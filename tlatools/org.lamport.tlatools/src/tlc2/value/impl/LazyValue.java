@@ -15,6 +15,7 @@ import tla2sany.semantic.SemanticNode;
 import tlc2.tool.EvalControl;
 import tlc2.tool.FingerprintException;
 import tlc2.tool.TLCState;
+import tlc2.tool.TLCStateMut;
 import tlc2.tool.coverage.CostModel;
 import tlc2.tool.impl.Tool;
 import tlc2.util.Context;
@@ -167,9 +168,9 @@ public class LazyValue extends Value {
     if (val != null &&
         isCachable() &&
         tool.getId() == toolID &&
+        EvalControl.semanticallyEquivalent(control, this.control).isDefinitely(true) &&
         TLCState.isSubset(s0, this.s0).isDefinitely(true) &&
-        TLCState.isSubset(s1, this.s1).isDefinitely(true) &&
-        EvalControl.semanticallyEquivalent(control, this.control).isDefinitely(true)) {
+        TLCState.isSubset(s1, this.s1).isDefinitely(true)) {
       return val;
     }
     return null;
@@ -190,14 +191,45 @@ public class LazyValue extends Value {
    * @return a fully-reduced value
    */
   public Value getValue(Tool tool, TLCState s0, TLCState s1, int control) {
-    Value res = getCachedValue(tool, s0, s1, control);
+    Value res = null;
+    boolean assignS0 = false, assignS1 = false;
+    if (val != null &&
+        isCachable() &&
+        tool.getId() == toolID &&
+        EvalControl.semanticallyEquivalent(control, this.control).isDefinitely(true)) {
+      int subsetResultS0 = TLCState.isSubsetOrEqual(s0, this.s0);
+      if (subsetResultS0 != TLCState.SUBSET_DIFFERENT) {
+        assignS0 = subsetResultS0 == TLCState.SUBSET_SUBSET;
+        int subsetResultS1 = TLCState.isSubsetOrEqual(s1, this.s1);
+        if (subsetResultS1 != TLCState.SUBSET_DIFFERENT) {
+          assignS1 = subsetResultS1 == TLCState.SUBSET_SUBSET;
+          res = val;
+        }
+      }
+    }
+
+    getCachedValue(tool, s0, s1, control);
     if (res == null) {
       res = tool.eval(this.expr, this.con, s0, s1, control, getCostModel());
       if (isCachable()) {
         this.val = res;
         this.toolID = tool.getId();
-        this.s0 = s0 != null ? s0.copy() : null;
-        this.s1 = s1 != null ? s1.copy() : null;
+
+        if (assignS0) {
+          if (this.s0 instanceof TLCStateMut) {
+            ((TLCStateMut) this.s0).Assign(s0);
+          } else {
+            this.s0 = s0 != null ? s0.copy() : null;
+          }
+        }
+
+        if (assignS1) {
+          if (this.s1 instanceof TLCStateMut) {
+            ((TLCStateMut) this.s1).Assign(s1);
+          } else {
+            this.s1 = s1 != null ? s1.copy() : null;
+          }
+        }
         this.control = control;
         ++cacheCount;
       }

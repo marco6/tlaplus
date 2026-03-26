@@ -318,4 +318,45 @@ public abstract class TLCState implements Serializable {
 		return PartialBoolean.YES;
 	}
 
+	public static final int SUBSET_EQUAL = 0, SUBSET_SUBSET = 1, SUBSET_DIFFERENT = 2;
+
+	public static int isSubsetOrEqual(TLCState s1, TLCState s2) {
+		if (s1 == null) {
+			s1 = Empty;
+		}
+
+		if (s2 == null) {
+			s2 = Empty;
+		}
+
+		// Optimization: if the arguments point to the same state, then we can return
+		// true
+		// without inspecting the state's contents.
+		if (s1 == s2) {
+			return SUBSET_EQUAL;
+		} else if (s2 == Empty) {
+			return SUBSET_SUBSET;
+		}
+
+		int result = SUBSET_EQUAL;
+		try {
+			for (OpDeclNode var : vars) {
+				UniqueString key = var.getName();
+				IValue val1 = s1.lookup(key);
+				IValue val2 = s2.lookup(key);
+				if (val2 != null) {
+					if (val1 != val2 && !val2.equals(val1)) {
+						return SUBSET_DIFFERENT;
+					}
+				} else if (val1 != null) {
+					result = SUBSET_SUBSET;
+				}
+			}
+		} catch (FingerprintException | Assert.TLCRuntimeException e) {
+			// These exceptions get thrown when two values are not comparable.
+			return SUBSET_DIFFERENT;
+		}
+
+		return result;
+	}
 }

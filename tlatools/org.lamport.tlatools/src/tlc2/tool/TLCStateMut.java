@@ -406,4 +406,13 @@ public final class TLCStateMut extends TLCState implements Serializable {
     return mytool.evalAlias(this, TLCState.Empty);
   }
 
+  public void Assign(TLCState other) {
+    if (other instanceof TLCStateMut) {
+      TLCStateMut otherMut = (TLCStateMut) other;
+      System.arraycopy(otherMut.values, 0, this.values, 0, this.values.length);
+    } else {
+      throw new WrongInvocationException("TLCStateMut.Assign: This is a TLC bug.");
+    }
+  }
+
 }

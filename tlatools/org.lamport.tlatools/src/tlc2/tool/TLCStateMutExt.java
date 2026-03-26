@@ -495,4 +495,13 @@ public final class TLCStateMutExt extends TLCState implements Serializable {
 		// raising an error.
 		return mytool.evalAlias(this, TLCState.Empty);
 	}
+
+	public void Assign(TLCState other) {
+		if (other instanceof TLCStateMutExt) {
+			TLCStateMutExt otherMut = (TLCStateMutExt) other;
+			System.arraycopy(otherMut.values, 0, this.values, 0, this.values.length);
+		} else {
+			throw new WrongInvocationException("TLCStateMutExt.Assign: This is a TLC bug.");
+		}
+	}
 }
