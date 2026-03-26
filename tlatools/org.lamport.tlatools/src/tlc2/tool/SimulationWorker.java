@@ -40,6 +40,7 @@ import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import tla2sany.semantic.OpDeclNode;
 import tlc2.TLCGlobals;
 import tlc2.module.TLCGetSet;
@@ -347,7 +348,7 @@ public class SimulationWorker extends IdThread implements INextStateFunctor {
 
 		private long numOfNextRetries;
 
-		private final Map<UniqueString, Integer> numOfActions = new HashMap<>();
+		private final Object2IntOpenHashMap<UniqueString> numOfActions = new Object2IntOpenHashMap<>();
 
 		private final CountDistinct numOfDistinctStates;
 
@@ -394,7 +395,7 @@ public class SimulationWorker extends IdThread implements INextStateFunctor {
 
 			numOfDistinctStates.add(t);
 
-			numOfActions.merge(s.getAction().getName(), 1, Integer::sum);
+			numOfActions.addTo(s.getAction().getName(), 1);
 		}
 
 		@Override

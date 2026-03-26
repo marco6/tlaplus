@@ -12,20 +12,21 @@ import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import tla2sany.semantic.ExprNode;
 import tla2sany.st.Location;
 import tlc2.TLCGlobals;
@@ -326,14 +327,6 @@ public class Simulator {
 		final ProgressReport report = new ProgressReport();
 		report.start();
 
-		// Wait for the progress report thread to enter its synchronized
-		// block. Because the thread holds the monitor when it signals
-		// the latch, it is guaranteed to reach wait() (releasing the
-		// monitor) before the main thread can acquire the monitor to
-		// call notify(). This prevents a lost notification when the
-		// simulation completes before the progress thread is scheduled.
-		report.ready.await();
-
 		//
 		// Start simulating.
 		//
@@ -350,9 +343,7 @@ public class Simulator {
 			errorCode = Math.max(this.tool.checkPostCondition(), errorCode);
 		}
 
-		// Waking the progress thread serves double duty: it breaks
-		// out of the while loop (isRunning is now false) *and* triggers
-		// one final progress report before the thread exits.
+		// Do a final progress report.
 		report.isRunning = false;
 		synchronized (report) {
 			report.notify();
@@ -370,7 +361,7 @@ public class Simulator {
 
 	protected SimulationWorkerResult simulate(final StateVec initStates) throws InterruptedException {
 		// Start up multiple simulation worker threads, each with their own unique seed.
-		final Set<Integer> runningWorkers = new HashSet<>();
+		final it.unimi.dsi.fastutil.ints.IntOpenHashSet runningWorkers = new it.unimi.dsi.fastutil.ints.IntOpenHashSet();
 		for (int i = 0; i < this.workers.size(); i++) {
 			SimulationWorker worker = workers.get(i);
 			worker.start(initStates);
@@ -622,15 +613,12 @@ public class Simulator {
 
 		volatile boolean isRunning = true;
 
-		final CountDownLatch ready = new CountDownLatch(1);
-
 		public void run() {
+			final ExprNode periodic = tool.getSpecProcessor().getPeriodic();
+			int count = TLCGlobals.coverageInterval / TLCGlobals.progressInterval;
 			try {
-				final ExprNode periodic = tool.getSpecProcessor().getPeriodic();
-				int count = TLCGlobals.coverageInterval / TLCGlobals.progressInterval;
 				while (isRunning) {
 					synchronized (this) {
-						ready.countDown();
 						this.wait(TLCGlobals.progressInterval);
 					}
 					final long genTrace = numOfGenTraces.longValue();
@@ -661,11 +649,6 @@ public class Simulator {
 			} catch (Exception e) {
 				// SZ Jul 10, 2009: changed from error to bug
 				MP.printTLCBug(EC.TLC_REPORTER_DIED, null);
-			} finally {
-				// If getSpecProcessor or any earlier step throws an exception,
-				// always tear down the latch to avoid blocking the main thread.
-				// This is a no-op if the latch was already torn down in the normal path.
-				ready.countDown();
 			}
 		}
 
@@ -690,11 +673,11 @@ public class Simulator {
 		// ...
 		// A(p) == p \in {...} /\ v' = 42...
 		// Next == \E p \in Proc : A(p)
-		final Map<String, Set<Integer>> clusters = new HashMap<>();
+		final Map<String, IntOpenHashSet> clusters = new HashMap<>();
 		for (int i = 0; i < len; i++) {
 			final String con = initAndNext.elementAt(i).con.toString();
 			if (!clusters.containsKey(con)) {
-				clusters.put(con, new HashSet<>());
+				clusters.put(con, new IntOpenHashSet());
 			}
 			clusters.get(con).add(i);
 		}
@@ -702,15 +685,14 @@ public class Simulator {
 		// Write clusters to dot file (override previous file).
 		final DotActionWriter dotActionWriter = new DotActionWriter(
 				Simulator.this.tool.getRootName() + "_actions.dot", "");
-		for (Entry<String, Set<Integer>> cluster : clusters.entrySet()) {
+		for (Entry<String, IntOpenHashSet> cluster : clusters.entrySet()) {
 			// key is a unique set of chars accepted/valid as a graphviz cluster id.
 			final String key = Integer.toString(Math.abs(cluster.getKey().hashCode()));
 			dotActionWriter.writeSubGraphStart(key, cluster.getKey().toString());
 
-			final Set<Integer> ids = cluster.getValue();
-			for (Integer id : ids) {
-				dotActionWriter.write(initAndNext.elementAt(id), id);
-			}
+			cluster.getValue().forEach(arg0 -> {
+				dotActionWriter.write(initAndNext.elementAt(arg0), arg0);
+			});
 			dotActionWriter.writeSubGraphEnd();
 		}
 
@@ -727,7 +709,7 @@ public class Simulator {
 		}
 
 		// Create a map from id to action name.
-		final Map<Integer, Action> idToActionName = new HashMap<>();
+		final Int2ObjectOpenHashMap<Action> idToActionName = new Int2ObjectOpenHashMap<>();
 		for (int i = 0; i < initAndNext.size(); i++) {
 			Action action = initAndNext.elementAt(i);
 			idToActionName.put(action.getId(), action);
@@ -774,8 +756,8 @@ public class Simulator {
 		}
 
 		// Create mappings from distinct ids to action ids and name.
-		final Map<Integer, Action> idToAction = new HashMap<>();
-		final Map<Location, Integer> actionToId = new HashMap<>();
+		final Int2ObjectOpenHashMap<Action> idToAction = new Int2ObjectOpenHashMap<>();
+		final Object2IntOpenHashMap<Location> actionToId = new Object2IntOpenHashMap<>();
 		for (int i = 0; i < initAndNext.size(); i++) {
 			final Action action = initAndNext.elementAt(i);
 
@@ -785,10 +767,10 @@ public class Simulator {
 				actionToId.put(action.getDefinition(), id);
 			}
 		}
-		final Map<Integer, Integer> actionsToDistinctActions = new HashMap<>();
+		final Int2IntOpenHashMap actionsToDistinctActions = new Int2IntOpenHashMap();
 		for (int i = 0; i < initAndNext.size(); i++) {
 			final Action action = initAndNext.elementAt(i);
-			actionsToDistinctActions.put(action.getId(), actionToId.get(action.getDefinition()));
+			actionsToDistinctActions.put(action.getId(), actionToId.getInt(action.getDefinition()));
 		}
 
 		// Override previous basic file.

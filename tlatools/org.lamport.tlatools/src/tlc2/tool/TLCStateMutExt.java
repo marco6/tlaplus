@@ -10,8 +10,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
@@ -472,7 +470,8 @@ public final class TLCStateMutExt extends TLCState implements Serializable {
 		this.callable = f;
 	}
 
-	private Map<Integer, Value> cache = new HashMap<>(0);
+	private it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<Value> cache = new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<>(
+			0);
 
 	public Value getCached(final int key) {
 		if (cache == null) {
@@ -483,7 +482,7 @@ public final class TLCStateMutExt extends TLCState implements Serializable {
 
 	public Value setCached(final int key, final Value value) {
 		if (cache == null) {
-			cache = new HashMap<>(0);
+			cache = new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<>(0);
 		}
 		cache.put(key, value);
 		return value;

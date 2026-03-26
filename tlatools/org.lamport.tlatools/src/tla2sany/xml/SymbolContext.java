@@ -19,8 +19,9 @@ import tla2sany.semantic.TheoremNode;
  * same def twice
  */
 public class SymbolContext {
-  private java.util.Map<Integer, Element> context;
-  private java.util.Set<Integer> keys; // we need this set since the generated element might spawn new keys
+  private it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<Element> context;
+  private it.unimi.dsi.fastutil.ints.IntOpenHashSet keys; // we need this set since the generated element might spawn
+                                                          // new keys
   private boolean top_level_entry; // used to detect if a symbol is exported twice.
                                    // only set in put() and reset in SymbolNode.getDefinitionElement
 
@@ -32,8 +33,8 @@ public class SymbolContext {
   private boolean[] flagArray;
 
   public SymbolContext() {
-    context = new java.util.HashMap<Integer, Element>();
-    keys = new java.util.HashSet<Integer>();
+    context = new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<Element>();
+    keys = new it.unimi.dsi.fastutil.ints.IntOpenHashSet();
     flagArray = new boolean[1];
     top_level_entry = false;
   }
@@ -86,14 +87,14 @@ public class SymbolContext {
 
   public Element getContextElement(Document doc) {
     Element ret = doc.createElement("context");
-    for (java.util.Map.Entry<Integer, Element> entry : context.entrySet()) {
+    context.int2ObjectEntrySet().forEach(entry -> {
       Element e = doc.createElement("entry");
       Element id = doc.createElement("UID");
-      id.appendChild(doc.createTextNode(entry.getKey().toString()));
+      id.appendChild(doc.createTextNode(Integer.toString(entry.getIntKey())));
       e.appendChild(id);
       e.appendChild(entry.getValue());
       ret.appendChild(e);
-    }
+    });
     return ret;
   }
 

@@ -26,9 +26,9 @@
 package tlc2.tool;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
@@ -52,7 +52,7 @@ public class RLSimulationWorker extends SimulationWorker {
 			.valueOf(System.getProperty(Simulator.class.getName() + ".rl.reward", "-10d"));
 	protected static final boolean ENABLED_ONLY = Boolean.getBoolean(Simulator.class.getName() + ".rl.enabledOnly");
 
-	protected final Map<Action, Map<Long, Double>> q = new HashMap<>();
+	protected final Object2ObjectOpenHashMap<Action, Long2DoubleOpenHashMap> q = new Object2ObjectOpenHashMap<>();
 
 	public RLSimulationWorker(int id, ITool tool, BlockingQueue<SimulationWorkerResult> resultQueue, long seed,
 			int maxTraceDepth, long maxTraceNum, boolean checkDeadlock, String traceFile, ILiveCheck liveCheck) {
@@ -68,7 +68,7 @@ public class RLSimulationWorker extends SimulationWorker {
 				numOfGenStates, numOfGenTraces, m2AndMean);
 
 		for (final Action a : tool.getActions()) {
-			q.put(a, new HashMap<>());
+			q.put(a, new Long2DoubleOpenHashMap());
 		}
 	}
 
@@ -83,9 +83,8 @@ public class RLSimulationWorker extends SimulationWorker {
 	private final double getMaxQ(final long fp) {
 		double max = -Double.MAX_VALUE;
 		for (Action a : q.keySet()) {
-			// Map#get instead of Map#getOrDefaults causes an NPE in max when the fp is
-			// unknown.
-			double d = this.q.get(a).getOrDefault(fp, -Double.MAX_VALUE);
+			final Long2DoubleOpenHashMap inner = this.q.get(a);
+			double d = inner != null && inner.containsKey(fp) ? inner.get(fp) : -Double.MAX_VALUE;
 			max = Math.max(max, d);
 		}
 		return max;
@@ -109,7 +108,11 @@ public class RLSimulationWorker extends SimulationWorker {
 		final long s = getHash(state);
 
 		// TODO Experiment with initializing to other values.
-		this.q.values().forEach(m -> m.putIfAbsent(s, 0d));
+		for (final Long2DoubleOpenHashMap m : this.q.values()) {
+			if (!m.containsKey(s)) {
+				m.put(s, 0d);
+			}
+		}
 
 		// Calculate the sum over all actions.
 		double denum = 0;

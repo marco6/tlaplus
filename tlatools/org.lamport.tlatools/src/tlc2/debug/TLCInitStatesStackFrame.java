@@ -27,10 +27,8 @@ package tlc2.debug;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
@@ -58,7 +56,7 @@ public class TLCInitStatesStackFrame extends TLCStackFrame {
 	// if the state is only partial, i.e., not all variables have been determined.
 	// Moreover, the DAP's representation of variable references is an integer, not
 	// a long. This is why the front-end uses the DAP's variable references.
-	private transient final Map<Integer, TLCState> idToStateMap = new HashMap<>();
+	private transient final it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<TLCState> idToStateMap = new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<>();
 
 	protected transient final int stateId;
 

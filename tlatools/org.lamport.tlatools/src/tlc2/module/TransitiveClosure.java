@@ -5,8 +5,7 @@
 
 package tlc2.module;
 
-import java.util.Hashtable;
-
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import tlc2.output.EC;
 import tlc2.tool.EvalException;
 import tlc2.util.Vect;
@@ -32,7 +31,7 @@ public class TransitiveClosure implements ValueConstants {
         boolean[][] matrix = new boolean[maxLen][maxLen];
         ValueEnumeration elems = ((Enumerable) rel).elements();
         Vect<Value> elemList = new Vect<>();
-        Hashtable<Value, Integer> fps = new Hashtable<>();
+        Object2IntOpenHashMap<Value> fps = new Object2IntOpenHashMap<>();
         int cnt = 0;
         Value elem = null;
         while ((elem = elems.nextElement()) != null) {
@@ -43,22 +42,22 @@ public class TransitiveClosure implements ValueConstants {
             Value elem1 = tv.elems[0];
             Value elem2 = tv.elems[1];
             int num1 = cnt;
-            Integer num = fps.get(elem1);
-            if (num == null) {
+            int num = fps.getOrDefault(elem1, -1);
+            if (num == -1) {
                 fps.put(elem1, cnt);
                 elemList.addElement(elem1);
                 cnt++;
             } else {
-                num1 = num.intValue();
+                num1 = num;
             }
             int num2 = cnt;
-            num = fps.get(elem2);
-            if (num == null) {
+            num = fps.getOrDefault(elem2, -1);
+            if (num == -1) {
                 fps.put(elem2, cnt);
                 elemList.addElement(elem2);
                 cnt++;
             } else {
-                num2 = num.intValue();
+                num2 = num;
             }
             matrix[num1][num2] = true;
         }

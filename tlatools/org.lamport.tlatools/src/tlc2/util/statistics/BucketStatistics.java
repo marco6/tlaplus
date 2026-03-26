@@ -25,8 +25,6 @@
  ******************************************************************************/
 package tlc2.util.statistics;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.TreeMap;
@@ -46,16 +44,16 @@ public class BucketStatistics extends AbstractBucketStatistics implements IBucke
 	 * seen two times.
 	 * The map is thread safe, so are the values.
 	 */
-	private final Map<Integer, Long> buckets;
+	private final it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap buckets;
 
 	public BucketStatistics(String aTitle) {
 		super(aTitle);
-		this.buckets = new HashMap<Integer, Long>();
+		this.buckets = new it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap();
 	}
 
 	public BucketStatistics(String aTitle, final String pkg, final String name) {
 		super(aTitle, pkg, name);
-		this.buckets = new HashMap<Integer, Long>();
+		this.buckets = new it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap();
 	}
 
 	/*
@@ -68,11 +66,11 @@ public class BucketStatistics extends AbstractBucketStatistics implements IBucke
 			throw new IllegalArgumentException("Negative amount invalid");
 		}
 
-		Long l = buckets.get(amount);
-		if (l == null) {
+		long l = buckets.get(amount);
+		if (l == 0) {
 			buckets.put(amount, 1L);
 		} else {
-			buckets.replace(amount, ++l);
+			buckets.put(amount, l + 1);
 		}
 		observations++;
 	}
@@ -93,7 +91,8 @@ public class BucketStatistics extends AbstractBucketStatistics implements IBucke
 	 */
 	public NavigableMap<Integer, Long> getSamples() {
 		final NavigableMap<Integer, Long> res = new TreeMap<Integer, Long>();
-		for (Entry<Integer, Long> entry : this.buckets.entrySet()) {
+		// TODO fast foreach
+		for (Entry<Integer, Long> entry : this.buckets.int2LongEntrySet()) {
 			res.put(entry.getKey(), entry.getValue());
 		}
 		return res;
@@ -106,12 +105,9 @@ public class BucketStatistics extends AbstractBucketStatistics implements IBucke
 		this.observations += stat.getObservations();
 
 		for (Entry<Integer, Long> entry : stat.getSamples().entrySet()) {
-			final Long l = this.buckets.get(entry.getKey());
-			if (l == null) {
-				this.buckets.put(entry.getKey(), entry.getValue());
-			} else {
-				this.buckets.replace(entry.getKey(), l + entry.getValue());
-			}
+			final int key = entry.getKey();
+			final long l = this.buckets.get(key) + entry.getValue();
+			this.buckets.put(key, l);
 		}
 	}
 }

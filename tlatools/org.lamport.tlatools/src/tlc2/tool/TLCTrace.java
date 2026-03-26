@@ -12,8 +12,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.util.Random;
 
 import tlc2.output.EC;
@@ -199,7 +198,7 @@ public class TLCTrace {
 	 * @throws IOException
 	 */
 	public final TLCStateInfo[] getTrace() throws IOException {
-		final Map<Long, TLCStateInfo> locToState = new HashMap<Long, TLCStateInfo>();
+		final Long2ObjectOpenHashMap<TLCStateInfo> locToState = new Long2ObjectOpenHashMap<>();
 
 		synchronized (this) {
 			final long curLoc = this.raf.getFilePointer();

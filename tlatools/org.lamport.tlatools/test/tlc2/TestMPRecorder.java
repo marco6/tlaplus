@@ -27,16 +27,15 @@
 package tlc2;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import tlc2.output.EC;
 
 public class TestMPRecorder implements tlc2.output.IMessagePrinterRecorder {
-	private final Map<Integer, List<Object>> records = new HashMap<Integer, List<Object>>();
+	private final Int2ObjectOpenHashMap<List<Object>> records = new Int2ObjectOpenHashMap<List<Object>>();
 
 	public void record(int code, Object... objects) {
 		if (!records.containsKey(code)) {
@@ -272,7 +271,7 @@ public class TestMPRecorder implements tlc2.output.IMessagePrinterRecorder {
 	 */
 	public String toString() {
 		final StringBuffer buf = new StringBuffer(records.size());
-		for (Integer key : records.keySet()) {
+		records.keySet().forEach(key -> {
 			final List<Object> list = records.get(key);
 			for (Object elem : list) {
 				if (elem instanceof String[]) {
@@ -290,7 +289,7 @@ public class TestMPRecorder implements tlc2.output.IMessagePrinterRecorder {
 					buf.append("\n");
 				}
 			}
-		}
+		});
 		return buf.toString();
 	}
 }

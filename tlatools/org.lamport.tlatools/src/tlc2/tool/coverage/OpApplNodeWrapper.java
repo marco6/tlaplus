@@ -30,6 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 
 import tla2sany.semantic.OpApplNode;
 import tla2sany.semantic.SemanticNode;
@@ -156,7 +157,7 @@ public class OpApplNodeWrapper extends CostModelNode implements Comparable<OpApp
 		return this.root;
 	}
 
-	private final Set<Integer> seen = new HashSet<>();
+	private final IntOpenHashSet seen = new IntOpenHashSet();
 
 	@Override
 	public final CostModelNode get(final SemanticNode eon) {
