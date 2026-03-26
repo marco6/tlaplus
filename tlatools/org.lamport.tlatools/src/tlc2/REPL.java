@@ -203,7 +203,7 @@ public class REPL {
             try {
                 expr = reader.readLine(prompt);
                 String res = processInput(expr);
-                if (res.equals("")) {
+                if (res.length() == 0) {
                     continue;
                 }
                 System.out.println(res);
@@ -230,7 +230,7 @@ public class REPL {
 
             if (args.length == 1) {
                 String res = repl.processInput(args[0]);
-                if (!res.equals("")) {
+                if (res.length() != 0) {
                     System.out.println(res);
                 }
                 // TODO Return actual exit value if parsing/evaluation fails.
@@ -276,7 +276,7 @@ public class REPL {
         udc.put("osArch", System.getProperty("os.arch"));
         udc.put("jvmVendor", System.getProperty("java.vendor"));
         udc.put("jvmVersion", System.getProperty("java.version"));
-        udc.put("jvmArch", tlcRuntime.getArchitecture().toString());
+        udc.put("jvmArch", tlcRuntime.getArchitecture().name());
         udc.put("jvmHeapMem", Long.toString(heapMemory));
         udc.put("jvmOffHeapMem", Long.toString(offHeapMemory));
         udc.put("toolbox", Boolean.toString(TLCGlobals.tool));

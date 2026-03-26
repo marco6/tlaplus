@@ -421,12 +421,12 @@ public class SetOfRcdsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
         sb.append("[");
         int len = this.names.length;
         if (len != 0) {
-          sb.append(names[0] + ": ");
+          sb.append(names[0]).append(": ");
           this.values[0].toString(sb, offset, swallow);
         }
         for (int i = 1; i < len; i++) {
           sb.append(", ");
-          sb.append(names[i] + ": ");
+          sb.append(names[i]).append(": ");
           this.values[i].toString(sb, offset, swallow);
         }
         sb.append("]");

@@ -365,11 +365,11 @@ public class SetPredValue extends EnumerableValue implements Enumerable {
         if (ids.length != 0)
           sb.append(ids[0].getName());
         for (int i = 1; i < ids.length; i++) {
-          sb.append(", " + ids[i].getName());
+          sb.append(", ").append(ids[i].getName());
         }
       }
-      sb.append(" \\in " + this.inVal + " : <expression ");
-      sb.append(this.pred + "> }");
+      sb.append(" \\in ").append(this.inVal).append(" : <expression ");
+      sb.append(this.pred).append("> }");
       return sb;
     } catch (RuntimeException | OutOfMemoryError e) {
       if (hasSource()) {

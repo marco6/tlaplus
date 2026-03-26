@@ -23,7 +23,7 @@ public class Formula {
 	public static List<Formula> deserializeFormulaList(final List<String> serializedList) {
 		final ArrayList<Formula> result = new ArrayList<>(serializedList.size());
 		for (final String entry : serializedList) {
-			if ("1".equals(entry.substring(0, 1))) {
+			if (entry.startsWith("1")) {
 				result.add(new Formula(entry.substring(1)));
 			}
 		}

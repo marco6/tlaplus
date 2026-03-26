@@ -840,8 +840,8 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
         } catch (Throwable e) {
           /* SKIP */ }
       }
-      sb.append("[" + this.params.toString());
-      sb.append(" |-> <expression " + this.body + ">]");
+      sb.append("[").append(this.params.toString());
+      sb.append(" |-> <expression ").append(this.body).append(">]");
       return sb;
     } catch (RuntimeException | OutOfMemoryError e) {
       if (hasSource()) {
