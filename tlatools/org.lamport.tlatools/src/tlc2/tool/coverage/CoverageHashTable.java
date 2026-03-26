@@ -27,11 +27,12 @@ package tlc2.tool.coverage;
 
 import java.util.Set;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import tla2sany.explorer.ExploreNode;
 import tla2sany.semantic.OpDefNode;
 
 @SuppressWarnings("serial")
-class CoverageHashTable extends java.util.Hashtable<Integer, ExploreNode> {
+class CoverageHashTable extends Int2ObjectOpenHashMap<ExploreNode> {
 	private final Set<OpDefNode> nodes;
 
 	public CoverageHashTable(final Set<OpDefNode> nodes) {
@@ -39,17 +40,13 @@ class CoverageHashTable extends java.util.Hashtable<Integer, ExploreNode> {
 	}
 
 	@Override
-	public ExploreNode get(Object key) {
-		// Return null here to visit an OpDefNode D multiple times if D is "called" from
-		// multiple OpApplNodes. However, stop endless recursion if D is a RECURSIVE
-		// operator.
-		final ExploreNode v = super.get(key);
-		if (v instanceof OpDefNode) {
-			final OpDefNode odn = (OpDefNode) v;
+	public ExploreNode putIfAbsent(int key, ExploreNode value) {
+		if (value instanceof OpDefNode) {
+			final OpDefNode odn = (OpDefNode) value;
 			if (odn.getInRecursive()) {
 				if (nodes.contains(odn)) {
 					// RECURSIVE operators
-					return v;
+					return super.putIfAbsent(key, value);
 				}
 			}
 		}

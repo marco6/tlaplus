@@ -10,17 +10,15 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import tla2sany.semantic.Errors;
 import tla2sany.semantic.ExternalModuleTable;
 import tla2sany.semantic.FormalParamNode;
 import tla2sany.semantic.OpDefOrDeclNode;
-import tla2sany.semantic.SemanticNode;
 import tla2sany.semantic.SymbolNode;
 import tla2sany.utilities.Vector;
 import util.UniqueString;
@@ -47,13 +45,13 @@ public class Explorer {
 
 	// semNodesTable contains various nodes in the semantic graph keyed
 	// by their UIDs
-	private final Hashtable<Integer, ExploreNode> semNodesTable = new Hashtable<>();
+	private final Int2ObjectOpenHashMap<ExploreNode> semNodesTable = new Int2ObjectOpenHashMap<>();
 
 	// variables used in parsing commands
 	private int ntokens;
 	private StringTokenizer inputTokens;
 	private String firstToken, secondToken;
-	private Integer icmd, icmd2 = null;
+	private int icmd = Integer.MIN_VALUE, icmd2 = Integer.MIN_VALUE;
 	private ExploreNode obj;
 
 	private ExternalModuleTable mt;
@@ -115,18 +113,12 @@ public class Explorer {
 
 		// Collect in Vector symbols all SymbolNodes in the semNodesTable whose name ==
 		// symbName
-
-		for (Enumeration<ExploreNode> Enum = semNodesTable.elements(); Enum.hasMoreElements();) {
-
-			ExploreNode semNode = Enum.nextElement();
-
-			if (semNode instanceof SymbolNode
-					&& ((SymbolNode) semNode).getName() == UniqueString.uniqueStringOf(symbName)) {
-
+		UniqueString symbUS = UniqueString.uniqueStringOf(symbName);
+		semNodesTable.values().forEach((ExploreNode semNode) -> {
+			if (semNode instanceof SymbolNode && ((SymbolNode) semNode).getName() == symbUS) {
 				symbolVect.addElement((SymbolNode) semNode);
-
 			}
-		}
+		});
 
 		// Print them all
 		for (int i = 0; i < symbolVect.size(); i++) {
@@ -134,7 +126,6 @@ public class Explorer {
 			sym.getTreeNode().printST(0);
 			System.out.println();
 		}
-
 	}
 
 	private void lookUpAndPrintDef(String symbName) {
@@ -143,18 +134,12 @@ public class Explorer {
 
 		// Collect in Vector symbols all SymbolNodes in the semNodesTable whose name ==
 		// symbName
-
-		for (Enumeration<ExploreNode> Enum = semNodesTable.elements(); Enum.hasMoreElements();) {
-
-			ExploreNode semNode = Enum.nextElement();
-
-			if (semNode instanceof SymbolNode
-					&& ((SymbolNode) semNode).getName() == UniqueString.uniqueStringOf(symbName)) {
-
+		UniqueString symbUS = UniqueString.uniqueStringOf(symbName);
+		semNodesTable.values().forEach((ExploreNode semNode) -> {
+			if (semNode instanceof SymbolNode && ((SymbolNode) semNode).getName() == symbUS) {
 				symbolVect.addElement((SymbolNode) semNode);
-
 			}
-		}
+		});
 
 		// Print them all
 		for (int i = 0; i < symbolVect.size(); i++) {
@@ -175,23 +160,16 @@ public class Explorer {
 	}
 
 	private void levelDataPrint(String symbName) {
-
 		final Vector<SymbolNode> symbolVect = new Vector<>(8); // Initial room for 8 symbols with same name
 
 		// Collect in Vector symbols all SymbolNodes in the semNodesTable whose name ==
 		// symbName
-
-		for (Enumeration<ExploreNode> Enum = semNodesTable.elements(); Enum.hasMoreElements();) {
-
-			ExploreNode semNode = Enum.nextElement();
-
-			if (semNode instanceof SymbolNode
-					&& ((SymbolNode) semNode).getName() == UniqueString.uniqueStringOf(symbName)) {
-
+		UniqueString symbUS = UniqueString.uniqueStringOf(symbName);
+		semNodesTable.values().forEach((ExploreNode semNode) -> {
+			if (semNode instanceof SymbolNode && ((SymbolNode) semNode).getName() == symbUS) {
 				symbolVect.addElement((SymbolNode) semNode);
-
 			}
-		}
+		});
 
 		// Print them all
 		for (int i = 0; i < symbolVect.size(); i++) {
@@ -209,7 +187,6 @@ public class Explorer {
 			System.out.println(((ExploreNode) (sym)).levelDataToString());
 			System.out.println();
 		}
-
 	}
 
 	private void executeCommand() throws ExplorerQuitException {
@@ -220,9 +197,9 @@ public class Explorer {
 		// Integers as commands start printing at the node having icmd == UID;
 		// non-integer commands do something else
 
-		if (icmd != null) { // first token is an integer
+		if (icmd != Integer.MIN_VALUE) { // first token is an integer
 
-			printNode(icmd2.intValue());
+			printNode(icmd2);
 
 		} else { // the first token is not an integer
 
@@ -235,8 +212,8 @@ public class Explorer {
 
 				// Print the semantic graph, rooted in the Module Table
 				// excluding built-ins and ops defined in module Naturals
-				if (icmd2 != null) {
-					mt.printExternalModuleTable(icmd2.intValue(), false, errors);
+				if (icmd2 != Integer.MIN_VALUE) {
+					mt.printExternalModuleTable(icmd2, false, errors);
 				} else {
 					mt.printExternalModuleTable(2, false, errors);
 				}
@@ -245,8 +222,8 @@ public class Explorer {
 
 				// Print the semantic graph, rooted in the Module Table
 				// including builtins and ops defined in Naturals
-				if (icmd2 != null) {
-					mt.printExternalModuleTable(icmd2.intValue(), true, errors);
+				if (icmd2 != Integer.MIN_VALUE) {
+					mt.printExternalModuleTable(icmd2, true, errors);
 				} else {
 					mt.printExternalModuleTable(2, true, errors);
 				}
@@ -289,8 +266,8 @@ public class Explorer {
 
 	private void parseAndExecuteCommand() throws ExplorerQuitException {
 
-		icmd = null;
-		icmd2 = null;
+		icmd = Integer.MIN_VALUE;
+		icmd2 = Integer.MIN_VALUE;
 		ntokens = 0;
 
 		// Do nothing if cmd line contains no tokens
@@ -321,7 +298,7 @@ public class Explorer {
 
 		// A single token command defaults the depth to 20, except for
 		// "mt" command, which defaults to 2
-		if (ntokens < 2 || (icmd2 != null && icmd2.intValue() < 0)) {
+		if (ntokens < 2 || icmd2 < 0) {
 			if (firstToken.toLowerCase().startsWith("mt")) {
 				icmd2 = 2;
 			} else {

@@ -1,8 +1,7 @@
 // Copyright (c) 2003 Compaq Corporation.  All rights reserved.
 package tla2sany.explorer;
 
-import java.util.Hashtable;
-
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import tla2sany.semantic.Errors;
 
 /**
@@ -29,13 +28,13 @@ public interface ExploreNode {
    ***********************************************************************/
   public String levelDataToString();
 
-  public void walkGraph(Hashtable<Integer, ExploreNode> semNodesTable, final ExplorerVisitor visitor);
+  public void walkGraph(Int2ObjectOpenHashMap<ExploreNode> semNodesTable, final ExplorerVisitor visitor);
   /***********************************************************************
    * This method is apparently supposed to insert an entry in *
    * semNodesTable for itself and every descendant in the semantic tree *
    * by executing *
    * *
-   * Integer uid = Integer.valueOf(myUID); *
+   * int uid = myUID; *
    * if (semNodesTable.get(uid) != null) return; *
    * semNodesTable.put(uid, this); *
    * *

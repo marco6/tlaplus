@@ -30,9 +30,9 @@ import java.io.PrintWriter;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import tla2sany.semantic.Context;
 import tla2sany.semantic.FormalParamNode;
 import tla2sany.semantic.LetInNode;
@@ -56,7 +56,7 @@ public class DotExplorerVisitor extends ExplorerVisitor {
 	}
 
 	private final ModuleNode rootModule;
-	private final Hashtable<Integer, ExploreNode> table;
+	private final NoopTable table;
 	private final PrintWriter writer;
 	private final Deque<ExploreNode> stack = new ArrayDeque<>();
 	private final boolean includeLineNumbers = Boolean
@@ -64,7 +64,7 @@ public class DotExplorerVisitor extends ExplorerVisitor {
 
 	public DotExplorerVisitor(final ModuleNode rootModule) {
 		this.rootModule = rootModule;
-		this.table = new NoopTable<>();
+		this.table = new NoopTable();
 		try {
 			this.writer = new PrintWriter(FileUtil.newBFOS(rootModule.getName() + ".dot"));
 		} catch (FileNotFoundException e) {
@@ -133,7 +133,7 @@ public class DotExplorerVisitor extends ExplorerVisitor {
 		this.writer.close();
 	}
 
-	public Hashtable<Integer, ExploreNode> getTable() {
+	public Int2ObjectOpenHashMap<ExploreNode> getTable() {
 		return table;
 	}
 
@@ -158,19 +158,15 @@ public class DotExplorerVisitor extends ExplorerVisitor {
 	}
 
 	@SuppressWarnings("serial")
-	private class NoopTable<K, V> extends Hashtable<K, V> {
+	private class NoopTable extends Int2ObjectOpenHashMap<ExploreNode> {
 		@Override
-		public V get(Object key) {
-			// Return null here to visit an OpDefNode D multiple times if D is "called" from
-			// multiple OpApplNodes. However, stop endless recursion if D is a RECURSIVE
-			// operator.
-			final V v = super.get(key);
-			if (v instanceof OpDefNode) {
-				final OpDefNode odn = (OpDefNode) v;
+		public ExploreNode putIfAbsent(int key, ExploreNode value) {
+			if (value instanceof OpDefNode) {
+				final OpDefNode odn = (OpDefNode) value;
 				if (odn.getInRecursive()) {
 					if (stack.contains(odn)) {
 						// RECURSIVE operators
-						return v;
+						return super.putIfAbsent(key, value);
 					}
 				}
 			}

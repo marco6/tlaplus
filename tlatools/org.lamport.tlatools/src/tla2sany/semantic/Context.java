@@ -12,9 +12,9 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import tla2sany.explorer.ExploreNode;
 import tla2sany.explorer.ExplorerVisitor;
-import tla2sany.parser.SyntaxTreeNode;
 import tla2sany.semantic.BuiltInOperators.BuiltInOperator;
 import tla2sany.utilities.Strings;
 import tla2sany.utilities.Vector;
@@ -543,7 +543,7 @@ public class Context implements ExploreNode {
     return ctxtEntries;
   }
 
-  public void walkGraph(Hashtable<Integer, ExploreNode> semNodesTable, ExplorerVisitor visitor) {
+  public void walkGraph(Int2ObjectOpenHashMap<ExploreNode> semNodesTable, ExplorerVisitor visitor) {
     visitor.preVisit(this);
     UniqueString key;
     Enumeration<?> e = table.keys();

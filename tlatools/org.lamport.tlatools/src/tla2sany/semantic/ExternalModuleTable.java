@@ -11,6 +11,7 @@ package tla2sany.semantic;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import tla2sany.explorer.ExploreNode;
 import tla2sany.explorer.ExplorerVisitor;
 import tla2sany.utilities.Strings;
@@ -54,7 +55,7 @@ public class ExternalModuleTable implements ExploreNode {
       return "Dummy level string";
     }
 
-    public void walkGraph(Hashtable<Integer, ExploreNode> moduleNodesTable, ExplorerVisitor visitor) {
+    public void walkGraph(Int2ObjectOpenHashMap<ExploreNode> moduleNodesTable, ExplorerVisitor visitor) {
       if (moduleNode != null)
         moduleNode.walkGraph(moduleNodesTable, visitor);
       if (ctxt != null)
@@ -208,11 +209,11 @@ public class ExternalModuleTable implements ExploreNode {
     return ret;
   }
 
-  public void walkGraph(Hashtable<Integer, ExploreNode> moduleNodesTable) {
+  public void walkGraph(Int2ObjectOpenHashMap<ExploreNode> moduleNodesTable) {
     walkGraph(moduleNodesTable, ExplorerVisitor.NoopVisitor);
   }
 
-  public void walkGraph(Hashtable<Integer, ExploreNode> moduleNodesTable, ExplorerVisitor visitor) {
+  public void walkGraph(Int2ObjectOpenHashMap<ExploreNode> moduleNodesTable, ExplorerVisitor visitor) {
     Enumeration<ExternalModuleTableEntry> Enum = moduleHashTable.elements();
 
     while (Enum.hasMoreElements()) {
@@ -220,5 +221,4 @@ public class ExternalModuleTable implements ExploreNode {
       mte.walkGraph(moduleNodesTable, visitor);
     }
   }
-
 }

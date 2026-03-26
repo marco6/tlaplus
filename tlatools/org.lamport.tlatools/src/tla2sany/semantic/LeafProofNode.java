@@ -1,12 +1,12 @@
 // Copyright (c) 2007 Microsoft Corporation.  All rights reserved.
 package tla2sany.semantic;
 
-import java.util.Hashtable;
 import java.util.function.BiPredicate;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import tla2sany.explorer.ExploreNode;
 import tla2sany.explorer.ExplorerVisitor;
 import tla2sany.st.TreeNode;
@@ -115,16 +115,13 @@ public class LeafProofNode extends ProofNode {
   }
 
   @Override
-  public void walkGraph(Hashtable<Integer, ExploreNode> semNodesTable, ExplorerVisitor visitor) {
-    Integer uid = Integer.valueOf(myUID);
-    if (semNodesTable.get(uid) != null)
+  public void walkGraph(Int2ObjectOpenHashMap<ExploreNode> semNodesTable, ExplorerVisitor visitor) {
+    if (semNodesTable.putIfAbsent(myUID, this) != null)
       return;
-    semNodesTable.put(uid, this);
     visitor.preVisit(this);
     for (int i = 0; i < facts.length; i++) {
       facts[i].walkGraph(semNodesTable, visitor);
     }
-    ;
     /***********************************************************************
      * Note: there's no need to walk the defs array because all the nodes *
      * on it are walked from the nodes under which they appear. *

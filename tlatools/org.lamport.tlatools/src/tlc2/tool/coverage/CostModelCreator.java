@@ -362,8 +362,7 @@ public class CostModelCreator extends ExplorerVisitor {
 			final CostModelNode pop = stack.pop();
 			assert pop.getNode() == exploreNode;
 		} else if (exploreNode instanceof OpDefNode) {
-			final boolean removed = opDefNodes.remove((OpDefNode) exploreNode);
-			assert removed;
+			opDefNodes.remove((OpDefNode) exploreNode);
 		}
 	}
 

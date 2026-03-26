@@ -1,12 +1,12 @@
 // Portions Copyright (c) 2007 Microsoft Corporation.  All rights reserved.
 package tla2sany.semantic;
 
-import java.util.Hashtable;
 import java.util.function.BiPredicate;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import tla2sany.explorer.ExploreNode;
 import tla2sany.explorer.ExplorerVisitor;
 import tla2sany.st.TreeNode;
@@ -67,16 +67,13 @@ public class DefStepNode extends LevelNode {
   }
 
   @Override
-  public void walkGraph(Hashtable<Integer, ExploreNode> semNodesTable, ExplorerVisitor visitor) {
-    Integer uid = Integer.valueOf(myUID);
-    if (semNodesTable.get(uid) != null)
+  public void walkGraph(Int2ObjectOpenHashMap<ExploreNode> semNodesTable, ExplorerVisitor visitor) {
+    if (semNodesTable.putIfAbsent(myUID, this) != null)
       return;
-    semNodesTable.put(uid, this);
     visitor.preVisit(this);
     for (int i = 0; i < defs.length; i++) {
       defs[i].walkGraph(semNodesTable, visitor);
     }
-    ;
     visitor.postVisit(this);
   }
 
@@ -99,7 +96,6 @@ public class DefStepNode extends LevelNode {
     for (int i = 0; i < this.defs.length; i++) {
       ret += Strings.indent(4, this.defs[i].toString(depth - 1, errors));
     }
-    ;
     return ret;
   }
 

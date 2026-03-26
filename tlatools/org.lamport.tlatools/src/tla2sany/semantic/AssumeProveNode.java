@@ -4,12 +4,12 @@
 
 package tla2sany.semantic;
 
-import java.util.Hashtable;
 import java.util.function.BiPredicate;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import tla2sany.explorer.ExploreNode;
 import tla2sany.explorer.ExplorerVisitor;
 import tla2sany.st.TreeNode;
@@ -374,18 +374,15 @@ public class AssumeProveNode extends LevelNode {
   }
 
   @Override
-  public final void walkGraph(Hashtable<Integer, ExploreNode> h, ExplorerVisitor visitor) {
-    Integer uid = Integer.valueOf(myUID);
-    if (h.get(uid) != null)
+  public final void walkGraph(Int2ObjectOpenHashMap<ExploreNode> h, ExplorerVisitor visitor) {
+    if (h.putIfAbsent(myUID, this) != null)
       return;
-    h.put(uid, this);
     visitor.preVisit(this);
     int i = 0;
     while (i < assumes.length) {
       assumes[i].walkGraph(h, visitor);
       i = i + 1;
     }
-    ;
     prove.walkGraph(h, visitor);
     visitor.postVisit(this);
   } // end walkGraph()

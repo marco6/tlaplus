@@ -2,12 +2,12 @@
 // Portions Copyright (c) 2003 Microsoft Corporation.  All rights reserved.
 package tla2sany.semantic;
 
-import java.util.Hashtable;
 import java.util.function.BiPredicate;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import tla2sany.explorer.ExploreNode;
 import tla2sany.explorer.ExplorerVisitor;
 import tla2sany.utilities.Strings;
@@ -161,7 +161,7 @@ public class AtNode extends ExprNode {
    * and inserts them in the Hashtable semNodesTable for use by the Explorer tool.
    */
   @Override
-  public final void walkGraph(Hashtable<Integer, ExploreNode> h, ExplorerVisitor visitor) {
+  public final void walkGraph(Int2ObjectOpenHashMap<ExploreNode> h, ExplorerVisitor visitor) {
     visitor.preVisit(this);
     // Empty because there are no nodes reachable through an AtNode that are not
     // reachable by other paths through the semantic graph.

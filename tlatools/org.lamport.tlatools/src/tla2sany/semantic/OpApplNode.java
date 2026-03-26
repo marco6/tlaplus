@@ -17,7 +17,6 @@ package tla2sany.semantic;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
@@ -26,6 +25,7 @@ import java.util.function.BiPredicate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import tla2sany.explorer.ExploreNode;
 import tla2sany.explorer.ExplorerVisitor;
 import tla2sany.parser.SyntaxTreeNode;
@@ -1207,12 +1207,10 @@ public class OpApplNode extends ExprNode implements ExploreNode {
    * and inserts them in the Hashtable semNodesTable for use by the Explorer tool.
    */
   @Override
-  public void walkGraph(Hashtable<Integer, ExploreNode> semNodesTable, ExplorerVisitor visitor) {
-    Integer uid = Integer.valueOf(myUID);
-    if (semNodesTable.get(uid) != null)
+  public void walkGraph(Int2ObjectOpenHashMap<ExploreNode> semNodesTable, ExplorerVisitor visitor) {
+    if (semNodesTable.putIfAbsent(myUID, this) != null)
       return;
 
-    semNodesTable.put(uid, this);
     visitor.preVisit(this);
 
     if (operator != null) {

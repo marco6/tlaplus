@@ -7,7 +7,6 @@ package tla2sany.semantic;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -19,6 +18,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import tla2sany.explorer.ExploreNode;
 import tla2sany.explorer.ExplorerVisitor;
 import tla2sany.parser.SyntaxTreeNode;
@@ -338,11 +338,10 @@ public abstract class SemanticNode
    * of walkgraph is to find all reachable nodes in the semantic graph
    * and insert them in a Hashtable for use by the Explorer tool.
    */
-  public void walkGraph(Hashtable<Integer, ExploreNode> semNodesTable, ExplorerVisitor visitor) {
-    Integer uid = Integer.valueOf(myUID);
-    if (semNodesTable.get(uid) != null)
+  @Override
+  public void walkGraph(Int2ObjectOpenHashMap<ExploreNode> semNodesTable, ExplorerVisitor visitor) {
+    if (semNodesTable.putIfAbsent(myUID, this) != null)
       return;
-    semNodesTable.put(uid, this);
     visitor.preVisit(this);
     visitor.postVisit(this);
   }
@@ -367,7 +366,7 @@ public abstract class SemanticNode
         return cycle && !substInNode;
       }
     };
-    this.walkGraph(new Hashtable<>(), visitor);
+    this.walkGraph(new Int2ObjectOpenHashMap<ExploreNode>(), visitor);
     return visitor.get();
   }
 
@@ -391,7 +390,7 @@ public abstract class SemanticNode
         }
       }
     };
-    this.walkGraph(new Hashtable<>(), explorerVisitor);
+    this.walkGraph(new Int2ObjectOpenHashMap<ExploreNode>(), explorerVisitor);
     // Mutation of the semantic graph, i.e. call to resetOperator below, is delayed
     // until *after* the graph traversal to prevent unintended side effects.
     matches.forEach(oan -> oan.resetOperator(s));

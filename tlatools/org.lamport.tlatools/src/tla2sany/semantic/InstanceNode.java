@@ -3,13 +3,13 @@
 package tla2sany.semantic;
 
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.function.BiPredicate;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import tla2sany.explorer.ExploreNode;
 import tla2sany.explorer.ExplorerVisitor;
 import tla2sany.st.TreeNode;
@@ -408,12 +408,10 @@ public class InstanceNode extends LevelNode {
     return res;
   }
 
-  public final void walkGaph(Hashtable<Integer, ExploreNode> semNodesTable, final ExplorerVisitor visitor) {
-    Integer uid = Integer.valueOf(myUID);
-    if (semNodesTable.get(uid) != null)
+  public final void walkGraph(Int2ObjectOpenHashMap<ExploreNode> semNodesTable, final ExplorerVisitor visitor) {
+    if (semNodesTable.putIfAbsent(myUID, this) != null)
       return;
 
-    semNodesTable.put(myUID, this);
     visitor.preVisit(this);
 
     for (int i = 0; i < params.length; i++) {

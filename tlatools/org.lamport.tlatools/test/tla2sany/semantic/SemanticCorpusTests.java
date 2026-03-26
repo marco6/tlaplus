@@ -41,6 +41,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+
 import org.junit.Test;
 
 import tla2sany.drivers.SANY;
@@ -279,7 +282,7 @@ public class SemanticCorpusTests {
         }
       }
     };
-    module.walkGraph(new Hashtable<>(), visitor);
+    module.walkGraph(new Int2ObjectOpenHashMap<>(), visitor);
     return assertions;
   }
 

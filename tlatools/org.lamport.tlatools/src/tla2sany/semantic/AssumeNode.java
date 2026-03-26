@@ -3,13 +3,13 @@
 package tla2sany.semantic;
 
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.function.BiPredicate;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import tla2sany.explorer.ExploreNode;
 import tla2sany.explorer.ExplorerVisitor;
 import tla2sany.st.TreeNode;
@@ -200,18 +200,14 @@ public class AssumeNode extends LevelNode {
    * Explorer tool.
    */
   @Override
-  public final void walkGraph(Hashtable<Integer, ExploreNode> semNodesTable, ExplorerVisitor visitor) {
-    Integer uid = Integer.valueOf(myUID);
-
-    if (semNodesTable.get(uid) != null)
+  public final void walkGraph(Int2ObjectOpenHashMap<ExploreNode> semNodesTable, ExplorerVisitor visitor) {
+    if (semNodesTable.putIfAbsent(myUID, this) != null)
       return;
 
-    semNodesTable.put(uid, this);
     visitor.preVisit(this);
     if (assumeExpr != null) {
       assumeExpr.walkGraph(semNodesTable, visitor);
     }
-    ;
     visitor.postVisit(this);
   }
 
