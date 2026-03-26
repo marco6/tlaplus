@@ -386,11 +386,18 @@ public class TupleValue extends Value implements FunctionValue, ITupleValue {
   @Override
   public final IValue permute(IMVPerm perm) {
     try {
-      Value[] vals = new Value[this.elems.length];
+      Value[] vals = null;
       boolean changed = false;
-      for (int i = 0; i < vals.length; i++) {
-        vals[i] = (Value) this.elems[i].permute(perm);
-        changed = changed || (vals[i] != this.elems[i]);
+      for (int i = 0; i < this.elems.length; i++) {
+        Value v = (Value) this.elems[i].permute(perm);
+        if (changed) {
+          vals[i] = v;
+        } else if (v != this.elems[i]) {
+          changed = true;
+          vals = new Value[this.elems.length];
+          System.arraycopy(this.elems, 0, vals, 0, i);
+          vals[i] = v;
+        }
       }
       if (changed) {
         return new TupleValue(vals);

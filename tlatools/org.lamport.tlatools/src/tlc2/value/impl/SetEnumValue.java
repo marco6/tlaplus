@@ -22,7 +22,6 @@ import tlc2.value.RandomEnumerableValues;
 import tlc2.value.ValueInputStream;
 import tlc2.value.Values;
 import util.Assert;
-import util.UniqueString;
 
 @SuppressWarnings("serial")
 public class SetEnumValue extends EnumerableValue
@@ -406,11 +405,18 @@ public class SetEnumValue extends EnumerableValue
   public final IValue permute(IMVPerm perm) {
     try {
       int sz = this.elems.size();
-      Value[] vals = new Value[sz];
+      Value[] vals = null;
       boolean changed = false;
       for (int i = 0; i < sz; i++) {
-        vals[i] = (Value) this.elems.elementAt(i).permute(perm);
-        changed = (changed || vals[i] != this.elems.elementAt(i));
+        Value v = (Value) this.elems.elementAt(i).permute(perm);
+        if (changed) {
+          vals[i] = v;
+        } else if (v != this.elems.elementAt(i)) {
+          changed = true;
+          vals = new Value[sz];
+          System.arraycopy(this.elems.toArray(), 0, vals, 0, i);
+          vals[i] = v;
+        }
       }
       if (changed) {
         return new SetEnumValue(vals, false);

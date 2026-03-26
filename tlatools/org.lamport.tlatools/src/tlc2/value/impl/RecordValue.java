@@ -708,11 +708,18 @@ public class RecordValue extends Value implements FunctionValue {
     try {
       this.normalize();
       int rlen = this.names.length;
-      Value[] vals = new Value[rlen];
+      Value[] vals = null;
       boolean changed = false;
       for (int i = 0; i < rlen; i++) {
-        vals[i] = (Value) this.values[i].permute(perm);
-        changed = changed || (vals[i] != this.values[i]);
+        Value v = (Value) this.values[i].permute(perm);
+        if (changed) {
+          vals[i] = v;
+        } else if (v != this.values[i]) {
+          changed = true;
+          vals = new Value[rlen];
+          System.arraycopy(this.values, 0, vals, 0, i);
+          vals[i] = v;
+        }
       }
       if (changed) {
         return new RecordValue(this.names, vals, true);

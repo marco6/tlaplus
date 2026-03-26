@@ -838,34 +838,49 @@ public class FcnRcdValue extends Value implements FunctionValue, IFcnRcdValue {
   @Override
   public final IValue permute(IMVPerm perm) {
     try {
-
       this.normalize();
       int flen = this.size();
-      Value[] vals = new Value[flen];
+      Value[] vals = null;
 
       boolean vchanged = false;
       for (int i = 0; i < flen; i++) {
-        vals[i] = (Value) this.values[i].permute(perm);
-        vchanged = vchanged || (vals[i] != this.values[i]);
+        Value v = (Value) this.values[i].permute(perm);
+        if (vchanged) {
+          vals[i] = v;
+        } else if (v != this.values[i]) {
+          vchanged = true;
+          vals = new Value[flen];
+          System.arraycopy(this.values, 0, vals, 0, i);
+          vals[i] = v;
+        }
       }
 
       if (this.intv == null) {
-        Value[] dom = new Value[flen];
+        Value[] dom = null;
         boolean dchanged = false;
         for (int i = 0; i < flen; i++) {
-          dom[i] = (Value) this.domain[i].permute(perm);
-          dchanged = dchanged || (dom[i] != this.domain[i]);
+          Value d = (Value) this.domain[i].permute(perm);
+          if (dchanged) {
+            dom[i] = d;
+          } else if (d != this.domain[i]) {
+            dchanged = true;
+            dom = new Value[flen];
+            System.arraycopy(this.domain, 0, dom, 0, i);
+            dom[i] = d;
+          }
         }
 
-        if (dchanged) {
+        if (dchanged && vchanged) {
           return new FcnRcdValue(dom, vals, false);
         } else if (vchanged) {
           return new FcnRcdValue(this.domain, vals, true);
+        } else if (dchanged) {
+          vals = new Value[flen];
+          System.arraycopy(this.values, 0, vals, 0, flen);
+          return new FcnRcdValue(dom, vals, false);
         }
-      } else {
-        if (vchanged) {
-          return new FcnRcdValue(this.intv, vals);
-        }
+      } else if (vchanged) {
+        return new FcnRcdValue(this.intv, vals);
       }
       return this;
 
