@@ -7,14 +7,10 @@
 package tlc2.value.impl;
 
 import tla2sany.semantic.ExprOrOpArgNode;
-import tlc2.tool.EvalException;
-import tlc2.tool.FingerprintException;
 import tlc2.tool.TLCState;
 import tlc2.tool.coverage.CostModel;
 import tlc2.tool.impl.Tool;
 import tlc2.util.Context;
-import util.Assert;
-import util.WrongInvocationException;
 
 /**
  * Operations for values that behave like operators.

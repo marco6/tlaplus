@@ -142,5 +142,10 @@ public class EnumerableValueTest {
 		public StringBuffer toString(StringBuffer sb, int offset, boolean swallow) {
 			return toString(sb, offset, swallow);
 		}
+
+		@Override
+		public boolean equals(Value obj) {
+			return false;
+		}
 	}
 }

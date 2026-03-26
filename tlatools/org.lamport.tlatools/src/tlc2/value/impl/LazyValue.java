@@ -226,7 +226,8 @@ public class LazyValue extends Value {
     }
   }
 
-  public final boolean equals(Object obj) {
+  @Override
+  public final boolean equals(Value obj) {
     try {
       if (this.val == null || this.val == UndefValue.ValUndef) {
         Assert.fail("Error(TLC): Attempted to check equality of lazy values.", getSource());

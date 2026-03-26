@@ -355,12 +355,15 @@ public final class Location implements Comparable<Location> {
      */
     public boolean equals(Object object) {
         if (object instanceof Location) {
-            Location loc = (Location) object;
-            return loc.bLine == bLine && loc.bColumn == bColumn && loc.eLine == eLine && loc.eColumn == eColumn
-                    && loc.source().equals(source());
+            return equals((Location) object);
         }
 
         return false;
+    }
+
+    public boolean equals(Location loc) {
+        return loc.bLine == bLine && loc.bColumn == bColumn && loc.eLine == eLine && loc.eColumn == eColumn
+                && loc.source().equals(source());
     }
 
     /*

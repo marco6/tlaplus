@@ -100,7 +100,8 @@ public class SetPredValue extends EnumerableValue implements Enumerable {
     }
   }
 
-  public final boolean equals(Object obj) {
+  @Override
+  public final boolean equals(Value obj) {
     try {
       this.inVal = this.toSetEnum();
       this.converted = true;

@@ -121,6 +121,17 @@ public abstract class TLCState implements Serializable {
 		return copy;
 	}
 
+	public final boolean equals(Object obj) {
+		if (obj instanceof TLCStateMut) {
+			return equals((TLCStateMut) obj);
+		}
+		return false;
+	}
+
+	public boolean equals(TLCState state) {
+		return this == state;
+	}
+
 	public boolean noneAssigned() {
 		// isEmpty just checks referential equality, which is broken when some code
 		// invokes TLCState#copy on the empty state (e.g. FcnRcdValue).
@@ -294,7 +305,7 @@ public abstract class TLCState implements Serializable {
 				IValue val2 = s2.lookup(key);
 				if (val2 != null) {
 					IValue val1 = s1.lookup(key);
-					if (!Objects.equals(val1, val2)) {
+					if (val1 != val2 && !val2.equals(val1)) {
 						return PartialBoolean.NO;
 					}
 				}

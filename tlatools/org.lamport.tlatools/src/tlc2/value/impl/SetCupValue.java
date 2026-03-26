@@ -54,7 +54,8 @@ public class SetCupValue extends EnumerableValue implements Enumerable {
     }
   }
 
-  public final boolean equals(Object obj) {
+  @Override
+  public final boolean equals(Value obj) {
     try {
       this.convertAndCache();
       return this.cupSet.equals(obj);

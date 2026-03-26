@@ -48,7 +48,8 @@ public class SetDiffValue extends EnumerableValue implements Enumerable {
     }
   }
 
-  public final boolean equals(Object obj) {
+  @Override
+  public final boolean equals(Value obj) {
     try {
       this.convertAndCache();
       return this.diffSet.equals(obj);
@@ -260,6 +261,7 @@ public class SetDiffValue extends EnumerableValue implements Enumerable {
     if (this.diffSet != null && this.diffSet != SetEnumValue.DummyEnum) {
       return this.diffSet;
     }
+    // FIXME: use a specific initial capacity.
     ValueVec vals = new ValueVec();
     ValueEnumeration Enum = this.elements();
     Value elem;

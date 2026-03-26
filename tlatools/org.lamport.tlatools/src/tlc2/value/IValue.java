@@ -226,6 +226,8 @@ public interface IValue extends Comparable<Object> {
 		return false;
 	}
 
+	boolean equals(IValue obj);
+
 	/**
 	 * @return true if a value mutates as part of normalization or fingerprinting.
 	 */

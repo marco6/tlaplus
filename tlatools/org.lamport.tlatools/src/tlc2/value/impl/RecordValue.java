@@ -339,7 +339,8 @@ public class RecordValue extends Value implements FunctionValue {
     }
   }
 
-  public final boolean equals(Object obj) {
+  @Override
+  public final boolean equals(Value obj) {
     try {
       RecordValue rcd = obj instanceof Value ? (RecordValue) ((Value) obj).toRcd() : null;
       if (rcd == null) {
@@ -902,7 +903,7 @@ public class RecordValue extends Value implements FunctionValue {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(TLCState obj) {
       return this.state.equals(obj);
     }
 

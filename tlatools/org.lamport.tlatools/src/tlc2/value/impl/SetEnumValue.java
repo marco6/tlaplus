@@ -120,7 +120,8 @@ public class SetEnumValue extends EnumerableValue
     }
   }
 
-  public final boolean equals(Object obj) {
+  @Override
+  public final boolean equals(Value obj) {
     try {
       SetEnumValue set = obj instanceof Value ? (SetEnumValue) ((Value) obj).toSetEnum() : null;
       if (set == null) {

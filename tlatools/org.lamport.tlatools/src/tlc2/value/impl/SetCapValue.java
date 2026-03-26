@@ -48,7 +48,8 @@ public class SetCapValue extends EnumerableValue implements Enumerable {
     }
   }
 
-  public final boolean equals(Object obj) {
+  @Override
+  public final boolean equals(Value obj) {
     try {
       this.convertAndCache();
       return this.capSet.equals(obj);

@@ -36,7 +36,8 @@ public class UndefValue extends Value {
     }
   }
 
-  public final boolean equals(Object obj) {
+  @Override
+  public final boolean equals(Value obj) {
     try {
       return (obj instanceof UndefValue);
     } catch (RuntimeException | OutOfMemoryError e) {

@@ -253,9 +253,9 @@ public class FcnRcdValue extends Value implements FunctionValue, IFcnRcdValue {
     return 0;
   }
 
-  public final boolean equals(Object obj) {
+  @Override
+  public final boolean equals(Value obj) {
     try {
-
       FcnRcdValue fcn = obj instanceof Value ? (FcnRcdValue) ((Value) obj).toFcnRcd() : null;
       if (fcn == null) {
         if (obj instanceof ModelValue)

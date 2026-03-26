@@ -97,7 +97,8 @@ public class TupleValue extends Value implements FunctionValue, ITupleValue {
     }
   }
 
-  public final boolean equals(Object obj) {
+  @Override
+  public final boolean equals(Value obj) {
     try {
       TupleValue tv = obj instanceof Value ? (TupleValue) ((Value) obj).toTuple() : null;
       if (tv == null) {

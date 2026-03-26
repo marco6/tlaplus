@@ -56,7 +56,8 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
     }
   }
 
-  public final boolean equals(Object obj) {
+  @Override
+  public final boolean equals(Value obj) {
     try {
       if (obj instanceof SetOfFcnsValue) {
         SetOfFcnsValue fcns = (SetOfFcnsValue) obj;

@@ -67,7 +67,8 @@ public class StringValue extends Value {
     }
   }
 
-  public final boolean equals(Object obj) {
+  @Override
+  public final boolean equals(Value obj) {
     try {
       if (obj instanceof StringValue) {
         return this.val.equals(((StringValue) obj).getVal());

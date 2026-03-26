@@ -185,7 +185,8 @@ public class ModelValue extends Value implements IModelValue {
     }
   }
 
-  public final boolean equals(Object obj) {
+  @Override
+  public final boolean equals(Value obj) {
     try {
       if (this.type == 0) {
         return (obj instanceof ModelValue &&

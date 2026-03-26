@@ -66,7 +66,8 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 		}
 	}
 
-	public boolean equals(Object obj) {
+	@Override
+	public final boolean equals(Value obj) {
 		try {
 			if (obj instanceof SubsetValue) {
 				return this.set.equals(((SubsetValue) obj).set);
@@ -432,7 +433,6 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 	}
 
 	public class Unrank {
-
 		private final TreeMap<Long, Integer> sums = new TreeMap<>();
 		private final long[] partialPascalTable;
 		private final int maxK;

@@ -26,11 +26,11 @@ public class IntValue extends Value {
     }
   }
 
-  public static final IntValue ValNegOne = gen(-1);
+  public static final IntValue ValNegOne = new IntValue(-1);
 
-  public static final IntValue ValOne = gen(1);
+  public static final IntValue ValOne = new IntValue(1);
 
-  public static final IntValue ValZero = gen(0);
+  public static final IntValue ValZero = new IntValue(0);
 
   public static final int nbits(int tmp) {
     int nb = 0;
@@ -70,6 +70,13 @@ public class IntValue extends Value {
   }
 
   public static IntValue gen(int i) {
+    if (i == 0) {
+      return ValZero;
+    } else if (i == 1) {
+      return ValOne;
+    } else if (i == -1) {
+      return ValNegOne;
+    }
     if (i >= 0 && i < cache.length) {
       return cache[i];
     }
@@ -96,7 +103,8 @@ public class IntValue extends Value {
     }
   }
 
-  public final boolean equals(Object obj) {
+  @Override
+  public final boolean equals(Value obj) {
     try {
       if (obj instanceof IntValue) {
         return this.val == ((IntValue) obj).val;

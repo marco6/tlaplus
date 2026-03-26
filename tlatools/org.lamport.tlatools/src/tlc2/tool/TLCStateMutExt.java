@@ -88,7 +88,7 @@ public final class TLCStateMutExt extends TLCState implements Serializable {
 	}
 
 	// TODO equals without hashcode!
-	public final boolean equals(Object obj) {
+	public final boolean equals(TLCState obj) {
 		if (obj instanceof TLCStateMutExt) {
 			TLCStateMutExt state = (TLCStateMutExt) obj;
 			for (int i = 0; i < this.values.length; i++) {

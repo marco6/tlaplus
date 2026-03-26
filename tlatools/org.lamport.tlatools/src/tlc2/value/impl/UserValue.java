@@ -43,7 +43,8 @@ public class UserValue extends Value {
     }
   }
 
-  public final boolean equals(Object obj) {
+  @Override
+  public final boolean equals(Value obj) {
     try {
       return (this.compareTo(obj) == 0);
     } catch (RuntimeException | OutOfMemoryError e) {

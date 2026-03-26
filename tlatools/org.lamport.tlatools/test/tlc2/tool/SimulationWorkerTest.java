@@ -175,7 +175,7 @@ public class SimulationWorkerTest {
 		 * 
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
-		public boolean equals(Object obj) {
+		public boolean equals(TLCState obj) {
 			if (this == obj)
 				return true;
 			if (obj == null)

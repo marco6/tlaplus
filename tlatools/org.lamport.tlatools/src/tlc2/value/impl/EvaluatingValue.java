@@ -128,7 +128,7 @@ public class EvaluatingValue extends OpValue {
     }
   }
 
-  public final boolean equals(Object obj) {
+  public final boolean equals(Value obj) {
     try {
       Assert.fail("Attempted to check equality of operator " + this.toString() +
           " with value:\n" + obj == null ? "null" : Values.ppr(obj.toString()), getSource());

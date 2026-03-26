@@ -117,7 +117,8 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
     }
   }
 
-  public final boolean equals(Object obj) {
+  @Override
+  public final boolean equals(Value obj) {
     try {
       FcnRcdValue fcn = (FcnRcdValue) this.toFcnRcd();
       return fcn.equals(obj);

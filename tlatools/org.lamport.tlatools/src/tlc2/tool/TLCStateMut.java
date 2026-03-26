@@ -84,21 +84,25 @@ public final class TLCStateMut extends TLCState implements Serializable {
   }
 
   // TODO equals without hashcode!
-  public final boolean equals(Object obj) {
-    if (obj instanceof TLCStateMut) {
-      TLCStateMut state = (TLCStateMut) obj;
-      for (int i = 0; i < this.values.length; i++) {
-        if (this.values[i] == null) {
-          if (state.values[i] != null)
-            return false;
-        } else if (state.values[i] == null ||
-            !this.values[i].equals(state.values[i])) {
-          return false;
-        }
-      }
-      return true;
+
+  public final boolean equals(TLCState state) {
+    if (state instanceof TLCStateMut) {
+      return equals((TLCStateMut) state);
     }
     return false;
+  }
+
+  public final boolean equals(TLCStateMut state) {
+    for (int i = 0; i < this.values.length; i++) {
+      if (this.values[i] == null) {
+        if (state.values[i] != null)
+          return false;
+      } else if (state.values[i] == null ||
+          !this.values[i].equals(state.values[i])) {
+        return false;
+      }
+    }
+    return true;
   }
 
   public final TLCState bind(UniqueString name, IValue value) {

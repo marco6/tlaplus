@@ -76,7 +76,8 @@ public class OpLambdaValue extends OpValue {
     }
   }
 
-  public final boolean equals(Object obj) {
+  @Override
+  public final boolean equals(Value obj) {
     try {
       Assert.fail("Attempted to check equality of operator " + Values.ppr(this.toString()) +
           " with value:\n" + Values.ppr(obj.toString()), getSource());

@@ -362,6 +362,24 @@ public abstract class Value implements ValueConstants, Serializable, IValue {
     return toStringImpl(delim, false);
   }
 
+  @Override
+  public final boolean equals(Object obj) {
+    if (obj instanceof Value) {
+      return equals((Value) obj);
+    }
+    return false;
+  }
+
+  @Override
+  public final boolean equals(IValue obj) {
+    if (obj instanceof Value) {
+      return equals((Value) obj);
+    }
+    return false;
+  }
+
+  public abstract boolean equals(Value obj);
+
   private final String toStringImpl(final String delim, final boolean checked) {
     try {
       final StringBuffer sb = this.toString(new StringBuffer(), 0, checked);

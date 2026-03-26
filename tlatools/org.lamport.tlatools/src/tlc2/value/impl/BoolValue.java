@@ -60,7 +60,7 @@ public class BoolValue extends Value implements IBoolValue {
     }
   }
 
-  public final boolean equals(Object obj) {
+  public final boolean equals(Value obj) {
     try {
       if (obj instanceof BoolValue) {
         return this.val == ((BoolValue) obj).val;

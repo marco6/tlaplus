@@ -63,7 +63,8 @@ public class SetOfTuplesValue extends EnumerableValue implements Enumerable {
     }
   }
 
-  public final boolean equals(Object obj) {
+  @Override
+  public final boolean equals(Value obj) {
     try {
       if (obj instanceof SetOfTuplesValue) {
         SetOfTuplesValue tvs = (SetOfTuplesValue) obj;

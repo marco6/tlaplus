@@ -59,7 +59,8 @@ public class IntervalValue extends EnumerableValue
     }
   }
 
-  public final boolean equals(Object obj) {
+  @Override
+  public final boolean equals(Value obj) {
     try {
       if (obj instanceof IntervalValue) {
         IntervalValue intv = (IntervalValue) obj;
