@@ -174,10 +174,21 @@ public final class Action implements ToolGlobals, Serializable {
 	 * i.e., the order of the action's parameters.
 	 */
 	public final Map<UniqueString, Value> getParameters() {
-		return Arrays.stream(opDef != null ? opDef.getParams() : new FormalParamNode[0])
-				.filter(p -> con.lookup(p) instanceof Value)
-				.collect(Collectors.toMap(FormalParamNode::getName, p -> (Value) con.lookup(p),
-						(existing, replacement) -> existing, LinkedHashMap::new));
+		if (opDef == null) {
+			return Map.of();
+		}
+		FormalParamNode[] params = opDef.getParams();
+		if (params.length == 0) {
+			return Map.of();
+		}
+		LinkedHashMap<UniqueString, Value> res = new LinkedHashMap<>(params.length);
+		for (FormalParamNode p : params) {
+			Object o = con.lookup(p);
+			if (o instanceof Value) {
+				res.putIfAbsent(p.getName(), (Value) o);
+			}
+		}
+		return res;
 	}
 
 	public final String getInvocationSignature() {

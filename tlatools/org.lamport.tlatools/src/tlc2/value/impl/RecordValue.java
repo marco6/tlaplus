@@ -83,15 +83,17 @@ public class RecordValue extends Value implements FunctionValue {
   // override once sufficient time has passed that we can expect most users to be
   // on a version of TLC with this constructor.
   public RecordValue(final Map<UniqueString, ? extends Value> m) {
-    final List<Map.Entry<UniqueString, ? extends Value>> entries = new ArrayList<>(m.entrySet());
-
-    this.names = new UniqueString[entries.size()];
-    this.values = new Value[entries.size()];
-
-    for (int i = 0; i < entries.size(); i++) {
-      this.names[i] = entries.get(i).getKey();
-      this.values[i] = entries.get(i).getValue();
+    UniqueString[] names = new UniqueString[m.size()];
+    Value[] values = new Value[m.size()];
+    int i = 0;
+    for (Map.Entry<UniqueString, ? extends Value> entry : m.entrySet()) {
+      names[i] = entry.getKey();
+      values[i] = entry.getValue();
+      i++;
     }
+    this.names = names;
+    this.values = values;
+    this.isNorm = false;
   }
 
   public RecordValue(final RecordValue existing, UniqueString name, Value v) {
@@ -100,118 +102,91 @@ public class RecordValue extends Value implements FunctionValue {
   }
 
   public RecordValue(final Location location) {
-    this.names = new UniqueString[5];
-    this.values = new Value[this.names.length];
-
-    this.names[0] = BLI;
-    this.values[0] = IntValue.gen(location.beginLine());
-
-    this.names[1] = BCOL;
-    this.values[1] = IntValue.gen(location.beginColumn());
-
-    this.names[2] = ELI;
-    this.values[2] = IntValue.gen(location.endLine());
-
-    this.names[3] = ECOL;
-    this.values[3] = IntValue.gen(location.endColumn());
-
-    this.names[4] = MOD;
-    this.values[4] = new StringValue(location.sourceAsUniqueString());
-
-    this.isNorm = false;
+    // FIXME: why is this not normalized? WTF?
+    this(new UniqueString[] {
+        BLI, BCOL, ELI, ECOL, MOD
+    }, new Value[] {
+        IntValue.gen(location.beginLine()),
+        IntValue.gen(location.beginColumn()),
+        IntValue.gen(location.endLine()),
+        IntValue.gen(location.endColumn()),
+        new StringValue(location.sourceAsUniqueString())
+    }, false);
   }
 
   public RecordValue(final OpDefNode odn) {
-    this.names = new UniqueString[2];
-    this.values = new Value[this.names.length];
-
-    this.names[0] = NAME;
-    this.values[0] = new StringValue(odn.getName());
-
-    this.names[1] = LOC;
-    this.values[1] = new RecordValue(odn.getLocation());
-
-    this.isNorm = false;
+    // FIXME: why is this not normalized? WTF?
+    this(new UniqueString[] {
+        NAME, LOC
+    }, new Value[] {
+        new StringValue(odn.getName()),
+        new RecordValue(odn.getLocation())
+    }, false);
   }
 
   public RecordValue(final OpDeclNode odn) {
-    this.names = new UniqueString[2];
-    this.values = new Value[this.names.length];
-
-    this.names[0] = NAME;
-    this.values[0] = new StringValue(odn.getName());
-
-    this.names[1] = LOC;
-    this.values[1] = new RecordValue(odn.getLocation());
-
-    this.isNorm = false;
+    // FIXME: why is this not normalized? WTF?
+    this(new UniqueString[] {
+        NAME, LOC
+    }, new Value[] {
+        new StringValue(odn.getName()),
+        new RecordValue(odn.getLocation())
+    }, false);
   }
 
   public RecordValue(final OpDeclNode odn, final UniqueString u, final Value v) {
-    this.names = new UniqueString[3];
-    this.values = new Value[this.names.length];
-
-    this.names[0] = NAME;
-    this.values[0] = new StringValue(odn.getName());
-
-    this.names[1] = LOC;
-    this.values[1] = new RecordValue(odn.getLocation());
-
-    this.names[2] = u;
-    this.values[2] = v;
-
-    this.isNorm = false;
+    this(new UniqueString[] {
+        NAME, LOC, u
+    }, new Value[] {
+        new StringValue(odn.getName()),
+        new RecordValue(odn.getLocation()),
+        v
+    }, false);
   }
 
   public RecordValue(final Action action) {
+    // FIXME: why is this not normalized? WTF?
     final Map<UniqueString, Value> parameters = action.getParameters();
     if (parameters.isEmpty()) {
-      this.names = new UniqueString[2];
-      this.values = new Value[this.names.length];
+      this.names = new UniqueString[] { NAME, LOC };
+      this.values = new Value[] {
+          new StringValue(action.getName()),
+          new RecordValue(action.getDefinition())
+      };
     } else {
-      this.names = new UniqueString[4];
-      this.values = new Value[this.names.length];
-
-      this.names[2] = CTXT;
-      this.values[2] = new RecordValue(parameters);
-
-      this.names[3] = PARAMS;
-      this.values[3] = new TupleValue(
-          action.getParameters().keySet().stream().map(StringValue::new).toArray(Value[]::new));
+      this.names = new UniqueString[] { NAME, LOC, CTXT, PARAMS };
+      this.values = new Value[] {
+          new StringValue(action.getName()),
+          new RecordValue(action.getDefinition()),
+          new RecordValue(parameters),
+          new TupleValue(
+              action.getParameters().keySet().stream().map(StringValue::new).toArray(Value[]::new))
+      };
     }
-
-    this.names[0] = NAME;
-    this.values[0] = new StringValue(action.getName());
-
-    this.names[1] = LOC;
-    this.values[1] = new RecordValue(action.getDefinition());
-
     this.isNorm = false;
   }
 
   public RecordValue(final Action action, final UniqueString u, final Value v) {
     final Map<UniqueString, Value> parameters = action.getParameters();
-    this.names = new UniqueString[parameters.isEmpty() ? 3 : 5];
-    this.values = new Value[this.names.length];
-
-    this.names[0] = NAME;
-    this.values[0] = new StringValue(action.getName());
-
-    this.names[1] = LOC;
-    this.values[1] = new RecordValue(action.getDefinition());
-
-    this.names[2] = u;
-    this.values[2] = v;
-
-    if (!parameters.isEmpty()) {
-      this.names[3] = CTXT;
-      this.values[3] = new RecordValue(parameters);
-
-      this.names[4] = PARAMS;
-      this.values[4] = new TupleValue(
-          action.getParameters().keySet().stream().map(StringValue::new).toArray(Value[]::new));
+    if (parameters.isEmpty()) {
+      this.names = new UniqueString[] { NAME, LOC, u };
+      this.values = new Value[] {
+          new StringValue(action.getName()),
+          new RecordValue(action.getDefinition()),
+          v
+      };
+      this.isNorm = false;
+    } else {
+      this.names = new UniqueString[] { NAME, LOC, u, CTXT, PARAMS };
+      this.values = new Value[] {
+          new StringValue(action.getName()),
+          new RecordValue(action.getDefinition()),
+          v,
+          new RecordValue(parameters),
+          new TupleValue(
+              action.getParameters().keySet().stream().map(StringValue::new).toArray(Value[]::new))
+      };
     }
-
     this.isNorm = false;
   }
 
@@ -220,17 +195,7 @@ public class RecordValue extends Value implements FunctionValue {
   }
 
   public RecordValue(final TLCState state) {
-    final OpDeclNode[] vars = state.getVars();
-
-    this.names = new UniqueString[vars.length];
-    this.values = new Value[vars.length];
-
-    for (int i = 0; i < vars.length; i++) {
-      this.names[i] = vars[i].getName();
-      this.values[i] = (Value) state.lookup(this.names[i]);
-    }
-
-    this.isNorm = false;
+    this(state, (Value) null);
   }
 
   public RecordValue(final TLCState state, final Action action) {
@@ -252,13 +217,21 @@ public class RecordValue extends Value implements FunctionValue {
   }
 
   public RecordValue(final TLCState state, final Value defVal) {
-    this(state);
-    // if state.lookup in this returned null, replace null with defVal.
-    for (int i = 0; i < this.values.length; i++) {
+
+    final OpDeclNode[] vars = state.getVars();
+
+    this.names = new UniqueString[vars.length];
+    this.values = new Value[vars.length];
+
+    for (int i = 0; i < vars.length; i++) {
+      this.names[i] = vars[i].getName();
+      this.values[i] = (Value) state.lookup(this.names[i]);
       if (this.values[i] == null) {
         this.values[i] = defVal;
       }
     }
+
+    this.isNorm = false;
   }
 
   /**
@@ -292,6 +265,7 @@ public class RecordValue extends Value implements FunctionValue {
       }
     }
 
+    // FIXME: if we could guarantee that getVars is sorted, this could be normed.
     this.isNorm = false;
   }
 
