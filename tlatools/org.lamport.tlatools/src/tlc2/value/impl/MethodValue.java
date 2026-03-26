@@ -86,6 +86,10 @@ public class MethodValue extends OpValue {
     return this;
   }
 
+  public String getMethodName() {
+    return this.md.getName();
+  }
+
   @Override
   public final int compareTo(Object obj) {
     try {

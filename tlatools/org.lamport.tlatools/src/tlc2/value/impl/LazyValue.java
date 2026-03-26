@@ -176,6 +176,10 @@ public class LazyValue extends Value {
     return null;
   }
 
+  public Value getUnchecked() {
+    return this.val;
+  }
+
   /**
    * Reduce this LazyValue to a fully-reduced value in the given behavior.
    * The returned value might be cached to accelerate future calls. LazyValue

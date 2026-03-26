@@ -909,7 +909,7 @@ public class FcnRcdValue extends Value implements FunctionValue, IFcnRcdValue {
     return hasLetter && (len < 4 || (!name.startsWith("WF_") && !name.startsWith("SF_")));
   }
 
-  private final boolean isRcd() {
+  public final boolean isRcd() {
     if (this.intv != null)
       return false;
     for (int i = 0; i < this.domain.length; i++) {
@@ -922,7 +922,7 @@ public class FcnRcdValue extends Value implements FunctionValue, IFcnRcdValue {
     return true;
   }
 
-  private final boolean isTuple() {
+  public final boolean isTuple() {
     if (this.intv != null) {
       return (this.intv.low == 1);
     }

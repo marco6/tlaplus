@@ -3,7 +3,7 @@
 
 package tla2sany.semantic;
 
-class ArgLevelParam {
+public class ArgLevelParam {
   /*************************************************************************
    * ArgLevelParam objects are used only to implement the elements of the *
    * set of that name in the specification LevelSpec.tla of level *

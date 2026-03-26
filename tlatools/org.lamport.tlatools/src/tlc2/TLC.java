@@ -52,6 +52,7 @@ import tlc2.tool.management.TLCStandardMBean;
 import tlc2.tool.queue.IStateQueue;
 import tlc2.util.DotStateWriter;
 import tlc2.util.FP64;
+import tlc2.util.GraphStateWriter;
 import tlc2.util.IStateWriter;
 import tlc2.util.NoopStateWriter;
 import tlc2.util.RandomGenerator;
@@ -623,7 +624,7 @@ public class TLC {
 					strict = dotArgs.contains("strict");
 					dumpFile = getDumpFile(args[index++], ".dot");
 				} else if (index < args.length) {
-					dumpFile = getDumpFile(args[index++], ".dump");
+					dumpFile = args[index++];
 				} else {
 					printErrorMsg("Error: A file name for dumping states required.");
 					return false;
@@ -1132,8 +1133,10 @@ public class TLC {
 				if (asDot) {
 					this.stateWriter = new DotStateWriter(dumpFile, colorize, actionLabels, snapshot, constrained,
 							stuttering, strict);
+				} else if (dumpFile.endsWith(".gs")) {
+					this.stateWriter = new GraphStateWriter(dumpFile, false, true);
 				} else {
-					this.stateWriter = new StateWriter(dumpFile);
+					this.stateWriter = new StateWriter(getDumpFile(dumpFile, ".dump"));
 				}
 			} catch (IOException e) {
 				printErrorMsg(String.format("Error: Given file name %s for dumping states invalid.", dumpFile));
@@ -1323,7 +1326,7 @@ public class TLC {
 		result.put("osArch", System.getProperty("os.arch"));
 		result.put("jvmVendor", System.getProperty("java.vendor"));
 		result.put("jvmVersion", System.getProperty("java.version"));
-		result.put("jvmArch", tlcRuntime.getArchitecture().toString());
+		result.put("jvmArch", tlcRuntime.getArchitecture().name());
 		result.put("jvmHeapMem", Long.toString(heapMemory));
 		result.put("jvmOffHeapMem", Long.toString(offHeapMemory));
 		result.put("jvmPid", pid == -1 ? "" : String.valueOf(pid));
@@ -1358,7 +1361,7 @@ public class TLC {
 		result.put("osArch", System.getProperty("os.arch"));
 		result.put("jvmVendor", System.getProperty("java.vendor"));
 		result.put("jvmVersion", System.getProperty("java.version"));
-		result.put("jvmArch", tlcRuntime.getArchitecture().toString());
+		result.put("jvmArch", tlcRuntime.getArchitecture().name());
 		result.put("jvmHeapMem", Long.toString(heapMemory));
 		result.put("jvmOffHeapMem", Long.toString(offHeapMemory));
 		result.put("seed", Long.toString(RandomEnumerableValues.getSeed()));
