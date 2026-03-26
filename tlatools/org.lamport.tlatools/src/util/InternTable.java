@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import tlc2.output.EC;
 import tlc2.tool.distributed.InternRMI;
@@ -20,12 +21,12 @@ import tlc2.tool.distributed.InternRMI;
  * @author Yuan Yu, Simon Zambrovski
  */
 public final class InternTable implements Serializable {
-
     private int count; // The number of entries in the table.
     private int length; // The length of the table.
     private int thresh; // The maximum number of entries before the table
                         // needs to be grown.
     private UniqueString[] table; // The array that holds the entries.
+    private final ReentrantReadWriteLock lock;
 
     // SZ 10.04.2009: removed unused variable
     // made token counter to instance variable, since there is only one instance of
@@ -39,6 +40,7 @@ public final class InternTable implements Serializable {
         this.count = 0;
         this.length = size;
         this.thresh = this.length / 2;
+        this.lock = new ReentrantReadWriteLock();
     }
 
     private void grow() {
@@ -85,13 +87,18 @@ public final class InternTable implements Serializable {
      * equals id, then get(id) returns obj; otherwise, it returns null.
      */
     public UniqueString get(int id) {
-        for (int i = 0; i < this.table.length; i++) {
-            UniqueString var = this.table[i];
-            if (var != null && var.getTok() == id) {
-                return var;
+        this.lock.readLock().lock();
+        try {
+            for (int i = 0; i < this.table.length; i++) {
+                UniqueString var = this.table[i];
+                if (var != null && var.getTok() == id) {
+                    return var;
+                }
             }
+            return null;
+        } finally {
+            this.lock.readLock().unlock();
         }
-        return null;
     }
 
     /**
@@ -115,16 +122,46 @@ public final class InternTable implements Serializable {
     }
 
     public UniqueString put(String str) {
-        synchronized (InternTable.class) {
+        int hash = str.hashCode();
+        int initial_count;
+        int loc = (hash & 0x7FFFFFFF) % length;
+        this.lock.readLock().lock();
+        try {
+            initial_count = this.count;
+            while (true) {
+                UniqueString ent = this.table[loc];
+                if (ent == null) {
+                    break;
+                }
+                if (ent.toString().equals(str)) {
+                    return ent;
+                }
+                loc = (loc + 1) % length;
+            }
+        } finally {
+            this.lock.readLock().unlock();
+        }
+
+        // Add with hint
+        this.lock.writeLock().lock();
+        try {
             if (this.count >= this.thresh)
                 this.grow();
-            int loc = (str.hashCode() & 0x7FFFFFFF) % length;
+
+            // If the table changed while we were waiting for the write lock,
+            // then we need to re-compute the value. If the count is the same,
+            // we can just iterate until we find an empty slot.
+            // If the table grew, then we need to re-compute the location and check for
+            // duplicates again.
+            if (this.count != initial_count) {
+                loc = (hash & 0x7FFFFFFF) % length;
+            }
+
             while (true) {
                 UniqueString ent = this.table[loc];
                 if (ent == null) {
                     UniqueString var = this.create(str);
                     this.table[loc] = var;
-                    this.count++;
                     return var;
                 }
                 if (ent.toString().equals(str)) {
@@ -132,6 +169,8 @@ public final class InternTable implements Serializable {
                 }
                 loc = (loc + 1) % length;
             }
+        } finally {
+            this.lock.writeLock().unlock();
         }
     }
 
