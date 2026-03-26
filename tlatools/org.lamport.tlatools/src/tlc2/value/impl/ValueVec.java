@@ -8,6 +8,7 @@ package tlc2.value.impl;
 import java.io.Serializable;
 import java.util.Collection;
 
+import it.unimi.dsi.fastutil.Arrays;
 import tlc2.TLCGlobals;
 import util.WrongInvocationException;
 
@@ -178,31 +179,27 @@ public class ValueVec implements Serializable {
   }
 
   public final ValueVec sort(boolean noDup) {
-    int newCount = (this.elementCount == 0) ? 0 : 1;
-    for (int i = 1; i < this.elementCount; i++) {
-      Value elem = this.elementData[i];
-      int cmp = 0, idx = 0, low = 0, high = newCount;
-      while (low < high) {
-        idx = (low + high) >> 1;
-        cmp = elem.compareTo(this.elementData[idx]);
-        if (cmp == 0)
-          break;
-        if (cmp < 0) {
-          high = idx;
-        } else {
-          low = idx + 1;
+    Arrays.quickSort(0, this.elementCount,
+        (a, b) -> this.elementData[a].compareTo(this.elementData[b]),
+        (arg0, arg1) -> {
+          Value temp = this.elementData[arg0];
+          this.elementData[arg0] = this.elementData[arg1];
+          this.elementData[arg1] = temp;
+        });
+
+    if (noDup) {
+      // Remove duplicates.
+      int removed = 0;
+      for (int i = 1; i < this.elementCount; i++) {
+        if (this.elementData[i].equals(this.elementData[i - 1])) {
+          removed++;
+        } else if (removed > 0) {
+          this.elementData[i - removed] = this.elementData[i];
+          this.elementData[i] = null;
         }
       }
-      if (cmp != 0 || !noDup) {
-        idx = (cmp < 0) ? idx : idx + 1;
-        for (int j = newCount; j > idx; j--) {
-          this.elementData[j] = this.elementData[j - 1];
-        }
-        this.elementData[idx] = elem;
-        newCount++;
-      }
+      this.elementCount -= removed;
     }
-    this.elementCount = newCount;
     return this;
   }
 

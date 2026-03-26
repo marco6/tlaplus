@@ -690,41 +690,19 @@ public class FcnRcdValue extends Value implements FunctionValue, IFcnRcdValue {
   @Override
   public final Value normalize() {
     try {
-
       if (!this.isNorm) {
-        // Assert.check(this.domain != null)
-        int dlen = this.domain.length;
-        for (int i = 1; i < dlen; i++) {
-          int cmp = this.domain[0].compareTo(this.domain[i]);
-          if (cmp == 0) {
-            Assert.fail("The value\n" + this.domain[i] +
-                "\noccurs multiple times in the function domain.", getSource());
-          } else if (cmp > 0) {
-            Value tv = this.domain[0];
-            this.domain[0] = this.domain[i];
-            this.domain[i] = tv;
-            tv = this.values[0];
-            this.values[0] = this.values[i];
-            this.values[i] = tv;
-          }
-        }
-        for (int i = 2; i < dlen; i++) {
-          Value d = this.domain[i];
-          Value v = this.values[i];
-          int j = i;
-          int cmp;
-          while ((cmp = d.compareTo(this.domain[j - 1])) < 0) {
-            this.domain[j] = this.domain[j - 1];
-            this.values[j] = this.values[j - 1];
-            j--;
-          }
-          if (cmp == 0) {
-            Assert.fail("The value\n" + this.domain[i] +
-                "\noccurs multiple times in the function domain.", getSource());
-          }
-          this.domain[j] = d;
-          this.values[j] = v;
-        }
+        // Sort indices based on strings in arr1
+        it.unimi.dsi.fastutil.Arrays.quickSort(0, this.domain.length,
+            (a, b) -> this.domain[a].compareTo(this.domain[b]),
+            (arg0, arg1) -> {
+              Value tempVal = this.domain[arg0];
+              this.domain[arg0] = this.domain[arg1];
+              this.domain[arg1] = tempVal;
+
+              tempVal = this.values[arg0];
+              this.values[arg0] = this.values[arg1];
+              this.values[arg1] = tempVal;
+            });
         this.isNorm = true;
       }
       return this;
