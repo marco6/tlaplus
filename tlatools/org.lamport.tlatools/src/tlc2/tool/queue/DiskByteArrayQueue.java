@@ -39,7 +39,8 @@ import util.WrongInvocationException;
 
 /**
  * A {@link DiskByteArrayQueue} uses the local hard disc as a backing store for
- * states. An in-memory buffer of size {@link DiskByteArrayQueue}{@link #BufSize}
+ * states. An in-memory buffer of size
+ * {@link DiskByteArrayQueue}{@link #BufSize}
  */
 public class DiskByteArrayQueue extends ByteArrayQueue {
 	// TODO dynamic bufsize based on current VM parameters?
@@ -60,7 +61,7 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 	protected int deqIndex, enqIndex;
 	protected ByteArrayPoolReader reader;
 	protected ByteArrayPoolWriter writer;
-	
+
 	/**
 	 * The SPC takes care of deleting swap files on the lower end of the range
 	 * (loPool, hiPool). It terminates, when the first checkpoint is written at
@@ -70,7 +71,7 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 	protected final StatePoolCleaner cleaner;
 	private int loPool, hiPool, lastLoPool, newLastLoPool;
 	private File loFile;
-	
+
 	// TESTING ONLY!
 	DiskByteArrayQueue() throws IOException {
 		this(Files.createTempDirectory("DiskByteArrayQueue").toFile().toString());
@@ -122,7 +123,7 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 		}
 		return this.deqBuf[this.deqIndex++];
 	}
-	
+
 	byte[] peekInner() {
 		if (this.deqIndex == this.deqBuf.length) {
 			this.fillDeqBuffer();
@@ -162,7 +163,7 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 			}
 			// Notify the cleaner to do its job unless its waits for more work
 			// to pile up.
-			if ((loPool - lastLoPool) > 100) { //TODO Take BufSize into account. It defines the disc file size.
+			if ((loPool - lastLoPool) > 100) { // TODO Take BufSize into account. It defines the disc file size.
 				synchronized (this.cleaner) {
 					this.cleaner.deleteUpTo = loPool - 1;
 					this.cleaner.notifyAll();
@@ -183,21 +184,21 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 			this.cleaner.finished = true;
 			this.cleaner.notifyAll();
 		}
-		
+
 		String filename = this.filePrefix + "queue.tmp";
-	  	final BufferedDataOutputStream vos = new BufferedDataOutputStream(filename);
+		final BufferedDataOutputStream vos = new BufferedDataOutputStream(filename);
 		vos.writeLong(this.len);
 		vos.writeInt(this.loPool);
 		vos.writeInt(this.hiPool);
 		vos.writeInt(this.enqIndex);
 		vos.writeInt(this.deqIndex);
 		for (int i = 0; i < this.enqIndex; i++) {
-	  		vos.writeInt(this.enqBuf[i].length);
-	  		vos.write(this.enqBuf[i]);
+			vos.writeInt(this.enqBuf[i].length);
+			vos.write(this.enqBuf[i]);
 		}
 		for (int i = this.deqIndex; i < this.deqBuf.length; i++) {
-	  		vos.writeInt(this.deqBuf[i].length);
-	  		vos.write(this.deqBuf[i]);
+			vos.writeInt(this.deqBuf[i].length);
+			vos.write(this.deqBuf[i]);
 		}
 		vos.close();
 		this.newLastLoPool = this.loPool - 1;
@@ -223,7 +224,7 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 
 	public final void recover() throws IOException {
 		String filename = this.filePrefix + "queue.chkpt";
-	  	final BufferedDataInputStream vis = new BufferedDataInputStream(filename);
+		final BufferedDataInputStream vis = new BufferedDataInputStream(filename);
 		this.len = vis.readLong();
 		this.loPool = vis.readInt();
 		this.hiPool = vis.readInt();
@@ -266,12 +267,14 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 
 		private volatile boolean finished = false;
 		public int deleteUpTo;
-		
+
 		private StatePoolCleaner() {
 			super("RawTLCStatePoolCleaner");
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Thread#run()
 		 */
 		public void run() {
@@ -282,7 +285,7 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 						if (this.finished) {
 							return;
 						}
-						
+
 						for (int i = lastLoPool; i < deleteUpTo; i++) {
 							final File oldPoolFile = new File(filePrefix + Integer.toString(i));
 							if (!oldPoolFile.delete()) {
@@ -304,354 +307,352 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 			}
 		}
 	}
-	
+
 	private static final class ByteArrayPoolWriter extends Thread {
 
-	    private byte[][] buf;     
-	    private File poolFile;           // the file to be written
-	    private final ByteArrayPoolReader reader;  // the consumer if not null
-	    
-	  public ByteArrayPoolWriter(int bufSize, ByteArrayPoolReader reader) {
-		  super("RawTLCStatePoolWriter");
-	    this.buf = new byte[bufSize][];
-	    this.poolFile = null;
-	    this.reader = reader;
-	  }
-	  
-	  /*
-	   * This method first completes the preceding write if not started.
-	   * It then notifies this writer to flush enqBuf to file. In practice,
-	   * we expect the preceding write to have been completed. 
-	   */
-	  public final synchronized byte[][] doWork(byte[][] enqBuf, File file)
-	  throws IOException {
-	    if (this.poolFile != null) {
-	  	  final BufferedDataOutputStream vos = new BufferedDataOutputStream(this.poolFile);
-	  	  for (int i = 0; i < this.buf.length; i++) {
-	  		  vos.writeInt(this.buf[i].length);
-	  		  vos.write(this.buf[i]);
-	  	  }
-	      vos.close();
-	    }
-	    byte[][] res = this.buf;
-	    this.buf = enqBuf;
-	    this.poolFile = file;
-	    this.notify();
-	    return res;
-	  }
+		private byte[][] buf;
+		private File poolFile; // the file to be written
+		private final ByteArrayPoolReader reader; // the consumer if not null
 
-	  /* Spin waiting for the write to complete.  */
-	  public final void ensureWritten() throws InterruptedException {
-	    synchronized(this) {
-	      while (this.poolFile != null) {
-		this.wait();
-	      }
-	    }
-	  }
-
-	  public final synchronized void beginChkpt(ObjectOutputStream oos)
-	  throws IOException {
-	    boolean hasFile = (this.poolFile == null) ? false : true;
-	    oos.writeBoolean(hasFile);
-	    if (hasFile) {
-	      oos.writeObject(this.poolFile);
-	      for (int i = 0; i < this.buf.length; i++) {
-		oos.writeObject(this.buf[i]);
-	      }
-	    }
-	  }
-
-	  /* Note this method is not synchronized.  */
-	  public final void recover(ObjectInputStream ois) throws IOException {    
-	    boolean hasFile = ois.readBoolean();
-	    if (hasFile) {
-	      try {
-		this.poolFile = (File)ois.readObject();
-		for (int i = 0; i < this.buf.length; i++) {
-		  this.buf[i] = (byte[])ois.readObject();
+		public ByteArrayPoolWriter(int bufSize, ByteArrayPoolReader reader) {
+			super("RawTLCStatePoolWriter");
+			this.buf = new byte[bufSize][];
+			this.poolFile = null;
+			this.reader = reader;
 		}
-	      }
-	      catch (ClassNotFoundException e) 
-	      {
-	          Assert.fail(EC.SYSTEM_CHECKPOINT_RECOVERY_CORRUPT, e);
-	      }
-	    }
-	    else {
-	      this.poolFile = null;
-	    }
-	  }
 
-	  /**
-	   * Write "buf" to "poolFile". The objects in the queue are written
-	   * using Java's object serialization facilities.
-	   */
-	  public void run() {
-	    try {
-	      synchronized(this) {
-		while (true) {
-		  while (this.poolFile == null) {
-		    this.wait();
-		    // we are done without ever receiving a pool file
-		    if(this.poolFile == null) {
-		    	return;
-		    }
-		  }
-		  final BufferedDataOutputStream vos = new BufferedDataOutputStream(this.poolFile);
-		  for (int i = 0; i < this.buf.length; i++) {
-			  vos.writeInt(this.buf[i].length);
-			  vos.write(this.buf[i]);
-		  }
-		  vos.close();
-		  this.poolFile = null;
-		  this.notify();
-		  if (this.reader != null) this.reader.wakeup();
+		/*
+		 * This method first completes the preceding write if not started.
+		 * It then notifies this writer to flush enqBuf to file. In practice,
+		 * we expect the preceding write to have been completed.
+		 */
+		public final synchronized byte[][] doWork(byte[][] enqBuf, File file)
+				throws IOException {
+			if (this.poolFile != null) {
+				final BufferedDataOutputStream vos = new BufferedDataOutputStream(this.poolFile);
+				for (int i = 0; i < this.buf.length; i++) {
+					vos.writeInt(this.buf[i].length);
+					vos.write(this.buf[i]);
+				}
+				vos.close();
+			}
+			byte[][] res = this.buf;
+			this.buf = enqBuf;
+			this.poolFile = file;
+			this.notify();
+			return res;
 		}
-	      }
-	    }
-	    catch (Exception e) {
-	      // Assert.printStack(e);
-	        MP.printError(EC.SYSTEM_ERROR_WRITING_POOL, e.getMessage(), e);
-	      System.exit(1);
-	    }
-	  }
+
+		/* Spin waiting for the write to complete. */
+		public final void ensureWritten() throws InterruptedException {
+			synchronized (this) {
+				while (this.poolFile != null) {
+					this.wait();
+				}
+			}
+		}
+
+		public final synchronized void beginChkpt(ObjectOutputStream oos)
+				throws IOException {
+			boolean hasFile = (this.poolFile == null) ? false : true;
+			oos.writeBoolean(hasFile);
+			if (hasFile) {
+				oos.writeObject(this.poolFile);
+				for (int i = 0; i < this.buf.length; i++) {
+					oos.writeObject(this.buf[i]);
+				}
+			}
+		}
+
+		/* Note this method is not synchronized. */
+		public final void recover(ObjectInputStream ois) throws IOException {
+			boolean hasFile = ois.readBoolean();
+			if (hasFile) {
+				try {
+					this.poolFile = (File) ois.readObject();
+					for (int i = 0; i < this.buf.length; i++) {
+						this.buf[i] = (byte[]) ois.readObject();
+					}
+				} catch (ClassNotFoundException e) {
+					Assert.fail(EC.SYSTEM_CHECKPOINT_RECOVERY_CORRUPT, e);
+				}
+			} else {
+				this.poolFile = null;
+			}
+		}
+
+		/**
+		 * Write "buf" to "poolFile". The objects in the queue are written
+		 * using Java's object serialization facilities.
+		 */
+		public void run() {
+			try {
+				synchronized (this) {
+					while (true) {
+						while (this.poolFile == null) {
+							this.wait();
+							// we are done without ever receiving a pool file
+							if (this.poolFile == null) {
+								return;
+							}
+						}
+						final BufferedDataOutputStream vos = new BufferedDataOutputStream(this.poolFile);
+						for (int i = 0; i < this.buf.length; i++) {
+							vos.writeInt(this.buf[i].length);
+							vos.write(this.buf[i]);
+						}
+						vos.close();
+						this.poolFile = null;
+						this.notify();
+						if (this.reader != null)
+							this.reader.wakeup();
+					}
+				}
+			} catch (Exception e) {
+				// Assert.printStack(e);
+				MP.printError(EC.SYSTEM_ERROR_WRITING_POOL, e.getMessage(), e);
+				System.exit(1);
+			}
+		}
 	}
-	
+
 	private static final class ByteArrayPoolReader extends Thread {
 
-		  public ByteArrayPoolReader(int bufSize, File file) {
-			  super("RawTLCStatePoolReader");
-		    this.buf = new byte[bufSize][];
-		    this.poolFile = file;
-		    this.isFull = false;
-		    this.canRead = false;
-		  }
-		  
-		  private byte[][] buf;
-		  private File poolFile;      // the file to be read
-		  private boolean isFull;     // true iff the buf is filled
-		  private boolean canRead;    // true iff the file can be read
-		  private boolean finished = false;
+		public ByteArrayPoolReader(int bufSize, File file) {
+			super("RawTLCStatePoolReader");
+			this.buf = new byte[bufSize][];
+			this.poolFile = file;
+			this.isFull = false;
+			this.canRead = false;
+		}
 
-		  public final synchronized void wakeup() {
-		    this.canRead = true;
-		    this.notify();
-		  }
+		private byte[][] buf;
+		private File poolFile; // the file to be read
+		private boolean isFull; // true iff the buf is filled
+		private boolean canRead; // true iff the file can be read
+		private boolean finished = false;
 
-		  public final synchronized void restart(File file, boolean canRead) {
-		    this.poolFile = file;
-		    this.isFull = false;
-		    this.canRead = canRead;
-		    this.notify();
-		  }
-		  
-		  /*
-		   * In the most common case, this method expects to see the buffer is
-		   * full, it returns its buffer and notifies this reader to read the
-		   * content of the file.
-		   */
-		  public final synchronized byte[][] doWork(byte[][] deqBuf, File file)
-		  throws IOException, ClassNotFoundException {
-		    if (this.isFull) {
-		      assert this.poolFile == null : EC.SYSTEM_FILE_NULL;
-		      byte[][] res = this.buf;
-		      this.buf = deqBuf;
-		      this.poolFile = file;
-		      this.isFull = false;      // <file, false>
-		      this.canRead = true;
-		      this.notify();
-		      return res;
-		    }
-		    else if (this.poolFile != null) {
-		  	  final BufferedDataInputStream vis = new BufferedDataInputStream(this.poolFile);
-		  	  for (int i = 0; i < deqBuf.length; i++) {
-		      	  deqBuf[i] = new byte[vis.readInt()];
-		      	  vis.read(deqBuf[i]);
-		  	  }
-		      vis.close();
-		      this.poolFile = file;     // <file, false>
-		      this.canRead = true;
-		      this.notify();
-		      return deqBuf;
-		    }
-		    else {
-		  	  final BufferedDataInputStream vis = new BufferedDataInputStream(this.poolFile);
-		  	  for (int i = 0; i < deqBuf.length; i++) {
-		  		  deqBuf[i] = new byte[vis.readInt()];
-		      	  vis.read(deqBuf[i]);
-		  	  }
-		      vis.close();              // <null, false>
-		      return deqBuf;
-		    }
-		  }
+		public final synchronized void wakeup() {
+			this.canRead = true;
+			this.notify();
+		}
 
-		  /*
-		   * Returns the cached buffer if filled. Otherwise, returns null.
-		   */
-		  public final synchronized byte[][] getCache(byte[][] deqBuf, File file)
-		  throws IOException, ClassNotFoundException {
-		    if (this.isFull) {
-		      assert this.poolFile == null : EC.SYSTEM_FILE_NULL;
-		      byte[][] res = this.buf;
-		      this.buf = deqBuf;
-		      this.poolFile = file;
-		      this.isFull = false;      // <file, false>
-		      this.canRead = false;
-		      return res;
-		    }
-		    else if (this.poolFile != null && this.canRead) {
-		      // this should seldom occur.
-		  	  final BufferedDataInputStream vis = new BufferedDataInputStream(this.poolFile);
-		  	  for (int i = 0; i < deqBuf.length; i++) {
-		  		  deqBuf[i] = new byte[vis.readInt()];
-		      	  vis.read(deqBuf[i]);
-		      }
-		      vis.close();
-		      // this.poolFile.delete();
-		      this.poolFile = file;    // <file, false>
-		      this.canRead = false;
-		      return deqBuf;
-		    }
-		    return null;
-		  }
+		public final synchronized void restart(File file, boolean canRead) {
+			this.poolFile = file;
+			this.isFull = false;
+			this.canRead = canRead;
+			this.notify();
+		}
 
-		  public final synchronized void beginChkpt(ObjectOutputStream oos)
-		  throws IOException {
-		    boolean hasFile = this.poolFile != null;
-		    oos.writeBoolean(hasFile);
-		    oos.writeBoolean(this.canRead);
-		    oos.writeBoolean(this.isFull);
-		    if (hasFile) {
-		      oos.writeObject(this.poolFile);
-		    }
-		    if (this.isFull) {
-		      for (int i = 0; i < this.buf.length; i++) {
-			oos.writeObject(this.buf[i]);
-		      }
-		    }
-		  }
-
-		  /* Note that this method is not synchronized. */
-		  public final void recover(ObjectInputStream ois) throws IOException {
-		    boolean hasFile = ois.readBoolean();
-		    this.canRead = ois.readBoolean();
-		    this.isFull = ois.readBoolean();
-		    try {
-		      if (hasFile) {
-			this.poolFile = (File)ois.readObject();
-		      }
-		      if (this.isFull) {
-			for (int i = 0; i < this.buf.length; i++) {
-			  this.buf[i] = (byte[])ois.readObject();
+		/*
+		 * In the most common case, this method expects to see the buffer is
+		 * full, it returns its buffer and notifies this reader to read the
+		 * content of the file.
+		 */
+		public final synchronized byte[][] doWork(byte[][] deqBuf, File file)
+				throws IOException, ClassNotFoundException {
+			if (this.isFull) {
+				assert this.poolFile == null : EC.SYSTEM_FILE_NULL;
+				byte[][] res = this.buf;
+				this.buf = deqBuf;
+				this.poolFile = file;
+				this.isFull = false; // <file, false>
+				this.canRead = true;
+				this.notify();
+				return res;
+			} else if (this.poolFile != null) {
+				final BufferedDataInputStream vis = new BufferedDataInputStream(this.poolFile);
+				for (int i = 0; i < deqBuf.length; i++) {
+					deqBuf[i] = new byte[vis.readInt()];
+					vis.read(deqBuf[i]);
+				}
+				vis.close();
+				this.poolFile = file; // <file, false>
+				this.canRead = true;
+				this.notify();
+				return deqBuf;
+			} else {
+				final BufferedDataInputStream vis = new BufferedDataInputStream(this.poolFile);
+				for (int i = 0; i < deqBuf.length; i++) {
+					deqBuf[i] = new byte[vis.readInt()];
+					vis.read(deqBuf[i]);
+				}
+				vis.close(); // <null, false>
+				return deqBuf;
 			}
-		      }
-		    }
-		    catch (ClassNotFoundException e) 
-		    {
-		      Assert.fail(EC.SYSTEM_CHECKPOINT_RECOVERY_CORRUPT, e);
-		    }
-		  }
-		  
-		  /**
-		   * Read the contents of "poolFile" into "buf". The objects in the
-		   * file are read using Java's object serialization facilities.
-		   */
-		  public void run() {
-		    try {
-		      synchronized(this) {
-			while (true) {
-			  while (this.poolFile == null || this.isFull || !this.canRead) {
-			    this.wait();
-			    if(this.finished ) {
-			    	return;
-			    }
-			  }
-			  final BufferedDataInputStream vis = new BufferedDataInputStream(this.poolFile);
-			  for (int i = 0; i < this.buf.length; i++) {
-		    	  this.buf[i] = new byte[vis.readInt()];
-		    	  vis.read(this.buf[i]);
-			  }
-			  vis.close();
-			  this.poolFile = null;
-			  this.isFull = true;       // <null, true>
+		}
+
+		/*
+		 * Returns the cached buffer if filled. Otherwise, returns null.
+		 */
+		public final synchronized byte[][] getCache(byte[][] deqBuf, File file)
+				throws IOException, ClassNotFoundException {
+			if (this.isFull) {
+				assert this.poolFile == null : EC.SYSTEM_FILE_NULL;
+				byte[][] res = this.buf;
+				this.buf = deqBuf;
+				this.poolFile = file;
+				this.isFull = false; // <file, false>
+				this.canRead = false;
+				return res;
+			} else if (this.poolFile != null && this.canRead) {
+				// this should seldom occur.
+				final BufferedDataInputStream vis = new BufferedDataInputStream(this.poolFile);
+				for (int i = 0; i < deqBuf.length; i++) {
+					deqBuf[i] = new byte[vis.readInt()];
+					vis.read(deqBuf[i]);
+				}
+				vis.close();
+				// this.poolFile.delete();
+				this.poolFile = file; // <file, false>
+				this.canRead = false;
+				return deqBuf;
 			}
-		      }
-		    }
-		    catch (Exception e) 
-		    {
-		      // Assert.printStack(e);
-		      final String[] cause = this.poolFile == null ? new String[] { e.getMessage() }
-				: new String[] { e.getMessage(), this.poolFile.getName() };
-		      MP.printError(EC.SYSTEM_ERROR_READING_POOL, cause, e);
-		      System.exit(1);
-		    }
-		  }
-		  
-		  public void setFinished() {
-			  finished = true;
-		  }
+			return null;
+		}
+
+		public final synchronized void beginChkpt(ObjectOutputStream oos)
+				throws IOException {
+			boolean hasFile = this.poolFile != null;
+			oos.writeBoolean(hasFile);
+			oos.writeBoolean(this.canRead);
+			oos.writeBoolean(this.isFull);
+			if (hasFile) {
+				oos.writeObject(this.poolFile);
+			}
+			if (this.isFull) {
+				for (int i = 0; i < this.buf.length; i++) {
+					oos.writeObject(this.buf[i]);
+				}
+			}
+		}
+
+		/* Note that this method is not synchronized. */
+		public final void recover(ObjectInputStream ois) throws IOException {
+			boolean hasFile = ois.readBoolean();
+			this.canRead = ois.readBoolean();
+			this.isFull = ois.readBoolean();
+			try {
+				if (hasFile) {
+					this.poolFile = (File) ois.readObject();
+				}
+				if (this.isFull) {
+					for (int i = 0; i < this.buf.length; i++) {
+						this.buf[i] = (byte[]) ois.readObject();
+					}
+				}
+			} catch (ClassNotFoundException e) {
+				Assert.fail(EC.SYSTEM_CHECKPOINT_RECOVERY_CORRUPT, e);
+			}
+		}
+
+		/**
+		 * Read the contents of "poolFile" into "buf". The objects in the
+		 * file are read using Java's object serialization facilities.
+		 */
+		public void run() {
+			try {
+				synchronized (this) {
+					while (true) {
+						while (this.poolFile == null || this.isFull || !this.canRead) {
+							this.wait();
+							if (this.finished) {
+								return;
+							}
+						}
+						final BufferedDataInputStream vis = new BufferedDataInputStream(this.poolFile);
+						for (int i = 0; i < this.buf.length; i++) {
+							this.buf[i] = new byte[vis.readInt()];
+							vis.read(this.buf[i]);
+						}
+						vis.close();
+						this.poolFile = null;
+						this.isFull = true; // <null, true>
+					}
+				}
+			} catch (Exception e) {
+				// Assert.printStack(e);
+				final String[] cause = this.poolFile == null ? new String[] { e.getMessage() }
+						: new String[] { e.getMessage(), this.poolFile.getName() };
+				MP.printError(EC.SYSTEM_ERROR_READING_POOL, cause, e);
+				System.exit(1);
+			}
+		}
+
+		public void setFinished() {
+			finished = true;
+		}
 	}
-	
+
 	static final class ByteValueOutputStream implements IValueOutputStream, IDataOutputStream {
 
 		private byte[] bytes;
-		
+
 		private int idx;
-		
+
 		public ByteValueOutputStream() {
 			this.bytes = new byte[16]; // TLCState "header" already has 6 bytes.
 			this.idx = 0;
 		}
-		
-	    private void ensureCapacity(int minCap) {
-	        if (minCap - bytes.length > 0) {
-	            int oldCap = bytes.length;
-	            int newCap = oldCap << 1; // double size
-	            if (newCap - minCap < 0) {
-	            	newCap = minCap;
-	            }
-	            bytes = Arrays.copyOf(bytes, newCap);
-	        }
-	    }
 
-		/* (non-Javadoc)
+		private void ensureCapacity(int minCap) {
+			if (minCap - bytes.length > 0) {
+				int oldCap = bytes.length;
+				int newCap = oldCap << 1; // double size
+				if (newCap - minCap < 0) {
+					newCap = minCap;
+				}
+				bytes = Arrays.copyOf(bytes, newCap);
+			}
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueOutputStream#writeShort(short)
 		 */
 		@Override
 		public final void writeShort(short s) throws IOException {
 			ensureCapacity(idx + 2);
-	        this.bytes[idx++] = (byte) ((s >>> 8) & 0xff);
-	        this.bytes[idx++] = (byte) (s & 0xff);
+			this.bytes[idx++] = (byte) ((s >>> 8) & 0xff);
+			this.bytes[idx++] = (byte) (s & 0xff);
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueOutputStream#writeInt(int)
 		 */
 		@Override
 		public final void writeInt(int i) throws IOException {
 			ensureCapacity(idx + 4);
-	        this.bytes[idx++] = (byte) ((i >>> 24) & 0xff);
-	        this.bytes[idx++] = (byte) ((i >>> 16) & 0xff);
-	        this.bytes[idx++] = (byte) ((i >>> 8) & 0xff);
-	        this.bytes[idx++] = (byte) (i & 0xff);
+			this.bytes[idx++] = (byte) ((i >>> 24) & 0xff);
+			this.bytes[idx++] = (byte) ((i >>> 16) & 0xff);
+			this.bytes[idx++] = (byte) ((i >>> 8) & 0xff);
+			this.bytes[idx++] = (byte) (i & 0xff);
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueOutputStream#writeLong(long)
 		 */
 		@Override
 		public final void writeLong(long l) throws IOException {
 			ensureCapacity(idx + 8);
-	        this.bytes[idx++] = (byte) ((l >>> 56) & 0xff);
-	        this.bytes[idx++] = (byte) ((l >>> 48) & 0xff);
-	        this.bytes[idx++] = (byte) ((l >>> 40) & 0xff);
-	        this.bytes[idx++] = (byte) ((l >>> 32) & 0xff);
-	        this.bytes[idx++] = (byte) ((l >>> 24) & 0xff);
-	        this.bytes[idx++] = (byte) ((l >>> 16) & 0xff);
-	        this.bytes[idx++] = (byte) ((l >>> 8) & 0xff);
-	        this.bytes[idx++] = (byte) (l & 0xff);
+			this.bytes[idx++] = (byte) ((l >>> 56) & 0xff);
+			this.bytes[idx++] = (byte) ((l >>> 48) & 0xff);
+			this.bytes[idx++] = (byte) ((l >>> 40) & 0xff);
+			this.bytes[idx++] = (byte) ((l >>> 32) & 0xff);
+			this.bytes[idx++] = (byte) ((l >>> 24) & 0xff);
+			this.bytes[idx++] = (byte) ((l >>> 16) & 0xff);
+			this.bytes[idx++] = (byte) ((l >>> 8) & 0xff);
+			this.bytes[idx++] = (byte) (l & 0xff);
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueOutputStream#close()
 		 */
 		@Override
@@ -659,7 +660,9 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 			// No-op
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueOutputStream#writeShortNat(short)
 		 */
 		@Override
@@ -671,7 +674,9 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 			}
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueOutputStream#writeNat(int)
 		 */
 		@Override
@@ -683,7 +688,9 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 			}
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueOutputStream#writeLongNat(long)
 		 */
 		@Override
@@ -695,7 +702,9 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 			}
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueOutputStream#writeByte(byte)
 		 */
 		@Override
@@ -704,16 +713,20 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 			this.bytes[idx++] = b;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueOutputStream#writeBoolean(boolean)
 		 */
 		@Override
 		public final void writeBoolean(boolean bool) throws IOException {
-	        byte b = (bool ? (byte)1 : (byte)0);
-	        this.writeByte(b);
+			byte b = (bool ? (byte) 1 : (byte) 0);
+			this.writeByte(b);
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueOutputStream#getOutputStream()
 		 */
 		@Override
@@ -721,7 +734,9 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 			return this;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueOutputStream#put(java.lang.Object)
 		 */
 		@Override
@@ -735,34 +750,38 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 			return copyOf;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see util.IDataOutputStream#writeString(java.lang.String)
 		 */
 		@Override
 		public final void writeString(String str) throws IOException {
 			final int length = str.length();
 			ensureCapacity(idx + length);
-			
+
 			final char[] c = new char[length];
 			str.getChars(0, length, c, 0);
-			
+
 			for (int i = 0; i < c.length; i++) {
 				this.bytes[idx++] = (byte) c[i];
 			}
 		}
 	}
-	
+
 	static final class ByteValueInputStream implements ValueConstants, IValueInputStream, IDataInputStream {
 
 		private final byte[] bytes;
-		
+
 		private int idx = 0;
 
 		public ByteValueInputStream(byte[] bytes) {
 			this.bytes = bytes;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueInputStream#read()
 		 */
 		@Override
@@ -770,80 +789,98 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 			final byte kind = this.readByte();
 
 			switch (kind) {
-			case BOOLVALUE: {
-				return (this.readBoolean()) ? BoolValue.ValTrue : BoolValue.ValFalse;
-			}
-			case INTVALUE: {
-				return IntValue.gen(this.readInt());
-			}
-			case STRINGVALUE: {
-				return StringValue.createFrom(this);
-			}
-			case MODELVALUE: {
-				return ModelValue.mvs[this.readShort()];
-			}
-			case INTERVALVALUE: {
-				return new IntervalValue(this.readInt(), this.readInt());
-			}
-			case RECORDVALUE: {
-				return RecordValue.createFrom(this);
-			}
-			case FCNRCDVALUE: {
-				return FcnRcdValue.createFrom(this);
-			}
-			case SETENUMVALUE: {
-				return SetEnumValue.createFrom(this);
-			}
-			case TUPLEVALUE: {
-				return TupleValue.createFrom(this);
-			}
-			default: {
-				throw new WrongInvocationException("ValueInputStream: Can not unpickle a value of kind " + kind);
-			}
+				case BOOLVALUE: {
+					return (this.readBoolean()) ? BoolValue.ValTrue : BoolValue.ValFalse;
+				}
+				case INTVALUE: {
+					return IntValue.gen(this.readInt());
+				}
+				case STRINGVALUE: {
+					return StringValue.createFrom(this);
+				}
+				case MODELVALUE: {
+					return ModelValue.mvs[this.readShort()];
+				}
+				case INTERVALVALUE: {
+					return new IntervalValue(this.readInt(), this.readInt());
+				}
+				case RECORDVALUE: {
+					return RecordValue.createFrom(this);
+				}
+				case FCNRCDVALUE: {
+					return FcnRcdValue.createFrom(this);
+				}
+				case SETENUMVALUE: {
+					return SetEnumValue.createFrom(this);
+				}
+				case TUPLEVALUE: {
+					return TupleValue.createFrom(this);
+				}
+				default: {
+					throw new WrongInvocationException("ValueInputStream: Can not unpickle a value of kind " + kind);
+				}
 			}
 		}
 
 		private final boolean readBoolean() throws EOFException, IOException {
-	        return (bytes[idx++] != 0);
+			return (bytes[idx++] != 0);
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueInputStream#readShort()
 		 */
 		@Override
 		public final int readShort() throws IOException {
-	        return (short) ((bytes[idx++] << 8) | (bytes[idx++] & 0xff));
+			return (short) ((bytes[idx++] << 8) | (bytes[idx++] & 0xff));
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueInputStream#readInt()
 		 */
 		@Override
 		public final int readInt() throws IOException {
-	        int res = bytes[idx++];
-	        res <<= 8; res |= (bytes[idx++] & 0xff);
-	        res <<= 8; res |= (bytes[idx++] & 0xff);
-	        res <<= 8; res |= (bytes[idx++] & 0xff);
-	        return res;
+			int res = bytes[idx++];
+			res <<= 8;
+			res |= (bytes[idx++] & 0xff);
+			res <<= 8;
+			res |= (bytes[idx++] & 0xff);
+			res <<= 8;
+			res |= (bytes[idx++] & 0xff);
+			return res;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueInputStream#readLong()
 		 */
 		@Override
 		public final long readLong() throws IOException {
-	        long res = bytes[idx++];
-	        res <<= 8; res |= (bytes[idx++] & 0xff);
-	        res <<= 8; res |= (bytes[idx++] & 0xff);
-	        res <<= 8; res |= (bytes[idx++] & 0xff);
-	        res <<= 8; res |= (bytes[idx++] & 0xff);
-	        res <<= 8; res |= (bytes[idx++] & 0xff);
-	        res <<= 8; res |= (bytes[idx++] & 0xff);
-	        res <<= 8; res |= (bytes[idx++] & 0xff);
-	        return res;
+			long res = bytes[idx++];
+			res <<= 8;
+			res |= (bytes[idx++] & 0xff);
+			res <<= 8;
+			res |= (bytes[idx++] & 0xff);
+			res <<= 8;
+			res |= (bytes[idx++] & 0xff);
+			res <<= 8;
+			res |= (bytes[idx++] & 0xff);
+			res <<= 8;
+			res |= (bytes[idx++] & 0xff);
+			res <<= 8;
+			res |= (bytes[idx++] & 0xff);
+			res <<= 8;
+			res |= (bytes[idx++] & 0xff);
+			return res;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueInputStream#close()
 		 */
 		@Override
@@ -851,39 +888,50 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 			// No-op
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueInputStream#readNat()
 		 */
 		@Override
 		public final int readNat() throws IOException {
-		    int res = this.readShort();
-		    if (res >= 0) return res;
-		    res = (res << 16) | (this.readShort() & 0xFFFF);
-		    return -res;
+			int res = this.readShort();
+			if (res >= 0)
+				return res;
+			res = (res << 16) | (this.readShort() & 0xFFFF);
+			return -res;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueInputStream#readShortNat()
 		 */
 		@Override
 		public final short readShortNat() throws IOException {
 			short res = this.readByte();
-			if (res >= 0) return res;
+			if (res >= 0)
+				return res;
 			return (short) -((res << 8) | (this.readByte() & 0xFF));
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueInputStream#readLongNat()
 		 */
 		@Override
 		public final long readLongNat() throws IOException {
-		    long res = this.readInt();
-		    if (res >= 0) return res;
-		    res = (res << 32) | ((long)this.readInt() & 0xFFFFFFFFL);
-		    return -res;
+			long res = this.readInt();
+			if (res >= 0)
+				return res;
+			res = (res << 32) | ((long) this.readInt() & 0xFFFFFFFFL);
+			return -res;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueInputStream#readByte()
 		 */
 		@Override
@@ -891,7 +939,9 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 			return bytes[idx++];
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueInputStream#assign(java.lang.Object, int)
 		 */
 		@Override
@@ -899,7 +949,9 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 			// No-op
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueInputStream#getIndex()
 		 */
 		@Override
@@ -907,7 +959,9 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 			return -1;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueInputStream#getInputStream()
 		 */
 		@Override
@@ -915,7 +969,9 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 			return this;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.value.IValueInputStream#getValue(int)
 		 */
 		@Override
@@ -923,7 +979,9 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 			throw new WrongInvocationException("Not supported");
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see util.IDataInputStream#readString(int)
 		 */
 		@Override
@@ -936,7 +994,9 @@ public class DiskByteArrayQueue extends ByteArrayQueue {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.queue.IStateQueue#delete()
 	 */
 	@Override

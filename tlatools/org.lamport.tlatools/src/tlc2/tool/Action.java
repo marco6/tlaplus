@@ -31,97 +31,99 @@ public final class Action implements ToolGlobals, Serializable {
 	private static final Collector<CharSequence, StringJoiner, String> PARAMETER_LIST = Collector.of(
 			() -> new StringJoiner(",", "(", ")").setEmptyValue(""), StringJoiner::add, StringJoiner::merge,
 			StringJoiner::toString);
-	
+
 	private static final UniqueString UNNAMED_ACTION = UniqueString.uniqueStringOf("UnnamedAction");
 
 	public static final Action UNKNOWN = new Action(SemanticNode.nullSN, Context.Empty, UNNAMED_ACTION, false, false);
 
-  /* A TLA+ action.   */
+	/* A TLA+ action. */
 
-  /* Fields  */
-  public final SemanticNode pred;     // Expression of the action
-  public final Context con;           // Context of the action
-  private final UniqueString actionName;
-  private OpDefNode opDef = null;
-  private int id;
-  private final boolean isInitPred;
-  private final boolean isInternal;
-  // This map provides a generic and reusable solution to addresses the recurring
-  // need to associate metadata with an action instance. The memory overhead from
-  // using a Map is considered acceptable, as the total number of action instances
-  // rarely exceeds 1000.
-  private final Map<Object, Object> auxiliary = new HashMap<>();
-  public CostModel cm = CostModel.DO_NOT_RECORD;
+	/* Fields */
+	public final SemanticNode pred; // Expression of the action
+	public final Context con; // Context of the action
+	private final UniqueString actionName;
+	private OpDefNode opDef = null;
+	private int id;
+	private final boolean isInitPred;
+	private final boolean isInternal;
+	// This map provides a generic and reusable solution to addresses the recurring
+	// need to associate metadata with an action instance. The memory overhead from
+	// using a Map is considered acceptable, as the total number of action instances
+	// rarely exceeds 1000.
+	private final Map<Object, Object> auxiliary = new HashMap<>();
+	public CostModel cm = CostModel.DO_NOT_RECORD;
 
-  /* Constructors */
-  public Action(SemanticNode pred, Context con) {
-	  this(pred, con, false);
-  }
-  
-  public Action(SemanticNode pred, Context con, boolean isInitPred) {
-	  this(pred, con, UNNAMED_ACTION, isInitPred, false);
-  }
+	/* Constructors */
+	public Action(SemanticNode pred, Context con) {
+		this(pred, con, false);
+	}
 
-  private Action(SemanticNode pred, Context con, UniqueString actionName, boolean isInitPred, final boolean isInternal) {
-	  this.pred = pred;
-	  this.con = con;
-	  this.actionName = actionName;
-	  this.isInitPred = isInitPred;
-	  this.isInternal = isInternal;
-  }
+	public Action(SemanticNode pred, Context con, boolean isInitPred) {
+		this(pred, con, UNNAMED_ACTION, isInitPred, false);
+	}
 
-  public Action(SemanticNode pred, Context con, OpDefNode opDef) {
-	  this(pred, con, opDef, false, false);
-  }
+	private Action(SemanticNode pred, Context con, UniqueString actionName, boolean isInitPred,
+			final boolean isInternal) {
+		this.pred = pred;
+		this.con = con;
+		this.actionName = actionName;
+		this.isInitPred = isInitPred;
+		this.isInternal = isInternal;
+	}
 
-  public Action(ITool t, SemanticNode pred, Context con, OpDefNode opDef) {
-	  this(t, pred, con, opDef, false, false);
-  }
+	public Action(SemanticNode pred, Context con, OpDefNode opDef) {
+		this(pred, con, opDef, false, false);
+	}
 
-  public Action(SemanticNode pred, Context con, OpDefNode opDef, boolean isInitPred, final boolean isInternal) {
-	  this(pred, con, opDef != null ? opDef.getName() : UNNAMED_ACTION, isInitPred, isInternal);
-	  // opDef null when action not declared, i.e. Spec == x = 0 /\ ...
-	  // See test64 and test64a and others.
-	  this.opDef = opDef;
-  }
+	public Action(ITool t, SemanticNode pred, Context con, OpDefNode opDef) {
+		this(t, pred, con, opDef, false, false);
+	}
 
-  public Action(ITool t, SemanticNode pred, Context con, OpDefNode opDef, boolean isInitPred, final boolean isInternal) {
-	  this(pred, con, opDef, isInitPred, isInternal);
-  }
+	public Action(SemanticNode pred, Context con, OpDefNode opDef, boolean isInitPred, final boolean isInternal) {
+		this(pred, con, opDef != null ? opDef.getName() : UNNAMED_ACTION, isInitPred, isInternal);
+		// opDef null when action not declared, i.e. Spec == x = 0 /\ ...
+		// See test64 and test64a and others.
+		this.opDef = opDef;
+	}
 
-/* Returns a string representation of this action.  */
-  public final String toString() {
-    return "<Action " + pred.toString() + ">";
-  }
+	public Action(ITool t, SemanticNode pred, Context con, OpDefNode opDef, boolean isInitPred,
+			final boolean isInternal) {
+		this(pred, con, opDef, isInitPred, isInternal);
+	}
 
-  public final String getLocation() {
-	  // It is possible that actionName is "Action" but lets ignore it for now.
-	  if (isNamed()) {
-		  // If known, print the action name instead of the generic string "Action".
-	      return getLocation(actionName.toString());
-	  }
-	  return getLocation("Action");
-  }
-  
-  public final String getLocation(final String actionName) {
-	return String.format("<%s%s %s>", actionName,
-			Arrays.stream(opDef != null ? opDef.getParams() : new FormalParamNode[0]).map(p -> con.lookup(p))
-					.filter(o -> o != null).map(Object::toString)
-					.collect(PARAMETER_LIST),
-			pred.getLocation());
-  }
-  
-  public final boolean isNamed() {
-	  return actionName != UNNAMED_ACTION && actionName != null && !"".equals(actionName.toString());
-  }
-  
-  /**
-   * @return The name of this action. Can be {@link Action#UNNAMED_ACTION}.
-   */
-  public final UniqueString getName() {
-	  return actionName;
-  }
-  
+	/* Returns a string representation of this action. */
+	public final String toString() {
+		return "<Action " + pred.toString() + ">";
+	}
+
+	public final String getLocation() {
+		// It is possible that actionName is "Action" but lets ignore it for now.
+		if (isNamed()) {
+			// If known, print the action name instead of the generic string "Action".
+			return getLocation(actionName.toString());
+		}
+		return getLocation("Action");
+	}
+
+	public final String getLocation(final String actionName) {
+		return String.format("<%s%s %s>", actionName,
+				Arrays.stream(opDef != null ? opDef.getParams() : new FormalParamNode[0]).map(p -> con.lookup(p))
+						.filter(o -> o != null).map(Object::toString)
+						.collect(PARAMETER_LIST),
+				pred.getLocation());
+	}
+
+	public final boolean isNamed() {
+		return actionName != UNNAMED_ACTION && actionName != null && !"".equals(actionName.toString());
+	}
+
+	/**
+	 * @return The name of this action. Can be {@link Action#UNNAMED_ACTION}.
+	 */
+	public final UniqueString getName() {
+		return actionName;
+	}
+
 	public final String getNameOfDefault() {
 		if (isNamed()) {
 			return getName().toString();
@@ -131,7 +133,7 @@ public final class Action implements ToolGlobals, Serializable {
 		// about line, column etc).
 		return toString();
 	}
-  
+
 	/**
 	 * @return The OpDefNode corresponding to this Action or <code>null</code> if
 	 *         the Action is not explicitly declared. I.e. "Spec == x = 42 /\ [][x'
@@ -142,10 +144,10 @@ public final class Action implements ToolGlobals, Serializable {
 	}
 
 	public final boolean isDeclared() {
-		// Spec == x = 0 /\ [][x' = x + 1]_x  has no declared actions.
+		// Spec == x = 0 /\ [][x' = x + 1]_x has no declared actions.
 		return getDeclaration() != Location.nullLoc;
 	}
-	
+
 	/**
 	 * @return The {@link Location} of the <code>Action</code>'s declaration or
 	 *         <code>Location.nullLoc</code> if {@link #isDeclared()} is
@@ -164,9 +166,9 @@ public final class Action implements ToolGlobals, Serializable {
 	}
 
 	public final Location getDefinition() {
-	   return pred.getLocation();
+		return pred.getLocation();
 	}
-	
+
 	/**
 	 * The order of iteration is the order in which keys were inserted into the map,
 	 * i.e., the order of the action's parameters.
@@ -176,7 +178,7 @@ public final class Action implements ToolGlobals, Serializable {
 				.filter(p -> con.lookup(p) instanceof Value)
 				.collect(Collectors.toMap(FormalParamNode::getName, p -> (Value) con.lookup(p),
 						(existing, replacement) -> existing, LinkedHashMap::new));
-    }
+	}
 
 	public final String getInvocationSignature() {
 		return String.format("%s%s", actionName,
@@ -186,10 +188,11 @@ public final class Action implements ToolGlobals, Serializable {
 	public void setId(int id) {
 		this.id = id;
 	}
+
 	public int getId() {
 		return this.id;
 	}
-	
+
 	public final boolean isInitPredicate() {
 		return isInitPred;
 	}

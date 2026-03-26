@@ -41,7 +41,7 @@ public abstract class BidirectionalTransitions2C_TTrace extends TTraceModelCheck
 	public BidirectionalTransitions2C_TTrace(Class<?> clazz) {
 		super(clazz, ExitStatus.VIOLATION_LIVENESS);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));

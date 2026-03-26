@@ -280,8 +280,11 @@ public class LiveCheck1 implements ILiveCheck {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.liveness.ILiveCheck#addNextState(tlc2.tool.TLCState, long, tlc2.util.SetOfStates)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.tool.liveness.ILiveCheck#addNextState(tlc2.tool.TLCState, long,
+	 * tlc2.util.SetOfStates)
 	 */
 	public void addNextState(final ITool tool, TLCState s0, long fp0, SetOfStates nextStates) throws IOException {
 		for (int i = 0; i < nextStates.size(); i++) {
@@ -321,8 +324,7 @@ public class LiveCheck1 implements ILiveCheck {
 			} else {
 				// if there is tableau ...
 				BTGraphNode[] srcNodes = bgraph.allNodes.getBTNode(fp1);
-				if (srcNodes == null)
-				{
+				if (srcNodes == null) {
 					continue; // nothing to add
 				}
 				boolean[] checkStateRes = null;
@@ -395,7 +397,8 @@ public class LiveCheck1 implements ILiveCheck {
 	 * after s has been done. So, we still have to compute the children of (s,
 	 * t). Hopefully, this case will not occur very frequently.
 	 */
-	private void addNextState(final ITool tool, TLCState s, long fp, BTGraphNode node, OrderOfSolution os, BEGraph bgraph) {
+	private void addNextState(final ITool tool, TLCState s, long fp, BTGraphNode node, OrderOfSolution os,
+			BEGraph bgraph) {
 		TBGraphNode tnode = node.getTNode(os.getTableau());
 		int slen = os.getCheckState().length;
 		int alen = os.getCheckAction().length;
@@ -448,8 +451,10 @@ public class LiveCheck1 implements ILiveCheck {
 			bgraphs[soln].allNodes.setDone(fp);
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#doLiveCheck()
 	 */
 	public boolean doLiveCheck() {
@@ -635,9 +640,9 @@ public class LiveCheck1 implements ILiveCheck {
 		if (cycleStack.size() == 0) {
 			cycleStack.push(curNode);
 		}
-		
+
 		final Resolver r = stateTrace != null && !stateTrace.isEmpty() ? new StateTraceResolver() : new Resolver();
-		
+
 		// Now, print the error trace. We first construct the prefix that
 		// led to the bad cycle. The nodes on prefix and cycleStack then
 		// form the complete counter example.
@@ -929,63 +934,81 @@ public class LiveCheck1 implements ILiveCheck {
 		return check(tool, true);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#getMetaDir()
 	 */
 	public String getMetaDir() {
 		return metadir;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#getTool()
 	 */
 	public ITool getTool() {
 		return myTool;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#getOutDegreeStatistics()
 	 */
 	public IBucketStatistics getOutDegreeStatistics() {
 		return new DummyBucketStatistics();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#getChecker(int)
 	 */
 	public ILiveChecker getChecker(int idx) {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#getNumChecker()
 	 */
 	public int getNumChecker() {
 		return 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#close()
 	 */
 	public void close() throws IOException {
 		// Intentional no op - LiveCheck1 has no disk files.
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#beginChkpt()
 	 */
 	public void beginChkpt() throws IOException {
 		// Intentional no op - LiveCheck1 has no disk files.
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#commitChkpt()
 	 */
 	public void commitChkpt() throws IOException {
 		// Intentional no op - LiveCheck1 has no disk files.
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#recover()
 	 */
 	public void recover() throws IOException {
@@ -997,20 +1020,26 @@ public class LiveCheck1 implements ILiveCheck {
 		// Intentional no op - LiveCheck1 has no disk files.
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.liveness.ILiveCheck#calculateInDegreeDiskGraphs(tlc2.util.statistics.IBucketStatistics)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.tool.liveness.ILiveCheck#calculateInDegreeDiskGraphs(tlc2.util.
+	 * statistics.IBucketStatistics)
 	 */
 	public IBucketStatistics calculateInDegreeDiskGraphs(IBucketStatistics aGraphStats) throws IOException {
 		return new DummyBucketStatistics();
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.liveness.ILiveCheck#calculateOutDegreeDiskGraphs(tlc2.util.statistics.IBucketStatistics)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.tool.liveness.ILiveCheck#calculateOutDegreeDiskGraphs(tlc2.util.
+	 * statistics.IBucketStatistics)
 	 */
 	public IBucketStatistics calculateOutDegreeDiskGraphs(IBucketStatistics aGraphStats) throws IOException {
 		return new DummyBucketStatistics();
 	}
-	
+
 	private class Resolver {
 
 		public TLCStateInfo getState(final long fp, final int stateNum) {

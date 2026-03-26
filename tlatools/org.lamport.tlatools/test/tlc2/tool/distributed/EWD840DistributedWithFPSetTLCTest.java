@@ -37,7 +37,7 @@ import tlc2.output.EC;
 public class EWD840DistributedWithFPSetTLCTest extends DistributedTLCTestCase {
 
 	public EWD840DistributedWithFPSetTLCTest() {
-		super("MC06", BASE_PATH + "EWD840" + File.separator, new String[] {"-deadlock"}, 1);
+		super("MC06", BASE_PATH + "EWD840" + File.separator, new String[] { "-deadlock" }, 1);
 	}
 
 	@Test

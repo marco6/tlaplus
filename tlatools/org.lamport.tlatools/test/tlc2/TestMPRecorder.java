@@ -37,9 +37,9 @@ import tlc2.output.EC;
 
 public class TestMPRecorder implements tlc2.output.IMessagePrinterRecorder {
 	private final Map<Integer, List<Object>> records = new HashMap<Integer, List<Object>>();
-	
+
 	public void record(int code, Object... objects) {
-		if(!records.containsKey(code)) {
+		if (!records.containsKey(code)) {
 			records.put(code, new ArrayList<Object>());
 		}
 		records.get(code).add(objects);
@@ -52,7 +52,7 @@ public class TestMPRecorder implements tlc2.output.IMessagePrinterRecorder {
 	public List<Object> getRecords(int code) {
 		return records.get(code);
 	}
-	
+
 	private List<Object> getRecordsOrDefault(final int code, final List<Object> defaultValue) {
 		return records.getOrDefault(code, defaultValue);
 	}
@@ -63,14 +63,14 @@ public class TestMPRecorder implements tlc2.output.IMessagePrinterRecorder {
 
 	public List<String[]> getRecordAsStringArray(int code) {
 		final List<Object> l = records.getOrDefault(code, new ArrayList<>());
-		
+
 		final List<String[]> strs = new ArrayList<>(l.size());
 		for (Object o : l) {
 			strs.add((String[]) o);
 		}
 		return strs;
 	}
-	
+
 	// This is a best effort implementation that only checks the first
 	// elements of the nested records and contained arrays
 	public boolean recordedWithStringValue(int code, String str) {
@@ -84,7 +84,7 @@ public class TestMPRecorder implements tlc2.output.IMessagePrinterRecorder {
 	public boolean recordedWithSubStringValue(int code, String substring) {
 		return recordedWithSubStringValue(code, substring, 0);
 	}
-	
+
 	public boolean recordedWithSubStringValue(int code, String substring, int idx) {
 		try {
 			Object object = records.get(code).get(0);
@@ -159,11 +159,11 @@ public class TestMPRecorder implements tlc2.output.IMessagePrinterRecorder {
 	public List<Coverage> getZeroCoverage() {
 		return getCoverage(EC.TLC_COVERAGE_VALUE, (Predicate<? super Coverage>) o -> o.isZero());
 	}
-	
+
 	public List<Coverage> getNonZeroCoverage() {
 		return getCoverage(EC.TLC_COVERAGE_VALUE, (Predicate<? super Coverage>) o -> !o.isZero());
 	}
-	
+
 	public List<Coverage> getCostCoverage() {
 		return getCoverage(EC.TLC_COVERAGE_VALUE_COST, (Predicate<? super Coverage>) o -> !o.isZero());
 	}
@@ -178,10 +178,10 @@ public class TestMPRecorder implements tlc2.output.IMessagePrinterRecorder {
 		private final String line;
 		private final long count;
 		private final long cost;
-		//TODO Take level into account in comparison!
+		// TODO Take level into account in comparison!
 		private final int level;
 		private final boolean isAction;
-		
+
 		public Coverage(String[] line) {
 			this.isAction = line[0].startsWith("<");
 			this.line = line[0].replace("|", "").trim();
@@ -199,7 +199,7 @@ public class TestMPRecorder implements tlc2.output.IMessagePrinterRecorder {
 				throw new IllegalArgumentException();
 			}
 		}
-		
+
 		public String getLine() {
 			return line;
 		}
@@ -207,30 +207,30 @@ public class TestMPRecorder implements tlc2.output.IMessagePrinterRecorder {
 		public long getCount() {
 			return count;
 		}
-		
+
 		public int getLevel() {
 			return level;
 		}
-		
+
 		public boolean isZero() {
 			return count == 0L;
 		}
-		
+
 		public boolean isCoverage() {
 			return !isAction;
 		}
-		
+
 		public boolean isCost() {
 			return cost >= 0;
 		}
-		
+
 		public boolean isAction() {
 			return isAction;
 		}
 
 		@Override
 		public String toString() {
-			return "Coverage [line=" + line + ", count=" + count  + ", cost=" + cost + "]";
+			return "Coverage [line=" + line + ", count=" + count + ", cost=" + cost + "]";
 		}
 
 		@Override
@@ -264,13 +264,15 @@ public class TestMPRecorder implements tlc2.output.IMessagePrinterRecorder {
 			return true;
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
 		final StringBuffer buf = new StringBuffer(records.size());
-		for(Integer key : records.keySet()) {
+		for (Integer key : records.keySet()) {
 			final List<Object> list = records.get(key);
 			for (Object elem : list) {
 				if (elem instanceof String[]) {

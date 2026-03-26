@@ -52,7 +52,9 @@ public class GraphNode extends AbstractGraphNode {
 		this.nnodes = nnodes;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
@@ -63,7 +65,9 @@ public class GraphNode extends AbstractGraphNode {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object obj) {
@@ -100,7 +104,8 @@ public class GraphNode extends AbstractGraphNode {
 		// offset being != NO_FREE_SLOTS indicates that the nnodes array has been
 		// overallocated in preparation to batch-insert transitions but the
 		// transitions have not been added yet. In this case the nnodes.length /
-		// NNODE_RECORD_SIZE is *not* the actual number of transitions, offset / NNODE_RECORD_SIZE is!
+		// NNODE_RECORD_SIZE is *not* the actual number of transitions, offset /
+		// NNODE_RECORD_SIZE is!
 		if (this.offset != NO_FREE_SLOTS) {
 			return this.offset / NNODE_RECORD_SIZE;
 		}
@@ -116,7 +121,7 @@ public class GraphNode extends AbstractGraphNode {
 	private int offset = NO_FREE_SLOTS;
 
 	private static final int NO_FREE_SLOTS = -1;
-	
+
 	/**
 	 * Allocates memory for subsequent
 	 * {@link GraphNode#addTransition(long, int, int, int, boolean[])} calls.
@@ -139,8 +144,8 @@ public class GraphNode extends AbstractGraphNode {
 	 * transition.
 	 * 
 	 * @param transitions
-	 *            The approximate number of transitions that will be added
-	 *            subsequently.
+	 *                    The approximate number of transitions that will be added
+	 *                    subsequently.
 	 * 
 	 * @see GraphNode#addTransition(long, int, int, int, boolean[])
 	 * @see GraphNode#realign()
@@ -158,34 +163,44 @@ public class GraphNode extends AbstractGraphNode {
 	 * Add a new transition to the node target.
 	 * 
 	 * @param fp
-	 *            fingerprint to add
+	 *                       fingerprint to add
 	 * @param tidx
-	 *            tableau index to add
+	 *                       tableau index to add
 	 * @param slen
-	 *            number of solutions
+	 *                       number of solutions
 	 * @param alen
-	 *            number of actions
+	 *                       number of actions
 	 * @param acts
-	 *            A {@link BitVector} of action results. Each bit in the vector
-	 *            represents the result of the corresponding action (true or
-	 *            false) returned by
-	 *            tlc2.tool.liveness.OrderOfSolution.checkAction(TLCState,
-	 *            TLCState, BitVector, int). <code>null</code> if no action 
-	 *            constraints to check.
+	 *                       A {@link BitVector} of action results. Each bit in the
+	 *                       vector
+	 *                       represents the result of the corresponding action (true
+	 *                       or
+	 *                       false) returned by
+	 *                       tlc2.tool.liveness.OrderOfSolution.checkAction(TLCState,
+	 *                       TLCState, BitVector, int). <code>null</code> if no
+	 *                       action
+	 *                       constraints to check.
 	 * @param actsOffset
-	 *            The offset into the {@link BitVector} acts. acts may hold
-	 *            action results for more than just the currently added
-	 *            transition. In this case, provide an zero-based offset for
-	 *            where the action results in BitVector start. 0 if the given
-	 *            {@link BitVector} is exclusively used for the current
-	 *            transition.
+	 *                       The offset into the {@link BitVector} acts. acts may
+	 *                       hold
+	 *                       action results for more than just the currently added
+	 *                       transition. In this case, provide an zero-based offset
+	 *                       for
+	 *                       where the action results in BitVector start. 0 if the
+	 *                       given
+	 *                       {@link BitVector} is exclusively used for the current
+	 *                       transition.
 	 * @param allocationHint
-	 *            A (Naturals \ {0}) hint telling the method's implementation
-	 *            how many memory to allocate for subsequent transition
-	 *            additions (used when called from within for loop). Zero or
-	 *            negative hints are ignored (negative hints are the result of
-	 *            nested for loop where the 1. iteration produces a bad average
-	 *            of how many additions are made across all iterations).
+	 *                       A (Naturals \ {0}) hint telling the method's
+	 *                       implementation
+	 *                       how many memory to allocate for subsequent transition
+	 *                       additions (used when called from within for loop). Zero
+	 *                       or
+	 *                       negative hints are ignored (negative hints are the
+	 *                       result of
+	 *                       nested for loop where the 1. iteration produces a bad
+	 *                       average
+	 *                       of how many additions are made across all iterations).
 	 * @see GraphNode#allocate(int)
 	 */
 	public final void addTransition(long fp, int tidx, int slen, int alen, final BitVector acts, final int actsOffset,
@@ -275,11 +290,11 @@ public class GraphNode extends AbstractGraphNode {
 		}
 		return transitions.size() == succSize();
 	}
-	
+
 	public Set<Transition> getTransition() {
 		return getTransition(0, 0);
 	}
-	
+
 	public Set<Transition> getTransition(final int slen, final int alen) {
 		final Set<Transition> transitions = new HashSet<Transition>();
 		for (int i = 0; i < succSize(); i++) {
@@ -293,7 +308,7 @@ public class GraphNode extends AbstractGraphNode {
 		}
 		return transitions;
 	}
-	
+
 	public static class Transition {
 
 		private final long fp;
@@ -306,7 +321,9 @@ public class GraphNode extends AbstractGraphNode {
 			this.bv = bv;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Object#hashCode()
 		 */
 		public int hashCode() {
@@ -318,7 +335,9 @@ public class GraphNode extends AbstractGraphNode {
 			return result;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
 		public boolean equals(Object obj) {
@@ -340,7 +359,7 @@ public class GraphNode extends AbstractGraphNode {
 				return false;
 			return true;
 		}
-		
+
 		public BitVector getChecks() {
 			return bv;
 		}
@@ -348,7 +367,7 @@ public class GraphNode extends AbstractGraphNode {
 		public long getFP() {
 			return fp;
 		}
-		
+
 		public int getTidx() {
 			return tidx;
 		}
@@ -388,12 +407,13 @@ public class GraphNode extends AbstractGraphNode {
 		// Read checks
 		checks = new BitVector();
 		checks.read(nodeRAF);
-		
+
 		assert offset == NO_FREE_SLOTS;
 	}
 
 	public final String toString() {
-		// A GraphNode does not know the action length. This is kept elsewhere in the code.
+		// A GraphNode does not know the action length. This is kept elsewhere in the
+		// code.
 		return toString(0).replace("[] ", "");
 	}
 
@@ -418,22 +438,25 @@ public class GraphNode extends AbstractGraphNode {
 		return buf.substring(0, buf.length() - ", ".length()); // chop off dangling ", "
 	}
 
-	public String toDotViz(final boolean isInitState, final boolean hasTableau, final int slen, final int alen, final OrderOfSolution oos, final Map<Long, String> labels) {
+	public String toDotViz(final boolean isInitState, final boolean hasTableau, final int slen, final int alen,
+			final OrderOfSolution oos, final Map<Long, String> labels) {
 		return toDotViz(isInitState, hasTableau, slen, alen, null, oos, labels);
 	}
 
-	public String toDotViz(final boolean isInitState, final boolean hasTableau, final int slen, final int alen, TableauNodePtrTable filter, final OrderOfSolution oos) {
+	public String toDotViz(final boolean isInitState, final boolean hasTableau, final int slen, final int alen,
+			TableauNodePtrTable filter, final OrderOfSolution oos) {
 		return toDotViz(isInitState, hasTableau, slen, alen, oos, new HashMap<>());
 	}
 
-	public String toDotViz(final boolean isInitState, final boolean hasTableau, final int slen, final int alen, TableauNodePtrTable filter, final OrderOfSolution oos, final Map<Long, String> labels) {
+	public String toDotViz(final boolean isInitState, final boolean hasTableau, final int slen, final int alen,
+			TableauNodePtrTable filter, final OrderOfSolution oos, final Map<Long, String> labels) {
 		// The node's id including its tidx if any. It uses the complete
 		// fingerprint.
 		String id = Long.toString(this.stateFP);
 		if (hasTableau) {
 			id += "." + this.tindex;
 		}
-			
+
 		// Nodes label and a marker if it is an init state. The label is
 		// shortened to 8 chars max to avoid screen clutter. It's possible
 		// that the resulting graph will have multiple nodes with an identical
@@ -452,7 +475,7 @@ public class GraphNode extends AbstractGraphNode {
 				}
 			}
 		}
-		
+
 		// Annotate the GraphNode if it fulfills the promises.
 		final int plen = oos.getPromises().length;
 		if (plen > 0) {
@@ -475,31 +498,31 @@ public class GraphNode extends AbstractGraphNode {
 		} else {
 			buf.append("\"" + id + "\" [label = \"" + label + "\"]\n");
 		}
-		
+
 		// Each outgoing transition
 		for (int i = 0; i < succSize(); i++) {
 			final long stateFP = getStateFP(i);
 			final int tidx = getTidx(i);
-			
+
 			// If a filter is given, check if this node is in filter
 			if (filter != null && filter.get(stateFP, tidx) == -1) {
 				continue;
 			}
-			
+
 			String fp = Long.toString(stateFP);
-//			if (fp == this.stateFP) {
-//				// skip self loops if edge count to large for dotViz to handle.
-//				continue;
-//			}
-			
+			// if (fp == this.stateFP) {
+			// // skip self loops if edge count to large for dotViz to handle.
+			// continue;
+			// }
+
 			buf.append("\"" + id + "\" -> ");
 			if (hasTableau) {
 				buf.append(("\"" + fp) + "." + tidx + "\"");
 			} else {
-				//Omit tableau index when it's -1 (indicating no tableau)
+				// Omit tableau index when it's -1 (indicating no tableau)
 				buf.append(("\"" + fp) + "\"");
 			}
-			
+
 			buf.append(" [label=\"");
 			for (int j = 0; j < alen; j++) {
 				if (getCheckAction(slen, alen, i, j)) {

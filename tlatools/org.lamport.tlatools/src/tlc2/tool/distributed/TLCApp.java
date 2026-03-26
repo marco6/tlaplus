@@ -44,7 +44,7 @@ public class TLCApp extends DistApp {
 		this.metadir = FileUtil.makeMetaDir(this.tool.getSpecDir(), fromChkpt);
 		this.fpSetConfig = fpSetConfig;
 	}
-	
+
 	public TLCApp(String specFile, String configFile, boolean deadlock,
 			String fromChkpt, FPSetConfiguration fpSetConfig, FilenameToStream fts) throws IOException {
 		this(specFile, configFile, deadlock, fts);
@@ -60,13 +60,13 @@ public class TLCApp extends DistApp {
 
 		// get the spec dir from the spec file
 		int lastSep = specFile.lastIndexOf(File.separatorChar);
-		String specDir = (lastSep == -1) ? "" : specFile.substring(0,
-				lastSep + 1);
+		String specDir = (lastSep == -1) ? ""
+				: specFile.substring(0,
+						lastSep + 1);
 		specFile = specFile.substring(lastSep + 1);
-		
+
 		this.config = configFile;
-		
-		
+
 		this.checkDeadlock = deadlock.booleanValue();
 		this.preprocess = true;
 		this.tool = new FastTool(specDir, specFile, configFile, fts, new HashMap<>());
@@ -88,68 +88,86 @@ public class TLCApp extends DistApp {
 	private String fromChkpt = null; // recover from this checkpoint
 	private String metadir = null; // the directory pathname for metadata
 	private FPSetConfiguration fpSetConfig;
-   
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.DistApp#getCheckDeadlock()
 	 */
 	public final Boolean getCheckDeadlock() {
 		return this.checkDeadlock;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.DistApp#getPreprocess()
 	 */
 	public final Boolean getPreprocess() {
 		return this.preprocess;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.DistApp#getFileName()
 	 */
 	public final String getFileName() {
 		return this.tool.getRootFile();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.DistApp#getSpecDir()
 	 */
 	public String getSpecDir() {
 		return this.tool.getSpecDir();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.DistApp#getConfigName()
 	 */
 	public String getConfigName() {
 		return this.config;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.DistApp#getMetadir()
 	 */
 	public final String getMetadir() {
 		return this.metadir;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.DistApp#canRecover()
 	 */
 	public final boolean canRecover() {
 		return this.fromChkpt != null;
 	}
-	
+
 	public List<File> getModuleFiles() {
 		return this.tool.getModuleFiles(new InJarFilenameToStream(ModelInJar.PATH));
-    }
+	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.DistApp#getInitStates(tlc2.tool.IStateFunctor)
 	 */
 	public final void getInitStates(IStateFunctor functor) {
 		this.tool.getInitStates(functor);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.DistApp#getNextStates(tlc2.tool.TLCState)
 	 */
 	public final TLCState[] getNextStates(TLCState curState)
@@ -183,8 +201,11 @@ public class TLCApp extends DistApp {
 		return res;
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.distributed.DistApp#checkState(tlc2.tool.TLCState, tlc2.tool.TLCState)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.tool.distributed.DistApp#checkState(tlc2.tool.TLCState,
+	 * tlc2.tool.TLCState)
 	 */
 	public final void checkState(TLCState s1, TLCState s2)
 			throws WorkerException {
@@ -221,22 +242,29 @@ public class TLCApp extends DistApp {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.DistApp#isInModel(tlc2.tool.TLCState)
 	 */
 	public final boolean isInModel(TLCState s) {
 		return this.tool.isInModel((TLCState) s);
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.distributed.DistApp#isInActions(tlc2.tool.TLCState, tlc2.tool.TLCState)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.tool.distributed.DistApp#isInActions(tlc2.tool.TLCState,
+	 * tlc2.tool.TLCState)
 	 */
 	public final boolean isInActions(TLCState s1, TLCState s2) {
 		return this.tool.isInActions((TLCState) s1, (TLCState) s2);
 	}
 
 	/* Reconstruct the initial state whose fingerprint is fp. */
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.DistApp#getState(long)
 	 */
 	public final TLCStateInfo getState(long fp) {
@@ -244,7 +272,9 @@ public class TLCApp extends DistApp {
 	}
 
 	/* Reconstruct the next state of state s whose fingerprint is fp. */
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.DistApp#getState(long, tlc2.tool.TLCState)
 	 */
 	public final TLCStateInfo getState(long fp, TLCState s) {
@@ -252,26 +282,33 @@ public class TLCApp extends DistApp {
 	}
 
 	/* Reconstruct the info for the transition from s to s1. */
-	/* (non-Javadoc)
-	 * @see tlc2.tool.distributed.DistApp#getState(tlc2.tool.TLCState, tlc2.tool.TLCState)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.tool.distributed.DistApp#getState(tlc2.tool.TLCState,
+	 * tlc2.tool.TLCState)
 	 */
 	public TLCStateInfo getState(TLCState s1, TLCState s) {
 		return this.tool.getState(s1, s);
 	}
-	
+
 	@Override
 	public TLCStateInfo evalAlias(TLCStateInfo current, TLCState successor, Supplier<List<TLCStateInfo>> prefix) {
 		return this.tool.evalAlias(current, successor, prefix);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.DistApp#setCallStack()
 	 */
 	public final void setCallStack() {
 		this.tool = new CallStackTool(this.tool);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.DistApp#printCallStack()
 	 */
 	public final String printCallStack() {
@@ -287,7 +324,7 @@ public class TLCApp extends DistApp {
 		String fromChkpt = null;
 
 		FPSetConfiguration fpSetConfig = new FPSetConfiguration();
-		
+
 		int index = 0;
 		while (index < args.length) {
 			if (args[index].equals("-config")) {
@@ -305,7 +342,7 @@ public class TLCApp extends DistApp {
 				}
 			} else if (args[index].equals("-tool")) {
 				index++;
-                TLCGlobals.tool = true;
+				TLCGlobals.tool = true;
 			} else if (args[index].equals("-deadlock")) {
 				index++;
 				deadlock = false;
@@ -319,7 +356,7 @@ public class TLCApp extends DistApp {
 				}
 			} else if (args[index].equals("-checkpoint")) {
 				index++;
-                if (index < args.length) {
+				if (index < args.length) {
 					try {
 						TLCGlobals.chkptDuration = Integer.parseInt(args[index]) * 1000 * 60;
 						if (TLCGlobals.chkptDuration < 0) {
@@ -344,12 +381,12 @@ public class TLCApp extends DistApp {
 						ToolIO.out.println(
 								"Warning: coverage reporting not supported in distributed TLC, ignoring -coverage "
 										+ args[index] + " parameter.");
-//						TLCGlobals.coverageInterval = Integer
-//						.parseInt(args[index]) * 1000;
-//						if (TLCGlobals.coverageInterval < 0) {
-//							printErrorMsg("Error: expect a nonnegative integer for -coverage option.");
-//							return null;
-//						}
+						// TLCGlobals.coverageInterval = Integer
+						// .parseInt(args[index]) * 1000;
+						// if (TLCGlobals.coverageInterval < 0) {
+						// printErrorMsg("Error: expect a nonnegative integer for -coverage option.");
+						// return null;
+						// }
 						index++;
 					} catch (Exception e) {
 						printErrorMsg("Error: An integer for coverage report interval required."
@@ -366,34 +403,30 @@ public class TLCApp extends DistApp {
 			} else if (args[index].equals("-nowarning")) {
 				index++;
 				TLCGlobals.warn = false;
-            } else if (args[index].equals("-maxSetSize"))
-            {
-                index++;
-                if (index < args.length)
-                {
-                    try
-                    {
-                        int bound = Integer.parseInt(args[index]);
-                        
-                    	// make sure it's in valid range
-                    	if (!TLCGlobals.isValidSetSize(bound)) {
-                    		int maxValue = Integer.MAX_VALUE;
-                    		printErrorMsg("Error: Value in interval [0, " + maxValue + "] for maxSetSize required. But encountered " + args[index]);
-                    		return null;
-                    	}
-                    	TLCGlobals.setBound = bound;
+			} else if (args[index].equals("-maxSetSize")) {
+				index++;
+				if (index < args.length) {
+					try {
+						int bound = Integer.parseInt(args[index]);
 
-                    	index++;
-                    } catch (Exception e)
-                    {
-                        printErrorMsg("Error: An integer for maxSetSize required. But encountered " + args[index]);
-                        return null;
-                    }
-                } else
-                {
-                    printErrorMsg("Error: maxSetSize required.");
-                    return null;
-                }
+						// make sure it's in valid range
+						if (!TLCGlobals.isValidSetSize(bound)) {
+							int maxValue = Integer.MAX_VALUE;
+							printErrorMsg("Error: Value in interval [0, " + maxValue
+									+ "] for maxSetSize required. But encountered " + args[index]);
+							return null;
+						}
+						TLCGlobals.setBound = bound;
+
+						index++;
+					} catch (Exception e) {
+						printErrorMsg("Error: An integer for maxSetSize required. But encountered " + args[index]);
+						return null;
+					}
+				} else {
+					printErrorMsg("Error: maxSetSize required.");
+					return null;
+				}
 			} else if (args[index].equals("-fp")) {
 				index++;
 				if (index < args.length) {
@@ -414,21 +447,21 @@ public class TLCApp extends DistApp {
 					printErrorMsg("Error: expect an integer for -workers option.");
 					return null;
 				}
-				
-				
+
 			} else if (args[index].equals("-fpbits")) {
 				index++;
 				if (index < args.length) {
 					try {
 						int fpBits = Integer.parseInt(args[index]);
-						
-                    	// make sure it's in valid range
-                    	if (!FPSet.isValid(fpBits)) {
-                    		printErrorMsg("Error: Value in interval [0, 30] for fpbits required. But encountered " + args[index]);
-                    		return null;
-                    	}
-                    	fpSetConfig.setFpBits(fpBits);
-                    	
+
+						// make sure it's in valid range
+						if (!FPSet.isValid(fpBits)) {
+							printErrorMsg("Error: Value in interval [0, 30] for fpbits required. But encountered "
+									+ args[index]);
+							return null;
+						}
+						fpSetConfig.setFpBits(fpBits);
+
 						index++;
 					} catch (Exception e) {
 						printErrorMsg("Error: A number for -fpbits is required. But encountered "
@@ -439,58 +472,59 @@ public class TLCApp extends DistApp {
 					printErrorMsg("Error: expect an integer for -workers option.");
 					return null;
 				}
-            } else if (args[index].equals("-fpmem"))
-            {
-                index++;
-                if (index < args.length)
-                {
-                    try
-                    {
-                    	// -fpmem can be used in two ways:
-                    	// a) to set the relative memory to be used for fingerprints (being machine independent)
-                    	// b) to set the absolute memory to be used for fingerprints
-                    	//
-                    	// In order to set memory relatively, a value in the domain [0.0, 1.0] is interpreted as a fraction.
-                    	// A value in the [2, Double.MaxValue] domain allocates memory absolutely.
-                    	//
+			} else if (args[index].equals("-fpmem")) {
+				index++;
+				if (index < args.length) {
+					try {
+						// -fpmem can be used in two ways:
+						// a) to set the relative memory to be used for fingerprints (being machine
+						// independent)
+						// b) to set the absolute memory to be used for fingerprints
+						//
+						// In order to set memory relatively, a value in the domain [0.0, 1.0] is
+						// interpreted as a fraction.
+						// A value in the [2, Double.MaxValue] domain allocates memory absolutely.
+						//
 						// Independently of relative or absolute mem allocation,
 						// a user cannot allocate more than JVM heap space
 						// available. Conversely there is the lower hard limit TLC#MinFpMemSize.
-                    	double fpmem = Double.parseDouble(args[index]);
-                        if (fpmem < 0) {
-                            printErrorMsg("Error: An positive integer or a fraction for fpset memory size/percentage required. But encountered " + args[index]);
-                            return null;
-                        } else if (fpmem > 1) {
+						double fpmem = Double.parseDouble(args[index]);
+						if (fpmem < 0) {
+							printErrorMsg(
+									"Error: An positive integer or a fraction for fpset memory size/percentage required. But encountered "
+											+ args[index]);
+							return null;
+						} else if (fpmem > 1) {
 							// For legacy reasons we allow users to set the
 							// absolute amount of memory. If this is the case,
 							// we know the user intends to allocate all 100% of
 							// the absolute memory to the fpset.
-                    		ToolIO.out
-            				.println("Using -fpmem with an abolute memory value has been deprecated. " +
-            						"Please allocate memory for the TLC process via the JVM mechanisms " +
-            						"and use -fpmem to set the fraction to be used for fingerprint storage.");
-                        	fpSetConfig.setMemory((long) fpmem);
-                        	fpSetConfig.setRatio(1.0);
-                        } else {
-                        	fpSetConfig.setRatio(fpmem);
-                        }
-                        index++;
-                    } catch (Exception e)
-                    {
-                        printErrorMsg("Error: A positive integer or a fraction for fpset memory size/percentage required. But encountered " + args[index]);
-                        return null;
-                    }
-                }
+							ToolIO.out
+									.println("Using -fpmem with an abolute memory value has been deprecated. " +
+											"Please allocate memory for the TLC process via the JVM mechanisms " +
+											"and use -fpmem to set the fraction to be used for fingerprint storage.");
+							fpSetConfig.setMemory((long) fpmem);
+							fpSetConfig.setRatio(1.0);
+						} else {
+							fpSetConfig.setRatio(fpmem);
+						}
+						index++;
+					} catch (Exception e) {
+						printErrorMsg(
+								"Error: A positive integer or a fraction for fpset memory size/percentage required. But encountered "
+										+ args[index]);
+						return null;
+					}
+				}
 			} else if (args[index].equals("-metadir")) {
 				index++;
-                if (index < args.length)
-                {
-                    TLCGlobals.metaDir = args[index++] + FileUtil.separator;
-                } else {
-                    printErrorMsg("Error: need to specify the metadata directory.");
-                    return null;
-                }
-            } else {
+				if (index < args.length) {
+					TLCGlobals.metaDir = args[index++] + FileUtil.separator;
+				} else {
+					printErrorMsg("Error: need to specify the metadata directory.");
+					return null;
+				}
+			} else {
 				if (args[index].charAt(0) == '-') {
 					printErrorMsg("Error: unrecognized option: " + args[index]);
 					return null;
@@ -517,10 +551,11 @@ public class TLCApp extends DistApp {
 				TLCGlobals.chkptDuration = 0; // never use checkpoints with distributed TLC (highly inefficient)
 				FP64.Init(fpIndex);
 				FilenameToStream resolver = new InJarFilenameToStream(ModelInJar.PATH);
-				return new TLCApp(TLAConstants.Files.MODEL_CHECK_FILE_BASENAME, TLAConstants.Files.MODEL_CHECK_FILE_BASENAME,
+				return new TLCApp(TLAConstants.Files.MODEL_CHECK_FILE_BASENAME,
+						TLAConstants.Files.MODEL_CHECK_FILE_BASENAME,
 						deadlock, fromChkpt, fpSetConfig, resolver);
 			}
-			
+
 			printErrorMsg("Error: Missing input TLA+ module.");
 			return null;
 		}

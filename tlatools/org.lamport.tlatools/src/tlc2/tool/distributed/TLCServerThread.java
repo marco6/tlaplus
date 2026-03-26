@@ -125,10 +125,11 @@ public class TLCServerThread extends IdThread {
 		this.selector = aSelector;
 		this.uri = aURI;
 
-		// Create Timer early to avoid NPE in handleRemoteWorkerLost (it tries to cancel the timer)
+		// Create Timer early to avoid NPE in handleRemoteWorkerLost (it tries to cancel
+		// the timer)
 		keepAliveTimer = new Timer("TLCWorker KeepAlive Timer ["
 				+ uri.toASCIIString() + "]", true);
-		
+
 		// Wrap the TLCWorker with a SmartProxy. A SmartProxy's responsibility
 		// is to measure the RTT spend to transfer states back and forth.
 		this.worker = new TLCWorkerSmartProxy(worker);
@@ -138,7 +139,7 @@ public class TLCServerThread extends IdThread {
 		// gather thread contention stats.
 		final String i = String.format("%03d", myGetId());
 		setName(TLCServer.THREAD_NAME_PREFIX + i + "-[" + uri.toASCIIString() + "]");
-		
+
 		// schedule a timer to periodically (60s) check server aliveness
 		task = new TLCTimerTask();
 		keepAliveTimer.schedule(task, 10000, 60000);
@@ -207,7 +208,7 @@ public class TLCServerThread extends IdThread {
 							selector.setMaxTXSize(states.length / 2);
 							// go back to beginning
 							continue START;
-						} else { 
+						} else {
 							// non recoverable errors, exit...
 							MP.printMessage(
 									EC.TLC_DISTRIBUTED_WORKER_LOST,
@@ -296,8 +297,9 @@ public class TLCServerThread extends IdThread {
 	 */
 	private boolean isRecoverable(final Exception e) {
 		final Throwable cause = e.getCause();
-		return ((cause instanceof EOFException && cause.getMessage() == null) || (cause instanceof RemoteException && cause
-				.getCause() instanceof OutOfMemoryError));
+		return ((cause instanceof EOFException && cause.getMessage() == null)
+				|| (cause instanceof RemoteException && cause
+						.getCause() instanceof OutOfMemoryError));
 	}
 
 	private String throwableToString(final Exception e) {
@@ -317,8 +319,8 @@ public class TLCServerThread extends IdThread {
 		// exception in the this run() method has caused handleRemoteWorkerLost
 		// to be called.
 		keepAliveTimer.cancel();
-		
-		// This call has to be idempotent, otherwise we see bugs as in 
+
+		// This call has to be idempotent, otherwise we see bugs as in
 		// Bug #234 in general/bugzilla/index.html
 		//
 		// Prevent second invocation of worker de-registration which stems from
@@ -329,17 +331,17 @@ public class TLCServerThread extends IdThread {
 
 			// De-register TLCServerThread at the main server thread locally
 			tlcServer.removeTLCServerThread(this);
-			
+
 			// Return the undone worklist (if any)
 			if (stateQueue != null) {
 				stateQueue.sEnqueue(states != null ? states : new TLCState[0]);
 			}
-			
+
 			// Reset states to empty array to signal to TLCServer that we are not
 			// processing any new states. Otherwise statistics will incorrectly
 			// count this TLCServerThread as actively calculating states.
 			states = new TLCState[0];
-			
+
 			// Before decrementing the worker count, notify all waiters on
 			// stateQueue to re-evaluate the while loop in isAvail(). The demise
 			// of this worker (who potentially was the lock owner) might causes
@@ -357,7 +359,7 @@ public class TLCServerThread extends IdThread {
 					stateQueue.notifyAll();
 				}
 			}
-			
+
 			TLCGlobals.decNumWorkers();
 		}
 	}
@@ -390,7 +392,7 @@ public class TLCServerThread extends IdThread {
 	public int getSentStates() {
 		return sentStates;
 	}
-	
+
 	/**
 	 * @return The hit ratio of the worker-local fingerprint cache.
 	 */
@@ -402,11 +404,13 @@ public class TLCServerThread extends IdThread {
 
 	private class TLCTimerTask extends TimerTask {
 		/**
-		 * Timestamp of last successful remote invocation 
+		 * Timestamp of last successful remote invocation
 		 */
 		private long lastInvocation = 0L;
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.util.TimerTask#run()
 		 */
 		public void run() {

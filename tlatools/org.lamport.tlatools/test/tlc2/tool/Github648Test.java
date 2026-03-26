@@ -49,7 +49,7 @@ public class Github648Test extends ModelCheckerTestCase {
 
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "1"));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "1332", "36", "0"));
-		
+
 		assertCoverage("<Init line 34, col 1 to line 34, col 4 of module Github648>: 36:36\n"
 				+ "  line 35, col 8 to line 35, col 23 of module Github648: 1\n"
 				+ "  line 36, col 8 to line 36, col 23 of module Github648: 36\n"

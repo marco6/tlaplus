@@ -51,7 +51,7 @@ public class LiveWorker implements Callable<Boolean> {
 
 	public static final IBucketStatistics STATS = new BucketStatistics("Histogram SCC sizes", LiveWorker.class
 			.getPackage().getName(), "StronglyConnectedComponent sizes");
-	
+
 	private static int errFoundByThread = -1;
 	private static final Object workerLock = new Object();
 
@@ -70,7 +70,8 @@ public class LiveWorker implements Callable<Boolean> {
 
 	private final int id;
 
-	public LiveWorker(final ITool tool, int id, int numWorkers, final ILiveCheck liveCheck, final BlockingQueue<ILiveChecker> queue, final boolean finalCheck) {
+	public LiveWorker(final ITool tool, int id, int numWorkers, final ILiveCheck liveCheck,
+			final BlockingQueue<ILiveChecker> queue, final boolean finalCheck) {
 		this.id = id;
 		this.tool = tool;
 		this.numWorkers = numWorkers;
@@ -138,8 +139,9 @@ public class LiveWorker implements Callable<Boolean> {
 	 * checkSccs runs on a partial graph. Thus some nodes are marked undone.
 	 * Those nodes are skipped by the SCC search.</li>
 	 * </ul>
-	 * @throws ExecutionException 
-	 * @throws InterruptedException 
+	 * 
+	 * @throws ExecutionException
+	 * @throws InterruptedException
 	 * 
 	 * @see http://en.wikipedia.org/wiki/Tarjan'
 	 *      s_strongly_connected_components_algorithm
@@ -149,19 +151,19 @@ public class LiveWorker implements Callable<Boolean> {
 	private final void checkSccs(final ITool tool) throws IOException, InterruptedException, ExecutionException {
 		// Initialize this.dg:
 		this.dg.makeNodePtrTbl();
-		
-		// Initialize nodeQueue with initial states. The initial states stored 
+
+		// Initialize nodeQueue with initial states. The initial states stored
 		// separately in the DiskGraph are resolved to their pointer location
 		// in the on-disk part of the DiskGraph.
 		// The pointer location generally is obviously used to:
 		// * Speed up disk lookups in the RandomAccessFile(s) backing up the DiskGraph
 		// * Is replaced by the SCC link number the moment the node's successors
-		//   are explored during DFS search. At this point the ptr location isn't
-		//   needed anymore. The successors have been resolved.
-		// 
+		// are explored during DFS search. At this point the ptr location isn't
+		// needed anymore. The successors have been resolved.
+		//
 		// From each node in nodeQueue the SCC search is started down below,
 		// which can subsequently add additional nodes into nodeQueue.
-		// 
+		//
 		// Contrary to plain Tarjan, not all vertices are added to the
 		// nodeQueue of unexplored states, but only the initial states. Since we
 		// know that all non-initial states are reachable from the set of
@@ -202,8 +204,7 @@ public class LiveWorker implements Callable<Boolean> {
 		final int[] eaaction = this.pem.EAAction;
 		final int slen = this.oos.getCheckState().length;
 		final int alen = this.oos.getCheckAction().length;
-		
-		
+
 		// Synchronize all LiveWorker instances to consistently read free
 		// memory. This method is only called during initialization of SCC
 		// search, thus synchronization should not cause significant thread
@@ -215,7 +216,7 @@ public class LiveWorker implements Callable<Boolean> {
 			// Tarjan's stack
 			// Append thread id to name for unique disk files during concurrent SCC search
 			dfsStack = getStack(liveCheck.getMetaDir(), "dfs" + this.id);
-			
+
 			// comStack is only being added to during the deep first search. It is passed
 			// to the checkComponent method while in DFS though. Note that the nodes pushed
 			// onto comStack don't necessarily form a strongly connected component (see
@@ -256,11 +257,11 @@ public class LiveWorker implements Callable<Boolean> {
 				final long curLoc = dfsStack.popLong();
 				final int curTidx = dfsStack.popInt();
 				final long curState = dfsStack.popLong();
-				
+
 				// At this point curLoc is still a file pointer (small MAX_PTR)
 				// and not yet replaced by a link (MAX_PTR < curLoc < MAX_LINK).
 				assert DiskGraph.isFilePointer(curLoc);
-				
+
 				// The current node is explored iff curLoc < 0. If it is indeed fully explored,
 				// it means it has potentially found an SCC. Thus, check if this is the case
 				// for the current GraphNode.
@@ -274,9 +275,9 @@ public class LiveWorker implements Callable<Boolean> {
 					// If curLink # lowLink, continue by pop'ing the next node
 					// from dfsStack. It can either be:
 					// - unexplored in which case the else branch is taken and
-					//   DFS continues.
+					// DFS continues.
 					// - be an intermediate node of the SCC and thus curLink #
-					//   lowLink for it too.
+					// lowLink for it too.
 					// - can be the start of the SCC (curLink = lowLink).
 					final long curLink = this.dg.getLink(curState, curTidx);
 					assert curLink < AbstractDiskGraph.MAX_LINK;
@@ -322,8 +323,8 @@ public class LiveWorker implements Callable<Boolean> {
 					// the current lowLink and plowLink on the stack.
 					final long plowLink = dfsStack.popLong();
 					dfsStack.pushLong(Math.min(plowLink, lowLink));
-					
-				// No SCC found yet	
+
+					// No SCC found yet
 				} else {
 					// Assign newLink to curState:
 					final long link = this.dg.putLink(curState, curTidx, newLink);
@@ -347,7 +348,7 @@ public class LiveWorker implements Callable<Boolean> {
 						comStack.pushLong(curLoc);
 						comStack.pushInt(curTidx);
 						comStack.pushLong(curState);
-						
+
 						// Look at all the successors of curState:
 						final GraphNode gnode = this.dg.getNode(curState, curTidx, curLoc);
 						final int succCnt = gnode.succSize();
@@ -365,8 +366,8 @@ public class LiveWorker implements Callable<Boolean> {
 							// A successor node t of gnode is undone if it is:
 							// - An initial state which hasn't been explored yet
 							// - t has not been added to the liveness disk graph
-							//   itself (only as the successor (transition) of
-							//   gnode).
+							// itself (only as the successor (transition) of
+							// gnode).
 							//
 							// If it is >= 0, it either is a:
 							// - file pointer location
@@ -436,9 +437,9 @@ public class LiveWorker implements Callable<Boolean> {
 									// potentially might be the only one by
 									// which DFS can reach it.
 									if (DiskGraph.isFilePointer(nextLink)) {
-									nodeQueue.enqueueLong(nextState);
-									nodeQueue.enqueueInt(nextTidx);
-									nodeQueue.enqueueLong(nextLink); // nextLink is logically a ptr/loc here
+										nodeQueue.enqueueLong(nextState);
+										nodeQueue.enqueueInt(nextTidx);
+										nodeQueue.enqueueLong(nextLink); // nextLink is logically a ptr/loc here
 									}
 								}
 							} else {
@@ -448,18 +449,19 @@ public class LiveWorker implements Callable<Boolean> {
 								// UNDONE (a non-UNDONE negative nextLink is
 								// probably a bug).
 								// isFinalCheck => nextLink # UNDONE
-								// This assertion will be violated if TLC terminates prematurely triggered by TLCSet("exit", TRUE).
+								// This assertion will be violated if TLC terminates prematurely triggered by
+								// TLCSet("exit", TRUE).
 								assert !isFinalCheck || nextLink != TableauNodePtrTable.UNDONE;
 							}
 						}
 						// Push the next lowLink onto stack on top of all
-						// successors. It is assigned to the topmost 
+						// successors. It is assigned to the topmost
 						// successor only though.
 						dfsStack.pushLong(nextLowLink);
 					} else {
 						// link above wasn't "-1", thus it has to be a valid
 						// link in the known interval.
-						assert AbstractDiskGraph.MAX_PTR <= link && link <= AbstractDiskGraph.MAX_LINK; 
+						assert AbstractDiskGraph.MAX_PTR <= link && link <= AbstractDiskGraph.MAX_LINK;
 						// Push the minimum of the two links onto the stack. If
 						// link == DiskGraph.MAX_PTR lowLink will always be the
 						// minimum (unless this graph has a gigantic amount of
@@ -501,8 +503,9 @@ public class LiveWorker implements Callable<Boolean> {
 		} catch (final OutOfMemoryError oom) {
 			System.gc();
 			// If the allocation above failed, be more conservative. If it fails to
-			// allocate even 16mb, TLC will subsequently terminate with a message about insufficient
-			// memory. 
+			// allocate even 16mb, TLC will subsequently terminate with a message about
+			// insufficient
+			// memory.
 			final SynchronousDiskIntStack sdis = new SynchronousDiskIntStack(metaDir, name,
 					SynchronousDiskIntStack.BufSize / 2);
 			MP.printWarning(EC.GENERAL,
@@ -524,14 +527,16 @@ public class LiveWorker implements Callable<Boolean> {
 	 * satisfies &#968;). ~&#966; (called &#968; by MP) is the negation of the
 	 * liveness formula &#966; which has to be "P-valid" for the liveness
 	 * properties to be valid.
-	 * @throws ExecutionException 
-	 * @throws InterruptedException 
+	 * 
+	 * @throws ExecutionException
+	 * @throws InterruptedException
 	 */
-	private boolean checkComponent(final ITool tool, final long state, final int tidx, final IntStack comStack) throws IOException, InterruptedException, ExecutionException {
+	private boolean checkComponent(final ITool tool, final long state, final int tidx, final IntStack comStack)
+			throws IOException, InterruptedException, ExecutionException {
 		final long comStackSize = comStack.size();
-		// There is something to pop and each is a well formed tuple <<fp, tidx, loc>> 
+		// There is something to pop and each is a well formed tuple <<fp, tidx, loc>>
 		assert comStackSize >= 5 && comStackSize % 5 == 0; // long + int + long
-		
+
 		long state1 = comStack.popLong();
 		int tidx1 = comStack.popInt();
 		long loc1 = comStack.popLong();
@@ -544,7 +549,7 @@ public class LiveWorker implements Callable<Boolean> {
 		}
 
 		// Now, we know we are working on a non-trivial component
-		// We first put all the nodes in this component in a hashtable. 
+		// We first put all the nodes in this component in a hashtable.
 		// The nodes in this component do not correspond to
 		// all elements on the comStack though. Only the nodes up to
 		// the given one are copied to NodePtrTable.
@@ -606,7 +611,7 @@ public class LiveWorker implements Callable<Boolean> {
 		// node's hash in TableauNodePtrTbl) and not in the order given by
 		// comStack. This is fine because the all checks have been evaluated
 		// eagerly during insertion into the liveness graph long before the
-		// SCC search started. Thus, the code here only has to check the 
+		// SCC search started. Thus, the code here only has to check the
 		// check results which can happen in any order.
 		final int tsz = com.getSize();
 		for (int ci = 0; ci < tsz; ci++) {
@@ -617,7 +622,8 @@ public class LiveWorker implements Callable<Boolean> {
 			}
 
 			state1 = TableauNodePtrTable.getKey(nodes);
-			for (int nidx = 2; nidx < nodes.length; nidx += com.getElemLength()) { // nidx starts with 2 because [0][1] are the long fingerprint state1. 
+			for (int nidx = 2; nidx < nodes.length; nidx += com.getElemLength()) { // nidx starts with 2 because [0][1]
+																					// are the long fingerprint state1.
 				tidx1 = TableauNodePtrTable.getTidx(nodes, nidx);
 				loc1 = TableauNodePtrTable.getElem(nodes, nidx);
 
@@ -629,7 +635,7 @@ public class LiveWorker implements Callable<Boolean> {
 					// once it was true. It only matters if one state in com
 					// satisfies PEM's liveness property due to []<>~p (which is
 					// the inversion of <>[]p).
-					// 
+					//
 					// It obviously has to check all nodes in the component
 					// (com) if either of them violates AEState unless all
 					// elements of AEStateRes are true. From that point onwards,
@@ -646,14 +652,15 @@ public class LiveWorker implements Callable<Boolean> {
 
 				// Check AEAction: A TLA+ action represents the relationship
 				// between the current node and a successor state. The current
-				// node has n successor states. For each pair, see iff the 
+				// node has n successor states. For each pair, see iff the
 				// successor is in the "com" NodePtrTablecheck, check actions
 				// and store the results in AEActionRes(ult). Note that the
 				// actions have long been checked in advance when the node was
 				// added to the graph and the actual state and not just its
 				// fingerprint was available. Here, the result is just being
 				// looked up.
-				final int succCnt = aealen > 0 ? curNode.succSize() : 0; // No point in looping successors if there are no AEActions to check on them.
+				final int succCnt = aealen > 0 ? curNode.succSize() : 0; // No point in looping successors if there are
+																			// no AEActions to check on them.
 				for (int i = 0; i < succCnt; i++) {
 					final long nextState = curNode.getStateFP(i);
 					final int nextTidx = curNode.getTidx(i);
@@ -677,8 +684,8 @@ public class LiveWorker implements Callable<Boolean> {
 					// transition A from s -> t will be incorrectly traversed here unless it is
 					// skipped (again). Not skipping the transition A will result in TLC reporting a
 					// (bogus) counterexample even if the liveness is not violated.
-					// 
-					// Consider the spec BT for which TLC incorrectly reports a liveness property 
+					//
+					// Consider the spec BT for which TLC incorrectly reports a liveness property
 					// violation and prints a bogus counterexample:
 					//
 					// ---- BT -----
@@ -698,12 +705,13 @@ public class LiveWorker implements Callable<Boolean> {
 					// > x = 1
 					// > 1: Back to state: <B line xx... BT>
 					//
-					// (see tlc2.tool.BidirectionalTransitions1Test and BidirectionalTransitions2Test)
-					if(!curNode.getCheckAction(slen, alen, i, eaaction)) {
+					// (see tlc2.tool.BidirectionalTransitions1Test and
+					// BidirectionalTransitions2Test)
+					if (!curNode.getCheckAction(slen, alen, i, eaaction)) {
 						continue;
 					}
 					for (int j = 0; j < aealen; j++) {
-						// Only set false to true, but never true to false. 
+						// Only set false to true, but never true to false.
 						if (!AEActionRes[j]) {
 							final int idx = this.pem.AEAction[j];
 							AEActionRes[j] = curNode.getCheckAction(slen, alen, i, idx);
@@ -737,22 +745,25 @@ public class LiveWorker implements Callable<Boolean> {
 		// or promiseRes booleans is false.
 		for (int i = 0; i < aeslen; i++) {
 			if (!AEStateRes[i]) {
-//				writeDotViz(state, tidx, com, new java.io.File(liveCheck.getMetaDir() + java.io.File.separator
-//						+ "pValidSCC" + System.currentTimeMillis() + ".dot"));
+				// writeDotViz(state, tidx, com, new java.io.File(liveCheck.getMetaDir() +
+				// java.io.File.separator
+				// + "pValidSCC" + System.currentTimeMillis() + ".dot"));
 				return true;
 			}
 		}
 		for (int i = 0; i < aealen; i++) {
 			if (!AEActionRes[i]) {
-//				writeDotViz(state, tidx, com, new java.io.File(liveCheck.getMetaDir() + java.io.File.separator
-//						+ "pValidSCC" + System.currentTimeMillis() + ".dot"));
+				// writeDotViz(state, tidx, com, new java.io.File(liveCheck.getMetaDir() +
+				// java.io.File.separator
+				// + "pValidSCC" + System.currentTimeMillis() + ".dot"));
 				return true;
 			}
 		}
 		for (int i = 0; i < plen; i++) {
 			if (!promiseRes[i]) {
-//				writeDotViz(state, tidx, com, new java.io.File(liveCheck.getMetaDir() + java.io.File.separator
-//						+ "pValidSCC" + System.currentTimeMillis() + ".dot"));
+				// writeDotViz(state, tidx, com, new java.io.File(liveCheck.getMetaDir() +
+				// java.io.File.separator
+				// + "pValidSCC" + System.currentTimeMillis() + ".dot"));
 				return true;
 			}
 		}
@@ -804,35 +815,39 @@ public class LiveWorker implements Callable<Boolean> {
 	 *      sketch.
 	 * @see tlc2.tool.liveness.ErrorTraceConstructionTest which runs a spec that
 	 *      exemplifies the three staged error trace composition
-	 *      
+	 * 
 	 * @param state
-	 *            fingerprint of the state which is the "starting" state of the
-	 *            SCC in nodeTbl.
+	 *                fingerprint of the state which is the "starting" state of the
+	 *                SCC in nodeTbl.
 	 * @param tidx
-	 *            tableau index pointing to the {@link TBGraph}. Corresponds to
-	 *            the state fingerprint. Combined <<state, tidx>> unique
-	 *            identify a node in the liveness/behavior graph.
+	 *                tableau index pointing to the {@link TBGraph}. Corresponds to
+	 *                the state fingerprint. Combined <<state, tidx>> unique
+	 *                identify a node in the liveness/behavior graph.
 	 * @param nodeTbl
-	 *            The current SCC which is known to satisfy the
-	 *            {@link PossibleErrorModel} and thus violates the liveness
-	 *            properties.
-	 * @throws ExecutionException 
-	 * @throws InterruptedException 
+	 *                The current SCC which is known to satisfy the
+	 *                {@link PossibleErrorModel} and thus violates the liveness
+	 *                properties.
+	 * @throws ExecutionException
+	 * @throws InterruptedException
 	 */
-	private void printTrace(ITool tool, final long state, final int tidx, final TableauNodePtrTable nodeTbl) throws IOException, InterruptedException, ExecutionException {
-//		writeDotViz(state, tidx, nodeTbl, new java.io.File(liveCheck.getMetaDir() + java.io.File.separator
-//				+ "pSatisfiableSCC_" + System.currentTimeMillis() + ".dot"));
+	private void printTrace(ITool tool, final long state, final int tidx, final TableauNodePtrTable nodeTbl)
+			throws IOException, InterruptedException, ExecutionException {
+		// writeDotViz(state, tidx, nodeTbl, new java.io.File(liveCheck.getMetaDir() +
+		// java.io.File.separator
+		// + "pSatisfiableSCC_" + System.currentTimeMillis() + ".dot"));
 
 		MP.printError(EC.TLC_TEMPORAL_PROPERTY_VIOLATED);
 		MP.printError(EC.TLC_COUNTER_EXAMPLE);
-		
+
 		/*
 		 * Use a dedicated thread to concurrently search a prefix-path from some
 		 * initial node to the state identified by <<state, tidx>>.
 		 */
 		final ExecutorService executor = Executors.newFixedThreadPool(1);
 		final Future<List<TLCStateInfo>> future = executor.submit(new Callable<List<TLCStateInfo>>() {
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see java.util.concurrent.Callable#call()
 			 */
 			public List<TLCStateInfo> call() throws Exception {
@@ -844,7 +859,7 @@ public class LiveWorker implements Callable<Boolean> {
 				final List<TLCStateInfo> states = new ArrayList<TLCStateInfo>(plen);
 
 				// Recover the initial state:
-				//TODO This throws an ArrayIndexOutOfBounds if getPath returned a
+				// TODO This throws an ArrayIndexOutOfBounds if getPath returned a
 				// LongVec with just a single element. This happens when the parameter
 				// state is one of the init states already.
 				long fp = prefix.elementAt(plen - 1);
@@ -865,7 +880,7 @@ public class LiveWorker implements Callable<Boolean> {
 					// <<fp2,fp1>> though.
 					if (curFP != fp) {
 						sinfo = tool.getState(curFP, sinfo);
-						states.add(sinfo);	
+						states.add(sinfo);
 						fp = curFP;
 					}
 				}
@@ -886,7 +901,7 @@ public class LiveWorker implements Callable<Boolean> {
 		 */
 		final MemIntStack cycleStack = new MemIntStack(liveCheck.getMetaDir(), "cycle");
 		GraphNode curNode = dfsPostFix(state, tidx, nodeTbl, cycleStack);
-		
+
 		/*
 		 * If the cycle is not closed/completed (complete when startState ==
 		 * state), continue from the curNode at which the previous while loop
@@ -908,7 +923,7 @@ public class LiveWorker implements Callable<Boolean> {
 			// when the actual states get printed. See Test3.tla for reason why.
 			long fp = cycleStack.popLong();
 			if (postfix.isEmpty() || postfix.lastElement() != fp) {
-				// See comment 4723xdf below.  This here just a minor optimization.
+				// See comment 4723xdf below. This here just a minor optimization.
 				postfix.addElement(fp);
 			}
 			cycleStack.popInt(); // ignore tableau idx. The tableau idx is
@@ -931,10 +946,10 @@ public class LiveWorker implements Callable<Boolean> {
 			}
 			throw ee;
 		}
-		
+
 		/*
 		 * At this point everything from the initial state up to the start state
-		 * of the SCC has been printed. Now, print cycleState and the  states in
+		 * of the SCC has been printed. Now, print cycleState and the states in
 		 * postfix. Obtain the last state from the prefix (which corresponds to
 		 * <<state, tidx>>) to use it to generate the next state. Obviously, we
 		 * have to wait for the prefix thread to be done for two reasons: a) the
@@ -943,7 +958,7 @@ public class LiveWorker implements Callable<Boolean> {
 		 */
 		final TLCStateInfo cycleState = states.get(states.size() - 1);
 		TLCStateInfo sinfo = cycleState;
-		
+
 		// 4723xdf:
 		// Only print the state if it differs from its predecessor. We don't
 		// want to print an identical state twice. This can happen if the
@@ -957,7 +972,7 @@ public class LiveWorker implements Callable<Boolean> {
 					cycleState.state, () -> new ArrayList<>(states)));
 		} else {
 			postfix.pack().removeLastIf(cycleState.fingerPrint());
-			
+
 			for (int i = postfix.size() - 1; i >= 0; i--) {
 				final long curFP = postfix.elementAt(i);
 				TLCStateInfo sucinfo = tool.getState(curFP, sinfo);
@@ -970,12 +985,14 @@ public class LiveWorker implements Callable<Boolean> {
 					() -> new ArrayList<>(states)));
 		}
 
-		/* All error trace states have been printed (prefix + cycleStack +
+		/*
+		 * All error trace states have been printed (prefix + cycleStack +
 		 * postfix). What is left is to print either the stuttering or the
 		 * back-to-cyclePos marker.
-		 */ 
-		
-		final int stateNumber = (int) cycleState.stateNumber; // if the cast causes problems the trace won't be comprehensible anyway.
+		 */
+
+		final int stateNumber = (int) cycleState.stateNumber; // if the cast causes problems the trace won't be
+																// comprehensible anyway.
 		if (sinfo.fingerPrint() == cycleState.fingerPrint()) {
 			StatePrinter.printStutteringState(stateNumber);
 			if (!this.oos.hasEmptyPEMAndBoxFreePromises()) {
@@ -995,8 +1012,9 @@ public class LiveWorker implements Callable<Boolean> {
 			assert tool.getViewSpec() != null || cycleState.state.equals(sinfo.state);
 			StatePrinter.printBackToState(sinfo, stateNumber);
 		}
-		
-		tool.getDebugger().checkPostConditionWithCounterExample(new CounterExample(states, sinfo.getAction(), stateNumber));
+
+		tool.getDebugger()
+				.checkPostConditionWithCounterExample(new CounterExample(states, sinfo.getAction(), stateNumber));
 	}
 
 	// BFS search
@@ -1005,11 +1023,11 @@ public class LiveWorker implements Callable<Boolean> {
 		final int slen = this.oos.getCheckState().length;
 		final int alen = this.oos.getCheckAction().length;
 		final int[] eaaction = this.pem.EAAction;
-		
+
 		final LongVec postfix = new LongVec(16);
 		final long startState = curNode.stateFP;
 		final long startTidx = curNode.tindex;
-		
+
 		// B)
 		if (startState != state || startTidx != tidx) {
 			final MemIntQueue queue = new MemIntQueue(liveCheck.getMetaDir(), null);
@@ -1045,20 +1063,20 @@ public class LiveWorker implements Callable<Boolean> {
 						// Ignore self-loop because it cannot close the
 						// cycle/lasso. The seen state flag partially
 						// prevents exploring self-loops, but only if
-						// the tableau idx is the base idx (the seen 
+						// the tableau idx is the base idx (the seen
 						// flag ignores the tableau idx entirely).
 						if (curState == nextState && curTidx == nextTidx) {
 							assert TableauNodePtrTable.isSeen(nodes);
 							continue SUCCESSORS;
 						}
-						
+
 						// Prevent bogus counterexample: Do not close the loop by taking an action which
 						// does not satisfy the PossibleErrorModel (read more about it on line 640 in
 						// checkComponent).
-						if(!curNode.getCheckAction(slen, alen, j, eaaction)) {
+						if (!curNode.getCheckAction(slen, alen, j, eaaction)) {
 							continue;
 						}
-						
+
 						if (nextState == state && nextTidx == tidx) {
 							// We have found a path from startState to state,
 							// now backtrack the path the outer loop took to get
@@ -1098,7 +1116,8 @@ public class LiveWorker implements Callable<Boolean> {
 		return postfix;
 	}
 
-	private GraphNode dfsPostFix(final long state, final int tidx, final TableauNodePtrTable nodeTbl, final MemIntStack cycleStack) throws IOException {
+	private GraphNode dfsPostFix(final long state, final int tidx, final TableauNodePtrTable nodeTbl,
+			final MemIntStack cycleStack) throws IOException {
 		// First, find a "bad" cycle from the "bad" scc.
 		final int slen = this.oos.getCheckState().length;
 		final int alen = this.oos.getCheckAction().length;
@@ -1175,7 +1194,7 @@ public class LiveWorker implements Callable<Boolean> {
 						// Prevent bogus counterexample: Do not close the loop by taking an action which
 						// does not satisfy the PossibleErrorModel (read more about it on line 640 in
 						// checkComponent).
-						if(!curNode.getCheckAction(slen, alen, i, eaaction)) {
+						if (!curNode.getCheckAction(slen, alen, i, eaaction)) {
 							continue;
 						}
 						// <nextState, nextTidx> is in nodeTbl.
@@ -1254,13 +1273,13 @@ public class LiveWorker implements Callable<Boolean> {
 				TableauNodePtrTable.setSeen(nodes2, tloc2);
 			}
 		}
-		// All the conditions are satisfied. 
+		// All the conditions are satisfied.
 		// 1. curNode has not been pushed on cycleStack.
 		// 2. nodeTbl is trashed after this operation, thus reset. Trashed means
 		// that some nodes are still marked seen being left-overs from the
 		// Depth-First search.
 		nodeTbl.resetElems();
-		
+
 		return curNode;
 	}
 
@@ -1314,7 +1333,8 @@ public class LiveWorker implements Callable<Boolean> {
 			}
 
 			long state1 = TableauNodePtrTable.getKey(nodes);
-			for (int nidx = 2; nidx < nodes.length; nidx += tnpt.getElemLength()) { // nidx starts with 2 because [0][1] are the long fingerprint state1. 
+			for (int nidx = 2; nidx < nodes.length; nidx += tnpt.getElemLength()) { // nidx starts with 2 because [0][1]
+																					// are the long fingerprint state1.
 				int tidx1 = TableauNodePtrTable.getTidx(nodes, nidx);
 				long loc1 = TableauNodePtrTable.getElem(nodes, nidx);
 
@@ -1323,13 +1343,16 @@ public class LiveWorker implements Callable<Boolean> {
 						oos.getCheckAction().length, tnpt, oos));
 			}
 		}
-		
+
 		sb.append("}");
 		return sb.toString();
 	}
-	
+
 	/**
-	 * Write the output of {@link LiveWorker#toDotViz(long, int, TableauNodePtrTable)} to the given file.
+	 * Write the output of
+	 * {@link LiveWorker#toDotViz(long, int, TableauNodePtrTable)} to the given
+	 * file.
+	 * 
 	 * @param state
 	 * @param tidx
 	 * @param tnpt
@@ -1340,7 +1363,7 @@ public class LiveWorker implements Callable<Boolean> {
 		if (tnpt.size() <= 1) {
 			return;
 		}
-		
+
 		try {
 			final java.io.BufferedWriter bwr = new java.io.BufferedWriter(new java.io.FileWriter(file));
 
@@ -1356,33 +1379,33 @@ public class LiveWorker implements Callable<Boolean> {
 			e.printStackTrace();
 		}
 	}
-	
-  	/*
+
+	/*
 	 * The detailed formatter below can be activated in Eclipse's variable view
 	 * by choosing "New detailed formatter" from the MemIntQueue context menu.
 	 * Insert "LiveWorker.DetailedFormatter.toString(this);".
 	 */
-  	public static class DetailedFormatter {
-  		public static String toString(final MemIntStack comStack) {
-  			final int size = (int) comStack.size();
+	public static class DetailedFormatter {
+		public static String toString(final MemIntStack comStack) {
+			final int size = (int) comStack.size();
 			final StringBuffer buf = new StringBuffer(size / 5);
-  			for (int i = 0; i < comStack.size(); i+=5) {
-  				long loc = comStack.peakLong(size - i - 5);
-  				int tidx = comStack.peakInt(size - i - 3);
-  				long state = comStack.peakLong(size - i - 2);
-  				buf.append("state: ");
-  				buf.append(state);
-  				buf.append(" tidx: ");
-  				buf.append(tidx);
-  				buf.append(" loc: ");
-  				buf.append(loc);
-  				buf.append("\n");
-  			}
- 			return buf.toString();
-  		}
-  	}
+			for (int i = 0; i < comStack.size(); i += 5) {
+				long loc = comStack.peakLong(size - i - 5);
+				int tidx = comStack.peakInt(size - i - 3);
+				long state = comStack.peakLong(size - i - 2);
+				buf.append("state: ");
+				buf.append(state);
+				buf.append(" tidx: ");
+				buf.append(tidx);
+				buf.append(" loc: ");
+				buf.append(loc);
+				buf.append("\n");
+			}
+			return buf.toString();
+		}
+	}
 
-  	/*
+	/*
 	 * The detailed formatter below can be activated in Eclipse's variable view
 	 * by choosing "New detailed formatter" from the MemIntQueue context menu.
 	 * Insert "LiveWorker.DFSStackDetailedFormatter.toString(this);".
@@ -1393,49 +1416,50 @@ public class LiveWorker implements Callable<Boolean> {
 	 * states atomically. If called during a node is only partially pushed onto
 	 * the stack, the detailed formatter will crash.
 	 */
-  	public static class DFSStackDetailedFormatter {
-  		public static String toString(final MemIntStack dfsStack) {
-  			final int size = (int) dfsStack.size();
-			final StringBuffer buf = new StringBuffer(size / 7); // approximate the size needed (buf will grow or shrink if needed)
-  			int i = 0;
-  			for (; i < dfsStack.size();) {
-  				// Peak element to see if it's a marker or not
-  				final long topElement = dfsStack.peakLong(size - i - 2);
-  				if (topElement == SCC_MARKER) {
-  					// It is the marker element
-  	  				buf.append("node [");
-  	  				buf.append(" fp: ");
-  	  				buf.append(dfsStack.peakLong(size - i - 5));
-  	  				buf.append(" tidx: ");
-  	  				buf.append(dfsStack.peakInt(size - i - 3));
-  	  				buf.append(" lowLink: ");
-  	  				buf.append(dfsStack.peakLong(size - i - 7) - DiskGraph.MAX_PTR);
-  	  				buf.append("]\n");
-  	  				// Increase i by the number of elements peaked
-  	  				i += 7;
-  				} else if (DiskGraph.isFilePointer(topElement)) {
-  					final long location = topElement;
-  	  				buf.append("succ [");
-  	  				buf.append(" fp: ");
-  	  				buf.append(dfsStack.peakLong(size - i - 5));
-  	  				buf.append(" tidx: ");
-  	  				buf.append(dfsStack.peakInt(size - i - 3));
-  	  				buf.append(" location: ");
-  	  				buf.append(location);
-  	  				buf.append("]\n");
-  	  				// Increase i by the number of elements peaked
-  	  				i += 5;
-  				} else if (topElement >= DiskGraph.MAX_PTR) {
-  					final long pLowLink = topElement - DiskGraph.MAX_PTR;
-  	  				buf.append("pLowLink: ");
-  	  				buf.append(pLowLink);
-  	  				buf.append("\n");
-  					i += 2;
-  				}
-  			}
-  			// Assert all elements are used up
-  			assert i == size;
- 			return buf.toString();
-  		}
-  	}
+	public static class DFSStackDetailedFormatter {
+		public static String toString(final MemIntStack dfsStack) {
+			final int size = (int) dfsStack.size();
+			final StringBuffer buf = new StringBuffer(size / 7); // approximate the size needed (buf will grow or shrink
+																	// if needed)
+			int i = 0;
+			for (; i < dfsStack.size();) {
+				// Peak element to see if it's a marker or not
+				final long topElement = dfsStack.peakLong(size - i - 2);
+				if (topElement == SCC_MARKER) {
+					// It is the marker element
+					buf.append("node [");
+					buf.append(" fp: ");
+					buf.append(dfsStack.peakLong(size - i - 5));
+					buf.append(" tidx: ");
+					buf.append(dfsStack.peakInt(size - i - 3));
+					buf.append(" lowLink: ");
+					buf.append(dfsStack.peakLong(size - i - 7) - DiskGraph.MAX_PTR);
+					buf.append("]\n");
+					// Increase i by the number of elements peaked
+					i += 7;
+				} else if (DiskGraph.isFilePointer(topElement)) {
+					final long location = topElement;
+					buf.append("succ [");
+					buf.append(" fp: ");
+					buf.append(dfsStack.peakLong(size - i - 5));
+					buf.append(" tidx: ");
+					buf.append(dfsStack.peakInt(size - i - 3));
+					buf.append(" location: ");
+					buf.append(location);
+					buf.append("]\n");
+					// Increase i by the number of elements peaked
+					i += 5;
+				} else if (topElement >= DiskGraph.MAX_PTR) {
+					final long pLowLink = topElement - DiskGraph.MAX_PTR;
+					buf.append("pLowLink: ");
+					buf.append(pLowLink);
+					buf.append("\n");
+					i += 2;
+				}
+			}
+			// Assert all elements are used up
+			assert i == size;
+			return buf.toString();
+		}
+	}
 }

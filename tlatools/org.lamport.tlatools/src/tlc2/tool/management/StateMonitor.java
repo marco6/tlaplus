@@ -54,14 +54,15 @@ import tlc2.tool.distributed.management.TLCStatisticsMXBean;
  */
 public class StateMonitor {
 
-	private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //$NON-NLS-1$ 
+	private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //$NON-NLS-1$
 
-	public static void main(String[] args) throws IOException, MalformedObjectNameException, InterruptedException, AttachNotSupportedException {
+	public static void main(String[] args)
+			throws IOException, MalformedObjectNameException, InterruptedException, AttachNotSupportedException {
 		int interval = 10; // 10sec interval by default
 		if (args.length == 1) {
 			interval = Integer.valueOf(args[0]);
 		}
-		
+
 		JMXServiceURL url = null;
 		try {
 			final List<VirtualMachineDescriptor> vmds = com.sun.tools.attach.VirtualMachine.list();
@@ -80,7 +81,7 @@ public class StateMonitor {
 					return 0;
 				}
 			});
-			
+
 			int index = 1;
 			try (Scanner scanner = new Scanner(System.in)) {
 				rd: while (true) {
@@ -92,7 +93,7 @@ public class StateMonitor {
 					System.out.printf("Please select the number of the Java VM running TLC to connect to:\n");
 					if (scanner.hasNextInt()) {
 						index = scanner.nextInt();
-						
+
 						// Check index is within bounds.
 						if (index >= 1 && index <= vmds.size()) {
 							break rd;
@@ -117,7 +118,7 @@ public class StateMonitor {
 			url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + args[0] + "/jmxrmi");
 			System.out.printf("Connecting to TLC running at %s.\n(Hit Ctrl+c to terminate)\n", url);
 		}
-		
+
 		final JMXConnector jmxConnector = JMXConnectorFactory.connect(url);
 		final MBeanServerConnection mbeanServerConnection = jmxConnector.getMBeanServerConnection();
 		// ObjectName should be same as your MBean name
@@ -131,8 +132,8 @@ public class StateMonitor {
 			System.out.printf("############ %s ############\n%s", SDF.format(new Date()), mbeanProxy.getCurrentState());
 			Thread.sleep(interval * 1000L);
 		}
-		
+
 		// No need to close the connection because JVM itself terminates.
-		//jmxConnector.close();
+		// jmxConnector.close();
 	}
 }

@@ -41,7 +41,7 @@ public class April21Test extends ModelCheckerTestCase {
 	public April21Test() {
 		super("April21MC", "symmetry");
 	}
-	
+
 	@Test
 	@Ignore("Ignored for as long as symmetry is incorrectly handled by TLC with liveness checking.")
 	public void testSpec() {
@@ -51,7 +51,7 @@ public class April21Test extends ModelCheckerTestCase {
 		// Assert TLC has found a temporal violation and a counter example
 		assertTrue(recorder.recorded(EC.TLC_TEMPORAL_PROPERTY_VIOLATED));
 		assertTrue(recorder.recorded(EC.TLC_COUNTER_EXAMPLE));
-		
+
 		// Assert the error trace
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
 		final List<String> expectedTrace = new ArrayList<String>(2);

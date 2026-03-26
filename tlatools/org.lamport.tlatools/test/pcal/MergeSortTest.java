@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class MergeSortTest extends PCalModelCheckerTestCase {
 
 	public MergeSortTest() {
-		super("MergeSort", "pcal", new String[] {"-wf", "-termination"});
+		super("MergeSort", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test
@@ -46,35 +46,43 @@ public class MergeSortTest extends PCalModelCheckerTestCase {
 		assertFalse(recorder.recorded(EC.GENERAL));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "86", "80", "0"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "18"));
-		assertUncovered("line 162, col 32 to line 162, col 61 of module MergeSort: 0\n" + 
-				"line 178, col 32 to line 178, col 61 of module MergeSort: 0\n" + 
+		assertUncovered("line 162, col 32 to line 162, col 61 of module MergeSort: 0\n" +
+				"line 178, col 32 to line 178, col 61 of module MergeSort: 0\n" +
 				"line 179, col 32 to line 179, col 37 of module MergeSort: 0");
 	}
 }
 /*
-C:\lamport\tla\pluscal>java -mx1000m -cp "c:/lamport/tla/newtools/tla2-inria-workspace/tla2-inria/tlatools/class" tlc2.TLC -cleanup MergeSort.tla         
-TLC2 Version 2.05 of 18 May 2012
-Running in Model-Checking mode.
-Parsing file MergeSort.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\Naturals.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\Sequences.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\TLC.tla
-Semantic processing of module Naturals
-Semantic processing of module Sequences
-Semantic processing of module TLC
-Semantic processing of module MergeSort
-Starting... (2012-08-10 17:38:17)
-Implied-temporal checking--satisfiability problem has 1 branches.
-<<"Testing Mergesort on all arrays of length <= ", 2>>  TRUE
-Computing initial states...
-Finished computing initial states: 6 distinct states generated.
-Checking temporal properties for the complete state space...
-Model checking completed. No error has been found.
-  Estimates of the probability that TLC did not check all reachable states
-  because two distinct states had the same fingerprint:
-  calculated (optimistic):  val = 2.6E-17
-  based on the actual fingerprints:  val = 1.6E-16
-86 states generated, 80 distinct states found, 0 states left on queue.
-The depth of the complete state graph search is 18.
-Finished. (2012-08-10 17:38:17)
-*/
+ * C:\lamport\tla\pluscal>java -mx1000m -cp
+ * "c:/lamport/tla/newtools/tla2-inria-workspace/tla2-inria/tlatools/class"
+ * tlc2.TLC -cleanup MergeSort.tla
+ * TLC2 Version 2.05 of 18 May 2012
+ * Running in Model-Checking mode.
+ * Parsing file MergeSort.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\Naturals.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\Sequences.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\TLC.tla
+ * Semantic processing of module Naturals
+ * Semantic processing of module Sequences
+ * Semantic processing of module TLC
+ * Semantic processing of module MergeSort
+ * Starting... (2012-08-10 17:38:17)
+ * Implied-temporal checking--satisfiability problem has 1 branches.
+ * <<"Testing Mergesort on all arrays of length <= ", 2>> TRUE
+ * Computing initial states...
+ * Finished computing initial states: 6 distinct states generated.
+ * Checking temporal properties for the complete state space...
+ * Model checking completed. No error has been found.
+ * Estimates of the probability that TLC did not check all reachable states
+ * because two distinct states had the same fingerprint:
+ * calculated (optimistic): val = 2.6E-17
+ * based on the actual fingerprints: val = 1.6E-16
+ * 86 states generated, 80 distinct states found, 0 states left on queue.
+ * The depth of the complete state graph search is 18.
+ * Finished. (2012-08-10 17:38:17)
+ */

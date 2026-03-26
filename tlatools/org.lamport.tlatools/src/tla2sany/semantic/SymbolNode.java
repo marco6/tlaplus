@@ -23,15 +23,15 @@ import util.UniqueString;
 ***************************************************************************/
 
 /***************************************************************************
-* An object of superclass SymbolNode seems to represent something that     *
-* defines or declares a symbol, and hence might appear in a SymbolTable.   *
-* The constructors for these objects take a SymbolTable st as an argument  *
-* and, if st is non-null, call st.addSymbol to put the symbol in the       *
-* SymbolTable st.                                                          *
-***************************************************************************/
+ * An object of superclass SymbolNode seems to represent something that *
+ * defines or declares a symbol, and hence might appear in a SymbolTable. *
+ * The constructors for these objects take a SymbolTable st as an argument *
+ * and, if st is non-null, call st.addSymbol to put the symbol in the *
+ * SymbolTable st. *
+ ***************************************************************************/
 public abstract class SymbolNode extends LevelNode {
 
-  protected final UniqueString name;    // the name of this symbol
+  protected final UniqueString name; // the name of this symbol
 
   protected SymbolNode(int kind, TreeNode stn, UniqueString name) {
     super(kind, stn);
@@ -43,13 +43,15 @@ public abstract class SymbolNode extends LevelNode {
    * the symbol being declared or defined. For example, if this node
    * is an operator definition:
    *
-   *   Foo(a, b) == a*b
+   * Foo(a, b) == a*b
    *
    * getName() is the UniqueString for "Foo".
    */
-  public final UniqueString getName() { return this.name; }
+  public final UniqueString getName() {
+    return this.name;
+  }
 
-  /* Returns the arity of the operator named by the symbol.  */
+  /* Returns the arity of the operator named by the symbol. */
   public abstract int getArity();
 
   /**
@@ -62,93 +64,95 @@ public abstract class SymbolNode extends LevelNode {
    * Returns true iff the OpApplNode test has the proper types of
    * arguments for the operator as declared in module mn.
    */
-  public abstract boolean match(OpApplNode test, ModuleNode mn, Errors errors) throws AbortException ;
+  public abstract boolean match(OpApplNode test, ModuleNode mn, Errors errors) throws AbortException;
 
   public final boolean occur(SymbolNode[] params) {
     for (int i = 0; i < params.length; i++) {
-      if (this == params[i]) return true;
+      if (this == params[i])
+        return true;
     }
     return false;
   }
 
   public final boolean isParam() {
     return (this instanceof OpDeclNode ||
-	    this instanceof FormalParamNode);
+        this instanceof FormalParamNode);
   }
-  
+
   public String getSignature() {
-	  return getName().toString();
+    return getName().toString();
   }
 
   /**
    * Returns true iff this node and otherNode are both OpDefOrDeclNode objects or
    * both ThmOrAssumpDefNode objects and have the same originallyDefinedInModule
-   * field.  Added by LL on 31 Oct 2012.
+   * field. Added by LL on 31 Oct 2012.
    *
    * Corrected by LL on 1 Nov 2012 by (a) using the originallyDefinedInModule for
    * the source definitions (returned by getSource()), and by adding requirement
    * that their module of origin has no parameters.
    *
    * This method is used to check that two instantiations of a definition
-   * are the same.  They may not be if the two instantiations of their module have different
-   * substitutions for parameters.  To check that the substitutions are the same
-   * would be difficult, so we require that the module has no parameters.  This covers
+   * are the same. They may not be if the two instantiations of their module have
+   * different
+   * substitutions for parameters. To check that the substitutions are the same
+   * would be difficult, so we require that the module has no parameters. This
+   * covers
    * the common case when the definitions come from a standard module.
    *
    * @param otherNode
    * @return
    */
   public final boolean sameOriginallyDefinedInModule(SymbolNode otherNode) {
-      if (this.getClass() == otherNode.getClass()) {
-          ModuleNode thisModule = null ;
-          if (this instanceof OpDefNode) {
-              OpDefNode thisSrc = ((OpDefNode) this).getSource() ;
-              if (thisSrc != ((OpDefNode) otherNode).getSource()) {
-                  return false;
-              }
-              thisModule  = ((OpDefNode) thisSrc).getOriginallyDefinedInModuleNode();
-          }
-          else if (this instanceof ThmOrAssumpDefNode) {
-              ThmOrAssumpDefNode thisSrc = ((ThmOrAssumpDefNode) this).getSource() ;
-              if (thisSrc != ((ThmOrAssumpDefNode) otherNode).getSource()) {
-                  return false;
-              }
-              thisModule  = ((ThmOrAssumpDefNode) thisSrc).getOriginallyDefinedInModuleNode();
-          }
-          else {
-              return false;
-          }
-
-          return   (thisModule == null)
-                || (   (thisModule.getConstantDecls().length == 0)
-                    && (thisModule.getVariableDecls().length == 0)) ;
+    if (this.getClass() == otherNode.getClass()) {
+      ModuleNode thisModule = null;
+      if (this instanceof OpDefNode) {
+        OpDefNode thisSrc = ((OpDefNode) this).getSource();
+        if (thisSrc != ((OpDefNode) otherNode).getSource()) {
+          return false;
+        }
+        thisModule = ((OpDefNode) thisSrc).getOriginallyDefinedInModuleNode();
+      } else if (this instanceof ThmOrAssumpDefNode) {
+        ThmOrAssumpDefNode thisSrc = ((ThmOrAssumpDefNode) this).getSource();
+        if (thisSrc != ((ThmOrAssumpDefNode) otherNode).getSource()) {
+          return false;
+        }
+        thisModule = ((ThmOrAssumpDefNode) thisSrc).getOriginallyDefinedInModuleNode();
+      } else {
+        return false;
       }
-      return false ; // The compiler doesn't realize this is unreachable.
+
+      return (thisModule == null)
+          || ((thisModule.getConstantDecls().length == 0)
+              && (thisModule.getVariableDecls().length == 0));
+    }
+    return false; // The compiler doesn't realize this is unreachable.
   }
 
-
-  /** TL
+  /**
+   * TL
    * Symbol nodes are exported using their names only. Within a context element,
    * we want to expand their whole definitions and are using this method
    * we need to add location and level information here.
    */
-  public Element exportDefinition(Document doc, tla2sany.xml.SymbolContext context, BiPredicate<SemanticNode, SemanticNode> filter) {
+  public Element exportDefinition(Document doc, tla2sany.xml.SymbolContext context,
+      BiPredicate<SemanticNode, SemanticNode> filter) {
     if (!context.isTop_level_entry())
-      throw new IllegalArgumentException("Exporting definition "+getName()+" ref "+getNodeRef()+" twice!");
+      throw new IllegalArgumentException("Exporting definition " + getName() + " ref " + getNodeRef() + " twice!");
     context.resetTop_level_entry();
     try {
       Element e = getSymbolElement(doc, context, filter);
       // level
       try {
-        Element l = appendText(doc,"level",Integer.toString(getLevel()));
-        e.insertBefore(l,e.getFirstChild());
+        Element l = appendText(doc, "level", Integer.toString(getLevel()));
+        e.insertBefore(l, e.getFirstChild());
       } catch (RuntimeException ee) {
         // not sure it is legal for a LevelNode not to have level, debug it!
       }
-      //location
+      // location
       try {
         Element loc = getLocationElement(doc);
-        e.insertBefore(loc,e.getFirstChild());
+        e.insertBefore(loc, e.getFirstChild());
       } catch (RuntimeException ee) {
         // do nothing if no location
       }
@@ -160,25 +164,32 @@ public abstract class SymbolNode extends LevelNode {
     }
   }
 
-  protected abstract Element getSymbolElement(Document doc, tla2sany.xml.SymbolContext context, BiPredicate<SemanticNode, SemanticNode> filter);
+  protected abstract Element getSymbolElement(Document doc, tla2sany.xml.SymbolContext context,
+      BiPredicate<SemanticNode, SemanticNode> filter);
+
   protected abstract String getNodeRef();
 
-  /** TL
+  /**
+   * TL
    * we also override getLevelElement as it should never be called
    */
-  protected Element getLevelElement(Document doc, tla2sany.xml.SymbolContext context, BiPredicate<SemanticNode, SemanticNode> filter) {
-    throw new UnsupportedOperationException("implementation Error: A symbol node may not be called for its level element.");
+  protected Element getLevelElement(Document doc, tla2sany.xml.SymbolContext context,
+      BiPredicate<SemanticNode, SemanticNode> filter) {
+    throw new UnsupportedOperationException(
+        "implementation Error: A symbol node may not be called for its level element.");
   }
 
-  /** TL
+  /**
+   * TL
    * We override export in order not to export location and level.
    * We only export names.
    */
-  public Element export(Document doc, tla2sany.xml.SymbolContext context, BiPredicate<SemanticNode, SemanticNode> filter) {
+  public Element export(Document doc, tla2sany.xml.SymbolContext context,
+      BiPredicate<SemanticNode, SemanticNode> filter) {
     // first add symbol to context
     context.put(this, doc, filter);
     Element e = doc.createElement(getNodeRef());
-    e.appendChild(appendText(doc,"UID",Integer.toString(myUID)));
+    e.appendChild(appendText(doc, "UID", Integer.toString(myUID)));
     return e;
   }
 }

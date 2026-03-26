@@ -44,13 +44,13 @@ public class DepthFirstErrorTraceTest_TTraceTest extends TTraceModelCheckerTestC
 	public DepthFirstErrorTraceTest_TTraceTest() {
 		super(DepthFirstErrorTraceTest.class, ExitStatus.VIOLATION_SAFETY);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		// ModelChecker has finished and generated the expected amount of states
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
-	
+
 		// Assert the error trace
 		assertFalse(recorder.recorded(EC.TLC_STATE_PRINT1));
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
@@ -62,11 +62,11 @@ public class DepthFirstErrorTraceTest_TTraceTest extends TTraceModelCheckerTestC
 		expectedTrace.add("x = 4");
 		expectedTrace.add("x = 5");
 		expectedTrace.add("x = 6");
-		expectedTrace.add("x = 7");		
-        
-        final List<String> expectedActions = new ArrayList<>();
-        expectedActions.add("<_init line 23, col 5 to line 23, col 24 of module " + getModuleName() + ">");
-        expectedActions.addAll(Collections.nCopies(expectedTrace.size() - 1, 
+		expectedTrace.add("x = 7");
+
+		final List<String> expectedActions = new ArrayList<>();
+		expectedActions.add("<_init line 23, col 5 to line 23, col 24 of module " + getModuleName() + ">");
+		expectedActions.addAll(Collections.nCopies(expectedTrace.size() - 1,
 				"<_next line 27, col 5 to line 31, col 29 of module " + getModuleName() + ">"));
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace, expectedActions);
 		assertZeroUncovered();

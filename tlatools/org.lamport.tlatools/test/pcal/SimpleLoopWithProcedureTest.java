@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class SimpleLoopWithProcedureTest extends PCalModelCheckerTestCase {
 
 	public SimpleLoopWithProcedureTest() {
-		super("SimpleLoopWithProcedure", "pcal", new String[] {"-wf", "-termination"});
+		super("SimpleLoopWithProcedure", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test
@@ -51,108 +51,116 @@ public class SimpleLoopWithProcedureTest extends PCalModelCheckerTestCase {
 	}
 }
 /*
-C:\lamport\tla\pluscal>java -mx1000m -cp "c:/lamport/tla/newtools/tla2-inria-workspace/tla2-inria/tlatools/class" tlc2.TLC -cleanup SimpleLoopWithProcedure.tla         
-TLC2 Version 2.05 of 18 May 2012
-Running in Model-Checking mode.
-Parsing file SimpleLoopWithProcedure.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\Naturals.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\Sequences.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\TLC.tla
-Semantic processing of module Naturals
-Semantic processing of module Sequences
-Semantic processing of module TLC
-Semantic processing of module SimpleLoopWithProcedure
-Starting... (2012-08-10 17:38:38)
-Implied-temporal checking--satisfiability problem has 1 branches.
-Computing initial states...
-Finished computing initial states: 2 distinct states generated.
-0  TRUE
-0  TRUE
-0  TRUE
-0  TRUE
-0  TRUE
-0  TRUE
-0  TRUE
-0  TRUE
-3  TRUE
-3  TRUE
-3  TRUE
-3  TRUE
-4  TRUE
-4  TRUE
-4  TRUE
-4  TRUE
-6  TRUE
-6  TRUE
-6  TRUE
-6  TRUE
-8  TRUE
-8  TRUE
-8  TRUE
-8  TRUE
-9  TRUE
-9  TRUE
-9  TRUE
-9  TRUE
-12  TRUE
-12  TRUE
-12  TRUE
-12  TRUE
-12  TRUE
-12  TRUE
-12  TRUE
-12  TRUE
-16  TRUE
-16  TRUE
-16  TRUE
-16  TRUE
-15  TRUE
-15  TRUE
-15  TRUE
-15  TRUE
-20  TRUE
-20  TRUE
-20  TRUE
-20  TRUE
-18  TRUE
-18  TRUE
-18  TRUE
-18  TRUE
-24  TRUE
-24  TRUE
-24  TRUE
-24  TRUE
-21  TRUE
-21  TRUE
-21  TRUE
-21  TRUE
-28  TRUE
-28  TRUE
-28  TRUE
-28  TRUE
-24  TRUE
-24  TRUE
-24  TRUE
-24  TRUE
-32  TRUE
-32  TRUE
-32  TRUE
-32  TRUE
-27  TRUE
-27  TRUE
-27  TRUE
-27  TRUE
-36  TRUE
-36  TRUE
-36  TRUE
-36  TRUE
-Checking temporal properties for the complete state space...
-Model checking completed. No error has been found.
-  Estimates of the probability that TLC did not check all reachable states
-  because two distinct states had the same fingerprint:
-  calculated (optimistic):  val = 6.9E-18
-  based on the actual fingerprints:  val = 8.3E-16
-66 states generated, 64 distinct states found, 0 states left on queue.
-The depth of the complete state graph search is 32.
-Finished. (2012-08-10 17:38:39)
-*/
+ * C:\lamport\tla\pluscal>java -mx1000m -cp
+ * "c:/lamport/tla/newtools/tla2-inria-workspace/tla2-inria/tlatools/class"
+ * tlc2.TLC -cleanup SimpleLoopWithProcedure.tla
+ * TLC2 Version 2.05 of 18 May 2012
+ * Running in Model-Checking mode.
+ * Parsing file SimpleLoopWithProcedure.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\Naturals.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\Sequences.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\TLC.tla
+ * Semantic processing of module Naturals
+ * Semantic processing of module Sequences
+ * Semantic processing of module TLC
+ * Semantic processing of module SimpleLoopWithProcedure
+ * Starting... (2012-08-10 17:38:38)
+ * Implied-temporal checking--satisfiability problem has 1 branches.
+ * Computing initial states...
+ * Finished computing initial states: 2 distinct states generated.
+ * 0 TRUE
+ * 0 TRUE
+ * 0 TRUE
+ * 0 TRUE
+ * 0 TRUE
+ * 0 TRUE
+ * 0 TRUE
+ * 0 TRUE
+ * 3 TRUE
+ * 3 TRUE
+ * 3 TRUE
+ * 3 TRUE
+ * 4 TRUE
+ * 4 TRUE
+ * 4 TRUE
+ * 4 TRUE
+ * 6 TRUE
+ * 6 TRUE
+ * 6 TRUE
+ * 6 TRUE
+ * 8 TRUE
+ * 8 TRUE
+ * 8 TRUE
+ * 8 TRUE
+ * 9 TRUE
+ * 9 TRUE
+ * 9 TRUE
+ * 9 TRUE
+ * 12 TRUE
+ * 12 TRUE
+ * 12 TRUE
+ * 12 TRUE
+ * 12 TRUE
+ * 12 TRUE
+ * 12 TRUE
+ * 12 TRUE
+ * 16 TRUE
+ * 16 TRUE
+ * 16 TRUE
+ * 16 TRUE
+ * 15 TRUE
+ * 15 TRUE
+ * 15 TRUE
+ * 15 TRUE
+ * 20 TRUE
+ * 20 TRUE
+ * 20 TRUE
+ * 20 TRUE
+ * 18 TRUE
+ * 18 TRUE
+ * 18 TRUE
+ * 18 TRUE
+ * 24 TRUE
+ * 24 TRUE
+ * 24 TRUE
+ * 24 TRUE
+ * 21 TRUE
+ * 21 TRUE
+ * 21 TRUE
+ * 21 TRUE
+ * 28 TRUE
+ * 28 TRUE
+ * 28 TRUE
+ * 28 TRUE
+ * 24 TRUE
+ * 24 TRUE
+ * 24 TRUE
+ * 24 TRUE
+ * 32 TRUE
+ * 32 TRUE
+ * 32 TRUE
+ * 32 TRUE
+ * 27 TRUE
+ * 27 TRUE
+ * 27 TRUE
+ * 27 TRUE
+ * 36 TRUE
+ * 36 TRUE
+ * 36 TRUE
+ * 36 TRUE
+ * Checking temporal properties for the complete state space...
+ * Model checking completed. No error has been found.
+ * Estimates of the probability that TLC did not check all reachable states
+ * because two distinct states had the same fingerprint:
+ * calculated (optimistic): val = 6.9E-18
+ * based on the actual fingerprints: val = 8.3E-16
+ * 66 states generated, 64 distinct states found, 0 states left on queue.
+ * The depth of the complete state graph search is 32.
+ * Finished. (2012-08-10 17:38:39)
+ */

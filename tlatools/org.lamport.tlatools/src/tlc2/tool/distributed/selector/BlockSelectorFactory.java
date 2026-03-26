@@ -3,7 +3,7 @@ package tlc2.tool.distributed.selector;
 import tlc2.tool.distributed.TLCServer;
 
 public class BlockSelectorFactory {
-	
+
 	/**
 	 * Delegate to a custom factory if set
 	 */
@@ -12,25 +12,29 @@ public class BlockSelectorFactory {
 	/**
 	 * {@link StaticBlockSelector} system property
 	 */
-	private static final String STATIC_SELECTOR = System.getProperty("tlc2.tool.distributed.selector.bsf.staticselector");
+	private static final String STATIC_SELECTOR = System
+			.getProperty("tlc2.tool.distributed.selector.bsf.staticselector");
 	/**
 	 * {@link BlockSelector} system property
 	 */
-	private static final String UNLIMITING_SELECTOR = System.getProperty("tlc2.tool.distributed.selector.bsf.unlimitingselector");
+	private static final String UNLIMITING_SELECTOR = System
+			.getProperty("tlc2.tool.distributed.selector.bsf.unlimitingselector");
 	/**
 	 * {@link LimitingBlockSelector} system property
 	 */
-	private static final String LIMITING_SELECTOR = System.getProperty("tlc2.tool.distributed.selector.bsf.limitingselector");
-	
+	private static final String LIMITING_SELECTOR = System
+			.getProperty("tlc2.tool.distributed.selector.bsf.limitingselector");
+
 	/**
 	 * Creates an {@link IBlockSelector} for the given {@link TLCServer}.
+	 * 
 	 * @see {@link IBlockSelector}
 	 * @param aTLCServer
 	 * @return An {@link IBlockSelector} for the given {@link TLCServer}
 	 */
 	public static IBlockSelector getBlockSelector(final TLCServer aTLCServer) {
 		BlockSelectorFactory bsf = new BlockSelectorFactory();
-		if(FACTORY_NAME != null) {
+		if (FACTORY_NAME != null) {
 			bsf = loadCustomFactory(FACTORY_NAME, bsf);
 		}
 		return bsf.getSelector(aTLCServer);
@@ -38,7 +42,7 @@ public class BlockSelectorFactory {
 
 	/**
 	 * @param clazz Class string to load
-	 * @param bsf Default BlockSelectorFactory when loading from String fails
+	 * @param bsf   Default BlockSelectorFactory when loading from String fails
 	 * @return A BSF
 	 */
 	private static BlockSelectorFactory loadCustomFactory(final String clazz, BlockSelectorFactory bsf) {
@@ -60,13 +64,13 @@ public class BlockSelectorFactory {
 		}
 		return bsf;
 	}
-	
+
 	/**
 	 * @param aTLCServer
 	 * @return An instance of the requested selector type
 	 */
 	protected IBlockSelector getSelector(final TLCServer aTLCServer) {
-		if(Boolean.parseBoolean(STATIC_SELECTOR)) {
+		if (Boolean.parseBoolean(STATIC_SELECTOR)) {
 			return new StaticBlockSelector(aTLCServer);
 		} else if (Boolean.parseBoolean(UNLIMITING_SELECTOR)) {
 			return new BlockSelector(aTLCServer);

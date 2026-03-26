@@ -41,29 +41,31 @@ import tlc2.value.RandomEnumerableValues;
 
 public abstract class EnumerableValue extends Value implements Enumerable {
 
-  @Override
-  public Value isSubsetEq(Value other) {
-    try {
-      final ValueEnumeration Enum = this.elements();
-      Value elem;
-      while ((elem = Enum.nextElement()) != null) {
-        if (!other.member(elem)) {
-          return BoolValue.ValFalse;
-        }
-      }
-      return BoolValue.ValTrue;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
-    }
-  }
-  
+	@Override
+	public Value isSubsetEq(Value other) {
+		try {
+			final ValueEnumeration Enum = this.elements();
+			Value elem;
+			while ((elem = Enum.nextElement()) != null) {
+				if (!other.member(elem)) {
+					return BoolValue.ValFalse;
+				}
+			}
+			return BoolValue.ValTrue;
+		} catch (RuntimeException | OutOfMemoryError e) {
+			if (hasSource()) {
+				throw FingerprintException.getNewHead(this, e);
+			} else {
+				throw e;
+			}
+		}
+	}
+
 	@Override
 	public EnumerableValue getRandomSubset(final int kOutOfN) {
 		// By default, convert all EVs into SetEnumValue and delegate to its
 		// getRandomSubset.
-    	return ((SetEnumValue) this.toSetEnum()).getRandomSubset(kOutOfN);
+		return ((SetEnumValue) this.toSetEnum()).getRandomSubset(kOutOfN);
 	}
 
 	@Override
@@ -73,7 +75,7 @@ public abstract class EnumerableValue extends Value implements Enumerable {
 			// provides normalized ordering. Thus, to traverse the elements in normalized
 			// ordering, any EV type gets converted into a SetEnumValue - this effectively
 			// enumerates the EV and normalizes the new SEV. Traversing the normalized
-			// SEV with a ValueEnumeration returned by Enumerable#elements is guaranteed 
+			// SEV with a ValueEnumeration returned by Enumerable#elements is guaranteed
 			// to be in normalized order (@see Ordering.NORMALIZED for what this means).
 			// In case a subclass provides a more efficient ValueEnumeration that guarantees
 			// normalized order, the subclass may override this default method. This is
@@ -87,7 +89,7 @@ public abstract class EnumerableValue extends Value implements Enumerable {
 		}
 		return elements();
 	}
-	
+
 	@Override
 	public ValueEnumeration elements(final int k) {
 		// The generic implementation collects all n elements of the actual Enumerable
@@ -109,7 +111,7 @@ public abstract class EnumerableValue extends Value implements Enumerable {
 				return values.get(nextIndex());
 			}
 		};
-  	}
+	}
 
 	abstract class SubsetEnumerator implements ValueEnumeration {
 
@@ -120,10 +122,11 @@ public abstract class EnumerableValue extends Value implements Enumerable {
 		protected final int k;
 		// i counts the number of calls.
 		protected int i;
-		
+
 		// The seed, X, index, ...
 		private int index; // X_i or seed
-		// Multiplier (long because intermediate values in nextIndex can exceed Int.MAX_VALUE)
+		// Multiplier (long because intermediate values in nextIndex can exceed
+		// Int.MAX_VALUE)
 		protected long a;
 		// Modulo
 		private int m;
@@ -131,9 +134,9 @@ public abstract class EnumerableValue extends Value implements Enumerable {
 		private int c;
 
 		public SubsetEnumerator(final int k) {
-			this(k, size());	
+			this(k, size());
 		}
-		
+
 		public SubsetEnumerator(final int k, final int n) {
 			if (n <= 0) {
 				// For n < 1, hasNext is always going to return false.
@@ -141,7 +144,7 @@ public abstract class EnumerableValue extends Value implements Enumerable {
 				this.k = 0;
 				return;
 			}
-			
+
 			this.n = n;
 			this.k = k;
 
@@ -151,19 +154,19 @@ public abstract class EnumerableValue extends Value implements Enumerable {
 			int[] vals = MULTIPLIERS.computeIfAbsent(n, j -> computeOptimalMandA(j));
 			this.m = vals[0];
 			this.a = vals[1];
-			
+
 			final Random random = RandomEnumerableValues.get();
 			this.index = random.nextInt(n);
 			// Choose a prime for c that is guaranteed to be co-prime with m. We randomly
 			// choose a prime number on every invocation to better approximate a uniform
 			// distribution for repeated evaluation of Randomization!RandomSubset(k, S) with
-			// k and S fixed to some values.  Since TLC cheats and evaluates RandomSubset
+			// k and S fixed to some values. Since TLC cheats and evaluates RandomSubset
 			// simply by generating k indices in 0..|S|, repeatedly evaluating RandomSubset
 			// will reveal a bias because -even though the individual indices are uniform-
 			// the *sequences* of indices generated are not uniformly distributed. A more
 			// costly implementation that's based on generating the indices of all ksubsets
 			// of S and SubsetValue#getUnrank(k) would be robust against a static increment
-			// c.  For S = 1..20 and k = 3, this implementation is roughly 2.5x better in
+			// c. For S = 1..20 and k = 3, this implementation is roughly 2.5x better in
 			// approximating a uniform distribution yet also 2.5x slower.
 			this.c = RandomGenerator.nextPrime(random);
 		}
@@ -197,13 +200,14 @@ public abstract class EnumerableValue extends Value implements Enumerable {
 		@Override
 		public abstract Value nextElement();
 	}
-	
+
 	// Consider bootstrapping the parameters for the upper range of Integers (where
 	// prime factorization becomes more expensive)?
 	private static Map<Integer, int[]> MULTIPLIERS = new ConcurrentHashMap<>();
 
 	// https://en.wikipedia.org/wiki/Linear_congruential_generator#c_%E2%89%A0_0
-	// When c # 0, correctly chosen parameters allow a period equal to m, for all seed values. This will occur iff:
+	// When c # 0, correctly chosen parameters allow a period equal to m, for all
+	// seed values. This will occur iff:
 	// m and c are relatively prime,
 	// a-1 is divisible by all prime factors of m
 	// a-1 is divisible by 4 if m is divisible by 4.
@@ -216,7 +220,7 @@ public abstract class EnumerableValue extends Value implements Enumerable {
 		// Prime factorization is expensive!!! As a minor optimization, we could in-line
 		// primeFactor and use counters and track the product while looping instead of
 		// storing all primes in a list, comparing its size to the set, and calculating
-		// the product of the set.  However, I don't want to spend the time to extract
+		// the product of the set. However, I don't want to spend the time to extract
 		// Apache Commons Math's primeFactors implementation.
 		List<Integer> primeFactors = Primes.primeFactors(n);
 		while (n % 4 == 0 || new HashSet<>(primeFactors).size() == primeFactors.size()) {
@@ -229,58 +233,59 @@ public abstract class EnumerableValue extends Value implements Enumerable {
 			a *= prime;
 		}
 		a += 1;
-		
+
 		// Unfortunately, Java doesn't have tuples/pairs.
-		return new int[] {n, a};
+		return new int[] { n, a };
 	}
 }
 
 /*
----- CONFIG ksubsets_random_subset ----
-CONSTANTS 
-    Elements={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20}
-    Limit=1000
-SPECIFICATION   Spec
-====
-
------------------------------- MODULE ksubsets_random_subset ------------------------------
-EXTENDS Naturals, Randomization, FiniteSets, TLC
-
-CONSTANT Elements,
-         Limit
-
-VARIABLES counts,
-          total
-
-vars == <<counts, total >>
-
-AddSubset ==
-    /\ total < Limit 
-    /\ \E ss \in { RandomSubset(3, Elements) } :
-        /\ IF ss \in DOMAIN counts
-            THEN counts' = [counts EXCEPT ![ss] = @ + 1]
-            ELSE counts' = counts @@ (ss :> 1)
-        /\ total' = total + 1
-
-PrintDist ==
-    /\ total = Limit
-    /\ total' = Limit + 1
-    /\ UNCHANGED <<counts>>
-    /\ \A ss \in DOMAIN counts : PrintT(<<total, ss, counts[ss]>>)
-    /\ PrintT(<<"RESULT", Cardinality(DOMAIN counts)>>)
-
-Init == 
-    /\ counts = [ss \in {} |-> 0]
-    /\ total = 0
-
-Next ==
-    \/ AddSubset
-    \/ PrintDist
-
-Spec == Init /\ [][Next]_vars  
-
-=============================================================================
-\* Modification History
-\* Last modified Tue Oct 27 17:24:00 CET 2020 by jvanlightly
-\* Created Tue Oct 27 09:55:35 CET 2020 by jvanlightly
-*/
+ * ---- CONFIG ksubsets_random_subset ----
+ * CONSTANTS
+ * Elements={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20}
+ * Limit=1000
+ * SPECIFICATION Spec
+ * ====
+ * 
+ * ------------------------------ MODULE ksubsets_random_subset
+ * ------------------------------
+ * EXTENDS Naturals, Randomization, FiniteSets, TLC
+ * 
+ * CONSTANT Elements,
+ * Limit
+ * 
+ * VARIABLES counts,
+ * total
+ * 
+ * vars == <<counts, total >>
+ * 
+ * AddSubset ==
+ * /\ total < Limit
+ * /\ \E ss \in { RandomSubset(3, Elements) } :
+ * /\ IF ss \in DOMAIN counts
+ * THEN counts' = [counts EXCEPT ![ss] = @ + 1]
+ * ELSE counts' = counts @@ (ss :> 1)
+ * /\ total' = total + 1
+ * 
+ * PrintDist ==
+ * /\ total = Limit
+ * /\ total' = Limit + 1
+ * /\ UNCHANGED <<counts>>
+ * /\ \A ss \in DOMAIN counts : PrintT(<<total, ss, counts[ss]>>)
+ * /\ PrintT(<<"RESULT", Cardinality(DOMAIN counts)>>)
+ * 
+ * Init ==
+ * /\ counts = [ss \in {} |-> 0]
+ * /\ total = 0
+ * 
+ * Next ==
+ * \/ AddSubset
+ * \/ PrintDist
+ * 
+ * Spec == Init /\ [][Next]_vars
+ * 
+ * =============================================================================
+ * \* Modification History
+ * \* Last modified Tue Oct 27 17:24:00 CET 2020 by jvanlightly
+ * \* Created Tue Oct 27 09:55:35 CET 2020 by jvanlightly
+ */

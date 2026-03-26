@@ -18,23 +18,19 @@ import util.FilenameToStream;
  * @author Yuan Yu, Simon Zambrovski
  * @version $Id$
  */
-public class TLAClass
-{
-    /* Load a class from a file. */
-    private final String pkg;
+public class TLAClass {
+	/* Load a class from a file. */
+	private final String pkg;
 	private final FilenameToStream resolver;
 
-    public TLAClass(String pkg, FilenameToStream resolver)
-    {
-        this.resolver = resolver;
-		if (pkg.length() != 0 && pkg.charAt(pkg.length() - 1) != '.')
-        {
-            this.pkg = pkg + '.';
-        } else
-        {
-            this.pkg = pkg;
-        }
-    }
+	public TLAClass(String pkg, FilenameToStream resolver) {
+		this.resolver = resolver;
+		if (pkg.length() != 0 && pkg.charAt(pkg.length() - 1) != '.') {
+			this.pkg = pkg + '.';
+		} else {
+			this.pkg = pkg;
+		}
+	}
 
 	/**
 	 * This method attempts to load the java class with the given name.
@@ -54,56 +50,48 @@ public class TLAClass
 	 * <p>
 	 * If no class could be loaded, <code>null</code> is returned.
 	 **/
-    public synchronized Class loadClass(String name)
-    {
-        Class cl = null;
-        try
-        {
-        	try {
-        		if (resolver != null) {
-        			final File module = resolver.resolve(name + ".class", false);
-        			if (module != null && module.getAbsoluteFile() != null) {
-        				final URL url = module.getAbsoluteFile().getParentFile().toURI().toURL();
-        				cl = new URLClassLoader(new URL[] {url}).loadClass(name);
-        			}
-        		}
-        	} catch (Exception ignored1) {
-        		/*SKIP*/
-        	} finally {
-        		if (cl == null) {
-        			try
-        			{
-        				cl = Class.forName(name);
-        			} catch (Exception e)
-        			{ /*SKIP*/
-        			}
-        		}
-        	}
-            if (cl == null)
-            {
-                try
-                {
-                    cl = Class.forName(this.pkg + name);
-                } catch (Exception e)
-                { /*SKIP*/
-                }
-            }
-        } catch (Throwable e)
-        {
-            Assert.fail(EC.TLC_ERROR_REPLACING_MODULES, new String[] { name, 
-                       (e.getMessage()==null)?e.toString():e.getMessage() });
-        }
-        return cl;
-    }
-    
-//
-//    public static void main(String argv[])
-//    {
-//        TLAClass tc = new TLAClass("tlc2.module");
-//        Class c = tc.loadClass("Strings"); // must set CLASSPATH correctly
-//        System.err.println("c = " + c);
-//        // Class c1 = tc.loadClass("Class");
-//        // System.err.println("c1 = " + c1);
-//    }
-//
+	public synchronized Class loadClass(String name) {
+		Class cl = null;
+		try {
+			try {
+				if (resolver != null) {
+					final File module = resolver.resolve(name + ".class", false);
+					if (module != null && module.getAbsoluteFile() != null) {
+						final URL url = module.getAbsoluteFile().getParentFile().toURI().toURL();
+						cl = new URLClassLoader(new URL[] { url }).loadClass(name);
+					}
+				}
+			} catch (Exception ignored1) {
+				/* SKIP */
+			} finally {
+				if (cl == null) {
+					try {
+						cl = Class.forName(name);
+					} catch (Exception e) { /* SKIP */
+					}
+				}
+			}
+			if (cl == null) {
+				try {
+					cl = Class.forName(this.pkg + name);
+				} catch (Exception e) { /* SKIP */
+				}
+			}
+		} catch (Throwable e) {
+			Assert.fail(EC.TLC_ERROR_REPLACING_MODULES, new String[] { name,
+					(e.getMessage() == null) ? e.toString() : e.getMessage() });
+		}
+		return cl;
+	}
+
+	//
+	// public static void main(String argv[])
+	// {
+	// TLAClass tc = new TLAClass("tlc2.module");
+	// Class c = tc.loadClass("Strings"); // must set CLASSPATH correctly
+	// System.err.println("c = " + c);
+	// // Class c1 = tc.loadClass("Class");
+	// // System.err.println("c1 = " + c1);
+	// }
+	//
 }

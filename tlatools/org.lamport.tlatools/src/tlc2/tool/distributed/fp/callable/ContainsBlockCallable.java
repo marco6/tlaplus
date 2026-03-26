@@ -9,12 +9,14 @@ import tlc2.util.BitVector;
 import tlc2.util.LongVec;
 
 public class ContainsBlockCallable extends FPSetManagerCallable {
-	
+
 	public ContainsBlockCallable(FPSetManager fpSetManager, List<FPSets> fpSets, LongVec[] fps, int index) {
 		super(fpSetManager, fpSets, fps, index);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.concurrent.Callable#call()
 	 */
 	public BitVectorWrapper call() throws Exception {

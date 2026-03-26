@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class FastMutexTest extends PCalModelCheckerTestCase {
 
 	public FastMutexTest() {
-		super("FastMutex", "pcal", new String[] {"-wf"});
+		super("FastMutex", "pcal", new String[] { "-wf" });
 	}
 
 	@Test

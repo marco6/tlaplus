@@ -30,14 +30,15 @@ import org.junit.Test;
 import tla2sany.semantic.ExternalModuleTable;
 
 /**
- * Regression test for {@link XMLExporter} handling of {@link tla2sany.semantic.DecimalNode}
+ * Regression test for {@link XMLExporter} handling of
+ * {@link tla2sany.semantic.DecimalNode}
  * instances; previously, it would result in a XML schema validation failure.
  */
 public class TestDecimalXMLExport {
 
-	private static final String BASE_DIR = System.getProperty("basedir", System.getProperty("user.dir", "."));
-	private static final String TEST_MODEL = "test-model" + File.separator;
-	private static final String BASE_PATH = System.getProperty("basepath", BASE_DIR + File.separator + TEST_MODEL);
+  private static final String BASE_DIR = System.getProperty("basedir", System.getProperty("user.dir", "."));
+  private static final String TEST_MODEL = "test-model" + File.separator;
+  private static final String BASE_PATH = System.getProperty("basepath", BASE_DIR + File.separator + TEST_MODEL);
 
   @Test
   public void test() throws XMLExportingException {

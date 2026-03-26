@@ -12,19 +12,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
 
-
 /**
  * Resolver for the name to file handle.
  *
- * LL comment: 24 July 2013: I believe that the only classes that implements this
- * are SimpleFileNameToStream, RCPNameToFileIStream, and RMIFilenameToStreamResolver.
+ * LL comment: 24 July 2013: I believe that the only classes that implements
+ * this
+ * are SimpleFileNameToStream, RCPNameToFileIStream, and
+ * RMIFilenameToStreamResolver.
  * I added the isStandardModule method.
  *
  * @author Leslie Lamport
  * @author Simon Zambrovski
  */
-public interface FilenameToStream
-{
+public interface FilenameToStream {
 
     /**
      * Higher layers of TLC (and the Toolbox) have to determine if a module was
@@ -35,14 +35,15 @@ public interface FilenameToStream
     @SuppressWarnings("serial")
     public static class TLAFile extends File {
         /**
-         * The following regex is concerned with determining whether the provided 'parent' string to our
-         *parent/child constructor looks like the start of a legal absolute file path potentially including
-         *a drive letter.
+         * The following regex is concerned with determining whether the provided
+         * 'parent' string to our
+         * parent/child constructor looks like the start of a legal absolute file path
+         * potentially including
+         * a drive letter.
          */
-        private static final String ROOT_PATH_REGEX
-                = "^([a-zA-Z]+:)?" + ((File.separatorChar == '\\') ? "\\\\" : File.separator);
+        private static final String ROOT_PATH_REGEX = "^([a-zA-Z]+:)?"
+                + ((File.separatorChar == '\\') ? "\\\\" : File.separator);
         private static final Pattern ROOT_PATH_PATTERN = Pattern.compile(ROOT_PATH_REGEX);
-
 
         private final boolean isLibraryModule;
         private transient final FilenameToStream resolver;
@@ -131,21 +132,30 @@ public interface FilenameToStream
     /**
      * Resolves a logical name to a concrete OS-resource.
      *
-     * @param filename a logical name (e.g. <code>"Integers"</code>) or path (e.g. <code>"subdir/Integers.tla"</code>)
-     * @param isModule if true and the given filename does not end with {@link TLAConstants.Files#TLA_EXTENSION}, then
-     *                 the extension will be added.  Also, if the extension was already present, it will be converted
-     *                 to the correct case.  If <code>isModule</code> is false, then <code>filename</code> will be
+     * @param filename a logical name (e.g. <code>"Integers"</code>) or path (e.g.
+     *                 <code>"subdir/Integers.tla"</code>)
+     * @param isModule if true and the given filename does not end with
+     *                 {@link TLAConstants.Files#TLA_EXTENSION}, then
+     *                 the extension will be added. Also, if the extension was
+     *                 already present, it will be converted
+     *                 to the correct case. If <code>isModule</code> is false, then
+     *                 <code>filename</code> will be
      *                 resolved unaltered.
-     * @return a local file containing the module source, or a non-null non-existent file if the name was not found
+     * @return a local file containing the module source, or a non-null non-existent
+     *         file if the name was not found
      */
     // TODO: improve the performance of this interface.
-    // Returning a File is overly restrictive: some implementations resolve from non-filesystem locations like inside
-    // JARs.  To satisfy this interface, those implementations have to copy the resolved resource to a local file.
-    // That copy could be avoided if this interface returned a less restrictive type like NamedInputStream.
+    // Returning a File is overly restrictive: some implementations resolve from
+    // non-filesystem locations like inside
+    // JARs. To satisfy this interface, those implementations have to copy the
+    // resolved resource to a local file.
+    // That copy could be avoided if this interface returned a less restrictive type
+    // like NamedInputStream.
     File resolve(String filename, boolean isModule);
 
     /**
-     * Get a string describing the path locations this resolver will search.  The result has no particular format;
+     * Get a string describing the path locations this resolver will search. The
+     * result has no particular format;
      * it is intended for user-facing error output and debugging.
      *
      * @return a string describing the searched locations
@@ -154,7 +164,8 @@ public interface FilenameToStream
     String getFullPath();
 
     /**
-     * Returns true iff <code>moduleName</code> resolves to a standard module.  The argument is treated the same as a
+     * Returns true iff <code>moduleName</code> resolves to a standard module. The
+     * argument is treated the same as a
      * call to {@link #resolve(String, boolean)} with <code>isModule=true</code>.
      *
      * @param moduleName the name of a module (e.g. <code>"Integers"</code>)

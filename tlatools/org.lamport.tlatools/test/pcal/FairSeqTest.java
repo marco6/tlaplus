@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class FairSeqTest extends PCalModelCheckerTestCase {
 
 	public FairSeqTest() {
-		super("FairSeq", "pcal", new String[] {"-wf", "-termination"});
+		super("FairSeq", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test

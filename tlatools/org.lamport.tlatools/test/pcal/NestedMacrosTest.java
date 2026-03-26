@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class NestedMacrosTest extends PCalModelCheckerTestCase {
 
 	public NestedMacrosTest() {
-		super("NestedMacros", "pcal", new String[] {"-wf", "-termination"});
+		super("NestedMacros", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test
@@ -47,6 +47,6 @@ public class NestedMacrosTest extends PCalModelCheckerTestCase {
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "14", "9", "0"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "5"));
 
-	assertZeroUncovered();
+		assertZeroUncovered();
 	}
 }

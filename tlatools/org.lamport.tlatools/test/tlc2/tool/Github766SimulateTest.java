@@ -39,7 +39,9 @@ import tlc2.tool.liveness.ModelCheckerTestCase;
 public class Github766SimulateTest extends ModelCheckerTestCase {
 
 	public Github766SimulateTest() {
-		super("Github766", new String[] { "-config", "Github766.tla", "-dumpTrace", "json", "states" + File.separator + "Github766Simulate.json", "-simulate" },
+		super("Github766",
+				new String[] { "-config", "Github766.tla", "-dumpTrace", "json",
+						"states" + File.separator + "Github766Simulate.json", "-simulate" },
 				EC.ExitStatus.VIOLATION_SAFETY);
 	}
 

@@ -9,23 +9,20 @@ import java.io.File;
 
 /**
  * Simple printing utility
+ * 
  * @deprecated is likely not used (SZ February 19, 2009)
  */
 @Deprecated
-public class CurrentDir
-{
-    public static void main(String args[])
-    {
-        for (int i = 0; i < args.length; i++)
-        {
+public class CurrentDir {
+    public static void main(String args[]) {
+        for (int i = 0; i < args.length; i++) {
             System.out.println("args[" + i + "] = '" + args[i] + "'");
         }
         ;
 
         File dir1 = new File(".");
         File dir2 = new File("..");
-        try
-        {
+        try {
             System.out.println("Current dir : " + dir1.getCanonicalPath());
             System.out.println("Parent  dir : " + dir2.getCanonicalPath());
             System.out.println("HOME: " + System.getenv("HOME"));
@@ -65,8 +62,7 @@ public class CurrentDir
             System.out.println("user.dir : " + System.getProperty("user.dir"));
             System.out.println("Current dir : " + dir1.getCanonicalPath());
 
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

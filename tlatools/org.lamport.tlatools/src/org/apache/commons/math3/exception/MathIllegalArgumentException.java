@@ -29,7 +29,7 @@ import org.apache.commons.math3.exception.util.ExceptionContextProvider;
  * @since 2.2
  */
 public class MathIllegalArgumentException extends IllegalArgumentException
-    implements ExceptionContextProvider {
+        implements ExceptionContextProvider {
     /** Serializable version Id. */
     private static final long serialVersionUID = -6024911025449780478L;
     /** Context. */
@@ -37,10 +37,10 @@ public class MathIllegalArgumentException extends IllegalArgumentException
 
     /**
      * @param pattern Message pattern explaining the cause of the error.
-     * @param args Arguments.
+     * @param args    Arguments.
      */
     public MathIllegalArgumentException(Localizable pattern,
-                                        Object ... args) {
+            Object... args) {
         context = new ExceptionContext(this);
         context.addMessage(pattern, args);
     }

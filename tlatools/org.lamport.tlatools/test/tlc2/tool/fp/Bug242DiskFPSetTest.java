@@ -13,14 +13,16 @@ import org.junit.Test;
  */
 public class Bug242DiskFPSetTest extends AbstractFPSetTest {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.AbstractFPSetTest#getFPSet(int)
 	 */
 	@Override
 	protected FPSet getFPSet(final FPSetConfiguration fpSetConfig) throws IOException {
 		return new DummyDiskFPSet(fpSetConfig);
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	private FPSet getFPSet(int mem) throws IOException {
 		FPSetConfiguration fpSetConfiguration = new FPSetConfiguration();
@@ -28,7 +30,7 @@ public class Bug242DiskFPSetTest extends AbstractFPSetTest {
 		fpSetConfiguration.setRatio(1.0d);
 		return getFPSet(fpSetConfiguration);
 	}
-	
+
 	/**
 	 * @see Bug #242 in general/bugzilla/index.html
 	 */
@@ -43,6 +45,7 @@ public class Bug242DiskFPSetTest extends AbstractFPSetTest {
 			fail(e.getMessage());
 		}
 	}
+
 	@Test
 	public void testDiskFPSetIntMaxValue() throws RemoteException {
 		try {
@@ -54,6 +57,7 @@ public class Bug242DiskFPSetTest extends AbstractFPSetTest {
 			fail(e.getMessage());
 		}
 	}
+
 	@Test
 	public void testDiskFPSetIntMinValue() throws RemoteException {
 		try {
@@ -64,6 +68,7 @@ public class Bug242DiskFPSetTest extends AbstractFPSetTest {
 		}
 		fail();
 	}
+
 	@Test
 	public void testDiskFPSetZero() throws RemoteException {
 		try {
@@ -72,6 +77,7 @@ public class Bug242DiskFPSetTest extends AbstractFPSetTest {
 			fail(e.getMessage());
 		}
 	}
+
 	@Test
 	public void testDiskFPSetOne() throws RemoteException {
 		try {

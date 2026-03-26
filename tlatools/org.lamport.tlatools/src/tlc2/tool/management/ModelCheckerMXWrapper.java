@@ -30,92 +30,121 @@ public class ModelCheckerMXWrapper extends TLCStandardMBean implements TLCStatis
 		registerMBean(OBJ_NAME);
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.distributed.management.TLCStatisticsMXBean#getStatesGenerated()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * tlc2.tool.distributed.management.TLCStatisticsMXBean#getStatesGenerated()
 	 */
 	public long getStatesGenerated() {
 		return modelChecker.getStatesGenerated();
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.distributed.management.TLCStatisticsMXBean#getDistinctStatesGenerated()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.tool.distributed.management.TLCStatisticsMXBean#
+	 * getDistinctStatesGenerated()
 	 */
 	public long getDistinctStatesGenerated() {
 		// if impl is DiskFPSet we don't want to add to the lock contention on
 		// the RWLock in DiskFPSet and thus compromise on reading dirty values
 		// (acceptable for statistics/metrics)
-		if(modelChecker.theFPSet instanceof DiskFPSet) {
+		if (modelChecker.theFPSet instanceof DiskFPSet) {
 			DiskFPSet diskFPSet = (DiskFPSet) modelChecker.theFPSet;
 			return diskFPSet.getFileCnt() + diskFPSet.getTblCnt();
 		}
 		return modelChecker.theFPSet.size();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.management.TLCStatisticsMXBean#getStateQueueSize()
 	 */
 	public long getStateQueueSize() {
 		return modelChecker.getStateQueueSize();
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.distributed.management.TLCStatisticsMXBean#getStatesGeneratedPerMinute()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.tool.distributed.management.TLCStatisticsMXBean#
+	 * getStatesGeneratedPerMinute()
 	 */
 	public long getStatesGeneratedPerMinute() {
 		return modelChecker.statesPerMinute;
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.distributed.management.TLCStatisticsMXBean#getDistinctStatesGeneratedPerMinute()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.tool.distributed.management.TLCStatisticsMXBean#
+	 * getDistinctStatesGeneratedPerMinute()
 	 */
 	public long getDistinctStatesGeneratedPerMinute() {
 		return modelChecker.distinctStatesPerMinute;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.management.TLCStatisticsMXBean#getProgress()
 	 */
 	public int getProgress() {
 		return modelChecker.getProgress();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.management.TLCStatisticsMXBean#getWorkerCount()
 	 */
 	public int getWorkerCount() {
 		return TLCGlobals.getNumWorkers();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.management.TLCStatisticsMXBean#checkpoint()
 	 */
 	public void checkpoint() {
 		TLCGlobals.forceChkpt();
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.distributed.management.TLCStatisticsMXBean#getAverageBlockCnt()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * tlc2.tool.distributed.management.TLCStatisticsMXBean#getAverageBlockCnt()
 	 */
 	public long getAverageBlockCnt() {
-		//TODO adapt once Workers can support units of work greater than 1 
+		// TODO adapt once Workers can support units of work greater than 1
 		return 1;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.management.TLCStatisticsMXBean#getRuntimeRatio()
 	 */
 	public double getRuntimeRatio() {
 		return modelChecker.getRuntimeRatio();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.management.TLCStatisticsMXBean#liveCheck()
 	 */
 	public void liveCheck() {
 		modelChecker.forceLiveCheck();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.management.TLCStatisticsMXBean#getCurrentState()
 	 */
 	public String getCurrentState() {
@@ -126,35 +155,45 @@ public class ModelCheckerMXWrapper extends TLCStandardMBean implements TLCStatis
 		return "N/A";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.management.TLCStatisticsMXBean#getSpecName()
 	 */
 	public String getSpecName() {
 		return tlc.getSpecName();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.management.TLCStatisticsMXBean#getModelName()
 	 */
 	public String getModelName() {
 		return tlc.getModelName();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.management.TLCStatisticsMXBean#stop()
 	 */
 	public void stop() {
 		modelChecker.stop();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.management.TLCStatisticsMXBean#suspend()
 	 */
 	public void suspend() {
 		modelChecker.suspend();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.management.TLCStatisticsMXBean#resume()
 	 */
 	public void resume() {

@@ -104,7 +104,7 @@ public class FormatConfigTest {
         FormatConfig config = new FormatConfig(80, 4);
         assertNotEquals(null, config);
     }
-    
+
     @Test
     public void testHashCode() {
         FormatConfig config1 = new FormatConfig(80, 4);

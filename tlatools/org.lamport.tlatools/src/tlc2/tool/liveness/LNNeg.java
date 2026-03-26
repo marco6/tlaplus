@@ -26,7 +26,7 @@ public class LNNeg extends LiveExprNode {
 	public final boolean containAction() {
 		return this.body.containAction();
 	}
-	
+
 	@Override
 	public final boolean isPositiveForm() {
 		if (this.body instanceof LNBool || this.body instanceof LNState) {
@@ -104,7 +104,9 @@ public class LNNeg extends LiveExprNode {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.LiveExprNode#toDotViz()
 	 */
 	public String toDotViz() {

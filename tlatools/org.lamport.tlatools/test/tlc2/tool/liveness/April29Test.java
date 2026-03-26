@@ -54,14 +54,14 @@ public class April29Test extends ModelCheckerTestCase {
 	public April29Test() {
 		super("April29MC", "symmetry");
 	}
-	
+
 	@Test
 	@Ignore("Ignored for as long as symmetry is incorrectly handled by TLC with liveness checking.")
 	public void testSpec() throws IOException {
 		// Assert TLC has found a temporal violation and a counter example
 		assertTrue(recorder.recorded(EC.TLC_TEMPORAL_PROPERTY_VIOLATED));
 		assertTrue(recorder.recorded(EC.TLC_COUNTER_EXAMPLE));
-		
+
 		// Assert the error trace
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
 		final List<String> expectedTrace = new ArrayList<String>(2);
@@ -70,12 +70,12 @@ public class April29Test extends ModelCheckerTestCase {
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace);
 
 		assertStuttering(3);
-		
+
 		// Verify the nodes and arcs in the behavior graph in terms of nodes and arcs.
 		final ILiveCheck liveCheck = (ILiveCheck) getField(AbstractChecker.class, "liveCheck",
 				getField(TLC.class, "instance", tlc));
 		assertEquals(1, liveCheck.getNumChecker());
-		
+
 		final ILiveChecker checker = liveCheck.getChecker(0);
 		final DiskGraph graph = (DiskGraph) checker.getDiskGraph();
 		graph.makeNodePtrTbl();
@@ -83,16 +83,16 @@ public class April29Test extends ModelCheckerTestCase {
 
 		final LongVec initNodes = graph.getInitNodes();
 		assertEquals(2, initNodes.size()); // <<fp,tidx>>, thus a single init state
-		
+
 		final int slen = checker.getSolution().getCheckState().length;
 		assertEquals(0, slen);
 		final int alen = checker.getSolution().getCheckAction().length;
 		assertEquals(3, alen);
-		
+
 		final GraphNode init = graph.getNode(initNodes.elementAt(0));
 		Set<Transition> transitions = init.getTransition(slen, alen);
 		assertEquals(2, transitions.size()); // One self-loop and one successor
-		
+
 		// Remove self loop from init's transitions. The remaining transitions are
 		// the true successors (here just a single).
 		final List<Transition> outs = new ArrayList<Transition>();
@@ -102,11 +102,11 @@ public class April29Test extends ModelCheckerTestCase {
 			}
 		}
 		assertEquals(1, outs.size());
-		
+
 		final GraphNode successor = graph.getNode(outs.get(0).getFP());
 		transitions = successor.getTransition(slen, alen);
 		assertEquals(1, transitions.size());
-		
+
 		// Verify both outgoing transitions are self loops with the expected
 		// action predicates. transitions is a Set and thus adding equal
 		// instance does not increase the set's size.

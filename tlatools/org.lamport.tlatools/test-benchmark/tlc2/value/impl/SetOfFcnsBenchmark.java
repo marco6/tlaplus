@@ -44,23 +44,23 @@ public class SetOfFcnsBenchmark {
 
 		FP64.Init();
 	}
-	
-	@Param({"10", "12", "14", "16"})
+
+	@Param({ "10", "12", "14", "16" })
 	public int numOfElements;
-	
-	@Param({"16", "32", "46"})
+
+	@Param({ "16", "32", "46" })
 	public int sizeT;
-	
-	@Param({"8", "16", "46"})
+
+	@Param({ "8", "16", "46" })
 	public int sizeS;
 
 	// 08x16 ~= 2^32 = 4294967296
-	// 16x16 = 2^64  = 10^19
+	// 16x16 = 2^64 = 10^19
 	// 16x32 ~= 2^128 ~= 10^38
 	// 46x46 ~= 2^256 ~= 10^77
-	
+
 	public Enumerable setOfFcns;
-		
+
 	@Setup(Level.Invocation)
 	public void setup() {
 		if ((sizeS == 8 && sizeT == 16)

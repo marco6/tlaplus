@@ -50,19 +50,26 @@ public class NoOpLiveCheck implements ILiveCheck {
 		this.stats = new DummyBucketStatistics();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#addInitState(tlc2.tool.TLCState, long)
 	 */
 	public void addInitState(ITool tool, TLCState state, long stateFP) {
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.liveness.ILiveCheck#addNextState(tlc2.tool.TLCState, long, tlc2.util.SetOfStates)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.tool.liveness.ILiveCheck#addNextState(tlc2.tool.TLCState, long,
+	 * tlc2.util.SetOfStates)
 	 */
 	public void addNextState(ITool tool, TLCState s0, long fp0, SetOfStates nextStates) throws IOException {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#doLiveCheck()
 	 */
 	public boolean doLiveCheck() {
@@ -78,67 +85,87 @@ public class NoOpLiveCheck implements ILiveCheck {
 	public int finalCheck(ITool tool) throws Exception {
 		return EC.NO_ERROR;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#checkTrace(tlc2.tool.StateVec)
 	 */
 	public void checkTrace(ITool tool, Supplier<StateVec> trace) throws IOException, InterruptedException {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#getMetaDir()
 	 */
 	public String getMetaDir() {
 		return metadir;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#getTool()
 	 */
 	public ITool getTool() {
 		return tool;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#getOutDegreeStatistics()
 	 */
 	public IBucketStatistics getOutDegreeStatistics() {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#getChecker(int)
 	 */
 	public ILiveChecker getChecker(int idx) {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#getNumChecker()
 	 */
 	public int getNumChecker() {
 		return 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#close()
 	 */
 	public void close() throws IOException {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#beginChkpt()
 	 */
 	public void beginChkpt() throws IOException {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#commitChkpt()
 	 */
 	public void commitChkpt() throws IOException {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#recover()
 	 */
 	public void recover() throws IOException {
@@ -148,21 +175,29 @@ public class NoOpLiveCheck implements ILiveCheck {
 	public void flushWritesToDiskFiles() {
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.liveness.ILiveCheck#calculateInDegreeDiskGraphs(tlc2.util.statistics.IBucketStatistics)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.tool.liveness.ILiveCheck#calculateInDegreeDiskGraphs(tlc2.util.
+	 * statistics.IBucketStatistics)
 	 */
 	public IBucketStatistics calculateInDegreeDiskGraphs(IBucketStatistics aGraphStats) throws IOException {
 		return stats;
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.liveness.ILiveCheck#calculateOutDegreeDiskGraphs(tlc2.util.statistics.IBucketStatistics)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.tool.liveness.ILiveCheck#calculateOutDegreeDiskGraphs(tlc2.util.
+	 * statistics.IBucketStatistics)
 	 */
 	public IBucketStatistics calculateOutDegreeDiskGraphs(IBucketStatistics aGraphStats) throws IOException {
 		return stats;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ILiveCheck#reset()
 	 */
 	public void reset() throws IOException {

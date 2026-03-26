@@ -8,11 +8,15 @@ import java.util.Iterator;
 /**
  * Legacy wrapper around {@link ArrayList} to preserve historical semantics:
  * <ul>
- *   <li>{@link #contains(Object)} uses reference equality (==), not {@link Object#equals(Object)}.</li>
- *   <li>{@link #insertElementAt(Object, int)} rejects {@code index == size()} (cannot append via insert).</li>
- *   <li>{@link #elements()} returns a snapshot Enumeration taken at call time.</li>
+ * <li>{@link #contains(Object)} uses reference equality (==), not
+ * {@link Object#equals(Object)}.</li>
+ * <li>{@link #insertElementAt(Object, int)} rejects {@code index == size()}
+ * (cannot append via insert).</li>
+ * <li>{@link #elements()} returns a snapshot Enumeration taken at call
+ * time.</li>
  * </ul>
- * These differences make a drop-in replacement with {@link ArrayList} unsafe until all call sites
+ * These differences make a drop-in replacement with {@link ArrayList} unsafe
+ * until all call sites
  * are audited for identity-based membership checks.
  */
 public class Vector<E> extends ArrayList<E> {
@@ -85,7 +89,8 @@ public class Vector<E> extends ArrayList<E> {
     super.addAll(v);
   }
 
-  // Like the append method above, but elements of v will not be added to THIS Vector
+  // Like the append method above, but elements of v will not be added to THIS
+  // Vector
   // if they are already present at least once; repeated elements already in
   // THIS Vector, however, will not be removed.
   public final void appendNoRepeats(Vector<E> v) {
@@ -100,8 +105,9 @@ public class Vector<E> extends ArrayList<E> {
   public final String toString() {
     String ret;
     ret = "[ ";
-    if (this.size() > 0) ret += this.elementAt(0).toString();
-    for (int i = 1; i<this.size(); i++) {
+    if (this.size() > 0)
+      ret += this.elementAt(0).toString();
+    for (int i = 1; i < this.size(); i++) {
       ret += ", " + this.elementAt(i).toString();
     }
     return ret + " ]";

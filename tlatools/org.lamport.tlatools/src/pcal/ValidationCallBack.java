@@ -44,6 +44,6 @@ public interface ValidationCallBack {
 	}
 
 	boolean shouldCancel();
-	
+
 	Generate shouldGenerate();
 }

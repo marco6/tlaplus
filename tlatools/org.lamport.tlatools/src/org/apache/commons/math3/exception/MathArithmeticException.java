@@ -30,7 +30,7 @@ import org.apache.commons.math3.exception.util.ExceptionContextProvider;
  * @since 3.0
  */
 public class MathArithmeticException extends ArithmeticException
-    implements ExceptionContextProvider {
+        implements ExceptionContextProvider {
     /** Serializable version Id. */
     private static final long serialVersionUID = -6024911025449780478L;
     /** Context. */
@@ -48,11 +48,11 @@ public class MathArithmeticException extends ArithmeticException
      * Constructor with a specific message.
      *
      * @param pattern Message pattern providing the specific context of
-     * the error.
-     * @param args Arguments.
+     *                the error.
+     * @param args    Arguments.
      */
     public MathArithmeticException(Localizable pattern,
-                                   Object ... args) {
+            Object... args) {
         context = new ExceptionContext(this);
         context.addMessage(pattern, args);
     }

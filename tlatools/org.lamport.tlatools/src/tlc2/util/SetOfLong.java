@@ -25,7 +25,9 @@ public final class SetOfLong {
     this.hasZero = false;
   }
 
-  public SetOfLong(int size, float ignore) { this(size); }
+  public SetOfLong(int size, float ignore) {
+    this(size);
+  }
 
   private final void grow() {
     long[] old = table;
@@ -35,7 +37,8 @@ public final class SetOfLong {
     this.table = new long[this.length];
     for (int i = 0; i < old.length; i++) {
       long k = old[i];
-      if (k != 0) this.put(k);
+      if (k != 0)
+        this.put(k);
     }
   }
 
@@ -44,24 +47,26 @@ public final class SetOfLong {
    * contained k.
    */
   public final boolean put(long k) {
-    if (count >= thresh) this.grow();
+    if (count >= thresh)
+      this.grow();
     if (k == 0) {
-      if (this.hasZero) return true;
+      if (this.hasZero)
+        return true;
       this.hasZero = true;
       this.count++;
       return false;
-    }
-    else {
-      int loc = ((int)k & 0x7FFFFFFF) % this.length;
+    } else {
+      int loc = ((int) k & 0x7FFFFFFF) % this.length;
       while (true) {
-	long ent = this.table[loc];
-	if (ent == k) return true;
-	if (ent == 0) {
-	  table[loc] = k;
-	  count++;
-	  return false;
-	}
-	loc = (loc + 1) % this.length;
+        long ent = this.table[loc];
+        if (ent == k)
+          return true;
+        if (ent == 0) {
+          table[loc] = k;
+          count++;
+          return false;
+        }
+        loc = (loc + 1) % this.length;
       }
     }
   }
@@ -70,28 +75,33 @@ public final class SetOfLong {
   public final boolean contains(long k) {
     if (k == 0) {
       return this.hasZero;
-    }
-    else {
-      int loc = ((int)k & 0x7FFFFFFF) % this.length;
+    } else {
+      int loc = ((int) k & 0x7FFFFFFF) % this.length;
       while (true) {
-	long ent = this.table[loc];
-	if (ent == k) return true;
-	if (ent == 0) return false;
-	loc = (loc + 1) % this.length;
+        long ent = this.table[loc];
+        if (ent == k)
+          return true;
+        if (ent == 0)
+          return false;
+        loc = (loc + 1) % this.length;
       }
     }
   }
 
-  public final int size() { return this.count; }
+  public final int size() {
+    return this.count;
+  }
 
-  public final long sizeof() { return 20 + (8 * this.length); }
+  public final long sizeof() {
+    return 20 + (8 * this.length);
+  }
 
   public final long checkFPs() {
     int cnt = 0;
     for (int i = 0; i < this.length; i++) {
       long x = this.table[i];
       if (x != 0) {
-	this.table[cnt++] = this.table[i];
+        this.table[cnt++] = this.table[i];
       }
     }
     Arrays.sort(this.table, 0, cnt);
@@ -104,7 +114,7 @@ public final class SetOfLong {
       i = 1;
     }
     for (; i < cnt; i++) {
-      dis = Math.min(dis, this.table[i]-x);
+      dis = Math.min(dis, this.table[i] - x);
       x = this.table[i];
     }
     return dis;
@@ -117,7 +127,8 @@ public final class SetOfLong {
     dos.writeBoolean(this.hasZero);
     for (int i = 0; i < this.length; i++) {
       long k = this.table[i];
-      if (k != 0) dos.writeLong(k);
+      if (k != 0)
+        dos.writeLong(k);
     }
   }
 
@@ -127,10 +138,10 @@ public final class SetOfLong {
     this.thresh = dis.readInt();
     this.hasZero = dis.readBoolean();
     this.table = new long[this.length];
-    int num = this.hasZero ? this.count-1 : this.count;
+    int num = this.hasZero ? this.count - 1 : this.count;
     for (int i = 0; i < num; i++) {
       this.put(dis.readLong());
     }
   }
-  
+
 }

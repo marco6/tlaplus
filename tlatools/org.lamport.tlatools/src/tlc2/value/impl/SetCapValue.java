@@ -30,17 +30,21 @@ public class SetCapValue extends EnumerableValue implements Enumerable {
   }
 
   @Override
-  public final byte getKind() { return SETCAPVALUE; }
+  public final byte getKind() {
+    return SETCAPVALUE;
+  }
 
   @Override
   public final int compareTo(Object obj) {
     try {
       this.convertAndCache();
       return this.capSet.compareTo(obj);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -48,10 +52,12 @@ public class SetCapValue extends EnumerableValue implements Enumerable {
     try {
       this.convertAndCache();
       return this.capSet.equals(obj);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -59,10 +65,12 @@ public class SetCapValue extends EnumerableValue implements Enumerable {
   public final boolean member(Value elem) {
     try {
       return (this.set1.member(elem) && this.set2.member(elem));
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -73,10 +81,12 @@ public class SetCapValue extends EnumerableValue implements Enumerable {
         Assert.fail("Attempted to check if the set " + Values.ppr(this.toString()) + "is finite.", getSource());
       }
       return true;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -87,10 +97,12 @@ public class SetCapValue extends EnumerableValue implements Enumerable {
         Assert.fail("Attempted to apply EXCEPT to the set " + Values.ppr(this.toString()) + ".", getSource());
       }
       return ex.value;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -101,10 +113,12 @@ public class SetCapValue extends EnumerableValue implements Enumerable {
         Assert.fail("Attempted to apply EXCEPT to the set " + Values.ppr(this.toString()) + ".", getSource());
       }
       return this;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -113,10 +127,12 @@ public class SetCapValue extends EnumerableValue implements Enumerable {
     try {
       this.convertAndCache();
       return this.capSet.size();
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -127,10 +143,12 @@ public class SetCapValue extends EnumerableValue implements Enumerable {
         return (this.set1.isNormalized() && this.set2.isNormalized());
       }
       return this.capSet.isNormalized();
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -140,15 +158,16 @@ public class SetCapValue extends EnumerableValue implements Enumerable {
       if (this.capSet == null || this.capSet == SetEnumValue.DummyEnum) {
         this.set1.normalize();
         this.set2.normalize();
-      }
-      else {
+      } else {
         this.capSet.normalize();
       }
       return this;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -156,20 +175,24 @@ public class SetCapValue extends EnumerableValue implements Enumerable {
   public final boolean isDefined() {
     try {
       return this.set1.isDefined() && this.set2.isDefined();
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   @Override
-  public final IValue deepCopy() { return this; }
+  public final IValue deepCopy() {
+    return this;
+  }
 
-	@Override
-	public void write(final IValueOutputStream vos) throws IOException {
-		capSet.write(vos);
-	}
+  @Override
+  public void write(final IValueOutputStream vos) throws IOException {
+    capSet.write(vos);
+  }
 
   /* The fingerprint methods */
   @Override
@@ -177,10 +200,12 @@ public class SetCapValue extends EnumerableValue implements Enumerable {
     try {
       this.convertAndCache();
       return this.capSet.fingerPrint(fp);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -189,58 +214,62 @@ public class SetCapValue extends EnumerableValue implements Enumerable {
     try {
       this.convertAndCache();
       return this.capSet.permute(perm);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   private final void convertAndCache() {
     if (this.capSet == null) {
       this.capSet = (SetEnumValue) this.toSetEnum();
-    }
-    else if (this.capSet == SetEnumValue.DummyEnum) {
+    } else if (this.capSet == SetEnumValue.DummyEnum) {
       SetEnumValue val = (SetEnumValue) this.toSetEnum();
       val.deepNormalize();
       this.capSet = val;
     }
   }
-  
+
   @Override
   public final void deepNormalize() {
-	    try {
+    try {
       set1.deepNormalize();
       set2.deepNormalize();
       if (capSet == null) {
         capSet = SetEnumValue.DummyEnum;
-      }
-      else if (capSet != SetEnumValue.DummyEnum) {
+      } else if (capSet != SetEnumValue.DummyEnum) {
         capSet.deepNormalize();
       }
-	    }
-	    catch (RuntimeException | OutOfMemoryError e) {
-	      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-	      else { throw e; }
-	    }
-  }
-	  
-  @Override
-  public final Value toSetEnum() {
-      if (this.capSet != null && this.capSet != SetEnumValue.DummyEnum) {
-        return this.capSet;
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
       }
-      ValueVec vals = new ValueVec();
-      ValueEnumeration Enum = this.elements();	
-      Value elem;
-      while ((elem = Enum.nextElement()) != null) {
-        vals.addElement(elem);
-      }
-      if (coverage) {cm.incSecondary(vals.size());}
-      return new SetEnumValue(vals, this.isNormalized(), cm);
+    }
   }
 
-  /* String representation of this value.  */
+  @Override
+  public final Value toSetEnum() {
+    if (this.capSet != null && this.capSet != SetEnumValue.DummyEnum) {
+      return this.capSet;
+    }
+    ValueVec vals = new ValueVec();
+    ValueEnumeration Enum = this.elements();
+    Value elem;
+    while ((elem = Enum.nextElement()) != null) {
+      vals.addElement(elem);
+    }
+    if (coverage) {
+      cm.incSecondary(vals.size());
+    }
+    return new SetEnumValue(vals, this.isNormalized(), cm);
+  }
+
+  /* String representation of this value. */
   @Override
   public final StringBuffer toString(StringBuffer sb, int offset, boolean swallow) {
     try {
@@ -249,17 +278,21 @@ public class SetCapValue extends EnumerableValue implements Enumerable {
           Value val = this.toSetEnum();
           return val.toString(sb, offset, swallow);
         }
+      } catch (Throwable e) {
+        if (!swallow)
+          throw e;
       }
-      catch (Throwable e) { if (!swallow) throw e; }
 
       sb = this.set1.toString(sb, offset, swallow);
       sb = sb.append(" \\cap ");
       sb = this.set2.toString(sb, offset, swallow);
       return sb;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -270,10 +303,12 @@ public class SetCapValue extends EnumerableValue implements Enumerable {
         return new Enumerator();
       }
       return this.capSet.elements();
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -283,29 +318,32 @@ public class SetCapValue extends EnumerableValue implements Enumerable {
 
     public Enumerator() {
       if (set1 instanceof Enumerable) {
-        this.enum1 = ((Enumerable)set1).elements();
+        this.enum1 = ((Enumerable) set1).elements();
         this.set = set2;
-      }
-      else if (set2 instanceof Enumerable) {
-        this.enum1 = ((Enumerable)set2).elements();
+      } else if (set2 instanceof Enumerable) {
+        this.enum1 = ((Enumerable) set2).elements();
         this.set = set1;
-      }
-      else {
+      } else {
         Assert.fail("Attempted to enumerate S \\cap T when neither S:\n" +
-              Values.ppr(set1.toString()) + "\nnor T:\n" + Values.ppr(set2.toString()) +
-              "\nis enumerable", getSource());
+            Values.ppr(set1.toString()) + "\nnor T:\n" + Values.ppr(set2.toString()) +
+            "\nis enumerable", getSource());
       }
     }
 
     @Override
-    public final void reset() { this.enum1.reset(); }
+    public final void reset() {
+      this.enum1.reset();
+    }
 
     @Override
     public final Value nextElement() {
-    	Value elem = this.enum1.nextElement();
+      Value elem = this.enum1.nextElement();
       while (elem != null) {
-    	  if (coverage) { cm.incSecondary(); }
-        if (this.set.member(elem)) return elem;
+        if (coverage) {
+          cm.incSecondary();
+        }
+        if (this.set.member(elem))
+          return elem;
         elem = this.enum1.nextElement();
       }
       return null;

@@ -19,10 +19,10 @@ import tla2sany.semantic.TheoremNode;
  * same def twice
  */
 public class SymbolContext {
-  private java.util.Map<Integer,Element> context;
+  private java.util.Map<Integer, Element> context;
   private java.util.Set<Integer> keys; // we need this set since the generated element might spawn new keys
-  private boolean top_level_entry;  // used to detect if a symbol is exported twice.
-                                    // only set in put() and reset in SymbolNode.getDefinitionElement
+  private boolean top_level_entry; // used to detect if a symbol is exported twice.
+                                   // only set in put() and reset in SymbolNode.getDefinitionElement
 
   // flags list
   public static final int OTHER_BUG = 0;
@@ -32,7 +32,7 @@ public class SymbolContext {
   private boolean[] flagArray;
 
   public SymbolContext() {
-    context = new java.util.HashMap<Integer,Element>();
+    context = new java.util.HashMap<Integer, Element>();
     keys = new java.util.HashSet<Integer>();
     flagArray = new boolean[1];
     top_level_entry = false;
@@ -60,7 +60,7 @@ public class SymbolContext {
       // first add the key as it might be mentioned again inside the definition
       keys.add(k);
       setTop_level_entry();
-      context.put(k,nd.exportDefinition(doc,this, filter));
+      context.put(k, nd.exportDefinition(doc, this, filter));
     }
   }
 
@@ -70,7 +70,7 @@ public class SymbolContext {
       // first add the key as it might be mentioned again inside the definition
       keys.add(k);
       setTop_level_entry();
-      context.put(k,nd.exportDefinition(doc,this, filter));
+      context.put(k, nd.exportDefinition(doc, this, filter));
     }
   }
 
@@ -80,7 +80,7 @@ public class SymbolContext {
       // first add the key as it might be mentioned again inside the definition
       keys.add(k);
       setTop_level_entry();
-      context.put(k,nd.exportDefinition(doc,this, filter));
+      context.put(k, nd.exportDefinition(doc, this, filter));
     }
   }
 
@@ -101,8 +101,16 @@ public class SymbolContext {
     return context.size();
   }
 
-  public boolean isTop_level_entry() { return top_level_entry; }
-  public void setTop_level_entry() { top_level_entry = true; }
-  public void resetTop_level_entry() { top_level_entry = false; }
+  public boolean isTop_level_entry() {
+    return top_level_entry;
+  }
+
+  public void setTop_level_entry() {
+    top_level_entry = true;
+  }
+
+  public void resetTop_level_entry() {
+    top_level_entry = false;
+  }
 
 }

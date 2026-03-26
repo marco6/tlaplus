@@ -3,9 +3,12 @@ package formatter;
 import org.junit.Test;
 
 /**
- * Tests that infix conjunction/disjunction expressions preserve their AST structure
- * after formatting. When /\ or \/ is used as an infix operator (not in a bulleted list),
- * the formatter must not break lines in a way that causes SANY to re-parse them as
+ * Tests that infix conjunction/disjunction expressions preserve their AST
+ * structure
+ * after formatting. When /\ or \/ is used as an infix operator (not in a
+ * bulleted list),
+ * the formatter must not break lines in a way that causes SANY to re-parse them
+ * as
  * N_ConjList/N_DisjList instead of N_InfixExpr.
  */
 public class InfixConjAlignmentTest {

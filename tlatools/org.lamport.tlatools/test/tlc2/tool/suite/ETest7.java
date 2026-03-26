@@ -37,7 +37,7 @@ public class ETest7 extends SuiteETestCase {
 	public ETest7() {
 		super(ExitStatus.ERROR_CONFIG_PARSE);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_CONFIG_SUBSTITUTION_NON_CONSTANT,

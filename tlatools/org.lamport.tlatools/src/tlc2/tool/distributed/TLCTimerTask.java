@@ -16,11 +16,12 @@ import tlc2.output.MP;
 import tlc2.tool.distributed.TLCWorker.TLCWorkerRunnable;
 
 /**
- * Periodically checks if the server is still alive and exits the worker otherwise
+ * Periodically checks if the server is still alive and exits the worker
+ * otherwise
  */
 public class TLCTimerTask extends TimerTask {
 	public static final long PERIOD = 60000L;
-	
+
 	private static final Logger LOGGER = Logger.getLogger(TLCTimerTask.class.getName());
 
 	private static final int TIMEOUT = Integer.getInteger(TLCTimerTask.class.getName() + ".timeout", 60) * 1000;
@@ -35,11 +36,13 @@ public class TLCTimerTask extends TimerTask {
 		this.serverUrl = anUrl;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.TimerTask#run()
 	 */
 	public void run() {
-		if(noActivityWithin(TIMEOUT)) {
+		if (noActivityWithin(TIMEOUT)) {
 			// If we haven't seen any activity within the timeout, we
 			// actively call the server to find out if it is still alive and
 			// model checking is ongoing.
@@ -48,7 +51,7 @@ public class TLCTimerTask extends TimerTask {
 				final TLCServerRMI server = (TLCServerRMI) Naming.lookup(serverUrl);
 				// At this point the master is responsive, but model checking
 				// might has ended already
-				if(server.isDone()) {
+				if (server.isDone()) {
 					exitWorker(null);
 				}
 			} catch (MalformedURLException e) {
@@ -61,7 +64,7 @@ public class TLCTimerTask extends TimerTask {
 			}
 		}
 	}
-	
+
 	private boolean noActivityWithin(final int timeout) {
 		long lastInvocation = getMostRecentInvocation();
 		if (lastInvocation == -1) {

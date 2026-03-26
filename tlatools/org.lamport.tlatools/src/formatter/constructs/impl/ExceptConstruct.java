@@ -47,7 +47,6 @@ public class ExceptConstruct implements TlaConstruct {
                 lSPar.append(name)
                         .appendSpace(exceptKey)
                         .appendLineOrSpace(comps)
-                        .append(rSPar)
-        );
+                        .append(rSPar));
     }
 }

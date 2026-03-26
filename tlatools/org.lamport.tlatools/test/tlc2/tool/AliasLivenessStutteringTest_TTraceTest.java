@@ -46,9 +46,9 @@ public class AliasLivenessStutteringTest_TTraceTest extends TTraceModelCheckerTe
 		super(AliasLivenessStutteringTest.class, EC.ExitStatus.VIOLATION_LIVENESS);
 	}
 
-    // ALIAS modifies the output of the original spec, do we need to worry
+	// ALIAS modifies the output of the original spec, do we need to worry
 	// about these cases and also create a ALIAS in our TE spec?
-    @Ignore("TESpec Bug")
+	@Ignore("TESpec Bug")
 	@Test
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
@@ -64,9 +64,10 @@ public class AliasLivenessStutteringTest_TTraceTest extends TTraceModelCheckerTe
 		// Assert the error trace
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
 		final List<String> expectedTrace = new ArrayList<String>(7);
-		expectedTrace.add("/\\ y = FALSE\n/\\ x = 1\n/\\ a = 0\n/\\ b = TRUE\n/\\ anim = \"e1: 1 e2: FALSE\"\n/\\ te = TRUE");
+		expectedTrace.add(
+				"/\\ y = FALSE\n/\\ x = 1\n/\\ a = 0\n/\\ b = TRUE\n/\\ anim = \"e1: 1 e2: FALSE\"\n/\\ te = TRUE");
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace);
-		
+
 		assertStuttering(2);
 	}
 }

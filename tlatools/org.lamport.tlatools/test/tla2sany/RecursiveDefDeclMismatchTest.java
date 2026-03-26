@@ -41,8 +41,9 @@ public class RecursiveDefDeclMismatchTest extends SANYTest {
 		final TestPrintStream testPrintStream = new TestPrintStream();
 		ToolIO.out = testPrintStream;
 		ToolIO.err = testPrintStream;
-		
-		SANY.SANYmain(new String[] { CommonTestCase.BASE_PATH + File.separator + "sany" + File.separator + "RecursiveDefDeclMismatch.tla" });
+
+		SANY.SANYmain(new String[] {
+				CommonTestCase.BASE_PATH + File.separator + "sany" + File.separator + "RecursiveDefDeclMismatch.tla" });
 
 		testPrintStream.assertSubstring("Definition of CountDown has different arity than its RECURSIVE declaration.");
 		testPrintStream.assertSubstring("The operator CountDown requires 2 arguments.");

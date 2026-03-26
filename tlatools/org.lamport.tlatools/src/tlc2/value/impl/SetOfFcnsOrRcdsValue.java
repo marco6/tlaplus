@@ -41,14 +41,16 @@ public abstract class SetOfFcnsOrRcdsValue extends EnumerableValue {
 		while ((v = ve.nextElement()) != null) {
 			vec.addElement(v);
 		}
-    	
+
 		// Assert no duplicates. For large sets we assume kOutOfN < size() to avoid
 		// calling size() which then throws an assertion exception anyway.
 		assert (needBigInteger() ? vec.sort(true).size() == kOutOfN
 				: vec.sort(true).size() == Math.min(kOutOfN, size()));
 
-		if (coverage) {cm.incSecondary(vec.size());}
-    	return new SetEnumValue(vec, false, cm);
+		if (coverage) {
+			cm.incSecondary(vec.size());
+		}
+		return new SetEnumValue(vec, false, cm);
 	}
 
 	@Override
@@ -88,7 +90,7 @@ public abstract class SetOfFcnsOrRcdsValue extends EnumerableValue {
 		protected final BigInteger a;
 
 		protected final int k;
-		
+
 		protected BigInteger sz;
 		protected int i;
 

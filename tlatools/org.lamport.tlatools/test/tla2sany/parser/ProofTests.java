@@ -56,10 +56,12 @@ public class ProofTests {
       PROOF,
       PROOF_STEP
     }
+
     public final Kind kind;
     public final String name;
     public final int level;
     public final List<AST> children;
+
     private AST(Kind kind, String name, int level, List<AST> children) {
       this.kind = kind;
       this.name = name;
@@ -87,36 +89,31 @@ public class ProofTests {
   @Parameters(name = "{index}: {0}")
   public static Object[][] getTests() {
     return new Object[][] {
-      new Object[] {
-        "PROOF <1>a A <1>b QED",
-        proof(1, step("a"), step("b"))
-      },
-      new Object[] {
-        "<1>a A <1>b QED",
-        proof(1, step("a"), step("b"))
-      },
-      new Object[] {
-        "<1>a. A PROOF <+> A <*> QED <1>b.. QED",
-        proof(1,
-          step("a", proof(2,
-            step(),
-            step()
-          )),
-          step("b")
-        )
-      },
-      new Object[] {
-        "<*> A <+> A <*> QED <+> QED <*> QED",
-        proof(0,
-          step(proof(1,
-            step(),
-            step(proof(2,
-              step()
-            ))
-          )),
-          step()
-        )
-      }
+        new Object[] {
+            "PROOF <1>a A <1>b QED",
+            proof(1, step("a"), step("b"))
+        },
+        new Object[] {
+            "<1>a A <1>b QED",
+            proof(1, step("a"), step("b"))
+        },
+        new Object[] {
+            "<1>a. A PROOF <+> A <*> QED <1>b.. QED",
+            proof(1,
+                step("a", proof(2,
+                    step(),
+                    step())),
+                step("b"))
+        },
+        new Object[] {
+            "<*> A <+> A <*> QED <+> QED <*> QED",
+            proof(0,
+                step(proof(1,
+                    step(),
+                    step(proof(2,
+                        step())))),
+                step())
+        }
     };
   }
 
@@ -137,7 +134,7 @@ public class ProofTests {
    * expected syntax tree in terms of structure, proof level, and name.
    *
    * @param expected The expected syntax tree.
-   * @param actual The actual syntax tree.
+   * @param actual   The actual syntax tree.
    */
   private static void match(final AST expected, final TreeNode actual) {
     Assert.assertEquals(expected.level, actual.getProofLevel());

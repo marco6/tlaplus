@@ -37,7 +37,7 @@ public class SetOfStatesTest extends TestCase {
 
 	public void testSizeEmpty() {
 		final SetOfStates s = new SetOfStates(16);
-		
+
 		assertEquals(16, s.capacity());
 		assertEquals(0, s.size());
 	}
@@ -52,8 +52,8 @@ public class SetOfStatesTest extends TestCase {
 
 	public void testGrow() {
 		final SetOfStates s = new SetOfStates(1);
-		
-		for(int i = 0; i < 32; i++) {
+
+		for (int i = 0; i < 32; i++) {
 			s.put(new DummyTLCState(i));
 		}
 
@@ -63,8 +63,8 @@ public class SetOfStatesTest extends TestCase {
 
 	public void testIterate() {
 		final SetOfStates s = new SetOfStates(1);
-		
-		for(int i = 1; i <= 32; i++) {
+
+		for (int i = 1; i <= 32; i++) {
 			assertFalse(s.put(new DummyTLCState(i)));
 		}
 		assertEquals(32, s.size());
@@ -77,7 +77,7 @@ public class SetOfStatesTest extends TestCase {
 			predecessor = state;
 		}
 		s.resetNext();
-		
+
 		// The combined sum of elements is correct
 		long sum = 0L;
 		for (int i = 0; i < s.size(); i++) {
@@ -89,12 +89,12 @@ public class SetOfStatesTest extends TestCase {
 
 	public void testDuplicates() {
 		final SetOfStates s = new SetOfStates(1);
-		
-		for(int i = 1; i <= 32; i++) {
+
+		for (int i = 1; i <= 32; i++) {
 			assertFalse(s.put(new DummyTLCState(i)));
 		}
 		assertEquals(32, s.size());
-		
+
 		// Adding the same elements again fails
 		final Set<TLCState> states = new HashSet<TLCState>(s.size());
 		for (int i = 0; i < s.size(); i++) {
@@ -110,30 +110,30 @@ public class SetOfStatesTest extends TestCase {
 		// duplicates in terms of fingerprints, but not in terms of equality
 		// (symmetry).
 		final SetOfStates s = new SetOfStates(1);
-		
+
 		int id = 1;
-		for(int i = 1; i <= 32; i++) {
+		for (int i = 1; i <= 32; i++) {
 			assertFalse(s.put(new EqualityDummyTLCState(i, id++)));
 		}
 		assertEquals(32, s.size());
-		
+
 		// Add 32 more elements with identical fp but different ids
-		for(int i = 1; i <= 32; i++) {
+		for (int i = 1; i <= 32; i++) {
 			assertFalse(s.put(new EqualityDummyTLCState(i, id++)));
 		}
 		assertEquals(64, s.size());
 
 		// Add 32 more elements with identical fp and ids
 		id = 1;
-		for(int i = 1; i <= 32; i++) {
+		for (int i = 1; i <= 32; i++) {
 			assertTrue(s.put(new EqualityDummyTLCState(i, id++)));
 		}
 		assertEquals(64, s.size());
 	}
-	
+
 	@SuppressWarnings("serial")
 	private static class EqualityDummyTLCState extends DummyTLCState {
-		
+
 		private final int id;
 
 		public EqualityDummyTLCState(final int fp, final int id) {
@@ -141,7 +141,9 @@ public class SetOfStatesTest extends TestCase {
 			this.id = id;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Object#hashCode()
 		 */
 		public int hashCode() {
@@ -152,7 +154,9 @@ public class SetOfStatesTest extends TestCase {
 			return result;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
 		public boolean equals(Object obj) {

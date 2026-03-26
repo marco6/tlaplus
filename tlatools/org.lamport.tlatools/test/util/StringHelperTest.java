@@ -35,20 +35,22 @@ public class StringHelperTest extends TestCase {
 
 	public void testGetWords() {
 		String[] words = StringHelper.getWords("Abc def ghi.");
-		assertArrayEquals(new String[]{"Abc", "def", "ghi."}, words);
+		assertArrayEquals(new String[] { "Abc", "def", "ghi." }, words);
 
 		words = StringHelper.getWords("Abc  def    ghi.      ");
-		assertArrayEquals(new String[]{"Abc", "def", "ghi."}, words);
+		assertArrayEquals(new String[] { "Abc", "def", "ghi." }, words);
 	}
+
 	public void testGetWordsLeadingSpace() {
 		String[] words = StringHelper.getWords("     Abc def ghi.");
-		assertArrayEquals(new String[]{"Abc", "def", "ghi."}, words);
+		assertArrayEquals(new String[] { "Abc", "def", "ghi." }, words);
 	}
-//TODO What is the intended behavior here?
-//	public void testGetWordsEmpty() {
-//		String[] words = StringHelper.getWords("");
-//		assertArrayEquals(new String[0], words);
-//	}
+
+	// TODO What is the intended behavior here?
+	// public void testGetWordsEmpty() {
+	// String[] words = StringHelper.getWords("");
+	// assertArrayEquals(new String[0], words);
+	// }
 	public void testGetWordsNull() {
 		try {
 			StringHelper.getWords(null);
@@ -57,46 +59,50 @@ public class StringHelperTest extends TestCase {
 		}
 		fail("null should not be accepted!");
 	}
-	
+
 	public void testCopyString0() {
 		String copyString = StringHelper.copyString("abc", 0);
 		assertEquals("", copyString);
 	}
+
 	public void testCopyStringPos1() {
 		String copyString = StringHelper.copyString("abc", 1);
 		assertEquals("abc", copyString);
 	}
+
 	public void testCopyStringPos5() {
 		String copyString = StringHelper.copyString("abc", 5);
 		assertEquals("abcabcabcabcabc", copyString);
 	}
+
 	public void testCopyStringNeg1() {
 		String copyString = StringHelper.copyString("abc", -1);
 		assertEquals("", copyString);
 	}
+
 	public void testCopyStringNeg5() {
 		String copyString = StringHelper.copyString("abc", -5);
 		assertEquals("", copyString);
 	}
-//TODO What is the intended behavior of passing a null string?
-//	public void testCopyStringNullPos() {
-//		try {
-//			StringHelper.copyString(null, 1);
-//		} catch (NullPointerException e) {
-//			return;
-//		}
-//		fail("null should not be accepted!");
-//	}
-//TODO What is the intended behavior of passing a null string?
-//	public void testCopyStringNullNeg() {
-//		try {
-//			StringHelper.copyString(null, -1);
-//		} catch (NullPointerException e) {
-//			return;
-//		}
-//		fail("null should not be accepted!");
-//	}
-	
+	// TODO What is the intended behavior of passing a null string?
+	// public void testCopyStringNullPos() {
+	// try {
+	// StringHelper.copyString(null, 1);
+	// } catch (NullPointerException e) {
+	// return;
+	// }
+	// fail("null should not be accepted!");
+	// }
+	// TODO What is the intended behavior of passing a null string?
+	// public void testCopyStringNullNeg() {
+	// try {
+	// StringHelper.copyString(null, -1);
+	// } catch (NullPointerException e) {
+	// return;
+	// }
+	// fail("null should not be accepted!");
+	// }
+
 	public void testOnlySpaces() {
 		assertTrue(StringHelper.onlySpaces("        "));
 		assertTrue(StringHelper.onlySpaces(" "));
@@ -105,6 +111,7 @@ public class StringHelperTest extends TestCase {
 		assertFalse(StringHelper.onlySpaces("a "));
 		assertFalse(StringHelper.onlySpaces("a"));
 	}
+
 	public void testOnlySpacesNull() {
 		try {
 			StringHelper.onlySpaces(null);
@@ -113,11 +120,11 @@ public class StringHelperTest extends TestCase {
 		}
 		fail("null should not be accepted!");
 	}
-//TODO What is the intended behavior for the empty string?
-//	public void testOnlySpacesEmptyString() {
-//		assertFalse(StringHelper.onlySpaces(""));
-//	}
-	
+	// TODO What is the intended behavior for the empty string?
+	// public void testOnlySpacesEmptyString() {
+	// assertFalse(StringHelper.onlySpaces(""));
+	// }
+
 	public void testTrimFront() {
 		assertEquals("", StringHelper.trimFront("    "));
 		assertEquals("a", StringHelper.trimFront(" a"));
@@ -127,6 +134,7 @@ public class StringHelperTest extends TestCase {
 		assertEquals("a ", StringHelper.trimFront("   a "));
 		assertEquals("aa  a ", StringHelper.trimFront("  aa  a "));
 	}
+
 	public void testTrimFrontNull() {
 		try {
 			StringHelper.trimFront(null);
@@ -135,6 +143,7 @@ public class StringHelperTest extends TestCase {
 		}
 		fail("null should not be accepted!");
 	}
+
 	public void testTrimFrontWhitespaces() {
 		assertEquals("Abc def ghi.", StringHelper.trimFront("Abc def ghi."));
 	}
@@ -148,6 +157,7 @@ public class StringHelperTest extends TestCase {
 		assertEquals(" a", StringHelper.trimEnd(" a  "));
 		assertEquals(" a aa", StringHelper.trimEnd(" a aa "));
 	}
+
 	public void testTrimEndNull() {
 		try {
 			StringHelper.trimEnd(null);
@@ -156,10 +166,11 @@ public class StringHelperTest extends TestCase {
 		}
 		fail("null should not be accepted!");
 	}
+
 	public void testTrimEndWhitespaces() {
 		assertEquals("Abc def ghi.", StringHelper.trimEnd("Abc def ghi."));
 	}
-	
+
 	public void testLeadingSpace() {
 		assertEquals(1, StringHelper.leadingSpaces(" "));
 		assertEquals(2, StringHelper.leadingSpaces("  "));
@@ -167,6 +178,7 @@ public class StringHelperTest extends TestCase {
 		assertEquals(2, StringHelper.leadingSpaces("  a  a  "));
 		assertEquals(0, StringHelper.leadingSpaces("a"));
 	}
+
 	public void testLeadingSpacesNull() {
 		try {
 			StringHelper.leadingSpaces(null);
@@ -175,7 +187,7 @@ public class StringHelperTest extends TestCase {
 		}
 		fail("null should not be accepted!");
 	}
-	
+
 	public void testIsIdentifier() {
 		assertFalse(StringHelper.isIdentifier("123"));
 		assertFalse(StringHelper.isIdentifier(" 123"));
@@ -186,6 +198,7 @@ public class StringHelperTest extends TestCase {
 		assertTrue(StringHelper.isIdentifier("1_"));
 		assertTrue(StringHelper.isIdentifier("_"));
 	}
+
 	public void testIsIdentifierNull() {
 		try {
 			StringHelper.isIdentifier(null);
@@ -194,12 +207,12 @@ public class StringHelperTest extends TestCase {
 		}
 		fail("null should not be accepted!");
 	}
-//TODO What is the intended behavior for the empty string?
-//	public void testIsIdentifierMetaChars() {
-//		assertTrue(StringHelper.isIdentifier("\\"));
-//	}
-//TODO What is the intended behavior for the empty string?
-//	public void testIsIdentifierEmptyString() {
-//		assertTrue(StringHelper.isIdentifier(""));
-//	}
+	// TODO What is the intended behavior for the empty string?
+	// public void testIsIdentifierMetaChars() {
+	// assertTrue(StringHelper.isIdentifier("\\"));
+	// }
+	// TODO What is the intended behavior for the empty string?
+	// public void testIsIdentifierEmptyString() {
+	// assertTrue(StringHelper.isIdentifier(""));
+	// }
 }

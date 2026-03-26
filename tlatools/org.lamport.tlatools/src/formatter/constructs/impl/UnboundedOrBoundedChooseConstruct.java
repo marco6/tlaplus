@@ -32,7 +32,7 @@ public class UnboundedOrBoundedChooseConstruct implements TlaConstruct {
         return Doc.group(
                 chooseKey.appendSpace(elName)
                         .appendSpace(maybeBound.append(colon))
-                        .appendLineOrSpace(Doc.group(expr).indent(indentSize))
-        ).indent(indentSize);
+                        .appendLineOrSpace(Doc.group(expr).indent(indentSize)))
+                .indent(indentSize);
     }
 }

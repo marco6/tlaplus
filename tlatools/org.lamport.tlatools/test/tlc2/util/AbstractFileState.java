@@ -5,7 +5,8 @@ package tlc2.util;
 import java.util.BitSet;
 
 /**
- * An "abstract" in-memory version of {@link RandomAccessFile} that only tracks which bytes are well-defined, not the
+ * An "abstract" in-memory version of {@link RandomAccessFile} that only tracks
+ * which bytes are well-defined, not the
  * actual value of those bytes.
  *
  * @see BufferedRandomAccessFileFuzzTest
@@ -54,6 +55,7 @@ public class AbstractFileState {
 
     @Override
     public String toString() {
-        return "AbstractFileState[cursor=" + cursor + ", length=" + length + ", |writtenPositions|=" + writtenPositions.cardinality() + "]";
+        return "AbstractFileState[cursor=" + cursor + ", length=" + length + ", |writtenPositions|="
+                + writtenPositions.cardinality() + "]";
     }
 }

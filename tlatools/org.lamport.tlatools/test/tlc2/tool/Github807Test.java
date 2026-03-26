@@ -55,7 +55,8 @@ public class Github807Test extends ModelCheckerTestCase {
 
 	@Override
 	protected boolean runWithDebugger() {
-		// Force TLC to use TLCStateMut instead of TLCStateMutExt.  The latter has TLCStateMutExt#action.
+		// Force TLC to use TLCStateMut instead of TLCStateMutExt. The latter has
+		// TLCStateMutExt#action.
 		return false;
 	}
 

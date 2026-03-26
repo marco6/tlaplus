@@ -30,12 +30,15 @@ import org.junit.Test;
 import tlc2.output.EC;
 
 public class Test220 extends SuiteETestCase {
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see tlc2.tool.liveness.ModelCheckerTestCase#checkDeadLock()
      */
     protected boolean checkDeadLock() {
-        // Disable command-line parameter "-deadlock" to let configuration file take control.
+        // Disable command-line parameter "-deadlock" to let configuration file take
+        // control.
         return true;
     }
 

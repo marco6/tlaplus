@@ -10,12 +10,14 @@ import tlc2.tool.distributed.fp.FPSetRMI;
 
 public class CheckInvariantCallable implements Callable<Boolean> {
 	private final FPSetRMI fpSetRMI;
-	
+
 	public CheckInvariantCallable(FPSetRMI fpSetRMI) {
 		this.fpSetRMI = fpSetRMI;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.concurrent.Callable#call()
 	 */
 	public Boolean call() throws Exception {

@@ -40,22 +40,23 @@ public class EWD998TraceDebuggerTest extends TLCDebuggerTestCase {
 	private static final String MDL = "EWD998_TTrace";
 
 	public EWD998TraceDebuggerTest() {
-		super(MDL, FOLDER, new String[] { "-config", "EWD998_TTrace.tla", "-noGenerateSpecTE" }, EC.ExitStatus.VIOLATION_LIVENESS);
+		super(MDL, FOLDER, new String[] { "-config", "EWD998_TTrace.tla", "-noGenerateSpecTE" },
+				EC.ExitStatus.VIOLATION_LIVENESS);
 	}
 
 	@Test
 	public void testSpec() throws Exception {
-		
+
 		debugger.replaceAllBreakpointsWith(MDL, 67);
 		debugger.continue_();
-		
+
 		EvaluateResponse var = debugger.evaluate(MDL, "_TETrace", 66, 22, 66, 29);
 		assertEquals(TupleValue.EmptyTuple.getTypeString(), var.getType());
 		assertNotEquals(0, var.getVariablesReference());
 		assertEquals(
 				"<<[color |-> (0 :> \"white\" @@ 1 :> \"white\" @@ 2 :> \"white\" @@ 3 :> \"white\" @@ 4 :> \"white\"), pending |-> (0 :> 0 @@ 1 :> 0 @@ 2 :> 0 @@ 3 :> 0 @@ 4 :> 0), active |-> (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE @@ 3 :> FALSE @@ 4 :> FALSE), counter |-> (0 :> 0 @@ 1 :> 0 @@ 2 :> 0 @@ 3 :> 0 @@ 4 :> 0), token |-> [color |-> \"black\", pos |-> 0, q |-> 0]], [color |-> (0 :> \"white\" @@ 1 :> \"white\" @@ 2 :> \"white\" @@ 3 :> \"white\" @@ 4 :> \"white\"), pending |-> (0 :> 0 @@ 1 :> 0 @@ 2 :> 0 @@ 3 :> 0 @@ 4 :> 0), active |-> (0 :> FALSE @@ 1 :> FALSE @@ 2 :> FALSE @@ 3 :> FALSE @@ 4 :> FALSE), counter |-> (0 :> 0 @@ 1 :> 0 @@ 2 :> 0 @@ 3 :> 0 @@ 4 :> 0), token |-> [color |-> \"white\", pos |-> 4, q |-> 0]]>>",
 				var.getResult());
-		
+
 		// Remove all breakpoints and run the spec to completion.
 		debugger.unsetBreakpoints();
 		debugger.continue_();

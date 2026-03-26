@@ -39,7 +39,7 @@ import java.lang.annotation.Target;
 public @interface TLAPlusOperator {
 
 	/**
-	 * @return The identifier of a TLA+ operator. 
+	 * @return The identifier of a TLA+ operator.
 	 */
 	String identifier();
 
@@ -52,7 +52,7 @@ public @interface TLAPlusOperator {
 	 * @see tlc2.overrides.Evaluation.minLevel()
 	 */
 	int minLevel() default 0;
-	
+
 	/**
 	 * @return tlc2.overrides.Evaluation.warn()
 	 */

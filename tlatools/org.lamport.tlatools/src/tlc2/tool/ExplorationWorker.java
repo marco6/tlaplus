@@ -48,7 +48,7 @@ public class ExplorationWorker extends SimulationWorker {
 
 	@Override
 	protected Optional<SimulationWorkerError> simulateRandomTrace() throws Exception {
-		
+
 		// Compared to SimulationWorker, this method is a de-optimization; Instead of
 		// generating all successor states (Next), SW randomly select a subaction of
 		// Next and generates only the successor states of that subaction. It then
@@ -80,7 +80,7 @@ public class ExplorationWorker extends SimulationWorker {
 				return new SetOfStates(initStates);
 			}
 		});
-		
+
 		// a) Randomly select a state from the (remaining) set of init states.
 		curState = randomState(this.localRng, initStates);
 		setCurrentState(curState);

@@ -50,10 +50,9 @@ public class IdentLHSConstruct implements TlaConstruct {
             content = content.append(Doc.text(",")).appendSpace(elementDocs.get(i));
         }
 
-        return
-                name
-                        .append(Doc.text("("))
-                        .append(content)
-                        .append(Doc.text(")"));
+        return name
+                .append(Doc.text("("))
+                .append(content)
+                .append(Doc.text(")"));
     }
 }

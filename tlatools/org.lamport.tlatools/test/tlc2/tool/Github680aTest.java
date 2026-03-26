@@ -36,7 +36,7 @@ import tlc2.tool.liveness.ModelCheckerTestCase;
 public class Github680aTest extends ModelCheckerTestCase {
 
 	public Github680aTest() {
-		super("Github680a", new String[] { "-config", "Github680a.tla", "-nowarning"});
+		super("Github680a", new String[] { "-config", "Github680a.tla", "-nowarning" });
 	}
 
 	@Test

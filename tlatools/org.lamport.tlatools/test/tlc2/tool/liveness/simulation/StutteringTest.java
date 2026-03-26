@@ -39,7 +39,8 @@ import util.TLAConstants;
 public class StutteringTest extends ModelCheckerTestCase {
 
 	public StutteringTest() {
-		super(TLAConstants.Files.MODEL_CHECK_FILE_BASENAME, "CodePlexBug08", new String[] { "-simulate" }, ExitStatus.VIOLATION_LIVENESS);
+		super(TLAConstants.Files.MODEL_CHECK_FILE_BASENAME, "CodePlexBug08", new String[] { "-simulate" },
+				ExitStatus.VIOLATION_LIVENESS);
 	}
 
 	@Test

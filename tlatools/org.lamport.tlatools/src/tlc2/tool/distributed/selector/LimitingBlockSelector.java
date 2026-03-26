@@ -9,12 +9,13 @@ public class LimitingBlockSelector extends BlockSelector {
 
 	/**
 	 * Limits the block size to 8192
+	 * 
 	 * @param aTLCServer
 	 */
 	LimitingBlockSelector(final TLCServer aTLCServer) {
 		this(aTLCServer, 8192);
 	}
-	
+
 	LimitingBlockSelector(final TLCServer aTLCServer, final int aMaximum) {
 		super(aTLCServer);
 		this.maximum = aMaximum;
@@ -26,19 +27,21 @@ public class LimitingBlockSelector extends BlockSelector {
 	 */
 	protected long getBlockSize(final long size, final TLCWorkerRMI aWorker) {
 		final long blockSize = super.getBlockSize(size, aWorker);
-		if(blockSize > maximum) {
+		if (blockSize > maximum) {
 			return maximum;
 		}
 		return blockSize;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.selector.IBlockSelector#setMaxTXSize(int)
 	 */
 	public void setMaxTXSize(int aMaximum) {
 		maximum = aMaximum;
 	}
-	
+
 	protected int getMaximum() {
 		return maximum;
 	}

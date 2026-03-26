@@ -17,18 +17,19 @@
 ***************************************************************************/
 package pcal;
 
-public class IntPair
-  { public int one = 0 ;
-    public int two = 0 ;
-    public IntPair(int a, int b)
-     { one = a ; 
-       two = b ;
-     }
+public class IntPair {
+  public int one = 0;
+  public int two = 0;
 
-    /***********************************************************************
-    * For debugging.                                                       *
-    ***********************************************************************/
-    public String toString()
-     { return "(" + one + ", " + two + ")" ;
-     }    
+  public IntPair(int a, int b) {
+    one = a;
+    two = b;
   }
+
+  /***********************************************************************
+   * For debugging. *
+   ***********************************************************************/
+  public String toString() {
+    return "(" + one + ", " + two + ")";
+  }
+}

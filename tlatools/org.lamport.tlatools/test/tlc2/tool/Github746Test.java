@@ -48,6 +48,7 @@ public class Github746Test extends ModelCheckerTestCase {
 		assertFalse(recorder.recorded(EC.GENERAL));
 
 		assertTrue(recorder.recorded(EC.TLC_COMPUTING_INIT));
-		assertTrue(recorder.recordedWithStringValues(EC.TLC_INVARIANT_VIOLATED_INITIAL, "Inv", "/\\ i = 1\n/\\ foo = \"bar\"\n/\\ j = TRUE\n"));
+		assertTrue(recorder.recordedWithStringValues(EC.TLC_INVARIANT_VIOLATED_INITIAL, "Inv",
+				"/\\ i = 1\n/\\ foo = \"bar\"\n/\\ j = TRUE\n"));
 	}
 }

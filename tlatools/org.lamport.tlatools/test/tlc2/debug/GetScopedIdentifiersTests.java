@@ -58,33 +58,33 @@ public class GetScopedIdentifiersTests {
     public final String input;
     public final String terminator;
     public final Set<String> expected;
+
     public TestCase(String input, String terminator, String... expected) {
       this.input = input;
       this.terminator = terminator;
       this.expected = new HashSet<String>(List.of(expected));
     }
+
     public String toString() {
-    	return this.input + " TRUE " + this.terminator;
+      return this.input + " TRUE " + this.terminator;
     }
   }
 
   /**
    * A wrapper in which to interpolate test cases to form a valid module.
    */
-  private static final String wrapper =
-    "---- MODULE Test ----\n"
-    + "VARIABLE x\n"
-    + "CONSTANT y\n"
-    + "%s\n"
-    + "TRUE%s\n"
-    + "====";
+  private static final String wrapper = "---- MODULE Test ----\n"
+      + "VARIABLE x\n"
+      + "CONSTANT y\n"
+      + "%s\n"
+      + "TRUE%s\n"
+      + "====";
 
   /**
    * The location of the expression TRUE in the wrapper. This assumes that
    * each test case input is a single line.
    */
-  private static final Location location
-    = new Location(UniqueString.of("Test"), 5, 1, 5, 2);
+  private static final Location location = new Location(UniqueString.of("Test"), 5, 1, 5, 2);
 
   /**
    * A set of test cases for finding scoped identifiers. Each input should
@@ -97,28 +97,28 @@ public class GetScopedIdentifiersTests {
   @Parameters(name = "{index}: {0}")
   public static TestCase[] testCases() {
     return new TestCase[] {
-      new TestCase("op ≜", ""),
-      new TestCase("op(i, j, k) ≜", "", "j", "i", "k"),
-      new TestCase("op(i) ≜ ∀ j ∈ {} :", "", "i", "j"),
-      new TestCase("op ≜ ∀ i, j ∈ {} :", "", "i", "j"),
-      new TestCase("op ≜ ∀ ⟨i, j, k⟩ ∈ {} :", "", "i", "j", "k"),
-      new TestCase("op(i, j) ≜ LET k == TRUE l == TRUE IN", "", "i", "j", "k", "l"),
-      new TestCase("op ≜ LET i(j, k) == ", " IN TRUE", "i(_,_)", "j", "k"),
-      new TestCase("op ≜ LET RECURSIVE i i == TRUE IN", "", "i"),
-      new TestCase("op ≜ LET i == TRUE j ==", " IN TRUE", "i", "j"),
-      new TestCase("op(i) ≜ [j, k ∈ {} ↦", "]", "i", "j", "k"),
-      new TestCase("op ≜ [⟨i, j, k⟩ ∈ {} ↦", "]", "i", "j", "k"),
-      new TestCase("op(i, j) ≜ {k ∈ {} :", "}", "i", "j", "k"),
-      new TestCase("RECURSIVE op(_, _) op(f(_,_), i) ≜ op(LAMBDA j, k : ", ", TRUE)", "f(_,_)", "i", "j", "k"),
-      new TestCase("op ≜ {⟨i, j, k⟩ ∈ {} : ", "}", "i", "j", "k"),
-      new TestCase("op(i) ≜ {j ∈ {} : ", "}", "i", "j"),
-      new TestCase("op ≜ {", ": i, j ∈ {}}", "i", "j"),
-      new TestCase("op ≜ {", ": ⟨i, j, k⟩ ∈ {}}", "i", "j", "k"),
-      // This is a bug that needs to be fixed! More likely this will get fixed
-      // when support is added to the semantic checker to introduce "ghost"
-      // expressions at arbitrary points in the semantic tree, rendering all
-      // of this functionality redundant.
-      new TestCase("op(_+_) ≜", "", "+(_,_)"),
+        new TestCase("op ≜", ""),
+        new TestCase("op(i, j, k) ≜", "", "j", "i", "k"),
+        new TestCase("op(i) ≜ ∀ j ∈ {} :", "", "i", "j"),
+        new TestCase("op ≜ ∀ i, j ∈ {} :", "", "i", "j"),
+        new TestCase("op ≜ ∀ ⟨i, j, k⟩ ∈ {} :", "", "i", "j", "k"),
+        new TestCase("op(i, j) ≜ LET k == TRUE l == TRUE IN", "", "i", "j", "k", "l"),
+        new TestCase("op ≜ LET i(j, k) == ", " IN TRUE", "i(_,_)", "j", "k"),
+        new TestCase("op ≜ LET RECURSIVE i i == TRUE IN", "", "i"),
+        new TestCase("op ≜ LET i == TRUE j ==", " IN TRUE", "i", "j"),
+        new TestCase("op(i) ≜ [j, k ∈ {} ↦", "]", "i", "j", "k"),
+        new TestCase("op ≜ [⟨i, j, k⟩ ∈ {} ↦", "]", "i", "j", "k"),
+        new TestCase("op(i, j) ≜ {k ∈ {} :", "}", "i", "j", "k"),
+        new TestCase("RECURSIVE op(_, _) op(f(_,_), i) ≜ op(LAMBDA j, k : ", ", TRUE)", "f(_,_)", "i", "j", "k"),
+        new TestCase("op ≜ {⟨i, j, k⟩ ∈ {} : ", "}", "i", "j", "k"),
+        new TestCase("op(i) ≜ {j ∈ {} : ", "}", "i", "j"),
+        new TestCase("op ≜ {", ": i, j ∈ {}}", "i", "j"),
+        new TestCase("op ≜ {", ": ⟨i, j, k⟩ ∈ {}}", "i", "j", "k"),
+        // This is a bug that needs to be fixed! More likely this will get fixed
+        // when support is added to the semantic checker to introduce "ghost"
+        // expressions at arbitrary points in the semantic tree, rendering all
+        // of this functionality redundant.
+        new TestCase("op(_+_) ≜", "", "+(_,_)"),
     };
   }
 

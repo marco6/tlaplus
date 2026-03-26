@@ -55,7 +55,9 @@ public class BEGraphNode extends AbstractGraphNode {
 		this.number = this.number ^ 0x8000000000000000L;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
@@ -65,7 +67,9 @@ public class BEGraphNode extends AbstractGraphNode {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object obj) {

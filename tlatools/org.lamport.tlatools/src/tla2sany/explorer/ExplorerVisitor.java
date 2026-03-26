@@ -31,10 +31,10 @@ public class ExplorerVisitor<T> {
 
 	public void preVisit(final ExploreNode exploreNode) {
 	}
-	
+
 	public void postVisit(final ExploreNode exploreNode) {
 	}
-	
+
 	public T get() {
 		return null;
 	}

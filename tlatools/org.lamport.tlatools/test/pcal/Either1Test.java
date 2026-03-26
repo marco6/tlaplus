@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class Either1Test extends PCalModelCheckerTestCase {
 
 	public Either1Test() {
-		super("Either1", "pcal", new String[] {"-wf", "-termination"});
+		super("Either1", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test
@@ -46,7 +46,7 @@ public class Either1Test extends PCalModelCheckerTestCase {
 		assertFalse(recorder.recorded(EC.GENERAL));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "9", "7", "0"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "4"));
-		
+
 		assertZeroUncovered();
 	}
 }

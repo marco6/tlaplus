@@ -45,14 +45,14 @@ public class MonolithSpecExtractor {
 		}
 		return configFile + TLAConstants.Files.CONFIG_EXTENSION;
 	}
-	
+
 	// config and module are almost identical except for what they return.
 	// The config is a plain (Java) InputStream, but the module has to be a
 	// TLA+ *NamedInputStream*, which is a wrapper and not a subclass of
 	// InputStream. Method config also filters out the config start and end markers
 	// while module keeps them. Other than that, they both loop over the input line
 	// by line and extract the lines in between the start and end marker.
-	
+
 	public static InputStream config(final InputStream in, final String configName) throws IOException {
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
 			String config = "";
@@ -62,7 +62,8 @@ public class MonolithSpecExtractor {
 				if (!config.isEmpty() && line.matches("====.*")) {
 					break;
 				}
-				if (config.isEmpty() && line.matches("-----*\\s*CONFIG\\s+" + Pattern.quote(configName) + "\\s*-----*")) {
+				if (config.isEmpty()
+						&& line.matches("-----*\\s*CONFIG\\s+" + Pattern.quote(configName) + "\\s*-----*")) {
 					config += " "; // activate.
 					continue; // skip to next line/don't include marker.
 				}
@@ -73,7 +74,7 @@ public class MonolithSpecExtractor {
 			return new ByteArrayInputStream(config.trim().getBytes(Charset.forName("UTF-8")));
 		}
 	}
-	
+
 	public static NamedInputStream module(final File in, final String moduleName)
 			throws IOException {
 		// Use only the base name for the temp file to avoid invalid paths on Windows

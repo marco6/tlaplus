@@ -24,7 +24,6 @@ public class TBGraphNode {
 	private int index; // unique id for this node
 	private final LiveExprNode[] statePreds; // state predicates in the particle
 
-
 	public TBGraphNode(TBPar par) {
 		this.par = par;
 		this.index = 0;
@@ -52,9 +51,11 @@ public class TBGraphNode {
 			// Liveness.java implies that the LiveExprNode sub-types that we can encounter
 			// here won't include LNActions. The comment of
 			// tlc2.tool.liveness.TBPar.positiveClosure() confirms it too.
-			// However, ln.getLevel might still be action or temporal because of e.g. formulae
+			// However, ln.getLevel might still be action or temporal because of e.g.
+			// formulae
 			// such as `[]~someStatePredicate` as negation of `<>someStatePredicate`, or
-			// `()[]~(someStatePredicate)` as a particle of `[]-someStatePredicate` with `()`
+			// `()[]~(someStatePredicate)` as a particle of `[]-someStatePredicate` with
+			// `()`
 			// denoting LNNext/LTL's next operator.
 			if (ln.getLevel() <= LevelConstants.VariableLevel) {
 				preds.addElement(ln);
@@ -111,14 +112,14 @@ public class TBGraphNode {
 		}
 		return true;
 	}
-	
+
 	private final boolean isSelfLoop() {
 		if (nextSize() == 1) {
 			return nextAt(0) == this;
 		}
 		return false;
 	}
-	
+
 	public final boolean isAccepting() {
 		if (par.isEmpty() && isSelfLoop()) {
 			return true;
@@ -151,7 +152,7 @@ public class TBGraphNode {
 	 */
 	public String toDotViz(final boolean isInitNode) {
 		final String label = "\"Id: " + this.index + "\n" + par.toDotViz() + "\"";
-		
+
 		final StringBuffer buf = new StringBuffer(nextSize());
 		buf.append(this.index + " [label=" + label + "]\n"); // nodes label
 		if (isInitNode) {
@@ -165,4 +166,3 @@ public class TBGraphNode {
 		return buf.toString();
 	}
 }
-

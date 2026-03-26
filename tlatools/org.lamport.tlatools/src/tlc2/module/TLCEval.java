@@ -75,11 +75,11 @@ public class TLCEval implements ValueConstants {
 			// of TLCEval.
 			// Since there is no sharing going on, there is no need to deal
 			// with WorkerValue here.
-			
+
 			// The value that a constant-level expression evaluates to is stored in the
-			// semantic graph. 
+			// semantic graph.
 			// For a state-level formula, the value could be kept in a transient member
-			// of the state.  This effort doesn't seem worth it, though.
+			// of the state. This effort doesn't seem worth it, though.
 			return convert(tool.eval(arg, c, s0, s1, control, cm));
 		} else if (!c.isDeepEmpty()) {
 			// If a constant expression has a context, e.g. a parameter, we
@@ -92,7 +92,7 @@ public class TLCEval implements ValueConstants {
 
 	private static Value tlcEvalConst(Tool tool, ExprOrOpArgNode arg, CostModel cm) {
 		assert arg.getLevel() == LevelConstants.ConstantLevel;
-		
+
 		lock.readLock().lock();
 
 		// Read with ReadLock
@@ -120,7 +120,7 @@ public class TLCEval implements ValueConstants {
 			}
 
 			// Create/Write the value!
-			final Object demuxed =  WorkerValue.demux(tool, arg, cm);
+			final Object demuxed = WorkerValue.demux(tool, arg, cm);
 			Value eval;
 			if (demuxed instanceof Value) {
 				eval = (Value) demuxed;

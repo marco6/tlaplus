@@ -5,15 +5,16 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Interface containing the error code constants 
+ * Interface containing the error code constants
+ * 
  * @author Simon Zambrovski
  * @version $Id$
  */
-public interface EC
-{
-    // This is reserved so that an optional error code can be safely represented in a single int
+public interface EC {
+    // This is reserved so that an optional error code can be safely represented in
+    // a single int
     public static final int NO_ERROR = 0;
-    
+
     // Check and CheckImpl
     // check if the TLC option is the same for params
     public static final int CHECK_FAILED_TO_CHECK = 3000;
@@ -35,20 +36,19 @@ public interface EC
     public static final int CHECK_PARAM_UNRECOGNIZED = 3113;
     public static final int CHECK_PARAM_TOO_MANY_INPUT_FILES = 3114;
 
-    
     public final static int SANY_PARSER_CHECK_1 = 4000;
     public final static int SANY_PARSER_CHECK_2 = 4001;
     public final static int SANY_PARSER_CHECK_3 = 4002;
 
-    public static final int UNKNOWN = -1;  // TODO remove all these
+    public static final int UNKNOWN = -1; // TODO remove all these
     public final static int UNIT_TEST = -123456;
-	/**
-	 * A feature of TLA+/TLC is not supported by TLC's current mode. E.g.
-	 * TLCGet/TLCSet operator cannot be used in distributed TLC.
-	 */
-	public static final int TLC_FEATURE_UNSUPPORTED = 2156;
-	public static final int TLC_FEATURE_UNSUPPORTED_LIVENESS_SYMMETRY = 2279;
-	public static final int TLC_FEATURE_LIVENESS_CONSTRAINTS = 2284;
+    /**
+     * A feature of TLA+/TLC is not supported by TLC's current mode. E.g.
+     * TLCGet/TLCSet operator cannot be used in distributed TLC.
+     */
+    public static final int TLC_FEATURE_UNSUPPORTED = 2156;
+    public static final int TLC_FEATURE_UNSUPPORTED_LIVENESS_SYMMETRY = 2279;
+    public static final int TLC_FEATURE_LIVENESS_CONSTRAINTS = 2284;
 
     public static final int GENERAL = 1000;
     public static final int SYSTEM_OUT_OF_MEMORY = 1001;
@@ -90,9 +90,9 @@ public interface EC
 
     public static final int TLC_ERROR_STATE = 2120;
     public static final int TLC_BEHAVIOR_UP_TO_THIS_POINT = 2121;
-    
+
     public static final int TLC_STATE_NOT_COMPLETELY_SPECIFIED_LIVE = 2148;
-    
+
     /**
      * This error code accompanies the final state in a liveness property
      * counter-example trace, when the trace takes the form of a lasso
@@ -134,7 +134,7 @@ public interface EC
     public static final int TLC_BUG = 2128; // TODO Bad description
     public static final int TLC_FINGERPRINT_EXCEPTION = 2147;
 
-    public static final int SYSTEM_DISKGRAPH_ACCESS = 2129; // TODO refactor  
+    public static final int SYSTEM_DISKGRAPH_ACCESS = 2129; // TODO refactor
 
     public static final int TLC_AAAAAAA = 2130;
     public static final int TLC_REGISTRY_INIT_ERROR = 2131;
@@ -142,7 +142,7 @@ public interface EC
     public static final int TLC_CHOOSE_UPPER_BOUND = 2165;
 
     public static final int TLC_VALUE_ASSERT_FAILED = 2132;
-	public static final int TLC_MODULE_VALUE_JAVA_METHOD_OVERRIDE = 2154;
+    public static final int TLC_MODULE_VALUE_JAVA_METHOD_OVERRIDE = 2154;
     public static final int TLC_MODULE_VALUE_JAVA_METHOD_OVERRIDE_LOADED = 2168;
     public static final int TLC_MODULE_VALUE_JAVA_METHOD_OVERRIDE_MISMATCH = 2400;
     public static final int TLC_MODULE_VALUE_JAVA_METHOD_OVERRIDE_MODULE_MISMATCH = 2402;
@@ -154,7 +154,7 @@ public interface EC
     public static final int TLC_FP_VALUE_ALREADY_ON_DISK = 2166;
 
     public static final int TLC_LIVE_BEGRAPH_FAILED_TO_CONSTRUCT = 2159;
-    public static final int TLC_PARAMETER_MUST_BE_POSTFIX = 2136; 
+    public static final int TLC_PARAMETER_MUST_BE_POSTFIX = 2136;
     public static final int TLC_COULD_NOT_DETERMINE_SUBSCRIPT = 2139;
     public static final int TLC_SUBSCRIPT_CONTAIN_NO_STATE_VAR = 2140;
     public static final int TLC_WRONG_TUPLE_FIELD_NAME = 2141;
@@ -167,11 +167,17 @@ public interface EC
     public static final int TLC_MODULE_COMPARE_VALUE = 2155;
     public static final int TLC_MODULE_CHECK_MEMBER_OF = 2158;
     public static final int TLC_MODULE_TRANSITIVE_CLOSURE = 2157;
-    /** The %1% argument of %2% should be a %3%, but instead it is:<br>%4% */
+    /**
+     * The %1% argument of %2% should be a %3%, but instead it is:<br>
+     * %4%
+     */
     public static final int TLC_MODULE_ARGUMENT_ERROR = 2169;
-    /** Simon used an argument like "\bn apple" to TLC_MODULE_ARGUMENT_ERROR to turn
-     * an "a" into an "an".  This doesn't work on the Toolbox's console.  Hence, LL added
-     * the following message type on 21 May 2012. */
+    /**
+     * Simon used an argument like "\bn apple" to TLC_MODULE_ARGUMENT_ERROR to turn
+     * an "a" into an "an". This doesn't work on the Toolbox's console. Hence, LL
+     * added
+     * the following message type on 21 May 2012.
+     */
     public static final int TLC_MODULE_ARGUMENT_ERROR_AN = 2266;
     public static final int TLC_MODULE_ONE_ARGUMENT_ERROR = 2283;
     public static final int TLC_ARGUMENT_MISMATCH = 2170;
@@ -188,18 +194,23 @@ public interface EC
     public static final int TLC_MODULE_NULL_POWER_NULL = 2180;
     public static final int TLC_MODULE_COMPUTING_CARDINALITY = 2181;
     public static final int TLC_MODULE_EVALUATING = 2182;
-    /** The %1% argument of %2% must be in the domain of its first argument:<br>%3%<br>, but instead it is<br>%4% */
+    /**
+     * The %1% argument of %2% must be in the domain of its first argument:<br>
+     * %3%<br>
+     * , but instead it is<br>
+     * %4%
+     */
     public static final int TLC_MODULE_ARGUMENT_NOT_IN_DOMAIN = 2183;
     public static final int TLC_MODULE_APPLY_EMPTY_SEQ = 2184;
-    
+
     public static final int TLC_SYMMETRY_SET_TOO_SMALL = 2300;
     public static final int TLC_SPECIFICATION_FEATURES_TEMPORAL_QUANTIFIER = 2301;
-    
+
     public static final int TLC_STARTING = 2185;
     public static final int TLC_FINISHED = 2186;
-    
+
     // distributed TLC
-    
+
     public static final int TLC_DISTRIBUTED_SERVER_RUNNING = 7000;
     public static final int TLC_DISTRIBUTED_WORKER_REGISTERED = TLC_DISTRIBUTED_SERVER_RUNNING + 1;
     public static final int TLC_DISTRIBUTED_WORKER_DEREGISTERED = TLC_DISTRIBUTED_WORKER_REGISTERED + 1;
@@ -211,9 +222,9 @@ public interface EC
     public static final int TLC_DISTRIBUTED_SERVER_FPSET_WAITING = TLC_DISTRIBUTED_EXCEED_BLOCKSIZE + 1;
     public static final int TLC_DISTRIBUTED_SERVER_FPSET_REGISTERED = TLC_DISTRIBUTED_SERVER_FPSET_WAITING + 1;
     public static final int TLC_DISTRIBUTED_SERVER_FINISHED = TLC_DISTRIBUTED_SERVER_FPSET_REGISTERED + 1;
-    
+
     // errors during parsing of the model configuration
-    
+
     public static final int CFG_ERROR_READING_FILE = 5001;
     public static final int CFG_GENERAL = 5002;
     public static final int CFG_MISSING_ID = 5003;
@@ -224,7 +235,7 @@ public interface EC
     public static final int TLC_MODE_MC_DFS = 2271;
     public static final int TLC_MODE_SIMU = 2188;
     public static final int TLC_COMPUTING_INIT = 2189;
-	public static final int TLC_COMPUTING_INIT_PROGRESS = 2269;
+    public static final int TLC_COMPUTING_INIT_PROGRESS = 2269;
     public static final int TLC_INIT_GENERATED1 = 2190;
     public static final int TLC_INIT_GENERATED2 = 2191;
     public static final int TLC_INIT_GENERATED3 = 2207;
@@ -249,7 +260,7 @@ public interface EC
     public static final int TLC_PROGRESS_STATS_DFID = 2206;
     public static final int TLC_PROGRESS_SIMU = 2209;
     public static final int TLC_FP_COMPLETED = 2211;
-    
+
     public static final int TLC_LIVE_IMPLIED = 2212;
     public static final int TLC_LIVE_IMPLIED_DEBUG = 2263;
     public static final int TLC_LIVE_CANNOT_HANDLE_FORMULA = 2213;
@@ -263,30 +274,30 @@ public interface EC
     public static final int TLC_CONFIG_NO_SPEC_BUT_PROPERTY = 2257;
     public static final int TLC_LIVE_FORMULA_AND_FAIRNESS_TAUTOLOGY = 2258;
     public static final int TLC_CONFIG_NO_FAIRNESS_BUT_LIVE_PROPERTY = 2259;
-    
+
     public static final int TLC_EXPECTED_VALUE = 2215;
     public static final int TLC_EXPECTED_EXPRESSION = 2246;
     public static final int TLC_EXPECTED_EXPRESSION_IN_COMPUTING = 2247;
     public static final int TLC_EXPECTED_EXPRESSION_IN_COMPUTING2 = 2248;
-    
-    
+
     /**
      * This error code is used in the following situations:
-     *  - During DFID model checking, when next state is not fully defined
-     *  - In the {@link tlc2.tool.CheckImpl} tool, when there is an invalid step
-     *  - During Simulation model checking, when maximum trace depth is reached
+     * - During DFID model checking, when next state is not fully defined
+     * - In the {@link tlc2.tool.CheckImpl} tool, when there is an invalid step
+     * - During Simulation model checking, when maximum trace depth is reached
      */
     public static final int TLC_STATE_PRINT1 = 2216;
-    
+
     /**
      * This error code is used in the following situations:
-     *  - Printing a safety invariant violation error trace
-     *  - Printing every state except the final state of a liveness error trace; the final state is printed with:
-     *    * {@link EC#TLC_BACK_TO_STATE} for liveness traces ending in a lasso
-     *    * {@link EC#TLC_STATE_PRINT3} for liveness traces ending in stuttering
+     * - Printing a safety invariant violation error trace
+     * - Printing every state except the final state of a liveness error trace; the
+     * final state is printed with:
+     * * {@link EC#TLC_BACK_TO_STATE} for liveness traces ending in a lasso
+     * * {@link EC#TLC_STATE_PRINT3} for liveness traces ending in stuttering
      */
     public static final int TLC_STATE_PRINT2 = 2217;
-    
+
     public static final int TLC_SANY_START = 2220;
     public static final int TLC_COVERAGE_MISMATCH = 2776;
     public static final int TLC_COVERAGE_VALUE = 2221;
@@ -297,7 +308,7 @@ public interface EC
     public static final int TLC_COVERAGE_CONSTRAINT = 2778;
     public static final int TLC_COVERAGE_END_OVERHEAD = 2777;
     public static final int TLC_COVERAGE_VAR = 2779;
-   
+
     // config file errors
     public static final int TLC_CONFIG_VALUE_NOT_ASSIGNED_TO_CONSTANT_PARAM = 2222;
     public static final int TLC_CONFIG_RHS_ID_APPEARED_AFTER_LHS_ID = 2223;
@@ -328,144 +339,145 @@ public interface EC
     public static final int TLC_CONFIG_NO_STATE_TYPE = 2243;
     public static final int TLC_CANT_HANDLE_REAL_NUMBERS = 2244;
     public static final int TLC_NO_MODULES = 2245;
-    
+
     public static final int TLC_ENABLED_WRONG_FORMULA = 2260;
     public static final int TLC_ENCOUNTERED_FORMULA_IN_PREDICATE = 2261;
     public static final int TLC_VERSION = 2262;
     public static final int TLC_COUNTER_EXAMPLE = 2264;
-    
+
     public static final int TLC_INTEGER_TOO_BIG = 2265;
     public static final int TLC_TRACE_TOO_LONG = 2282;
-    
+
     public static final int TLC_ENVIRONMENT_JVM_GC = 2401;
 
     // Codes for trace expression spec generation events
     public static final int TLC_TE_SPEC_GENERATION_COMPLETE = 2501;
     public static final int TLC_TE_SPEC_GENERATION_ERROR = 2502;
-    
-    //**************************************************************//
+
+    // **************************************************************//
     // Mapping error constants above to process exit/return values. //
     // Because Linux and macOS only support 8-bit exit values, this //
-    // mapping is necessary.                                        //
-    //**************************************************************//
+    // mapping is necessary. //
+    // **************************************************************//
 
     public static class ExitStatus {
-	    	
-    	public static final int ERROR = 255;
-	    public static final int SUCCESS = 0;
-	
-	    // (Safety/Liveness) Violations
-	    public static final int VIOLATION_ASSUMPTION = 10; 
-	    public static final int VIOLATION_DEADLOCK = VIOLATION_ASSUMPTION + 1; 
-	    public static final int VIOLATION_SAFETY = VIOLATION_DEADLOCK + 1;
-	    public static final int VIOLATION_LIVENESS = VIOLATION_SAFETY + 1;
-		public static final int VIOLATION_ASSERT = VIOLATION_LIVENESS + 1;
-	
-	    // Evaluation failures
-	    public static final int FAILURE_SPEC_EVAL = 75;
-	    public static final int FAILURE_SAFETY_EVAL = FAILURE_SPEC_EVAL + 1;
-	    public static final int FAILURE_LIVENESS_EVAL = FAILURE_SAFETY_EVAL + 1;
-	    
-	    // Errors
-	    public static final int ERROR_SPEC_PARSE = 150;
-	    public static final int ERROR_CONFIG_PARSE = ERROR_SPEC_PARSE + 1;
-	    public static final int ERROR_STATESPACE_TOO_LARGE = ERROR_CONFIG_PARSE + 1;
-	    public static final int ERROR_SYSTEM = ERROR_STATESPACE_TOO_LARGE + 1;
-	
-	    /**
-	     * Returns an exit status for an error code.
-	     */
-	    public static int errorConstantToExitStatus(final int ec) {
-	        // TODO Allocate a range of exit status to indicate classes of errors.
-	        // For a great example of potential classes see: https://github.com/tlaplus/tlaplus/pull/308#discussion_r285840112
-	    	switch (ec) {
-	    	case NO_ERROR:
-	    		return SUCCESS;
-	    	
-	    	// failures
-	    		
-	    	case TLC_LIVE_FORMULA_TAUTOLOGY:
-	    		return FAILURE_LIVENESS_EVAL;
-	    		
-	    	case TLC_STATE_NOT_COMPLETELY_SPECIFIED_NEXT:
-	    	case TLC_STATES_AND_NO_NEXT_ACTION:
-	    	case TLC_NESTED_EXPRESSION:
-	    	case TLC_FINGERPRINT_EXCEPTION:
-	    		return FAILURE_SPEC_EVAL;
-	    		
-	    	case TLC_INVARIANT_EVALUATION_FAILED:
-	    	case TLC_INVARIANT_VIOLATED_LEVEL:
-	    		return FAILURE_SAFETY_EVAL;
-	    		
-	    	// violations
-	    		
-	        case TLC_INVARIANT_VIOLATED_INITIAL:
-	        case TLC_INVARIANT_VIOLATED_BEHAVIOR:
-				return VIOLATION_SAFETY;
-				
-	        case TLC_ACTION_PROPERTY_VIOLATED_BEHAVIOR:
-	        case TLC_ACTION_PROPERTY_EVALUATION_FAILED:
-	        case TLC_TEMPORAL_PROPERTY_VIOLATED:
-	        case TLC_PROPERTY_VIOLATED_INITIAL:
-				return VIOLATION_LIVENESS;
-				
-	        case TLC_DEADLOCK_REACHED:
-	        	return VIOLATION_DEADLOCK;
-	        	
-	        case TLC_ASSUMPTION_FALSE:
-	        case TLC_ASSUMPTION_EVALUATION_ERROR:
-	            return VIOLATION_ASSUMPTION;
-	        
-	        case TLC_VALUE_ASSERT_FAILED:
-	        	return VIOLATION_ASSERT;
-	        	
-	        // errors
-	        case TLC_CONFIG_VALUE_NOT_ASSIGNED_TO_CONSTANT_PARAM:
-	        case TLC_CONFIG_RHS_ID_APPEARED_AFTER_LHS_ID:
-	        case TLC_CONFIG_WRONG_SUBSTITUTION:
-	        case TLC_CONFIG_WRONG_SUBSTITUTION_NUMBER_OF_ARGS:
-	        case TLC_CONFIG_UNDEFINED_OR_NO_OPERATOR:
-	        case TLC_CONFIG_SUBSTITUTION_NON_CONSTANT:
-	        case TLC_CONFIG_ID_DOES_NOT_APPEAR_IN_SPEC:
-	        case TLC_CONFIG_NOT_BOTH_SPEC_AND_INIT:
-	        case TLC_CONFIG_ID_REQUIRES_NO_ARG:
-	        case TLC_CONFIG_SPECIFIED_NOT_DEFINED:
-	        case TLC_CONFIG_ID_HAS_VALUE:
-	        case TLC_CONFIG_MISSING_INIT:
-	        case TLC_CONFIG_MISSING_NEXT:
-	        case TLC_CONFIG_ID_MUST_NOT_BE_CONSTANT:
-	        case TLC_CONFIG_OP_NO_ARGS:
-	        case TLC_CONFIG_OP_NOT_IN_SPEC:
-	        case TLC_CONFIG_OP_IS_EQUAL:
-	        case TLC_CONFIG_SPEC_IS_TRIVIAL:
-	        case TLC_CANT_HANDLE_SUBSCRIPT:
-	        case TLC_CANT_HANDLE_CONJUNCT:
-	        case TLC_CANT_HANDLE_TOO_MANY_NEXT_STATE_RELS:
-	        case TLC_CONFIG_PROPERTY_NOT_CORRECTLY_DEFINED:
-	        case TLC_CONFIG_PROPERTY_ACTION_LEVEL:
-	        case TLC_CONFIG_PROPERTY_ACTION_LEVEL_SQUARE_A_SUB_V:
-	        case TLC_CONFIG_PROPERTY_ACTION_LEVEL_ANGLE_A_SUB_V:
-	        case TLC_CONFIG_OP_ARITY_INCONSISTENT:
-	        case TLC_CONFIG_NO_STATE_TYPE:
-	        case TLC_CANT_HANDLE_REAL_NUMBERS: // might also be in the spec
-	        case TLC_NO_MODULES:
-	        	return ERROR_CONFIG_PARSE;
-	        	
-	        case TLC_PARSING_FAILED2:
-	        case TLC_PARSING_FAILED:
-	        	return ERROR_SPEC_PARSE;
 
-			default:
-				return 255;
-			}
-	    }
+        public static final int ERROR = 255;
+        public static final int SUCCESS = 0;
 
-		private static final Set<Integer> knownExitValues = Stream.of(SUCCESS, FAILURE_LIVENESS_EVAL, FAILURE_SPEC_EVAL,
-				FAILURE_SAFETY_EVAL, VIOLATION_SAFETY, VIOLATION_LIVENESS, VIOLATION_DEADLOCK, VIOLATION_ASSUMPTION,
-				VIOLATION_ASSERT, ERROR_CONFIG_PARSE, ERROR_SPEC_PARSE).collect(Collectors.toSet());
-		
-		public static boolean exitStatusToCrash(final int exitStatus) {
-			return !knownExitValues.contains(exitStatus);
-		}
+        // (Safety/Liveness) Violations
+        public static final int VIOLATION_ASSUMPTION = 10;
+        public static final int VIOLATION_DEADLOCK = VIOLATION_ASSUMPTION + 1;
+        public static final int VIOLATION_SAFETY = VIOLATION_DEADLOCK + 1;
+        public static final int VIOLATION_LIVENESS = VIOLATION_SAFETY + 1;
+        public static final int VIOLATION_ASSERT = VIOLATION_LIVENESS + 1;
+
+        // Evaluation failures
+        public static final int FAILURE_SPEC_EVAL = 75;
+        public static final int FAILURE_SAFETY_EVAL = FAILURE_SPEC_EVAL + 1;
+        public static final int FAILURE_LIVENESS_EVAL = FAILURE_SAFETY_EVAL + 1;
+
+        // Errors
+        public static final int ERROR_SPEC_PARSE = 150;
+        public static final int ERROR_CONFIG_PARSE = ERROR_SPEC_PARSE + 1;
+        public static final int ERROR_STATESPACE_TOO_LARGE = ERROR_CONFIG_PARSE + 1;
+        public static final int ERROR_SYSTEM = ERROR_STATESPACE_TOO_LARGE + 1;
+
+        /**
+         * Returns an exit status for an error code.
+         */
+        public static int errorConstantToExitStatus(final int ec) {
+            // TODO Allocate a range of exit status to indicate classes of errors.
+            // For a great example of potential classes see:
+            // https://github.com/tlaplus/tlaplus/pull/308#discussion_r285840112
+            switch (ec) {
+                case NO_ERROR:
+                    return SUCCESS;
+
+                // failures
+
+                case TLC_LIVE_FORMULA_TAUTOLOGY:
+                    return FAILURE_LIVENESS_EVAL;
+
+                case TLC_STATE_NOT_COMPLETELY_SPECIFIED_NEXT:
+                case TLC_STATES_AND_NO_NEXT_ACTION:
+                case TLC_NESTED_EXPRESSION:
+                case TLC_FINGERPRINT_EXCEPTION:
+                    return FAILURE_SPEC_EVAL;
+
+                case TLC_INVARIANT_EVALUATION_FAILED:
+                case TLC_INVARIANT_VIOLATED_LEVEL:
+                    return FAILURE_SAFETY_EVAL;
+
+                // violations
+
+                case TLC_INVARIANT_VIOLATED_INITIAL:
+                case TLC_INVARIANT_VIOLATED_BEHAVIOR:
+                    return VIOLATION_SAFETY;
+
+                case TLC_ACTION_PROPERTY_VIOLATED_BEHAVIOR:
+                case TLC_ACTION_PROPERTY_EVALUATION_FAILED:
+                case TLC_TEMPORAL_PROPERTY_VIOLATED:
+                case TLC_PROPERTY_VIOLATED_INITIAL:
+                    return VIOLATION_LIVENESS;
+
+                case TLC_DEADLOCK_REACHED:
+                    return VIOLATION_DEADLOCK;
+
+                case TLC_ASSUMPTION_FALSE:
+                case TLC_ASSUMPTION_EVALUATION_ERROR:
+                    return VIOLATION_ASSUMPTION;
+
+                case TLC_VALUE_ASSERT_FAILED:
+                    return VIOLATION_ASSERT;
+
+                // errors
+                case TLC_CONFIG_VALUE_NOT_ASSIGNED_TO_CONSTANT_PARAM:
+                case TLC_CONFIG_RHS_ID_APPEARED_AFTER_LHS_ID:
+                case TLC_CONFIG_WRONG_SUBSTITUTION:
+                case TLC_CONFIG_WRONG_SUBSTITUTION_NUMBER_OF_ARGS:
+                case TLC_CONFIG_UNDEFINED_OR_NO_OPERATOR:
+                case TLC_CONFIG_SUBSTITUTION_NON_CONSTANT:
+                case TLC_CONFIG_ID_DOES_NOT_APPEAR_IN_SPEC:
+                case TLC_CONFIG_NOT_BOTH_SPEC_AND_INIT:
+                case TLC_CONFIG_ID_REQUIRES_NO_ARG:
+                case TLC_CONFIG_SPECIFIED_NOT_DEFINED:
+                case TLC_CONFIG_ID_HAS_VALUE:
+                case TLC_CONFIG_MISSING_INIT:
+                case TLC_CONFIG_MISSING_NEXT:
+                case TLC_CONFIG_ID_MUST_NOT_BE_CONSTANT:
+                case TLC_CONFIG_OP_NO_ARGS:
+                case TLC_CONFIG_OP_NOT_IN_SPEC:
+                case TLC_CONFIG_OP_IS_EQUAL:
+                case TLC_CONFIG_SPEC_IS_TRIVIAL:
+                case TLC_CANT_HANDLE_SUBSCRIPT:
+                case TLC_CANT_HANDLE_CONJUNCT:
+                case TLC_CANT_HANDLE_TOO_MANY_NEXT_STATE_RELS:
+                case TLC_CONFIG_PROPERTY_NOT_CORRECTLY_DEFINED:
+                case TLC_CONFIG_PROPERTY_ACTION_LEVEL:
+                case TLC_CONFIG_PROPERTY_ACTION_LEVEL_SQUARE_A_SUB_V:
+                case TLC_CONFIG_PROPERTY_ACTION_LEVEL_ANGLE_A_SUB_V:
+                case TLC_CONFIG_OP_ARITY_INCONSISTENT:
+                case TLC_CONFIG_NO_STATE_TYPE:
+                case TLC_CANT_HANDLE_REAL_NUMBERS: // might also be in the spec
+                case TLC_NO_MODULES:
+                    return ERROR_CONFIG_PARSE;
+
+                case TLC_PARSING_FAILED2:
+                case TLC_PARSING_FAILED:
+                    return ERROR_SPEC_PARSE;
+
+                default:
+                    return 255;
+            }
+        }
+
+        private static final Set<Integer> knownExitValues = Stream.of(SUCCESS, FAILURE_LIVENESS_EVAL, FAILURE_SPEC_EVAL,
+                FAILURE_SAFETY_EVAL, VIOLATION_SAFETY, VIOLATION_LIVENESS, VIOLATION_DEADLOCK, VIOLATION_ASSUMPTION,
+                VIOLATION_ASSERT, ERROR_CONFIG_PARSE, ERROR_SPEC_PARSE).collect(Collectors.toSet());
+
+        public static boolean exitStatusToCrash(final int exitStatus) {
+            return !knownExitValues.contains(exitStatus);
+        }
     }
 }

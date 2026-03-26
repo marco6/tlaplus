@@ -48,7 +48,7 @@ public class AliasSafetyTest extends ModelCheckerTestCase {
 	public AliasSafetyTest() {
 		super("Alias", new String[] { "-config", "Alias.tla" }, EC.ExitStatus.VIOLATION_SAFETY);
 	}
-	
+
 	@Override
 	protected boolean runWithDebugger() {
 		return false;
@@ -66,12 +66,16 @@ public class AliasSafetyTest extends ModelCheckerTestCase {
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
 		final List<String> expectedTrace = new ArrayList<String>(7);
 		// Trace prefix
-		expectedTrace.add("/\\ yy = FALSE\n/\\ x = 1\n/\\ a = 1\n/\\ b = FALSE\n/\\ anim = \"e1: 1 e2: FALSE\"\n/\\ te = TRUE\n/\\ lvl = <<1, 1>>");
-		expectedTrace.add("/\\ yy = TRUE\n/\\ x = 2\n/\\ a = 1\n/\\ b = FALSE\n/\\ anim = \"e1: 2 e2: TRUE\"\n/\\ te = TRUE\n/\\ lvl = <<2, 2>>");
-		expectedTrace.add("/\\ yy = FALSE\n/\\ x = 3\n/\\ a = 1\n/\\ b = FALSE\n/\\ anim = \"e1: 3 e2: FALSE\"\n/\\ te = TRUE\n/\\ lvl = <<3, 3>>");
-		expectedTrace.add("/\\ yy = TRUE\n/\\ x = 4\n/\\ a = 0\n/\\ b = TRUE\n/\\ anim = \"e1: 4 e2: TRUE\"\n/\\ te = TRUE\n/\\ lvl = <<4, 4>>");
+		expectedTrace.add(
+				"/\\ yy = FALSE\n/\\ x = 1\n/\\ a = 1\n/\\ b = FALSE\n/\\ anim = \"e1: 1 e2: FALSE\"\n/\\ te = TRUE\n/\\ lvl = <<1, 1>>");
+		expectedTrace.add(
+				"/\\ yy = TRUE\n/\\ x = 2\n/\\ a = 1\n/\\ b = FALSE\n/\\ anim = \"e1: 2 e2: TRUE\"\n/\\ te = TRUE\n/\\ lvl = <<2, 2>>");
+		expectedTrace.add(
+				"/\\ yy = FALSE\n/\\ x = 3\n/\\ a = 1\n/\\ b = FALSE\n/\\ anim = \"e1: 3 e2: FALSE\"\n/\\ te = TRUE\n/\\ lvl = <<3, 3>>");
+		expectedTrace.add(
+				"/\\ yy = TRUE\n/\\ x = 4\n/\\ a = 0\n/\\ b = TRUE\n/\\ anim = \"e1: 4 e2: TRUE\"\n/\\ te = TRUE\n/\\ lvl = <<4, 4>>");
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace);
-		
+
 		// Assert POSTCONDITION.
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_FALSE));
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_EVALUATION_ERROR));

@@ -47,15 +47,15 @@ public class SubsetBenchmark {
 
 		FP64.Init();
 	}
-	
-	@Param({"10", "12", "14", "16", "20", "24"})
+
+	@Param({ "10", "12", "14", "16", "20", "24" })
 	public int numOfElements;
-	
-	@Param({"32", "64", "128", "256"})
+
+	@Param({ "32", "64", "128", "256" })
 	public int size;
 
 	public SubsetValue subset;
-		
+
 	@Setup(Level.Invocation)
 	public void setup() {
 		if (size < 128 || (size >= 128 && numOfElements <= 20)) {

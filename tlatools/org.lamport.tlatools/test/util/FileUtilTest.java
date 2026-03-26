@@ -19,13 +19,15 @@ import java.util.Date;
 public class FileUtilTest {
 
     /**
-     * This test writes to the filesystem.  To avoid clutter, it creates a temporary directory before
+     * This test writes to the filesystem. To avoid clutter, it creates a temporary
+     * directory before
      * each test and deletes it after the test.
      */
     private Path tmpDir;
 
     /**
-     * This test modifies the global variable {@link TLCGlobals#metaDir}.  To avoid test order dependence,
+     * This test modifies the global variable {@link TLCGlobals#metaDir}. To avoid
+     * test order dependence,
      * it saves the original value before each test and restores it at the end.
      */
     private String oldMetaDir;
@@ -44,7 +46,8 @@ public class FileUtilTest {
 
     @Test
     public void testReturnFromCheckpoint() {
-        // If the fromChkpt arg is provided, then it is returned as-is, even if it does not exist.
+        // If the fromChkpt arg is provided, then it is returned as-is, even if it does
+        // not exist.
         Assert.assertEquals(
                 "abc",
                 FileUtil.makeMetaDir(tmpDir.toString(), "abc"));
@@ -54,7 +57,8 @@ public class FileUtilTest {
     public void testDuplicateStateDirCreation() {
         Date now = new Date();
 
-        // Two calls to makeMetaDir with the same date should both succeed and return different directories.
+        // Two calls to makeMetaDir with the same date should both succeed and return
+        // different directories.
         String path1 = FileUtil.makeMetaDir(now, tmpDir.toString(), null);
         String path2 = FileUtil.makeMetaDir(now, tmpDir.toString(), null);
         Assert.assertNotEquals(path1, path2);
@@ -71,7 +75,8 @@ public class FileUtilTest {
         TLCGlobals.metaDir = tmpDir.resolve("fizz").resolve("buzz").toString();
         String path = FileUtil.makeMetaDir(now, tmpDir.toString(), null);
 
-        // If {@link TLCGlobals#metaDir} is set, then that directory is created and used as the parent.
+        // If {@link TLCGlobals#metaDir} is set, then that directory is created and used
+        // as the parent.
         Assert.assertEquals(Paths.get(TLCGlobals.metaDir), Paths.get(path).getParent());
         Assert.assertTrue(Files.isDirectory(Paths.get(path)));
     }

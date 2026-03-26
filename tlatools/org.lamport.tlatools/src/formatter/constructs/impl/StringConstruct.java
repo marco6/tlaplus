@@ -9,7 +9,8 @@ import tla2sany.st.TreeNode;
 /**
  * Handles string literal nodes.
  * <p>
- * SANY stores strings with escape sequences already interpreted (e.g., "\\b" becomes "\b").
+ * SANY stores strings with escape sequences already interpreted (e.g., "\\b"
+ * becomes "\b").
  * We need to re-escape them when outputting to produce valid TLA+ source.
  */
 public class StringConstruct implements TlaConstruct {
@@ -34,7 +35,8 @@ public class StringConstruct implements TlaConstruct {
 
     /**
      * Escape a string for TLA+ output.
-     * The input is a TLA+ string literal as stored by SANY (with quotes, but escape sequences interpreted).
+     * The input is a TLA+ string literal as stored by SANY (with quotes, but escape
+     * sequences interpreted).
      * The output is a valid TLA+ string literal with proper escaping.
      */
     private String escapeString(String s) {

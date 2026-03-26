@@ -36,39 +36,40 @@ import util.ToolIO;
 
 /**
  * Launcher for the PCal Translator for running out-of-the-tool
+ * 
  * @author Simon Zambrovski
  */
-public class Translator
-{
-    private String output;
+public class Translator {
+	private String output;
 
-    private final String input;
-    
-    public Translator(final String anInput, final String[] args) {
+	private final String input;
+
+	public Translator(final String anInput, final String[] args) {
 		this.input = anInput;
 		ToolIO.reset();
 		ToolIO.setMode(ToolIO.TOOL);
 		PcalParams.resetParams();
 		PcalParams.tlaPcalMapping = new TLAtoPCalMapping();
 		trans.parseAndProcessArguments(args);
-    }
-    
-    public Translator(final String anInput, final List<String> args) {
-    	this(anInput, args.toArray(new String[args.size()]));
-    }
+	}
 
-    /**
-     * delegates the call to the {@link trans#main()}
-     * @param args
-     * @return 
-     */
+	public Translator(final String anInput, final List<String> args) {
+		this(anInput, args.toArray(new String[args.size()]));
+	}
+
+	/**
+	 * delegates the call to the {@link trans#main()}
+	 * 
+	 * @param args
+	 * @return
+	 */
 	public boolean translate(final ValidationCallBack cb) {
 		// The input .tla file might have unix or windows line ending. If we fail to
 		// properly split the input (a line per array cell), the pcal translator will
 		// silently fail as well.
 		final String[] lines = input.split("\\r?\\n");
 		final List<String> in = Arrays.asList(lines);
-		
+
 		final List<String> out = trans.performTranslation(in, cb);
 		if (out != null) {
 			final StringBuilder buf = new StringBuilder();
@@ -81,26 +82,27 @@ public class Translator
 			}
 			output = buf.toString();
 		}
-		
+
 		return output != null && PcalParams.tlaPcalMapping != null;
 	}
-	
+
 	public String getOutput() {
 		return output;
 	}
-	
+
 	public boolean hasChanged() {
 		return !input.equals(output);
 	}
-	
+
 	public TLAtoPCalMapping getMapping() {
 		return PcalParams.tlaPcalMapping;
 	}
 
-    /**
-     * Retrieves the errors recorded during the execution
-     * @return
-     */
+	/**
+	 * Retrieves the errors recorded during the execution
+	 * 
+	 * @return
+	 */
 	public List<Error> getErrors() {
 		final String[] messages = ToolIO.getAllMessages();
 		final Vector<Error> errorMessages = new Vector<Error>();
@@ -113,25 +115,27 @@ public class Translator
 		}
 		return errorMessages;
 	}
-	
+
 	public static class Error {
 
 		private static final String LINE = "line ";
 		private static final String COLUMN = ", column ";
-		
+
 		private final String error;
 
 		public Error(String anError) {
 			this.error = anError;
 		}
-		
-		/* (non-Javadoc)
+
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Object#toString()
 		 */
 		public String toString() {
 			return error;
 		}
-		
+
 		public int[] getLocation() {
 			final int lineStarts = error.indexOf(LINE);
 			final int lineEnds = error.indexOf(COLUMN);
@@ -147,7 +151,7 @@ public class Translator
 				matcher.find();
 				// the column string that should be a parsable int
 				final String column = matcher.group().trim();
-				
+
 				int lineNumber = -1;
 				int columnNumber = -1;
 				try {

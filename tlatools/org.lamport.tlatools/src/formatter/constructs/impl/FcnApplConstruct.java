@@ -47,11 +47,9 @@ public class FcnApplConstruct implements TlaConstruct {
             content = content.append(Doc.text(",")).appendLineOrSpace(elementDocs.get(i));
         }
 
-
         return Doc.group(
                 generalId.append(Doc.text("["))
                         .appendLineOrEmpty(content).indent(indentSize)
-                        .appendLineOrEmpty(Doc.text("]"))
-        );
+                        .appendLineOrEmpty(Doc.text("]")));
     }
 }

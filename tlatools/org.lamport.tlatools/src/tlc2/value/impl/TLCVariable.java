@@ -31,7 +31,7 @@ import java.util.Random;
 public interface TLCVariable {
 
 	TLCVariable setInstance(final Value value);
-	
+
 	void setName(final String name);
 
 	void setValue(final String value);

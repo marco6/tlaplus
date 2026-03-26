@@ -23,14 +23,14 @@ public class FcnConstConstruct implements TlaConstruct {
     }
 
     /*
-      /\ pc =
-           [
-             self \in ProcSet
-             |->
-             CASE self \in SlushQueryProcess -> "QueryReplyLoop"
-             [] self \in SlushLoopProcess -> "RequireColorAssignment"
-             [] self = "ClientRequest" -> "ClientRequestLoop"
-           ]
+     * /\ pc =
+     * [
+     * self \in ProcSet
+     * |->
+     * CASE self \in SlushQueryProcess -> "QueryReplyLoop"
+     * [] self \in SlushLoopProcess -> "RequireColorAssignment"
+     * [] self = "ClientRequest" -> "ClientRequestLoop"
+     * ]
      */
 
     @Override
@@ -40,9 +40,9 @@ public class FcnConstConstruct implements TlaConstruct {
 
         // Structure for function constants:
         // Single bound: [ qBound |-> expr ]
-        //   z[0]=[ z[1]=qBound z[2]=|-> z[3]=expr z[4]=]
+        // z[0]=[ z[1]=qBound z[2]=|-> z[3]=expr z[4]=]
         // Multi-bound: [ qBound1 , qBound2 |-> expr ]
-        //   z[0]=[ z[1]=qBound1 z[2]=, z[3]=qBound2 z[4]=|-> z[5]=expr z[6]=]
+        // z[0]=[ z[1]=qBound1 z[2]=, z[3]=qBound2 z[4]=|-> z[5]=expr z[6]=]
 
         // Find the |-> symbol (it's always 3rd from the end: |-> expr ])
         int mapSymbolIndex = z.length - 3;
@@ -65,7 +65,7 @@ public class FcnConstConstruct implements TlaConstruct {
                 context.buildChild(z[0]) // [
                         .append(qBounds)
                         .appendSpace(mapSymbol)
-                        .appendLineOrSpace(mapExpr).indent(indentSize)
-        ).appendLineOrEmpty(context.buildChild(z[mapSymbolIndex + 2])); // ]
+                        .appendLineOrSpace(mapExpr).indent(indentSize))
+                .appendLineOrEmpty(context.buildChild(z[mapSymbolIndex + 2])); // ]
     }
 }

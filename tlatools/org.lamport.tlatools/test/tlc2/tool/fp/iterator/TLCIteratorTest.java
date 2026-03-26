@@ -18,14 +18,16 @@ public class TLCIteratorTest {
 
 	private MSBDiskFPSet.TLCIterator itr;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Before
 	public void setUp() throws Exception {
 		itr = new MSBDiskFPSet.TLCIterator(getBuffer());
 	}
-	
+
 	protected long[][] getBuffer() {
 		final long[][] buff = new long[8][];
 		buff[0] = getArray(8, 1, 8);
@@ -38,15 +40,15 @@ public class TLCIteratorTest {
 		buff[7] = null;
 		return buff;
 	}
-	
+
 	protected long getLast() {
 		return 21L;
 	}
-	
+
 	protected int getLength() {
 		return 21;
 	}
-	
+
 	protected long[] getArray(int length, long offset, int numOfElements) {
 		long[] l = new long[length];
 		for (int i = 0; i < length && i < numOfElements; i++) {
@@ -61,7 +63,7 @@ public class TLCIteratorTest {
 	@Test
 	public void testNext() {
 		long predecessor = -1l;
-		
+
 		int i = 0;
 		while (i < getLength()) {
 			i++;
@@ -75,7 +77,7 @@ public class TLCIteratorTest {
 		}
 		assertEquals(i, itr.reads());
 	}
-	
+
 	/**
 	 * Test method for {@link tlc2.tool.fp.TLCIterator#next()}.
 	 */
@@ -85,7 +87,7 @@ public class TLCIteratorTest {
 		while (itr.hasNext()) {
 			itr.next();
 		}
-		
+
 		// try to read further beyond end of itr
 		assertFalse(itr.hasNext());
 		try {
@@ -95,7 +97,7 @@ public class TLCIteratorTest {
 		}
 		fail("Must throw NoSuchElementException");
 	}
-	
+
 	/**
 	 * Test method for {@link tlc2.tool.fp.TLCIterator#getLast()}.
 	 */

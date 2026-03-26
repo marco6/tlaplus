@@ -32,7 +32,8 @@ public final class TLAPlusFormatter {
         this(specPath, config, true);
     }
 
-    public TLAPlusFormatter(File specPath, FormatConfig config, boolean verifyAst) throws IOException, SanyFrontendException {
+    public TLAPlusFormatter(File specPath, FormatConfig config, boolean verifyAst)
+            throws IOException, SanyFrontendException {
         this.docBuilder = new TlaDocBuilder(config);
         this.config = config.copy();
         this.verifyAst = verifyAst;
@@ -62,7 +63,8 @@ public final class TLAPlusFormatter {
         this(storeToTmp(spec), config, true);
     }
 
-    public TLAPlusFormatter(String spec, FormatConfig config, boolean verifyAst) throws IOException, SanyFrontendException {
+    public TLAPlusFormatter(String spec, FormatConfig config, boolean verifyAst)
+            throws IOException, SanyFrontendException {
         this(storeToTmp(spec), config, verifyAst);
     }
 
@@ -127,7 +129,8 @@ public final class TLAPlusFormatter {
                 dest.deleteOnExit();
             }
         }
-        // Write the formatted output with the original filename (SANY requires module name = filename)
+        // Write the formatted output with the original filename (SANY requires module
+        // name = filename)
         File verifyFile = new File(tmpDir, originalSpec.getName());
         verifyFile.deleteOnExit();
         try (java.io.FileWriter writer = new java.io.FileWriter(verifyFile, StandardCharsets.UTF_8)) {
@@ -175,13 +178,13 @@ public final class TLAPlusFormatter {
             postModuleSection.append(System.lineSeparator());
         }
 
-        return new String[]{preModuleSection.toString(), postModuleSection.toString()};
+        return new String[] { preModuleSection.toString(), postModuleSection.toString() };
     }
 
     private String[] getPreAndPostModuleSectionsFromSpecFile(Path spec) throws IOException {
         try {
             String content = Files.readString(spec);
-            //read all the content of spec:
+            // read all the content of spec:
             var startOfModuleRow = root.zero()[0].getLocation().getCoordinates()[0];
             var endOfModuleRow = root.zero()[3].getLocation().getCoordinates()[0];
             return getPreAndPostModuleSections(content, startOfModuleRow, endOfModuleRow);
@@ -190,6 +193,5 @@ public final class TLAPlusFormatter {
             throw e;
         }
     }
-
 
 }

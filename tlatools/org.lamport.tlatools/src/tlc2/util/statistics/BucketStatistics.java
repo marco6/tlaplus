@@ -38,7 +38,7 @@ public class BucketStatistics extends AbstractBucketStatistics implements IBucke
 	 * to the sum of the value of all buckets.
 	 */
 	private long observations;
-	
+
 	/**
 	 * Instead of using an ever-growing list of samples, identical
 	 * samples are counted in a bucket. E.g. the sample 5 is stored
@@ -58,16 +58,18 @@ public class BucketStatistics extends AbstractBucketStatistics implements IBucke
 		this.buckets = new HashMap<Integer, Long>();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.IBucketStatistics#addSample(int)
 	 */
 	public void addSample(int amount) {
 		if (amount < 0) {
 			throw new IllegalArgumentException("Negative amount invalid");
 		}
-		
+
 		Long l = buckets.get(amount);
-		if(l == null) {
+		if (l == null) {
 			buckets.put(amount, 1L);
 		} else {
 			buckets.replace(amount, ++l);
@@ -75,14 +77,18 @@ public class BucketStatistics extends AbstractBucketStatistics implements IBucke
 		observations++;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.AbstractBucketStatistics#getObservations()
 	 */
 	public long getObservations() {
 		return observations;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.IBucketStatistics#getSamples()
 	 */
 	public NavigableMap<Integer, Long> getSamples() {
@@ -98,7 +104,7 @@ public class BucketStatistics extends AbstractBucketStatistics implements IBucke
 	 */
 	public void add(final IBucketStatistics stat) {
 		this.observations += stat.getObservations();
-		
+
 		for (Entry<Integer, Long> entry : stat.getSamples().entrySet()) {
 			final Long l = this.buckets.get(entry.getKey());
 			if (l == null) {

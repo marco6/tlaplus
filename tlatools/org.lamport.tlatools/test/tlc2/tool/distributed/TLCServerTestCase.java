@@ -55,42 +55,46 @@ public abstract class TLCServerTestCase extends ModelCheckerTestCase {
 		super(spec, path);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ModelCheckerTestCase#setUp()
 	 */
 	@Before
 	public void setUp() {
 		try {
 			MP.setRecorder(recorder);
-			
+
 			// Never create checkpoints. They distort performance tests and are
 			// of no use anyway.
 			TLCGlobals.chkptDuration = 0;
-			
+
 			final String fqSpec = BASE_DIR + File.separator + TEST_MODEL + path + File.separator + spec;
 			final FPSetConfiguration fpSetConfig = new DummyFPSetConfig();
 			ToolIO.setUserDir(BASE_DIR + File.separator + TEST_MODEL + path + File.separator);
 			final TLCApp app = new TLCApp(fqSpec, spec, false, null, fpSetConfig);
 			final TLCServer server = new TLCServer(app);
 			server.modelCheck();
-			//TODO Implement exit status for distributed TLC
+			// TODO Implement exit status for distributed TLC
 			actualExitStatus = 0;
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	@SuppressWarnings("serial")
 	private class DummyFPSetConfig extends FPSetConfiguration {
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.tool.fp.FPSetConfiguration#getImplementation()
 		 */
 		public String getImplementation() {
 			return DummyFPSet.class.getName();
 		}
 	}
-	
+
 	@SuppressWarnings("serial")
 	protected static class DummyFPSet extends MSBDiskFPSet {
 
@@ -98,11 +102,14 @@ public abstract class TLCServerTestCase extends ModelCheckerTestCase {
 			super(fpSetConfig);
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.tool.fp.DiskFPSet#exit(boolean)
 		 */
 		public void exit(boolean cleanup) throws IOException {
-			//ignore because superclass calls System.exit(0) but we want to check our assertions first.
+			// ignore because superclass calls System.exit(0) but we want to check our
+			// assertions first.
 		}
 	}
 }

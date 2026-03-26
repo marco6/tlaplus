@@ -36,7 +36,7 @@ import tlc2.output.EC.ExitStatus;
 import tlc2.tool.liveness.ModelCheckerTestCase;
 
 public class DistributedDoInitFunctorInvariantTest extends ModelCheckerTestCase {
-	
+
 	public DistributedDoInitFunctorInvariantTest() {
 		super("DoInitFunctorInvariant", "DoInitFunctor", ExitStatus.VIOLATION_SAFETY);
 	}

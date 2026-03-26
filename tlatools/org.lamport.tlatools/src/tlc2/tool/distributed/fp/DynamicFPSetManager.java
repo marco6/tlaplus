@@ -28,27 +28,29 @@ public class DynamicFPSetManager extends FPSetManager implements Serializable {
 		// prior to when the workers start (it's possible to send out
 		// list updates, but it hasn't been implemented).
 		this.expectedNumOfServers = expectedNumOfServers;
-		
+
 		// Guard against invalid values
 		if (expectedNumOfServers <= 0) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		// Round expectedNumOfServers to power of 2
 		int log = 0;
 		while (expectedNumOfServers > 0) {
 			expectedNumOfServers = expectedNumOfServers / 2;
 			log++;
 		}
-		
+
 		// Zero upper bits of mask which won't be used when addressing the
 		// fingerprint servers anyway. See IFPSetManager#getFPSetIndex.
 		this.mask = (1L << log) - 1L;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see tlc2.tool.distributed.IFPSetManager#register(tlc2.tool.distributed.FPSetRMI)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * tlc2.tool.distributed.IFPSetManager#register(tlc2.tool.distributed.FPSetRMI)
 	 */
 	public synchronized void register(FPSetRMI aFPSet, String hostname) throws FPSetManagerException {
 		// Only accept additional FPSets as long as we haven't reached the
@@ -58,11 +60,11 @@ public class DynamicFPSetManager extends FPSetManager implements Serializable {
 		// This is due to the fact that workers immediately retrieve the
 		// FPSetManager once the expected number of FPSets have registered.
 		if (fpSets.size() < expectedNumOfServers) {
-		        fpSets.add(new FPSets(aFPSet, hostname));
+			fpSets.add(new FPSets(aFPSet, hostname));
 		} else {
-		        throw new FPSetManagerException(
-		                        "Limit for FPset servers reached (" + expectedNumOfServers
-		                                        + "). Cannot handle additional servers");
+			throw new FPSetManagerException(
+					"Limit for FPset servers reached (" + expectedNumOfServers
+							+ "). Cannot handle additional servers");
 		}
 	}
 }

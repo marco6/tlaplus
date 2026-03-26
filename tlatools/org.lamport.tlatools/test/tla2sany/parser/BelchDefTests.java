@@ -37,8 +37,10 @@ import tla2sany.output.SilentSanyOutput;
 import static tla2sany.parser.TLAplusParserConstants.*;
 
 /**
- * Tests for the critical but somewhat enigmatic {@link TLAplusParser#belchDEF()}
- * method. It *seems* to work by splicing {@link TLAplusParserConstants#DEFBREAK}
+ * Tests for the critical but somewhat enigmatic
+ * {@link TLAplusParser#belchDEF()}
+ * method. It *seems* to work by splicing
+ * {@link TLAplusParserConstants#DEFBREAK}
  * tokens into the token stream produced by {@link TLAplusParserTokenManager},
  * easing identification of the start of the next operator definition. However,
  * the method it uses to do this is very odd and involves modifying the pointer

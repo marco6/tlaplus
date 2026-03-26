@@ -20,7 +20,8 @@ import util.Assert;
  * <p>
  * The formulas are in positive form, meaning negation
  * is only applied to state formulas. The state formulas are not keep in
- * {@link TBPar}, but in {@link TBGraphNode#statePreds} instead. There is also where the
+ * {@link TBPar}, but in {@link TBGraphNode#statePreds} instead. There is also
+ * where the
  * successors of the particle are held.
  * <p>
  * TLA+ supports only future formulas and no past temporal operators (compare
@@ -128,7 +129,7 @@ public class TBPar extends Vect<LiveExprNode> {
 			return new TBParVec(0);
 		}
 		// if terms is not alpha-closed, then close it.
-		// first, try alpha expansion. See MP page 403 
+		// first, try alpha expansion. See MP page 403
 		// figure 5.1. for alpha expansion rules.
 		TBPar terms1 = terms;
 		for (int i = 0; i < terms1.size(); i++) {
@@ -175,7 +176,7 @@ public class TBPar extends Vect<LiveExprNode> {
 	}
 
 	private TBParVec particleClosureBeta(final TBPar terms, final Vect<TBTriple> alphas, final Vect<TBTriple> betas) {
-		// try a beta expansion. See MP page 403 
+		// try a beta expansion. See MP page 403
 		// figure 5.1. for beta expansion rules.
 		for (int i = 0; i < terms.size(); i++) {
 			LiveExprNode ln = terms.exprAt(i);
@@ -257,8 +258,8 @@ public class TBPar extends Vect<LiveExprNode> {
 	 */
 	private final boolean isLocallyConsistent() {
 		// Pre-conditions per Manna & Pnueli and the calling code:
-		//assert !this.containsActions (no LNAction instances)
-		//assert this.isPositiveForm()
+		// assert !this.containsActions (no LNAction instances)
+		// assert this.isPositiveForm()
 		// First put the elements into positive or negative bin
 		TBPar pos = new TBPar(this.size());
 		TBPar neg = new TBPar(this.size());
@@ -273,7 +274,7 @@ public class TBPar extends Vect<LiveExprNode> {
 				// Because tf has been brought into positive form by the nested pushNeg of
 				// toDNF, the sub-terms of LNNeg can only be LNState and LNBool, but not
 				// arbitrary terms such as ~[]p or []<>p.
-				//assert body instanceof LNState || body instanceof LNBool;
+				// assert body instanceof LNState || body instanceof LNBool;
 				if (body instanceof LNState || body instanceof LNBool) {
 					neg.addElement(body);
 				}
@@ -284,7 +285,7 @@ public class TBPar extends Vect<LiveExprNode> {
 			if (neg.member(pos.exprAt(i))) {
 				// This is reachable if two LNState instances have the same tag
 				// (LNState#tetTag), which are set in Liveness before the liveness constraints
-				// and properties are brought into disjunct normal form.  Thus, for two (or more)
+				// and properties are brought into disjunct normal form. Thus, for two (or more)
 				// LNState to have the same tag, LiveExprNode.toDNF() would have to duplicate
 				// the LNState instance.
 				// For two LNBool to be equal, their boolean values have to be the same.
@@ -369,7 +370,8 @@ public class TBPar extends Vect<LiveExprNode> {
 	 * This methods returns true iff this particle (TBPar) fulfills the given
 	 * promise.
 	 * <p>
-	 * A particle/atom A is said to fulfill formula &#966; which promises r if either:
+	 * A particle/atom A is said to fulfill formula &#966; which promises r if
+	 * either:
 	 * <ul>
 	 * <li>&#966; \notin A</li>
 	 * <li>r \in A</li>

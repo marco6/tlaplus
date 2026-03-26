@@ -34,21 +34,23 @@ import tlc2.TLCGlobals;
 import tlc2.util.statistics.CounterStatistic;
 
 public abstract class CostModelNode implements CostModel {
-	
+
 	// children has to preserve order to later traverse tree in the module location
 	// order when reporting coverage. Thus, use LinkedHashMap here.
 	protected final Map<SemanticNode, CostModelNode> children = new LinkedHashMap<>();
 
-	protected final CounterStatistic stats = CounterStatistic.getInstance(() -> TLCGlobals.isCoverageEnabled() || TLCGlobals.Coverage.isEnabled());
-	protected final CounterStatistic secondary = CounterStatistic.getInstance(() -> TLCGlobals.isCoverageEnabled() || TLCGlobals.Coverage.isEnabled());
-	
+	protected final CounterStatistic stats = CounterStatistic
+			.getInstance(() -> TLCGlobals.isCoverageEnabled() || TLCGlobals.Coverage.isEnabled());
+	protected final CounterStatistic secondary = CounterStatistic
+			.getInstance(() -> TLCGlobals.isCoverageEnabled() || TLCGlobals.Coverage.isEnabled());
+
 	// ---------------- Statistics ---------------- //
 
 	@Override
 	public long getPrimary() {
 		return getEvalCount();
 	}
-	
+
 	protected long getEvalCount() {
 		return this.stats.getCount();
 	}
@@ -66,7 +68,7 @@ public abstract class CostModelNode implements CostModel {
 	protected abstract Location getLocation();
 
 	// -- --//
-	
+
 	@Override
 	public final CostModel getChild() {
 		for (CostModelNode costModelNode : children.values()) {
@@ -75,17 +77,17 @@ public abstract class CostModelNode implements CostModel {
 		}
 		return this;
 	}
-	
+
 	void addChild(final CostModelNode child) {
 		final boolean newlyInserted = this.children.put(child.getNode(), child) == null;
 		assert newlyInserted;
 	}
 
 	abstract SemanticNode getNode();
-	
+
 	@Override
 	public abstract CostModelNode getRoot();
-	
+
 	boolean isRoot() {
 		return false;
 	}
@@ -93,9 +95,9 @@ public abstract class CostModelNode implements CostModel {
 	int getLevel() {
 		return 0;
 	}
-	
+
 	// -- -- //
-	
+
 	@Override
 	public final CostModel getAndIncrement(final SemanticNode eon) {
 		return get(eon).incInvocations();

@@ -37,7 +37,7 @@ import tlc2.output.EC.ExitStatus;
 public class Test57 extends SuiteTestCase {
 
 	public Test57() {
-		// Can pass any value to super because testSpec is overriden. 
+		// Can pass any value to super because testSpec is overriden.
 		super("-1", "-1", "-1", "-1");
 		setExitStatus(ExitStatus.VIOLATION_SAFETY);
 	}

@@ -34,12 +34,12 @@ import tlc2.output.EC;
 
 public class LCoverageTest extends AbstractCoverageTest {
 
-    public LCoverageTest () {
-        super("L");
-    }
+	public LCoverageTest() {
+		super("L");
+	}
 
-    @Test
-    public void testSpec () {
+	@Test
+	public void testSpec() {
 		// ModelChecker has finished and generated the expected amount of states
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "1"));
@@ -49,5 +49,5 @@ public class LCoverageTest extends AbstractCoverageTest {
 		assertFalse(recorder.recorded(EC.GENERAL));
 
 		assertFalse(recorder.recorded(EC.TLC_COVERAGE_MISMATCH));
-    }
+	}
 }

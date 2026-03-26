@@ -14,7 +14,9 @@ public class StateQueueTest {
 
 	protected IStateQueue sQueue;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Before
@@ -31,21 +33,21 @@ public class StateQueueTest {
 		assertEquals("", expected, actual);
 	}
 
-	// dequeue from empty 
+	// dequeue from empty
 	@Test
 	public void testsDequeueEmpty() {
 		TLCState state = sQueue.sDequeue();
 		assertNull(state);
 	}
-	
-	// dequeue from empty 
+
+	// dequeue from empty
 	@Test
 	public void testDequeueEmpty() {
 		TLCState state = sQueue.dequeue();
 		assertNull(state);
 	}
-	
-	// dequeue from not empty 
+
+	// dequeue from not empty
 	@Test
 	public void testsDequeueNotEmpty() {
 		DummyTLCState expected = new DummyTLCState();
@@ -55,8 +57,8 @@ public class StateQueueTest {
 		assertTrue(sQueue.size() == 0);
 		assertEquals(expected, actual);
 	}
-	
-	// dequeue from not empty 
+
+	// dequeue from not empty
 	@Test
 	public void testDequeueNotEmpty() {
 		DummyTLCState expected = new DummyTLCState();
@@ -76,7 +78,7 @@ public class StateQueueTest {
 		}
 		assertTrue(sQueue.size() == j);
 	}
-	
+
 	// add same states 10 times and check size
 	@Test
 	public void testEnqueueAddSame() {
@@ -96,9 +98,10 @@ public class StateQueueTest {
 		expectRuntimeException(sQueue, Integer.MIN_VALUE);
 		assertNull(sQueue.sDequeue(Integer.MAX_VALUE));
 	}
-	
+
 	// uncommon input with non-empty queue
-	// unfortunately sDequeue behaves differently depending what's its internal state
+	// unfortunately sDequeue behaves differently depending what's its internal
+	// state
 	@Test
 	public void testsDequeueAbuseNonEmpty() {
 		sQueue.sEnqueue(new DummyTLCState()); // make sure isAvail = true
@@ -109,11 +112,11 @@ public class StateQueueTest {
 
 		assertTrue(sQueue.sDequeue(Integer.MAX_VALUE).length == 1);
 	}
-	
-	private void expectRuntimeException(IStateQueue aQueue, int size)  {
+
+	private void expectRuntimeException(IStateQueue aQueue, int size) {
 		try {
 			aQueue.sDequeue(size);
-		} catch(RuntimeException|AssertionError e) {
+		} catch (RuntimeException | AssertionError e) {
 			return;
 		}
 		fail("expected to throw RuntimeException with <= input");

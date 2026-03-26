@@ -11,45 +11,51 @@ package tla2tex;
 
 import java.io.FileWriter;
 
-public class OutputFileWriter
- { private FileWriter fileWriter = null ;
-   private String name = "" ;
+public class OutputFileWriter {
+  private FileWriter fileWriter = null;
+  private String name = "";
 
-   public OutputFileWriter(String fileName)
-     /**********************************************************************
-     * Construct an OutputFileWriter from a file name.                     *
-     **********************************************************************/
-    { name = fileName ;
-      try {fileWriter = new FileWriter(fileName) ;}
-      catch (java.io.IOException e)
-       { Debug.ReportError( 
-           "TLATeX cannot open output file " + name + ".\n"
-         + "    Perhaps the file is write-protected");
-       };
+  public OutputFileWriter(String fileName)
+  /**********************************************************************
+   * Construct an OutputFileWriter from a file name. *
+   **********************************************************************/
+  {
+    name = fileName;
+    try {
+      fileWriter = new FileWriter(fileName);
+    } catch (java.io.IOException e) {
+      Debug.ReportError(
+          "TLATeX cannot open output file " + name + ".\n"
+              + "    Perhaps the file is write-protected");
     }
+    ;
+  }
 
-   public void putLine(String out)
-     /**********************************************************************
-     * Writes the string out followed by '\n'.                             *
-     **********************************************************************/
-    { try {fileWriter.write(out + "\n");
-           fileWriter.flush();
-          }
-      catch (java.io.IOException e)
-       { Debug.ReportError( 
-           "Error trying to write to output file " + name + ".\n"
-         + "    Perhaps there is a file-system problem.");
-       };
+  public void putLine(String out)
+  /**********************************************************************
+   * Writes the string out followed by '\n'. *
+   **********************************************************************/
+  {
+    try {
+      fileWriter.write(out + "\n");
+      fileWriter.flush();
+    } catch (java.io.IOException e) {
+      Debug.ReportError(
+          "Error trying to write to output file " + name + ".\n"
+              + "    Perhaps there is a file-system problem.");
     }
-     
-   public void close()
-    {try {fileWriter.close();}
-      catch (java.io.IOException e)
-       { Debug.ReportError( 
-           "Error trying to close output file " + name + ".\n"
-         + "    Perhaps there is a file-system problem.");
-       };
+    ;
+  }
+
+  public void close() {
+    try {
+      fileWriter.close();
+    } catch (java.io.IOException e) {
+      Debug.ReportError(
+          "Error trying to close output file " + name + ".\n"
+              + "    Perhaps there is a file-system problem.");
     }
+    ;
+  }
 
-
- }  // END class
+} // END class

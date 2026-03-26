@@ -58,10 +58,10 @@ public class EWD840ErrorActionDebuggerTest extends TLCDebuggerTestCase {
 		// Error occurs after TLC generated the first initial state.
 		int i = 17;
 		assertEquals(i, stackFrames.length);
-		for (int j = i - 1; j > 0 ; j--) {
+		for (int j = i - 1; j > 0; j--) {
 			assertNull(((TLCStackFrame) stackFrames[j]).exception);
 		}
-		
+
 		assertTLCActionFrame(stackFrames[0], 13, 69, 13, 77, MDL, (Context) null);
 
 		// Assert the exception variable.

@@ -37,44 +37,44 @@ public class Test215 extends SuiteETestCase {
 	public Test215() {
 		super(ExitStatus.ERROR_SPEC_PARSE);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		assertFalse(recorder.recorded(EC.GENERAL));
-		assertSubstring("Semantic errors:\n" + 
-				"\n" + 
+		assertSubstring("Semantic errors:\n" +
+				"\n" +
 				"*** Errors: 8\n");
 		assertSubstring(
-				"line 8, col 6 to line 8, col 14 of module test215\n" + 
-				"\n" + 
-				"Action used where only temporal formula or state predicate allowed.\n");
+				"line 8, col 6 to line 8, col 14 of module test215\n" +
+						"\n" +
+						"Action used where only temporal formula or state predicate allowed.\n");
 		assertSubstring(
-				"line 9, col 6 to line 9, col 14 of module test215\n" + 
-				"\n" + 
-				"Action used where only temporal formula or state predicate allowed.\n");
+				"line 9, col 6 to line 9, col 14 of module test215\n" +
+						"\n" +
+						"Action used where only temporal formula or state predicate allowed.\n");
 		assertSubstring(
-				"line 12, col 6 to line 12, col 16 of module test215\n" + 
-				"\n" + 
-				"Action used where only temporal formula or state predicate allowed.\n");
+				"line 12, col 6 to line 12, col 16 of module test215\n" +
+						"\n" +
+						"Action used where only temporal formula or state predicate allowed.\n");
 		assertSubstring(
-				"line 13, col 6 to line 13, col 16 of module test215\n" + 
-				"\n" + 
-				"Action used where only temporal formula or state predicate allowed.\n");
+				"line 13, col 6 to line 13, col 16 of module test215\n" +
+						"\n" +
+						"Action used where only temporal formula or state predicate allowed.\n");
 		assertSubstring(
-				"line 16, col 6 to line 16, col 11 of module test215\n" + 
-				"\n" + 
-				"<> followed by action not of form <<A>>_v.\n");
+				"line 16, col 6 to line 16, col 11 of module test215\n" +
+						"\n" +
+						"<> followed by action not of form <<A>>_v.\n");
 		assertSubstring(
-				"line 20, col 8 to line 20, col 13 of module test215\n" + 
-				"\n" + 
-				"[] followed by action not of form [A]_v.\n");
+				"line 20, col 8 to line 20, col 13 of module test215\n" +
+						"\n" +
+						"[] followed by action not of form [A]_v.\n");
 		assertSubstring(
-				"line 23, col 25 to line 23, col 26 of module test215\n" + 
-				"\n" + 
-				"Action-level bound of quantified temporal formula.\n");
+				"line 23, col 25 to line 23, col 26 of module test215\n" +
+						"\n" +
+						"Action-level bound of quantified temporal formula.\n");
 		assertSubstring(
-				"line 26, col 26 to line 26, col 27 of module test215\n" + 
-				"\n" + 
-				"Action-level bound of quantified temporal formula.\n");
+				"line 26, col 26 to line 26, col 27 of module test215\n" +
+						"\n" +
+						"Action-level bound of quantified temporal formula.\n");
 	}
 }

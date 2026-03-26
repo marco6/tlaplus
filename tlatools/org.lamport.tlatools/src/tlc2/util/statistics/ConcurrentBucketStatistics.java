@@ -49,35 +49,37 @@ public class ConcurrentBucketStatistics extends AbstractBucketStatistics impleme
 	 * The map is thread safe, so are the values.
 	 */
 	private final ConcurrentNavigableMap<Integer, AtomicLong> buckets = new ConcurrentSkipListMap<Integer, AtomicLong>();
-	
+
 	ConcurrentBucketStatistics() {
 		super("Concurrent Historgram");
 	}
-	
+
 	/**
 	 * @see {@link BucketStatistics#BucketStatistics(String, int)}
 	 */
 	public ConcurrentBucketStatistics(final String aTitle) {
 		super(aTitle);
 	}
-	
+
 	/**
 	 * @see {@link BucketStatistics#BucketStatistics(String, int, String, String)}
 	 */
 	public ConcurrentBucketStatistics(final String aTitle, final String pkg, final String name) {
 		super(aTitle, pkg, name);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.IBucketStatistics#addSample(int)
 	 */
 	public void addSample(final int amount) {
 		if (amount < 0) {
 			throw new IllegalArgumentException("Negative amount invalid");
 		}
-		
+
 		final AtomicLong atomicLong = buckets.get(amount);
-		if(atomicLong == null) {
+		if (atomicLong == null) {
 			buckets.putIfAbsent(amount, new AtomicLong(1));
 		} else {
 			atomicLong.incrementAndGet();
@@ -85,14 +87,18 @@ public class ConcurrentBucketStatistics extends AbstractBucketStatistics impleme
 		observations.increment();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.AbstractBucketStatistics#getObservations()
 	 */
 	public long getObservations() {
 		return observations.sum();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.IBucketStatistics#getSamples()
 	 */
 	public NavigableMap<Integer, Long> getSamples() {

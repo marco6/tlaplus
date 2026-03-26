@@ -40,7 +40,8 @@ import tlc2.tool.liveness.ModelCheckerTestCase;
 public class RandomElementTest extends ModelCheckerTestCase {
 
 	public RandomElementTest() {
-		super("RandomElement", new String[] {"-seed", Long.toString(8006803340504660123L)}, ExitStatus.VIOLATION_SAFETY);
+		super("RandomElement", new String[] { "-seed", Long.toString(8006803340504660123L) },
+				ExitStatus.VIOLATION_SAFETY);
 	}
 
 	@Test
@@ -50,7 +51,7 @@ public class RandomElementTest extends ModelCheckerTestCase {
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "932", "855", "388"));
 
 		assertTrue(recorder.recorded(EC.TLC_BEHAVIOR_UP_TO_THIS_POINT));
-		
+
 		final List<String> expectedTrace = new ArrayList<String>(11);
 		expectedTrace.add("/\\ x = 843\n/\\ y = 0");
 		expectedTrace.add("/\\ x = 920\n/\\ y = 1");
@@ -65,6 +66,6 @@ public class RandomElementTest extends ModelCheckerTestCase {
 		expectedTrace.add("/\\ x = 767\n/\\ y = 10");
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace);
 
-	assertZeroUncovered();
+		assertZeroUncovered();
 	}
 }

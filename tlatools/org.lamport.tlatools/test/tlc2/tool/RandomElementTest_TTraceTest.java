@@ -50,7 +50,7 @@ public class RandomElementTest_TTraceTest extends TTraceModelCheckerTestCase {
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "11", "11", "0"));
 
 		assertTrue(recorder.recorded(EC.TLC_BEHAVIOR_UP_TO_THIS_POINT));
-		
+
 		final List<String> expectedTrace = new ArrayList<String>(11);
 		expectedTrace.add("/\\ x = 843\n/\\ y = 0");
 		expectedTrace.add("/\\ x = 920\n/\\ y = 1");
@@ -65,6 +65,6 @@ public class RandomElementTest_TTraceTest extends TTraceModelCheckerTestCase {
 		expectedTrace.add("/\\ x = 767\n/\\ y = 10");
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace);
 
-	assertZeroUncovered();
+		assertZeroUncovered();
 	}
 }

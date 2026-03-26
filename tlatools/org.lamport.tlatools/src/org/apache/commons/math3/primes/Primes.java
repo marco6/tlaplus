@@ -21,7 +21,6 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
 
 import java.util.List;
 
-
 /**
  * Methods related to prime numbers in the range of <code>int</code>:
  * <ul>
@@ -43,8 +42,10 @@ public class Primes {
     /**
      * Primality test: tells if the argument is a (provable) prime or not.
      * <p>
-     * It uses the Miller-Rabin probabilistic test in such a way that a result is guaranteed:
-     * it uses the firsts prime numbers as successive base (see Handbook of applied cryptography
+     * It uses the Miller-Rabin probabilistic test in such a way that a result is
+     * guaranteed:
+     * it uses the firsts prime numbers as successive base (see Handbook of applied
+     * cryptography
      * by Menezes, table 4.1).
      *
      * @param n number to test.
@@ -77,7 +78,7 @@ public class Primes {
         if (n == 2) {
             return 2;
         }
-        n |= 1;//make sure n is odd
+        n |= 1;// make sure n is odd
         if (n == 1) {
             return 2;
         }

@@ -4,6 +4,8 @@ package tla2sany.semantic;
 
 class LevelException extends Exception {
 
-  LevelException(String s) { super(s); }
+  LevelException(String s) {
+    super(s);
+  }
 
 }

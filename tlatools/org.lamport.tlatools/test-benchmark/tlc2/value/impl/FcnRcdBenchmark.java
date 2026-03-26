@@ -51,36 +51,36 @@ public class FcnRcdBenchmark {
 
 		FP64.Init();
 	}
-	
-	@Param({"0", "2", "4", "8", "16", "32", "64", "128", "256", "512", "1024", "2048", "4096", "8192"})
+
+	@Param({ "0", "2", "4", "8", "16", "32", "64", "128", "256", "512", "1024", "2048", "4096", "8192" })
 	public int size;
 
 	public FcnRcdValue fcnRcd;
-		
+
 	@Setup(Level.Iteration)
 	public void setup() {
 		Value[] domain = new Value[size];
 		Value[] range = new Value[size];
 		for (int i = 0; i < domain.length; i++) {
-			// Use values as domain for which equality checking isn't effectively for free. 
+			// Use values as domain for which equality checking isn't effectively for free.
 			domain[i] = new StringValue("asdfghjkoiuytrewqzxcvbn" + i);
-//			domain[i] = IntValue.gen(i);
+			// domain[i] = IntValue.gen(i);
 			range[i] = IntValue.gen(i);
 		}
 		Collections.shuffle(Arrays.asList(domain));
 		fcnRcd = (FcnRcdValue) new FcnRcdValue(domain, range, false).normalize();
 	}
 
-//	@Benchmark
-//	public Value[] fcnRcdValueSelectIndex() {
-//		Value[] values = new Value[size];
-//		for (int i = 0; i < values.length; i++) {
-//			Value domain = new StringValue("asdfghjkoiuytrewqzxcvbn" + i);
-//			values[i] = fcnRcd.selectIndexTable(domain);
-////			values[i] = fcnRcd.select(IntValue.gen(i));
-//		}
-//		return values;
-//	}
+	// @Benchmark
+	// public Value[] fcnRcdValueSelectIndex() {
+	// Value[] values = new Value[size];
+	// for (int i = 0; i < values.length; i++) {
+	// Value domain = new StringValue("asdfghjkoiuytrewqzxcvbn" + i);
+	// values[i] = fcnRcd.selectIndexTable(domain);
+	//// values[i] = fcnRcd.select(IntValue.gen(i));
+	// }
+	// return values;
+	// }
 
 	@Benchmark
 	public Value[] fcnRcdValueSelectNoIndex() {
@@ -88,26 +88,26 @@ public class FcnRcdBenchmark {
 		for (int i = 0; i < values.length; i++) {
 			Value domain = new StringValue("asdfghjkoiuytrewqzxcvbn" + i);
 			values[i] = fcnRcd.selectLinearSearch(domain);
-//			values[i] = fcnRcd.selectNoIndex(IntValue.gen(i));
+			// values[i] = fcnRcd.selectNoIndex(IntValue.gen(i));
 		}
 		return values;
 	}
-	
+
 	@Benchmark
 	public Value[] fcnRcdValueSelectBinarySearch() {
 		Value[] values = new Value[size];
 		for (int i = 0; i < values.length; i++) {
 			Value domain = new StringValue("asdfghjkoiuytrewqzxcvbn" + i);
 			values[i] = fcnRcd.selectBinarySearch(domain);
-//			values[i] = fcnRcd.selectNoIndex(IntValue.gen(i));
+			// values[i] = fcnRcd.selectNoIndex(IntValue.gen(i));
 		}
 		return values;
 	}
-	
-    public static void main(String[] args) throws RunnerException {
-        final Options opt = new OptionsBuilder()
-                .include(FcnRcdBenchmark.class.getSimpleName())
-                .build();
-        new Runner(opt).run();
-    }
+
+	public static void main(String[] args) throws RunnerException {
+		final Options opt = new OptionsBuilder()
+				.include(FcnRcdBenchmark.class.getSimpleName())
+				.build();
+		new Runner(opt).run();
+	}
 }

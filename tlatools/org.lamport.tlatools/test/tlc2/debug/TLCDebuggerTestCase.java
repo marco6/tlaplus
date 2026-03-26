@@ -90,7 +90,9 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 	protected final Phaser phase = new Phaser();
 
 	public TLCDebuggerTestCase(String spec, String path, String[] extraArgs, final int exitStatus) {
-		super(spec, path, Stream.of(extraArgs, new String[] { "-debugger", "-noGenerateSpecTE" }).flatMap(Stream::of).toArray(String[]::new),
+		super(spec, path,
+				Stream.of(extraArgs, new String[] { "-debugger", "-noGenerateSpecTE" }).flatMap(Stream::of)
+						.toArray(String[]::new),
 				exitStatus);
 		// (i) This/current/control/test thread and (ii) executor thread that runs TLC
 		// and is launched in setUp below.
@@ -103,7 +105,7 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 	public TLCDebuggerTestCase(String spec, String path, final int exitStatus) {
 		this(spec, path, new String[] {}, exitStatus);
 	}
-	
+
 	@Override
 	protected boolean runWithDebugger() {
 		// TLCDebuggerTestCase configures the debugger explicitly! Especially, it
@@ -150,11 +152,12 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 		return TLCState.Empty.getVars();
 		// If this ever causes problems because Empty is still null during startup, an
 		// alternative is:
-		//		final Tool tool = (Tool) TLCGlobals.mainChecker.tool;
-		//		return tool.getSpecProcessor().getVariablesNodes();
+		// final Tool tool = (Tool) TLCGlobals.mainChecker.tool;
+		// return tool.getSpecProcessor().getVariablesNodes();
 	}
-	
-	protected static SourceBreakpoint createBreakpointInfo(final int line, final int column, final int hitCnt, String condition) {
+
+	protected static SourceBreakpoint createBreakpointInfo(final int line, final int column, final int hitCnt,
+			String condition) {
 		final SourceBreakpoint breakpoint = new SourceBreakpoint();
 		breakpoint.setLine(line);
 		breakpoint.setColumn(column);
@@ -167,7 +170,8 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 		return breakpoint;
 	}
 
-	protected static SetBreakpointsArguments createBreakpointArgument(final String spec, SourceBreakpoint... breakpoints) {
+	protected static SetBreakpointsArguments createBreakpointArgument(final String spec,
+			SourceBreakpoint... breakpoints) {
 		final SetBreakpointsArguments arguments = new SetBreakpointsArguments();
 		arguments.setBreakpoints(breakpoints);
 		final Source source = new Source();
@@ -176,24 +180,28 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 		return arguments;
 	}
 
-	protected static SetBreakpointsArguments createBreakpointArgument(final String spec, final int line, final int column, final int hitCnt, String condition) {
+	protected static SetBreakpointsArguments createBreakpointArgument(final String spec, final int line,
+			final int column, final int hitCnt, String condition) {
 		final SourceBreakpoint breakpoint = createBreakpointInfo(line, column, hitCnt, condition);
 		return createBreakpointArgument(spec, breakpoint);
 	}
-	
-	protected static SetBreakpointsArguments createBreakpointArgument(final String spec, final int line, final int column, final int hitCnt) {
+
+	protected static SetBreakpointsArguments createBreakpointArgument(final String spec, final int line,
+			final int column, final int hitCnt) {
 		return createBreakpointArgument(spec, line, column, hitCnt, null);
 	}
-	
-	protected static SetBreakpointsArguments createBreakpointArgument(final String spec, final int line, String condition) {
+
+	protected static SetBreakpointsArguments createBreakpointArgument(final String spec, final int line,
+			String condition) {
 		return createBreakpointArgument(spec, line, 0, -1, condition);
 	}
-	
+
 	protected static SetBreakpointsArguments createBreakpointArgument(final String spec, final int line) {
 		return createBreakpointArgument(spec, line, 0, -1);
 	}
 
-	protected static TLCActionStackFrame assertTLCActionFrame(final StackFrame stackFrame, final int beginLine, final int beginColumn,
+	protected static TLCActionStackFrame assertTLCActionFrame(final StackFrame stackFrame, final int beginLine,
+			final int beginColumn,
 			final int endLine, final int endColumn, String spec, final Context ctxt, final OpDeclNode... unassigned) {
 		assertTLCActionFrame(stackFrame, beginLine, endLine, spec, ctxt, unassigned);
 		assertEquals(beginColumn, stackFrame.getColumn());
@@ -239,7 +247,7 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 			}
 			context = context.next();
 		}
-		
+
 		final List<Variable> variables = Arrays.asList(f.getVariables());
 		assertEquals(f.getContext().toMap().size(), variables.size());
 		NXT: for (Variable v : variables) {
@@ -252,7 +260,7 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 			fail();
 		}
 		for (int i = 0; i < lazies.size(); ++i) {
-			assertEquals((int)lazyCounts.get(i), lazies.get(i).getNumTimesThatANewValueWasCached());
+			assertEquals((int) lazyCounts.get(i), lazies.get(i).getNumTimesThatANewValueWasCached());
 		}
 	}
 
@@ -275,7 +283,7 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 
 		assertNotNull(f.state);
 		assertEquals(new HashSet<>(Arrays.asList(unassigned)), f.state.getUnassigned());
-		
+
 		// Assert successor has an action set. This cannot be asserted for f.state
 		// because f.state might have been read from its persisted state
 		// (DiskStateQueue) that doesn't include f.state's action.
@@ -288,15 +296,18 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 
 		// Assert successor has a trace leading to an initial state.
 		assertTrace(f, f.state);
-		
+
 		// Assert level of state and successor.
 		if (!isStuttering(f.getS(), f.getT())) {
 			assertEquals(f.getS().getLevel() + 1, f.state.getLevel());
 		} else {
-			// TLA+ allows stuttering to occur.  By definition, stuttering steps do *not* increase the level,
-			// which is why tasf.successor has the same level of its predecessor.  If stuttering would be
-			// taken into account by TLCGet("level"), each state s1 to s6 above could have any level except
-			// level 1.  s1 would be the only state whose level would be 1 to inf. 
+			// TLA+ allows stuttering to occur. By definition, stuttering steps do *not*
+			// increase the level,
+			// which is why tasf.successor has the same level of its predecessor. If
+			// stuttering would be
+			// taken into account by TLCGet("level"), each state s1 to s6 above could have
+			// any level except
+			// level 1. s1 would be the only state whose level would be 1 to inf.
 			assertEquals(f.getS().getLevel(), f.state.getLevel());
 		}
 	}
@@ -319,7 +330,7 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 		assertTrue(stackFrame instanceof TLCStateStackFrame);
 		assertFalse(stackFrame instanceof TLCActionStackFrame);
 		final TLCStackFrame f = (TLCStackFrame) stackFrame;
-		
+
 		// Showing variables in the debugger does *not* unlazy LazyValues, i.e.
 		// interferes with TLC's evaluation.
 		final List<LazyValue> lazies = new ArrayList<>();
@@ -333,15 +344,15 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 			}
 			context = context.next();
 		}
-		
+
 		final Variable[] variables = f.getVariables();
 		assertEquals(expected.size(), variables.length);
 		for (Variable variable : variables) {
 			assertEquals(expected.get(variable.getName()), variable.getValue());
 		}
-		
+
 		for (int i = 0; i < lazies.size(); ++i) {
-			assertEquals((int)lazyCounts.get(i), lazies.get(i).getNumTimesThatANewValueWasCached());
+			assertEquals((int) lazyCounts.get(i), lazies.get(i).getNumTimesThatANewValueWasCached());
 		}
 	}
 
@@ -382,7 +393,7 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 		assertNotNull(f.state);
 
 		assertEquals(new HashSet<>(Arrays.asList(unassigned)), f.state.getUnassigned());
-		
+
 		assertStateVars(f, f.state);
 		assertTrace(f, f.state);
 	}
@@ -392,21 +403,21 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 		try {
 			final List<DebugTLCVariable> trace = Arrays.asList(frame.getTrace()).stream()
 					.map(v -> (DebugTLCVariable) v).collect(Collectors.toList());
-			
+
 			// Assert that the trace is never empty.
 			assertTrue(trace.size() > 0);
-						
+
 			// Assert that the last state is an initial state.
 			assertTrue(trace.get(trace.size() - 1).getName().matches("0*1: .*"));
-			
+
 			// Reverse the trace to traverse from initial to end in the following loops
 			Collections.reverse(trace);
-			
+
 			// Assert that the variables' numbers in trace are strictly monotonic for all
 			// but the last state.
 			for (int i = 0; i < trace.size() - 1; i++) {
-			    final String regex = "0*" + (i + 1) + ":.*";
-			    assertTrue(trace.get(i).getName().matches(regex));
+				final String regex = "0*" + (i + 1) + ":.*";
+				assertTrue(trace.get(i).getName().matches(regex));
 			}
 
 			// Assert TLCState#allAssigned for all but the last state.
@@ -415,7 +426,8 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 				assertTrue(tlcValue instanceof RecordValue);
 				final RecordValue rv = (RecordValue) tlcValue;
 				for (Value val : rv.values) {
-					assertTrue(!(val instanceof StringValue) || !DebuggerValue.NOT_EVALUATED.equals(((StringValue) val).toString()));
+					assertTrue(!(val instanceof StringValue)
+							|| !DebuggerValue.NOT_EVALUATED.equals(((StringValue) val).toString()));
 				}
 			}
 		} finally {
@@ -426,7 +438,8 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 		}
 	}
 
-	protected static void assertTLCInitStatesFrame(final StackFrame stackFrame, final int beginLine, final int beginColumn,
+	protected static void assertTLCInitStatesFrame(final StackFrame stackFrame, final int beginLine,
+			final int beginColumn,
 			final int endLine, final int endColumn, String spec, final Context expectedContext,
 			final int expectedSuccessors) {
 		assertTLCFrame(stackFrame, beginLine, endLine, spec, expectedContext);
@@ -434,11 +447,12 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 		assertEquals(endColumn + 1, (int) stackFrame.getEndColumn());
 
 		assertTrue(stackFrame instanceof TLCInitStatesStackFrame);
-		
+
 		// TODO assert initials like in assertTLCNextStatesFrame.
 	}
 
-	protected static void assertTLCNextStatesFrame(final StackFrame stackFrame, final int beginLine, final int beginColumn,
+	protected static void assertTLCNextStatesFrame(final StackFrame stackFrame, final int beginLine,
+			final int beginColumn,
 			final int endLine, final int endColumn, String spec, final Context expectedContext,
 			final int expectedSuccessors, final OpDeclNode... unassigned) {
 		assertTLCStateFrame(stackFrame, beginLine, endLine, spec, expectedContext, unassigned);
@@ -447,17 +461,18 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 
 		assertTrue(stackFrame instanceof TLCNextStatesStackFrame);
 		final TLCNextStatesStackFrame succframe = (TLCNextStatesStackFrame) stackFrame;
-		
+
 		assertEquals(expectedSuccessors, succframe.getSuccessors().size());
 
 		if (!succframe.getSuccessors().isEmpty()) {
-			final Scope succs = Arrays.asList(succframe.getScopes()).stream().filter(s -> s.getName().equals("Successors"))
+			final Scope succs = Arrays.asList(succframe.getScopes()).stream()
+					.filter(s -> s.getName().equals("Successors"))
 					.reduce((a, b) -> a).get();
 			assertNotNull(succs);
-			
+
 			List<Variable> variables = Arrays.asList(succframe.getVariables(succs.getVariablesReference()));
 			assertEquals(expectedSuccessors, variables.size());
-			
+
 			final List<Value> stateRecords = variables.stream().map(v -> (DebugTLCVariable) v).map(d -> d.getTLCValue())
 					.collect(Collectors.toList());
 			final Set<RecordValue> successors = succframe.getSuccessors().stream().map(s -> new RecordValue(s))
@@ -466,7 +481,8 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 				assertTrue(successors.contains(s));
 			}
 		} else {
-			Optional<Scope> o = Arrays.asList(succframe.getScopes()).stream().filter(s -> s.getName().equals("Successors"))
+			Optional<Scope> o = Arrays.asList(succframe.getScopes()).stream()
+					.filter(s -> s.getName().equals("Successors"))
 					.reduce((a, b) -> a);
 			assertTrue(o.isEmpty());
 		}
@@ -494,23 +510,27 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 			assertEquals(st.allAssigned() ? new RecordValue(st) : new RecordValue(st, TLCStateStackFrame.NOT_EVAL),
 					((DebugTLCVariable) svs[0]).getTLCValue());
 		} finally {
-			// TLCStateStackFrame#getStateVariables has the side-effect of adding variables to the
+			// TLCStateStackFrame#getStateVariables has the side-effect of adding variables
+			// to the
 			// nested ones.
 			frame.nestedVariables.clear();
 			frame.nestedVariables.putAll(old);
 		}
 	}
-	
+
 	private static void assertStateVars(TLCActionStackFrame frame, final TLCState s, final TLCState t) {
 		final Map<Integer, DebugTLCVariable> old = new HashMap<>(frame.nestedVariables);
 		try {
 			final Variable[] svs = frame.getStateVariables();
 			assertEquals(1, svs.length);
 			assertTrue(svs[0] instanceof DebugTLCVariable);
-			assertEquals(t.allAssigned() ? new RecordValue(s, t, new StringValue("Should not be used")) : new RecordValue(s, t, TLCStateStackFrame.NOT_EVAL),
+			assertEquals(
+					t.allAssigned() ? new RecordValue(s, t, new StringValue("Should not be used"))
+							: new RecordValue(s, t, TLCStateStackFrame.NOT_EVAL),
 					((DebugTLCVariable) svs[0]).getTLCValue());
 		} finally {
-			// TLCStateStackFrame#getStateVariables has the side-effect of adding variables to the
+			// TLCStateStackFrame#getStateVariables has the side-effect of adding variables
+			// to the
 			// nested ones.
 			frame.nestedVariables.clear();
 			frame.nestedVariables.putAll(old);
@@ -521,14 +541,14 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 			String spec) {
 		assertTLCFrame(stackFrame, beginLine, endLine, spec, Context.Empty);
 	}
-	
+
 	protected static void assertTLCFrame(final StackFrame stackFrame, final int beginLine, final int beginColumn,
 			final int endLine, final int endColumn, String spec) {
 		assertTLCFrame(stackFrame, beginLine, endLine, spec);
 		assertEquals(beginColumn, stackFrame.getColumn());
 		assertEquals(endColumn + 1, (int) stackFrame.getEndColumn());
 	}
-	
+
 	protected static void assertTLCFrame(final StackFrame stackFrame, final int beginLine, final int beginColumn,
 			final int endLine, final int endColumn, String spec, final Context expectedContext) {
 		assertTLCFrame(stackFrame, beginLine, endLine, spec, expectedContext);
@@ -544,7 +564,7 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 	}
 
 	private static void assertTLCFrame0(final StackFrame stackFrame, final int beginLine, final int endLine,
-				String spec, final Context expectedContext) {
+			String spec, final Context expectedContext) {
 		assertNotNull(stackFrame);
 		assertEquals(beginLine, stackFrame.getLine());
 		assertEquals(endLine, (int) stackFrame.getEndLine());
@@ -553,7 +573,6 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 		final TLCStackFrame f = (TLCStackFrame) stackFrame;
 		assertNotNull(f.getTool());
 
-
 		final Optional<Scope> scope = Arrays.asList(f.getScopes()).stream()
 				.filter(s -> TLCStackFrame.SCOPE.equals(s.getName())).findAny();
 		if (expectedContext != null && expectedContext == Context.Empty) {
@@ -561,11 +580,11 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 			return;
 		}
 		assertTrue(scope.isPresent());
-		
+
 		Scope sp = scope.get();
 		Variable[] variables = f.getVariables(sp.getVariablesReference());
 		assertNotNull(variables);
-		if (expectedContext!=null) {
+		if (expectedContext != null) {
 			assertEquals(0, new ContextComparator().compare(expectedContext, f.getContext()));
 			assertEquals(f.getContext().toMap().size(), variables.length);
 		}
@@ -593,7 +612,7 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 				return 0;
 			}
 			while (o1.hasNext()) {
-				//TODO: Compare Context#name too!
+				// TODO: Compare Context#name too!
 				if (!o1.getValue().equals(o2.getValue())) {
 					return -1;
 				}
@@ -626,12 +645,13 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 			// Set new breakpoint.
 			return setBreakpoints(rootModule, line);
 		}
+
 		public Breakpoint[] replaceAllBreakpointsWith(final String rootModule, int line, String expr) throws Exception {
 			unsetBreakpoints();
 			// Set new breakpoint.
 			return setBreakpoints(rootModule, line, expr);
 		}
-		
+
 		public Breakpoint[] setBreakpoints(final String rootModule, int line) throws Exception {
 			return setBreakpoints(createBreakpointArgument(rootModule, line)).get().getBreakpoints();
 		}
@@ -649,9 +669,9 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 				args.setSource(source);
 				setBreakpoints(args);
 			});
-			
+
 			final SetExceptionBreakpointsArguments args = new SetExceptionBreakpointsArguments();
-			
+
 			final ExceptionFilterOptions[] filterOptions = new ExceptionFilterOptions[2];
 			filterOptions[0] = new ExceptionFilterOptions();
 			filterOptions[0].setFilterId("InvariantBreakpointsFilter");
@@ -692,7 +712,7 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 			next(new NextArguments()).whenComplete((a, b) -> phase.arriveAndAwaitAdvance());
 			return stackTrace();
 		}
-		
+
 		public StackFrame[] next(final int steps) throws Exception {
 			// Convenience methods
 			for (int i = 0; i < steps; i++) {
@@ -703,10 +723,11 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 
 		public StackFrame[] stepOut(final int steps) throws Exception {
 			for (int i = 0; i < steps; i++) {
-				stepOut(new StepOutArguments()).whenComplete((a, b) -> phase.arriveAndAwaitAdvance());			}
+				stepOut(new StepOutArguments()).whenComplete((a, b) -> phase.arriveAndAwaitAdvance());
+			}
 			return stackTrace();
 		}
-		
+
 		public StackFrame[] stepOut() throws Exception {
 			// Convenience methods
 			stepOut(new StepOutArguments()).whenComplete((a, b) -> phase.arriveAndAwaitAdvance());
@@ -750,7 +771,8 @@ public abstract class TLCDebuggerTestCase extends ModelCheckerTestCase implement
 			final EvaluateArguments args = new EvaluateArguments();
 			args.setContext(EvaluateArgumentsContext.HOVER);
 			// Resolve module to absolute path required by URI.
-			// Use toUri().getPath() to get a URI-compatible path (forward slashes, leading /).
+			// Use toUri().getPath() to get a URI-compatible path (forward slashes, leading
+			// /).
 			final URI uri = new URI("tlaplus", "", Paths.get(module).toAbsolutePath().toUri().getPath(), symbol,
 					String.format("%s %s %s %s", beginLine, beginColumn, endLine, endColumn));
 			args.setExpression(uri.toASCIIString());

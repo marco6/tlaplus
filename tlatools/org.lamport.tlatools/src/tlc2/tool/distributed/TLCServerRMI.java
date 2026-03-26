@@ -18,7 +18,7 @@ import tlc2.tool.distributed.fp.IFPSetManager;
 public interface TLCServerRMI extends Remote {
 	public void registerWorker(TLCWorkerRMI worker)
 			throws IOException;
-	
+
 	public void registerFPSet(FPSetRMI fpSet, String hostname) throws RemoteException;
 
 	public Boolean getCheckDeadlock() throws RemoteException;
@@ -28,14 +28,14 @@ public interface TLCServerRMI extends Remote {
 	public IFPSetManager getFPSetManager() throws RemoteException;
 
 	public long getIrredPolyForFP() throws RemoteException;
-	
+
 	/**
 	 * @return true iff server is done computing states
 	 */
 	public boolean isDone() throws RemoteException;
-	
+
 	/**
-	 * @return The name and (potentially) path to the specification file 
+	 * @return The name and (potentially) path to the specification file
 	 * @throws RemoteException
 	 */
 	public String getSpecFileName() throws RemoteException;
@@ -45,9 +45,11 @@ public interface TLCServerRMI extends Remote {
 	 * @throws RemoteException
 	 */
 	public String getConfigFileName() throws RemoteException;
-	
+
 	/**
-	 * Reads the given file from the server stripping the path the just the file name.
+	 * Reads the given file from the server stripping the path the just the file
+	 * name.
+	 * 
 	 * @param file A full qualified or relative (to server spec dir) file name.
 	 * @return the file requested
 	 * @throws RemoteException

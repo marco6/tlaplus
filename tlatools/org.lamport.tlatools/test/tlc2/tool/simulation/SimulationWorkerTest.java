@@ -36,16 +36,16 @@ import util.UniqueString;
  * Correctness tests for the SimulationWorker.
  */
 public class SimulationWorkerTest extends CommonTestCase {
-	
+
 	public SimulationWorkerTest() {
 		super(new TestMPRecorder());
 	}
-	
+
 	@Before
-	public void setUp() throws Exception{
+	public void setUp() throws Exception {
 		ToolIO.setUserDir(BASE_PATH + File.separator + "simulation" + File.separator + "BasicMultiTrace");
 	}
-	
+
 	/**
 	 * Return a value from a TLCState as a string.
 	 */
@@ -56,9 +56,10 @@ public class SimulationWorkerTest extends CommonTestCase {
 
 	@Test
 	public void testSuccessfulRun() throws Exception {
-		Tool tool = new FastTool("", "BasicMultiTrace", TLAConstants.Files.MODEL_CHECK_FILE_BASENAME, new SimpleFilenameToStream(), Mode.Simulation);
+		Tool tool = new FastTool("", "BasicMultiTrace", TLAConstants.Files.MODEL_CHECK_FILE_BASENAME,
+				new SimpleFilenameToStream(), Mode.Simulation);
 
-		ILiveCheck liveCheck =  new NoOpLiveCheck(tool, "BasicMultiTrace");
+		ILiveCheck liveCheck = new NoOpLiveCheck(tool, "BasicMultiTrace");
 		StateVec initStates = tool.getInitStates();
 		BlockingQueue<SimulationWorkerResult> resultQueue = new LinkedBlockingQueue<>();
 		SimulationWorker worker = new SimulationWorker(0, tool, resultQueue, 0, 100, 1000, false, null,
@@ -69,12 +70,12 @@ public class SimulationWorkerTest extends CommonTestCase {
 		worker.join();
 		assertFalse(worker.isAlive());
 	}
-	
+
 	@Test
 	public void testInvariantViolation() throws Exception {
 		Tool tool = new FastTool("", "BasicMultiTrace", "MCInv", new SimpleFilenameToStream(), Mode.Simulation);
-		
-		ILiveCheck liveCheck =  new NoOpLiveCheck(tool, "BasicMultiTrace");
+
+		ILiveCheck liveCheck = new NoOpLiveCheck(tool, "BasicMultiTrace");
 		StateVec initStates = tool.getInitStates();
 		BlockingQueue<SimulationWorkerResult> resultQueue = new LinkedBlockingQueue<>();
 		int maxTraceNum = 3;
@@ -82,7 +83,7 @@ public class SimulationWorkerTest extends CommonTestCase {
 				null, liveCheck);
 		worker.start(initStates);
 		SimulationWorkerResult res = resultQueue.take();
-		
+
 		assertTrue(res.isError());
 		SimulationWorkerError err = res.error();
 		assertEquals(EC.TLC_INVARIANT_VIOLATED_BEHAVIOR, err.errorCode);
@@ -91,23 +92,26 @@ public class SimulationWorkerTest extends CommonTestCase {
 		final StateVec st1 = err.stateTrace;
 		assertTrue(java.util.stream.IntStream.range(0, err.stateTrace.size())
 				.allMatch(i -> st1.elementAt(i).getLevel() == i + 1));
-		
+
 		// Check the generated trace.
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(0), "depth"));
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(0), "branch"));
-		
+
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(1), "depth"));
 		assertEquals("6", getStateVal(err.stateTrace.elementAt(1), "branch"));
-		
+
 		assertEquals("1", getStateVal(err.stateTrace.elementAt(2), "depth"));
 		assertEquals("6", getStateVal(err.stateTrace.elementAt(2), "branch"));
-		
+
 		assertEquals("2", getStateVal(err.stateTrace.last(), "depth"));
 		assertEquals("6", getStateVal(err.stateTrace.last(), "branch"));
-		
-		// The worker should continue to generate random traces even after an invariant violation, so we should be
-		// able to receive more results. The worker should generate 2 more results before hitting the maximum trace count.
-		// For the next traces generated, we check their contents to make sure that the worker is actually producing traces
+
+		// The worker should continue to generate random traces even after an invariant
+		// violation, so we should be
+		// able to receive more results. The worker should generate 2 more results
+		// before hitting the maximum trace count.
+		// For the next traces generated, we check their contents to make sure that the
+		// worker is actually producing traces
 		// "randomly" i.e. not generating the same trace every time.
 		res = resultQueue.take();
 		assertTrue(res.isError());
@@ -118,17 +122,17 @@ public class SimulationWorkerTest extends CommonTestCase {
 		final StateVec st2 = err.stateTrace;
 		assertTrue(java.util.stream.IntStream.range(0, err.stateTrace.size())
 				.allMatch(i -> st2.elementAt(i).getLevel() == i + 1));
-		
+
 		// Check the generated trace.
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(0), "depth"));
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(0), "branch"));
-		
+
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(1), "depth"));
 		assertEquals("2", getStateVal(err.stateTrace.elementAt(1), "branch"));
-		
+
 		assertEquals("1", getStateVal(err.stateTrace.elementAt(2), "depth"));
 		assertEquals("2", getStateVal(err.stateTrace.elementAt(2), "branch"));
-		
+
 		res = resultQueue.take();
 		assertTrue(res.isError());
 		err = res.error();
@@ -138,38 +142,38 @@ public class SimulationWorkerTest extends CommonTestCase {
 		final StateVec st3 = err.stateTrace;
 		assertTrue(java.util.stream.IntStream.range(0, err.stateTrace.size())
 				.allMatch(i -> st3.elementAt(i).getLevel() == i + 1));
-		
+
 		// Check the generated trace.
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(0), "depth"));
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(0), "branch"));
-		
+
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(1), "depth"));
 		assertEquals("5", getStateVal(err.stateTrace.elementAt(1), "branch"));
-		
+
 		assertEquals("1", getStateVal(err.stateTrace.elementAt(2), "depth"));
 		assertEquals("5", getStateVal(err.stateTrace.elementAt(2), "branch"));
-		
+
 		assertEquals("2", getStateVal(err.stateTrace.elementAt(3), "depth"));
 		assertEquals("5", getStateVal(err.stateTrace.elementAt(3), "branch"));
-		
+
 		// The worker should push one final OK result onto the queue upon termination.
 		res = resultQueue.take();
 		assertFalse(res.isError());
-		
+
 		worker.join();
 		assertFalse(worker.isAlive());
 	}
-	
+
 	@Test
 	public void testActionPropertyViolation() throws Exception {
 		ITool tool = new FastTool("", "BasicMultiTrace", "MCActionProp", new SimpleFilenameToStream(), Mode.Simulation);
-		
+
 		StateVec initStates = tool.getInitStates();
-		ILiveCheck liveCheck =  new NoOpLiveCheck(tool, "BasicMultiTrace");
+		ILiveCheck liveCheck = new NoOpLiveCheck(tool, "BasicMultiTrace");
 		BlockingQueue<SimulationWorkerResult> resultQueue = new LinkedBlockingQueue<>();
 		SimulationWorker worker = new SimulationWorker(0, tool, resultQueue, 0, 100, 100, false, null, liveCheck);
 		worker.start(initStates);
-		
+
 		SimulationWorkerResult res = resultQueue.take();
 		assertTrue(res.isError());
 		SimulationWorkerError err = res.error();
@@ -179,17 +183,17 @@ public class SimulationWorkerTest extends CommonTestCase {
 		final StateVec st1 = err.stateTrace;
 		assertTrue(java.util.stream.IntStream.range(0, err.stateTrace.size())
 				.allMatch(i -> st1.elementAt(i).getLevel() == i + 1));
-		
+
 		// Check the generated trace.
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(0), "depth"));
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(0), "branch"));
-		
+
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(1), "depth"));
 		assertEquals("6", getStateVal(err.stateTrace.elementAt(1), "branch"));
-		
+
 		assertEquals("1", getStateVal(err.stateTrace.last(), "depth"));
 		assertEquals("6", getStateVal(err.stateTrace.last(), "branch"));
-		
+
 		// Check another result.
 		res = resultQueue.take();
 		assertTrue(res.isError());
@@ -200,33 +204,34 @@ public class SimulationWorkerTest extends CommonTestCase {
 		final StateVec st2 = err.stateTrace;
 		assertTrue(java.util.stream.IntStream.range(0, err.stateTrace.size())
 				.allMatch(i -> st2.elementAt(i).getLevel() == i + 1));
-		
+
 		// Check the generated trace.
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(0), "depth"));
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(0), "branch"));
-		
+
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(1), "depth"));
 		assertEquals("10", getStateVal(err.stateTrace.elementAt(1), "branch"));
-		
+
 		assertEquals("1", getStateVal(err.stateTrace.last(), "depth"));
-		assertEquals("10", getStateVal(err.stateTrace.last(), "branch"));		
-				
+		assertEquals("10", getStateVal(err.stateTrace.last(), "branch"));
+
 		worker.join();
 		assertFalse(worker.isAlive());
 	}
-	
+
 	@Test
 	public void testInvariantBadEval() throws Exception {
-		ITool tool = new FastTool("", "BasicMultiTrace", "MCBadInvNonInitState", new SimpleFilenameToStream(), Mode.Simulation);
-		
+		ITool tool = new FastTool("", "BasicMultiTrace", "MCBadInvNonInitState", new SimpleFilenameToStream(),
+				Mode.Simulation);
+
 		StateVec initStates = tool.getInitStates();
-		ILiveCheck liveCheck =  new NoOpLiveCheck(tool, "BasicMultiTrace");
+		ILiveCheck liveCheck = new NoOpLiveCheck(tool, "BasicMultiTrace");
 		BlockingQueue<SimulationWorkerResult> resultQueue = new LinkedBlockingQueue<>();
 		SimulationWorker worker = new SimulationWorker(0, tool, resultQueue, 0, 100, 100, false, null,
 				liveCheck);
 		worker.start(initStates);
 		SimulationWorkerResult res = resultQueue.take();
-		
+
 		assertTrue(res.isError());
 		SimulationWorkerError err = res.error();
 		assertEquals(EC.TLC_INVARIANT_EVALUATION_FAILED, err.errorCode);
@@ -234,7 +239,7 @@ public class SimulationWorkerTest extends CommonTestCase {
 		assertTrue(err.stateTrace.elementAt(0).isInitial());
 		assertTrue(java.util.stream.IntStream.range(0, err.stateTrace.size())
 				.allMatch(i -> err.stateTrace.elementAt(i).getLevel() == i + 1));
-		
+
 		// Check the generated trace.
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(0), "depth"));
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(0), "branch"));
@@ -245,40 +250,42 @@ public class SimulationWorkerTest extends CommonTestCase {
 		worker.join();
 		assertFalse(worker.isAlive());
 	}
-	
+
 	@Test
 	public void testActionPropertyBadEval() throws Exception {
-		ITool tool = new FastTool("", "BasicMultiTrace", "MCActionPropBadEval", new SimpleFilenameToStream(), Mode.Simulation);
-		
+		ITool tool = new FastTool("", "BasicMultiTrace", "MCActionPropBadEval", new SimpleFilenameToStream(),
+				Mode.Simulation);
+
 		StateVec initStates = tool.getInitStates();
-		ILiveCheck liveCheck =  new NoOpLiveCheck(tool, "BasicMultiTrace");
+		ILiveCheck liveCheck = new NoOpLiveCheck(tool, "BasicMultiTrace");
 		BlockingQueue<SimulationWorkerResult> resultQueue = new LinkedBlockingQueue<>();
 		SimulationWorker worker = new SimulationWorker(0, tool, resultQueue, 0, 100, 100, false, null,
 				liveCheck);
 		worker.start(initStates);
-		
+
 		SimulationWorkerResult res = resultQueue.take();
-		
+
 		assertTrue(res.isError());
 		SimulationWorkerError err = res.error();
 		assertEquals(EC.TLC_ACTION_PROPERTY_EVALUATION_FAILED, err.errorCode);
-				
+
 		worker.join();
 		assertFalse(worker.isAlive());
 	}
-	
+
 	@Test
 	public void testUnderspecifiedNext() throws Exception {
-		ITool tool = new FastTool("", "BasicMultiTrace", "MCUnderspecNext", new SimpleFilenameToStream(), Mode.Simulation);
-		
+		ITool tool = new FastTool("", "BasicMultiTrace", "MCUnderspecNext", new SimpleFilenameToStream(),
+				Mode.Simulation);
+
 		StateVec initStates = tool.getInitStates();
-		ILiveCheck liveCheck =  new NoOpLiveCheck(tool, "BasicMultiTrace");
+		ILiveCheck liveCheck = new NoOpLiveCheck(tool, "BasicMultiTrace");
 		BlockingQueue<SimulationWorkerResult> resultQueue = new LinkedBlockingQueue<>();
 		SimulationWorker worker = new SimulationWorker(0, tool, resultQueue, 0, 100, 100, false, null,
 				liveCheck);
 		worker.start(initStates);
 		SimulationWorkerResult res = resultQueue.take();
-		
+
 		assertTrue(res.isError());
 		SimulationWorkerError err = res.error();
 		assertEquals(EC.TLC_STATE_NOT_COMPLETELY_SPECIFIED_NEXT, err.errorCode);
@@ -286,52 +293,53 @@ public class SimulationWorkerTest extends CommonTestCase {
 		assertTrue(err.stateTrace.elementAt(0).isInitial());
 		assertTrue(java.util.stream.IntStream.range(0, err.stateTrace.size())
 				.allMatch(i -> err.stateTrace.elementAt(i).getLevel() == i + 1));
-		
+
 		// Check the generated trace.
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(0), "depth"));
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(0), "branch"));
-				
+
 		assertEquals(null, err.stateTrace.last().getVals().get(UniqueString.uniqueStringOf("depth")));
 		assertEquals("0", getStateVal(err.stateTrace.last(), "branch"));
 
 		worker.join();
 		assertFalse(worker.isAlive());
 	}
-	
+
 	@Test
 	public void testDeadlock() throws Exception {
-		ITool tool = new FastTool("", "BasicMultiTrace", TLAConstants.Files.MODEL_CHECK_FILE_BASENAME, new SimpleFilenameToStream(), Mode.Simulation);
-		
+		ITool tool = new FastTool("", "BasicMultiTrace", TLAConstants.Files.MODEL_CHECK_FILE_BASENAME,
+				new SimpleFilenameToStream(), Mode.Simulation);
+
 		StateVec initStates = tool.getInitStates();
-		ILiveCheck liveCheck =  new NoOpLiveCheck(tool, "BasicMultiTrace");
+		ILiveCheck liveCheck = new NoOpLiveCheck(tool, "BasicMultiTrace");
 		BlockingQueue<SimulationWorkerResult> resultQueue = new LinkedBlockingQueue<>();
 		SimulationWorker worker = new SimulationWorker(0, tool, resultQueue, 0, 100, 100, true, null,
 				liveCheck);
 		worker.start(initStates);
 		SimulationWorkerResult res = resultQueue.take();
-		
+
 		assertTrue(res.isError());
 		SimulationWorkerError err = res.error();
 		assertEquals(EC.TLC_DEADLOCK_REACHED, err.errorCode);
-		
+
 		assertEquals(7, err.stateTrace.size());
-		assertTrue(err.stateTrace.elementAt(0).isInitial());	
+		assertTrue(err.stateTrace.elementAt(0).isInitial());
 		assertTrue(java.util.stream.IntStream.range(0, err.stateTrace.size())
 				.allMatch(i -> err.stateTrace.elementAt(i).getLevel() == i + 1));
-		
+
 		// Check the generated trace.
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(0), "depth"));
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(0), "branch"));
-		
+
 		assertEquals("0", getStateVal(err.stateTrace.elementAt(1), "depth"));
 		assertEquals("6", getStateVal(err.stateTrace.elementAt(1), "branch"));
-		
+
 		assertEquals("1", getStateVal(err.stateTrace.elementAt(2), "depth"));
 		assertEquals("6", getStateVal(err.stateTrace.elementAt(2), "branch"));
-		
+
 		assertEquals("2", getStateVal(err.stateTrace.elementAt(3), "depth"));
 		assertEquals("6", getStateVal(err.stateTrace.elementAt(3), "branch"));
-		
+
 		assertEquals("3", getStateVal(err.stateTrace.elementAt(4), "depth"));
 		assertEquals("6", getStateVal(err.stateTrace.elementAt(4), "branch"));
 
@@ -344,13 +352,14 @@ public class SimulationWorkerTest extends CommonTestCase {
 		worker.join();
 		assertFalse(worker.isAlive());
 	}
-	
+
 	@Test
 	public void testModelStateConstraint() throws Exception {
-		ITool tool = new FastTool("", "BasicMultiTrace", "MCWithConstraint", new SimpleFilenameToStream(), Mode.Simulation);
-		
+		ITool tool = new FastTool("", "BasicMultiTrace", "MCWithConstraint", new SimpleFilenameToStream(),
+				Mode.Simulation);
+
 		StateVec initStates = tool.getInitStates();
-		ILiveCheck liveCheck =  new NoOpLiveCheck(tool, "BasicMultiTrace");
+		ILiveCheck liveCheck = new NoOpLiveCheck(tool, "BasicMultiTrace");
 		BlockingQueue<SimulationWorkerResult> resultQueue = new LinkedBlockingQueue<>();
 		SimulationWorker worker = new SimulationWorker(0, tool, resultQueue, 0, 100, 100, false, null,
 				liveCheck);
@@ -361,13 +370,14 @@ public class SimulationWorkerTest extends CommonTestCase {
 		assertTrue(resultQueue.isEmpty());
 		assertFalse(worker.isAlive());
 	}
-	
+
 	@Test
 	public void testModelActionConstraint() throws Exception {
-		ITool tool = new FastTool("", "BasicMultiTrace", "MCWithActionConstraint", new SimpleFilenameToStream(), Mode.Simulation);
-		
+		ITool tool = new FastTool("", "BasicMultiTrace", "MCWithActionConstraint", new SimpleFilenameToStream(),
+				Mode.Simulation);
+
 		StateVec initStates = tool.getInitStates();
-		ILiveCheck liveCheck =  new NoOpLiveCheck(tool, "BasicMultiTrace");
+		ILiveCheck liveCheck = new NoOpLiveCheck(tool, "BasicMultiTrace");
 		BlockingQueue<SimulationWorkerResult> resultQueue = new LinkedBlockingQueue<>();
 		SimulationWorker worker = new SimulationWorker(0, tool, resultQueue, 0, 100, 100, false, null,
 				liveCheck);
@@ -378,25 +388,26 @@ public class SimulationWorkerTest extends CommonTestCase {
 		assertTrue(resultQueue.isEmpty());
 		assertFalse(worker.isAlive());
 	}
-	
+
 	@Test
 	public void testWorkerInterruption() throws Exception {
 		ITool tool = new FastTool("", "BasicMultiTrace", "MCInv", new SimpleFilenameToStream(), Mode.Simulation);
-		
+
 		StateVec initStates = tool.getInitStates();
-		ILiveCheck liveCheck =  new NoOpLiveCheck(tool, "BasicMultiTrace");
+		ILiveCheck liveCheck = new NoOpLiveCheck(tool, "BasicMultiTrace");
 		BlockingQueue<SimulationWorkerResult> resultQueue = new LinkedBlockingQueue<>();
-		
-		// If we set the trace limit to the max, the worker should effectively run forever. We verify that after it generates
+
+		// If we set the trace limit to the max, the worker should effectively run
+		// forever. We verify that after it generates
 		// a result, we can cancel it and the worker will terminate.
 		long traceNum = Long.MAX_VALUE;
 		SimulationWorker worker = new SimulationWorker(0, tool, resultQueue, 0, 100, traceNum, false, null,
 				liveCheck);
 		worker.start(initStates);
-		
+
 		// Check one result.
 		SimulationWorkerResult res = resultQueue.take();
-		
+
 		assertTrue(res.isError());
 		SimulationWorkerError err = res.error();
 		assertEquals(EC.TLC_INVARIANT_VIOLATED_BEHAVIOR, err.errorCode);
@@ -404,7 +415,7 @@ public class SimulationWorkerTest extends CommonTestCase {
 		assertTrue(err.stateTrace.elementAt(0).isInitial());
 		assertTrue(java.util.stream.IntStream.range(0, err.stateTrace.size())
 				.allMatch(i -> err.stateTrace.elementAt(i).getLevel() == i + 1));
-		
+
 		// Cancel the worker.
 		worker.interrupt();
 		worker.join();
@@ -414,9 +425,9 @@ public class SimulationWorkerTest extends CommonTestCase {
 	@Test
 	public void testTraceDepthObeyed() throws Exception {
 		ITool tool = new FastTool("", "BasicMultiTrace", "MCInv", new SimpleFilenameToStream(), Mode.Simulation);
-		
+
 		StateVec initStates = tool.getInitStates();
-		ILiveCheck liveCheck =  new NoOpLiveCheck(tool, "BasicMultiTrace");
+		ILiveCheck liveCheck = new NoOpLiveCheck(tool, "BasicMultiTrace");
 		BlockingQueue<SimulationWorkerResult> resultQueue = new LinkedBlockingQueue<>();
 
 		// At this trace depth, the worker should never find the invariant violation.
@@ -426,18 +437,19 @@ public class SimulationWorkerTest extends CommonTestCase {
 		worker.start(initStates);
 		SimulationWorkerResult res = resultQueue.take();
 		assertFalse(res.isError());
-		
+
 		worker.join();
 		assertTrue(resultQueue.isEmpty());
 		assertFalse(worker.isAlive());
 	}
-	
+
 	@Test
 	public void testStateAndTraceGenerationCount() throws Exception {
-		ITool tool = new FastTool("", "BasicMultiTrace", TLAConstants.Files.MODEL_CHECK_FILE_BASENAME, new SimpleFilenameToStream(), Mode.Simulation);
-		
+		ITool tool = new FastTool("", "BasicMultiTrace", TLAConstants.Files.MODEL_CHECK_FILE_BASENAME,
+				new SimpleFilenameToStream(), Mode.Simulation);
+
 		StateVec initStates = tool.getInitStates();
-		ILiveCheck liveCheck =  new NoOpLiveCheck(tool, "BasicMultiTrace");
+		ILiveCheck liveCheck = new NoOpLiveCheck(tool, "BasicMultiTrace");
 		BlockingQueue<SimulationWorkerResult> resultQueue = new LinkedBlockingQueue<>();
 
 		// Have the worker generate a specified number of traces of a fixed length.

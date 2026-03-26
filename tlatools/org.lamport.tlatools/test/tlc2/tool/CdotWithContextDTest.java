@@ -45,7 +45,7 @@ public class CdotWithContextDTest extends ModelCheckerTestCase {
 
 	protected boolean noGenerateSpec() {
 		return true;
-	}	
+	}
 
 	protected boolean runWithDebugger() {
 		return false;

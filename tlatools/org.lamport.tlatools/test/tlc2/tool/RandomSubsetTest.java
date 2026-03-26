@@ -53,16 +53,16 @@ public class RandomSubsetTest extends ModelCheckerTestCase {
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_INIT_GENERATED1, "2002"));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "2003", "2003", "2001"));
 		assertEquals(2, recorder.getRecordAsInt(EC.TLC_SEARCH_DEPTH));
 
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
-		
+
 		final List<Object> actual = recorder.getRecords(EC.TLC_STATE_PRINT2);
 		assertEquals(2, actual.size());
-		
+
 		final TLCStateInfo first = (TLCStateInfo) ((Object[]) actual.get(0))[0];
 		if (isExtendedTLCState()) {
 			assertEquals("<Init line 6, col 9 to line 8, col 19 of module RandomSubset>", first.info);
@@ -71,7 +71,7 @@ public class RandomSubsetTest extends ModelCheckerTestCase {
 		}
 		final Map<UniqueString, IValue> firstState = first.state.getVals();
 		assertEquals(3, firstState.size());
-		
+
 		// Check x and y values are within defined ranges.
 		final IntValue firstX = (IntValue) firstState.get(UniqueString.uniqueStringOf("x"));
 		assertTrue(1 <= firstX.val && firstX.val <= 100000000);
@@ -80,9 +80,10 @@ public class RandomSubsetTest extends ModelCheckerTestCase {
 
 		// Check z is true
 		assertEquals(BoolValue.ValTrue, (IBoolValue) firstState.get(UniqueString.uniqueStringOf("z")));
-		
+
 		final TLCStateInfo second = (TLCStateInfo) ((Object[]) actual.get(1))[0];
-		assertTrue(((String) second.info).startsWith("<Next line 10, col 9 to line 11, col 21 of module RandomSubset>"));
+		assertTrue(
+				((String) second.info).startsWith("<Next line 10, col 9 to line 11, col 21 of module RandomSubset>"));
 		final Map<UniqueString, IValue> secondState = second.state.getVals();
 		assertEquals(3, secondState.size());
 		// UNCHANGED x,y

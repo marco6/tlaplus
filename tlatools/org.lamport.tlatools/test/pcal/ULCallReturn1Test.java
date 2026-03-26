@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class ULCallReturn1Test extends PCalModelCheckerTestCase {
 
 	public ULCallReturn1Test() {
-		super("ULCallReturn1", "pcal", new String[] {"-wf", "-termination"});
+		super("ULCallReturn1", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test
@@ -47,6 +47,6 @@ public class ULCallReturn1Test extends PCalModelCheckerTestCase {
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "9", "8", "0"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "8"));
 
-	assertZeroUncovered();
+		assertZeroUncovered();
 	}
 }

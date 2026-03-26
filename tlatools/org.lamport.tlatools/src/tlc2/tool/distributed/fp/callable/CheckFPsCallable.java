@@ -10,12 +10,14 @@ import tlc2.tool.distributed.fp.FPSetRMI;
 
 public class CheckFPsCallable implements Callable<Long> {
 	private final FPSetRMI fpSetRMI;
-	
+
 	public CheckFPsCallable(FPSetRMI fpSetRMI) {
 		this.fpSetRMI = fpSetRMI;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.concurrent.Callable#call()
 	 */
 	public Long call() throws Exception {

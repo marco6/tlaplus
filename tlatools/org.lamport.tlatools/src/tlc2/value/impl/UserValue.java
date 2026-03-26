@@ -15,35 +15,43 @@ import util.Assert;
 public class UserValue extends Value {
   public UserObj userObj;
 
-  public UserValue(UserObj obj) { this.userObj = obj; }
+  public UserValue(UserObj obj) {
+    this.userObj = obj;
+  }
 
   @Override
-  public final byte getKind() { return USERVALUE; }
+  public final byte getKind() {
+    return USERVALUE;
+  }
 
   @Override
   public final int compareTo(Object obj) {
     try {
       if (obj instanceof UserValue) {
-        return this.userObj.compareTo((Value)obj);
+        return this.userObj.compareTo((Value) obj);
       }
       if (!(obj instanceof ModelValue))
         Assert.fail("Attempted to compare overridden value " + Values.ppr(this.toString()) +
-        " with non-overridden value:\n" + Values.ppr(obj.toString()), getSource());
+            " with non-overridden value:\n" + Values.ppr(obj.toString()), getSource());
       return 1;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   public final boolean equals(Object obj) {
     try {
       return (this.compareTo(obj) == 0);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -51,10 +59,12 @@ public class UserValue extends Value {
   public final boolean member(Value val) {
     try {
       return this.userObj.member(val);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -62,10 +72,12 @@ public class UserValue extends Value {
   public final boolean isFinite() {
     try {
       return this.userObj.isFinite();
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -74,13 +86,15 @@ public class UserValue extends Value {
     try {
       if (ex.idx < ex.path.length) {
         Assert.fail("Attempted to apply EXCEPT to the overridden value " +
-        Values.ppr(this.toString()) + ".", getSource());
+            Values.ppr(this.toString()) + ".", getSource());
       }
       return ex.value;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -89,13 +103,15 @@ public class UserValue extends Value {
     try {
       if (exs.length != 0) {
         Assert.fail("Attempted to apply EXCEPT to the overridden value " +
-        Values.ppr(this.toString()) + ".", getSource());
+            Values.ppr(this.toString()) + ".", getSource());
       }
       return this;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -103,45 +119,57 @@ public class UserValue extends Value {
   public final int size() {
     try {
       Assert.fail("Attempted to compute the number of elements in the overridden value " +
-      Values.ppr(this.toString()) + ".", getSource());
-      return 0;   // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          Values.ppr(this.toString()) + ".", getSource());
+      return 0; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   /* Nothing to normalize. */
   @Override
-  public final boolean isNormalized() { return true; }
+  public final boolean isNormalized() {
+    return true;
+  }
 
   @Override
-  public final Value normalize() { /*SKIP*/return this; }
+  public final Value normalize() {
+    /* SKIP */return this;
+  }
 
   @Override
-  public final boolean isDefined() { return true; }
+  public final boolean isDefined() {
+    return true;
+  }
 
   @Override
-  public final IValue deepCopy() { return this; }
+  public final IValue deepCopy() {
+    return this;
+  }
 
   /* The string representation. */
   @Override
   public final StringBuffer toString(StringBuffer sb, int offset, boolean swallow) {
     try {
       return this.userObj.toString(sb, offset, swallow);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
-	@Override
-	public String getNonEnumerableErrorMsg(final ExprNode exprNode) {
-		if (userObj.getNonEnumerableErrorMsg(exprNode) != null) {
-			return userObj.getNonEnumerableErrorMsg(exprNode);
-		}
-		return super.getNonEnumerableErrorMsg(exprNode);
-	}	
+  @Override
+  public String getNonEnumerableErrorMsg(final ExprNode exprNode) {
+    if (userObj.getNonEnumerableErrorMsg(exprNode) != null) {
+      return userObj.getNonEnumerableErrorMsg(exprNode);
+    }
+    return super.getNonEnumerableErrorMsg(exprNode);
+  }
 }

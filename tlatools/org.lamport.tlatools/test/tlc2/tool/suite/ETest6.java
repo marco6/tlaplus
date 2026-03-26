@@ -37,7 +37,7 @@ public class ETest6 extends SuiteETestCase {
 	public ETest6() {
 		super(ExitStatus.FAILURE_SPEC_EVAL);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		assertTrue(recorder.recordedWithSubStringValue(EC.GENERAL,

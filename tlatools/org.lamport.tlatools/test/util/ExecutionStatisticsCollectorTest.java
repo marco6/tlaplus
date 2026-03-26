@@ -96,7 +96,7 @@ public class ExecutionStatisticsCollectorTest {
 	@Test
 	public void testCompanyLevelUnreadable() throws IOException {
 		File tempFile = File.createTempFile("esc", "txt");
-		assumeTrue(tempFile.setReadable(false));       
+		assumeTrue(tempFile.setReadable(false));
 		tempFile.deleteOnExit();
 
 		final TestExecutionStatisticsCollector esc = new TestExecutionStatisticsCollector(tempFile.getAbsolutePath(),

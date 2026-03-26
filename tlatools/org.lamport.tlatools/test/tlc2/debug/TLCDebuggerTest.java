@@ -179,7 +179,7 @@ public class TLCDebuggerTest {
 		public TestTLCDebugger(int n) {
 			this(n, true);
 		}
-		
+
 		public TestTLCDebugger(int n, boolean executionIsHalted) {
 			super(Step.In, true, executionIsHalted);
 			this.stack.addAll(IntStream.range(0, n).boxed().sorted(Collections.reverseOrder())

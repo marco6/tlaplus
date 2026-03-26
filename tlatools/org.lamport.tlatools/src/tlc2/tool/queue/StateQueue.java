@@ -39,7 +39,9 @@ public abstract class StateQueue implements IStateQueue {
 	private Object mu = new Object();
 
 	/* Enqueues the state. It is not thread-safe. */
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.queue.IStateQueue#enqueue(tlc2.tool.TLCState)
 	 */
 	public final void enqueue(final TLCState state) {
@@ -47,7 +49,9 @@ public abstract class StateQueue implements IStateQueue {
 		this.len++;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.queue.IStateQueue#dequeue()
 	 */
 	public final TLCState dequeue() {
@@ -60,7 +64,9 @@ public abstract class StateQueue implements IStateQueue {
 	}
 
 	/* Enqueues a state. Wake up any waiting thread. */
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.queue.IStateQueue#sEnqueue(tlc2.tool.TLCState)
 	 */
 	public final synchronized void sEnqueue(final TLCState state) {
@@ -72,7 +78,9 @@ public abstract class StateQueue implements IStateQueue {
 	}
 
 	/* Enqueues a list of states. Wake up any waiting thread. */
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.queue.IStateQueue#sEnqueue(tlc2.tool.TLCState[])
 	 */
 	public final synchronized void sEnqueue(final TLCState states[]) {
@@ -84,7 +92,7 @@ public abstract class StateQueue implements IStateQueue {
 			this.notifyAll();
 		}
 	}
-	
+
 	public final synchronized void sEnqueue(final StateVec stateVec) {
 		int cnt = 0;
 		for (int j = 0; j < stateVec.size(); j++) {
@@ -100,7 +108,6 @@ public abstract class StateQueue implements IStateQueue {
 		}
 	}
 
-
 	public final synchronized TLCState sPeek() {
 		if (this.isAvail()) {
 			return this.peekInner();
@@ -109,7 +116,9 @@ public abstract class StateQueue implements IStateQueue {
 	}
 
 	/* Return the first element in the queue. Wait if empty. */
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.queue.IStateQueue#sDequeue()
 	 */
 	public final synchronized TLCState sDequeue() {
@@ -123,14 +132,16 @@ public abstract class StateQueue implements IStateQueue {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.queue.IStateQueue#sDequeue(int)
 	 */
 	public final synchronized TLCState[] sDequeue(int cnt) {
 		assert cnt > 0 : "Nonpositive number of states requested.";
 		if (this.isAvail()) {
 			if (cnt > len) {
-				// in this case, casting len to int is safe 
+				// in this case, casting len to int is safe
 				cnt = (int) len;
 			}
 			final TLCState states[] = new TLCState[cnt];
@@ -167,7 +178,7 @@ public abstract class StateQueue implements IStateQueue {
 		 * isAvail is only called from within sDequeue() and sDequeue(..) and
 		 * thus is always synchronized on this.
 		 */
-		
+
 		if (this.finish) {
 			return false;
 		}
@@ -191,7 +202,8 @@ public abstract class StateQueue implements IStateQueue {
 			try {
 				this.wait();
 			} catch (Exception e) {
-				MP.printError(EC.GENERAL, "making a worker wait for a state from the queue", e);  // LL changed call 7 April 2012
+				MP.printError(EC.GENERAL, "making a worker wait for a state from the queue", e); // LL changed call 7
+																									// April 2012
 				System.exit(1);
 			}
 			this.numWaiting--;
@@ -202,7 +214,9 @@ public abstract class StateQueue implements IStateQueue {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.queue.IStateQueue#finishAll()
 	 */
 	public synchronized void finishAll() {
@@ -225,7 +239,9 @@ public abstract class StateQueue implements IStateQueue {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.queue.IStateQueue#suspendAll()
 	 */
 	public final boolean suspendAll() {
@@ -272,7 +288,7 @@ public abstract class StateQueue implements IStateQueue {
 					// this.mu.notify*()
 					this.mu.wait();
 				} catch (Exception e) {
-					MP.printError(EC.GENERAL, "waiting for a worker to wake up", e);  // LL changed call 7 April 2012
+					MP.printError(EC.GENERAL, "waiting for a worker to wake up", e); // LL changed call 7 April 2012
 					System.exit(1);
 				}
 			}
@@ -285,23 +301,26 @@ public abstract class StateQueue implements IStateQueue {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	private boolean needsWaiting() {
-		//MAK 04/2012: Commented to fix an EOFException when liveness checking is enabled 
-//		// no need to wait without workers present
-//		if (this.numWaiting < 1) {
-//			return false;
-//		}
+		// MAK 04/2012: Commented to fix an EOFException when liveness checking is
+		// enabled
+		// // no need to wait without workers present
+		// if (this.numWaiting < 1) {
+		// return false;
+		// }
 		// if all workers wait at once, it indicates that all work is
 		// done and suspending all workers can happen right away without
 		// waiting.
 		return this.numWaiting < TLCGlobals.getNumWorkers();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.queue.IStateQueue#resumeAll()
 	 */
 	public final synchronized void resumeAll() {
@@ -309,7 +328,9 @@ public abstract class StateQueue implements IStateQueue {
 		this.notifyAll();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.queue.IStateQueue#resumeAllStuck()
 	 */
 	public void resumeAllStuck() {
@@ -321,7 +342,7 @@ public abstract class StateQueue implements IStateQueue {
 				mu.notifyAll();
 			}
 		}
-		// 
+		//
 		if (!stop && !isEmpty() && this.numWaiting > 0) {
 			synchronized (this) {
 				this.notifyAll();
@@ -330,7 +351,9 @@ public abstract class StateQueue implements IStateQueue {
 	}
 
 	/* This method returns the size of the state queue. */
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.queue.IStateQueue#size()
 	 */
 	public final long size() {
@@ -352,23 +375,29 @@ public abstract class StateQueue implements IStateQueue {
 
 	/* This method must be implemented in the subclass. */
 	abstract TLCState peekInner();
-	
+
 	/* Checkpoint. */
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.queue.IStateQueue#beginChkpt()
 	 */
 	public abstract void beginChkpt() throws IOException;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.queue.IStateQueue#commitChkpt()
 	 */
 	public abstract void commitChkpt() throws IOException;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.queue.IStateQueue#recover()
 	 */
 	public abstract void recover() throws IOException;
-	
+
 	@Override
 	public void delete() throws IOException {
 		// no-op

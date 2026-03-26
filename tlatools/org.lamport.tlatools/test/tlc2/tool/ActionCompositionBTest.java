@@ -41,10 +41,11 @@ import tlc2.tool.liveness.ModelCheckerTestCase;
 public class ActionCompositionBTest extends ModelCheckerTestCase {
 
 	public ActionCompositionBTest() {
-		super("ActionComposition", "cdot", new String[] {"-config", "ActionCompositionB.cfg"}, ExitStatus.VIOLATION_SAFETY);
+		super("ActionComposition", "cdot", new String[] { "-config", "ActionCompositionB.cfg" },
+				ExitStatus.VIOLATION_SAFETY);
 		System.setProperty(Tool.CDOT_KEY, Boolean.TRUE.toString());
 	}
-	
+
 	protected boolean doCoverage() {
 		return false;
 	}
@@ -53,7 +54,7 @@ public class ActionCompositionBTest extends ModelCheckerTestCase {
 	public void testSpec() throws IOException {
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "10", "4", "0"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "3"));
-		
+
 		// Assert it has found the temporal violation and also a counter example
 		assertTrue(recorder.recorded(EC.TLC_INVARIANT_VIOLATED_BEHAVIOR));
 

@@ -44,11 +44,11 @@ import tlc2.tool.AbstractChecker;
  * possible counterexample.
  */
 public class LoopTestForcedPartial extends ModelCheckerTestCase {
-	
+
 	static {
 		AbstractChecker.LIVENESS_TESTING_IMPLEMENTATION = true;
 	}
-	
+
 	public LoopTestForcedPartial() {
 		super("SystemLoop", "Loop", ExitStatus.VIOLATION_LIVENESS);
 	}
@@ -70,10 +70,10 @@ public class LoopTestForcedPartial extends ModelCheckerTestCase {
 		final List<String> expectedTrace = new ArrayList<String>(4);
 		expectedTrace.add("x = 0");
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace);
-		
+
 		// Stuttering after the init state.
 		assertStuttering(2);
 
-	assertZeroUncovered();
+		assertZeroUncovered();
 	}
 }

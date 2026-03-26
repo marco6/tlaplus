@@ -40,7 +40,9 @@ public class NoopFPSet extends FPSet {
 		super(fpSetConfig);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#init(int, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -48,7 +50,9 @@ public class NoopFPSet extends FPSet {
 		return this;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#size()
 	 */
 	@Override
@@ -56,7 +60,9 @@ public class NoopFPSet extends FPSet {
 		return 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#put(long)
 	 */
 	@Override
@@ -64,7 +70,9 @@ public class NoopFPSet extends FPSet {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#contains(long)
 	 */
 	@Override
@@ -72,7 +80,9 @@ public class NoopFPSet extends FPSet {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#checkFPs()
 	 */
 	@Override
@@ -80,49 +90,63 @@ public class NoopFPSet extends FPSet {
 		return 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#beginChkpt()
 	 */
 	@Override
 	public void beginChkpt() throws IOException {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#commitChkpt()
 	 */
 	@Override
 	public void commitChkpt() throws IOException {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#recover()
 	 */
 	@Override
 	public void recover(TLCTrace trace) throws IOException {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#recoverFP(long)
 	 */
 	@Override
 	public void recoverFP(long fp) throws IOException {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#beginChkpt(java.lang.String)
 	 */
 	@Override
 	public void beginChkpt(String filename) throws IOException {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#commitChkpt(java.lang.String)
 	 */
 	@Override
 	public void commitChkpt(String filename) throws IOException {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#recover(java.lang.String)
 	 */
 	@Override

@@ -9,7 +9,7 @@ import tla2sany.st.TreeNode;
 /**
  * Example: `{Partitions(<<x>>\oseq,wt-x):x\inS}`
  * Example: RecordCombine(S, T) ==\n" +
- * "   {rc(s, t):s \\in S, t \\in T}
+ * " {rc(s, t):s \\in S, t \\in T}
  */
 public class SetOfAllConstruct implements TlaConstruct {
     @Override

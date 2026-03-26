@@ -56,21 +56,27 @@ public abstract class DistApp implements TraceApp {
 
 	// Reconstruct the initial state whose fingerprint is fp.
 	// TLCTrace
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.TraceApp#getState(long)
 	 */
 	public abstract TLCStateInfo getState(long fp);
 
 	// Reconstruct the next state of state s whose fingerprint is fp.
 	// TLCTrace
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.TraceApp#getState(long, tlc2.tool.TLCState)
 	 */
 	public abstract TLCStateInfo getState(long fp, TLCState s);
 
 	// Reconstruct the info for the transition from s to s1. /
 	// TLCTrace
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.TraceApp#getState(tlc2.tool.TLCState, tlc2.tool.TLCState)
 	 */
 	public abstract TLCStateInfo getState(TLCState s1, TLCState s);

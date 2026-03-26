@@ -21,32 +21,34 @@ import java.io.Serializable;
 public class BitVector implements Serializable {
 
   private static final long serialVersionUID = 901734230891583097L;
-  private long[] word;                   // words of this bit vector
+  private long[] word; // words of this bit vector
 
-  public BitVector() { this.word = null; }
-  
+  public BitVector() {
+    this.word = null;
+  }
+
   /**
    * Constructor for a new bit vector that is expected to contain bits
    * with indices 0 through <code>initCapacity-1</code>.
    */
   public BitVector(int initCapacity) {
-    int len = (initCapacity == 0) ? 0 : ((initCapacity - 1)/64 + 1);
+    int len = (initCapacity == 0) ? 0 : ((initCapacity - 1) / 64 + 1);
     this.word = new long[len];
   }
-  
-	/**
-	 * Constructor for a new bit vector that is expected to contain bits with
-	 * indices 0 through <code>initCapacity-1</code>. All bits are initially set
-	 * to <code>true</code>
-	 */
-	public BitVector(int initCapacity, boolean initValue) {
-		int len = (initCapacity == 0) ? 0 : ((initCapacity - 1) / 64 + 1);
-		this.word = new long[len];
-		if (initValue) {
-			set(0, len);
-		}
-	}
-   
+
+  /**
+   * Constructor for a new bit vector that is expected to contain bits with
+   * indices 0 through <code>initCapacity-1</code>. All bits are initially set
+   * to <code>true</code>
+   */
+  public BitVector(int initCapacity, boolean initValue) {
+    int len = (initCapacity == 0) ? 0 : ((initCapacity - 1) / 64 + 1);
+    this.word = new long[len];
+    if (initValue) {
+      set(0, len);
+    }
+  }
+
   /** Initialize this bit vector to be a copy of <code>bv</code>. */
   public BitVector(BitVector bv) {
     int len = bv.word.length;
@@ -55,17 +57,20 @@ public class BitVector implements Serializable {
   }
 
   public boolean equals(Object o) {
-    if (!(o instanceof BitVector)) return false;
-    BitVector other = (BitVector)o;
+    if (!(o instanceof BitVector))
+      return false;
+    BitVector other = (BitVector) o;
     int minLen = Math.min(this.word.length, other.word.length);
     for (int i = 0; i < minLen; i++) {
-      if (this.word[i] != other.word[i]) return false;
+      if (this.word[i] != other.word[i])
+        return false;
     }
     if (this.word.length != other.word.length) {
       int maxLen = Math.max(this.word.length, other.word.length);
       long[] tail = (maxLen == this.word.length) ? this.word : other.word;
       for (int i = minLen; i < maxLen; i++) {
-	if (tail[i] != 0L) return false;
+        if (tail[i] != 0L)
+          return false;
       }
     }
     return true;
@@ -76,8 +81,8 @@ public class BitVector implements Serializable {
     for (int i = 0; i < this.word.length; i++) {
       long w = this.word[i];
       if (w != 0) {
-	res ^= (int)(w & 0xffffL);
-	res ^= (int)(w >>> 32);
+        res ^= (int) (w & 0xffffL);
+        res ^= (int) (w >>> 32);
       }
     }
     return res;
@@ -89,108 +94,115 @@ public class BitVector implements Serializable {
       this.word[i] = 0L;
     }
   }
-    
+
   /** Return the bit at index <code>i</code>. */
   public boolean get(int i) {
     int wd = i / 64;
-    if (wd >= this.word.length) return false;
+    if (wd >= this.word.length)
+      return false;
     int bit = i % 64;
     return (this.word[wd] & (1L << bit)) != 0L;
   }
-    
+
   /** Set the bit at index <code>i</code> to <code>true</code>. */
   public void set(int i) {
     int wd = i / 64;
-    if (wd >= this.word.length) this.grow(wd);
+    if (wd >= this.word.length)
+      this.grow(wd);
     int bit = i % 64;
     this.word[wd] |= (1L << bit);
   }
-    
-  /** Set all the bits with indices in the closed interval
-      <code>[lo, hi]</code>. */
+
+  /**
+   * Set all the bits with indices in the closed interval
+   * <code>[lo, hi]</code>.
+   */
   public void set(int lo, int hi) {
     int lwd = lo / 64;
     int hwd = hi / 64;
-    if (hwd >= this.word.length) this.grow(hwd);
+    if (hwd >= this.word.length)
+      this.grow(hwd);
     int lbit = lo % 64;
     int hbit = hi % 64;
     if (lwd < hwd) {
-      for (int i = lwd+1; i < hwd; i++) {
-	this.word[i] = -1L;
+      for (int i = lwd + 1; i < hwd; i++) {
+        this.word[i] = -1L;
       }
       this.word[lwd] = (-1L << lbit);
-      this.word[hwd] = (-1L >>> (63-hbit));
-    }
-    else {
+      this.word[hwd] = (-1L >>> (63 - hbit));
+    } else {
       if (lo <= hi) {
-	this.word[lwd] = (-1L << lbit) & (-1L >>> (63-hbit));
+        this.word[lwd] = (-1L << lbit) & (-1L >>> (63 - hbit));
       }
     }
   }
-  
-  	/**
-	 * Returns this {@link BitVector} is a bit string with the MSB to the left
-	 * and the LSB to the right.
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
+
+  /**
+   * Returns this {@link BitVector} is a bit string with the MSB to the left
+   * and the LSB to the right.
+   * 
+   * @see java.lang.Object#toString()
+   */
   public String toString() {
-	  final StringBuffer buf = new StringBuffer(this.word.length * 64);
-	  for (int i = this.word.length * 64; i >= 0; i--) {
-		  if (get(i)) {
-			  buf.append("1");
-		  } else {
-			  buf.append("0");
-		  }
-	  }
-	  buf.append("]");
-	  return buf.toString().replaceAll("^0*","["); // Replace leading zeros with "["
+    final StringBuffer buf = new StringBuffer(this.word.length * 64);
+    for (int i = this.word.length * 64; i >= 0; i--) {
+      if (get(i)) {
+        buf.append("1");
+      } else {
+        buf.append("0");
+      }
+    }
+    buf.append("]");
+    return buf.toString().replaceAll("^0*", "["); // Replace leading zeros with "["
   }
+
   public String toString(int start, int length) {
-	  return toString(start, length, '1', '0');
+    return toString(start, length, '1', '0');
   }
-  
+
   public String toString(int start, int length, char one, char zero) {
-	  final StringBuffer buf = new StringBuffer(length);
-	  for (int i = 0; i < length; i++) {
-		  if (get(start + i)) {
-			  buf.append(one);
-		  } else {
-			  buf.append(zero);
-		  }
-	  }
-	  return "[" + buf.reverse().toString() + "]";
+    final StringBuffer buf = new StringBuffer(length);
+    for (int i = 0; i < length; i++) {
+      if (get(start + i)) {
+        buf.append(one);
+      } else {
+        buf.append(zero);
+      }
+    }
+    return "[" + buf.reverse().toString() + "]";
   }
-  
-	/**
-	 * @return The number of bits set true
-	 */
-	public int trueCnt() {
-		int res = 0;
-		for (int i = 0; i < this.word.length * 64; i++) {
-			// addr in long[]
-			int wd = i / 64;
-			// addr in long[x]
-			int bit = i % 64;
-			if ((this.word[wd] & (1L << bit)) != 0L) {
-				res++;
-			}
-		}
-		return res;
-	}
-    
+
+  /**
+   * @return The number of bits set true
+   */
+  public int trueCnt() {
+    int res = 0;
+    for (int i = 0; i < this.word.length * 64; i++) {
+      // addr in long[]
+      int wd = i / 64;
+      // addr in long[x]
+      int bit = i % 64;
+      if ((this.word[wd] & (1L << bit)) != 0L) {
+        res++;
+      }
+    }
+    return res;
+  }
+
   /** Set the bit at index <code>i</code> to <code>false</code>. */
   public void reset(int i) {
     int wd = i / 64;
-    if (wd >= this.word.length) this.grow(wd);
+    if (wd >= this.word.length)
+      this.grow(wd);
     int bit = i % 64;
     this.word[wd] &= ~(1L << bit);
   }
-    
+
   /** Set the bit at index <code>i</code> to <code>val</code>. */
   public void set(int i, boolean val) {
     int wd = i / 64;
-    if (wd >= this.word.length) this.grow(wd);
+    if (wd >= this.word.length)
+      this.grow(wd);
     int bit = i % 64;
     if (val) {
       this.word[wd] |= (1L << bit);
@@ -216,9 +228,11 @@ public class BitVector implements Serializable {
       this.word[i] = raf.readLong();
     }
   }
-  
-  /** Grow this bit vector to contain at least <code>wd+1</code>
-      words. */
+
+  /**
+   * Grow this bit vector to contain at least <code>wd+1</code>
+   * words.
+   */
   private void grow(int wd) {
     // Assert.check(wd >= this.word.length);
     int newLen = Math.max(this.word.length, wd + 1);
@@ -226,60 +240,73 @@ public class BitVector implements Serializable {
     System.arraycopy(this.word, 0, tmp, 0, this.word.length);
     this.word = tmp;
   }
-    
-  /** A <code>BitVector.Iter</code> is an object for enumerating the
-      set bits of a given bit vector in order. While the iterator is 
-      being used, the bit vector should not be modified.*/
-  public static class Iter {
-    /*@ non_null */
-    long[] word;  // pointer to bit vector's 'word' array
-    int wd;       // index of next word to consider
-    int bit;      // index of next bit to consider
-    long mask;    // mask of next bit to consider
-        
-    //@ invariant this.wd >= 0
-    //@ invariant this.mask == (1L << this.bit)
 
-    /** Construct an empty <code>Iter</code> object. The
-	<code>init</code> method must be called before this
-	iterator can be used. */
-    public Iter() { /*SKIP*/ }
-        
-    /** Initialize this <code>Iter</code> object for iterating
-	over <code>bv</code>. */
-    public Iter(BitVector bv) { this.init(bv); }
-        
-    /** Reinitialize this <code>BVIter</code> object for iterating
-	over <code>bv</code>. */
+  /**
+   * A <code>BitVector.Iter</code> is an object for enumerating the
+   * set bits of a given bit vector in order. While the iterator is
+   * being used, the bit vector should not be modified.
+   */
+  public static class Iter {
+    /* @ non_null */
+    long[] word; // pointer to bit vector's 'word' array
+    int wd; // index of next word to consider
+    int bit; // index of next bit to consider
+    long mask; // mask of next bit to consider
+
+    // @ invariant this.wd >= 0
+    // @ invariant this.mask == (1L << this.bit)
+
+    /**
+     * Construct an empty <code>Iter</code> object. The
+     * <code>init</code> method must be called before this
+     * iterator can be used.
+     */
+    public Iter() {
+      /* SKIP */ }
+
+    /**
+     * Initialize this <code>Iter</code> object for iterating
+     * over <code>bv</code>.
+     */
+    public Iter(BitVector bv) {
+      this.init(bv);
+    }
+
+    /**
+     * Reinitialize this <code>BVIter</code> object for iterating
+     * over <code>bv</code>.
+     */
     public void init(BitVector bv) {
       this.word = bv.word;
       this.wd = 0;
       this.bit = 0;
       this.mask = 1L;
     }
-        
-    /** Return the index of the next set bit in this iterator's
-	bit vector, or -1 if there are no more such bits. */
+
+    /**
+     * Return the index of the next set bit in this iterator's
+     * bit vector, or -1 if there are no more such bits.
+     */
     public int next() {
       for (; this.wd < this.word.length; this.wd++) {
-	long w = this.word[this.wd];
-	for (; this.bit < 64; this.bit++, this.mask <<= 1) {
-	  if ((w & this.mask) != 0L) {
-	    int res = (this.wd * 64) + this.bit;
-	    // advance to next bit for next call
-	    this.bit++;
-	    if (this.bit < 64) {
-	      this.mask <<= 1;
-	    } else {
-	      this.wd++;
-	      this.bit = 0;
-	      this.mask = 1L;
-	    }
-	    return res;
-	  }
-	}
-	this.bit = 0;
-	this.mask = 1L;
+        long w = this.word[this.wd];
+        for (; this.bit < 64; this.bit++, this.mask <<= 1) {
+          if ((w & this.mask) != 0L) {
+            int res = (this.wd * 64) + this.bit;
+            // advance to next bit for next call
+            this.bit++;
+            if (this.bit < 64) {
+              this.mask <<= 1;
+            } else {
+              this.wd++;
+              this.bit = 0;
+              this.mask = 1L;
+            }
+            return res;
+          }
+        }
+        this.bit = 0;
+        this.mask = 1L;
       }
       return -1;
     }

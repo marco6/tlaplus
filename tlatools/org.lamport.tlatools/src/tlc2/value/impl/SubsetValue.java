@@ -30,315 +30,350 @@ import util.Assert;
 import util.TLAConstants;
 
 public class SubsetValue extends EnumerableValue implements Enumerable {
-  public Value  set;           // SUBSET set
-  protected SetEnumValue pset;
+	public Value set; // SUBSET set
+	protected SetEnumValue pset;
 
-  /* Constructor */
-  public SubsetValue(Value  set) {
-    this.set = set;
-    this.pset = null;
-  }
+	/* Constructor */
+	public SubsetValue(Value set) {
+		this.set = set;
+		this.pset = null;
+	}
 
-  public SubsetValue(Value  set, CostModel cm) {
-	  this(set);
-	  this.cm = cm;
-  }
+	public SubsetValue(Value set, CostModel cm) {
+		this(set);
+		this.cm = cm;
+	}
 
-  @Override
-  public final byte getKind() { return SUBSETVALUE; }
+	@Override
+	public final byte getKind() {
+		return SUBSETVALUE;
+	}
 
-  @Override
-  public int compareTo(Object obj) {
-    try {
-      if (obj instanceof SubsetValue) {
-        return this.set.compareTo(((SubsetValue)obj).set);
-      }
-      this.convertAndCache();
-      return this.pset.compareTo(obj);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
-    }
-  }
+	@Override
+	public int compareTo(Object obj) {
+		try {
+			if (obj instanceof SubsetValue) {
+				return this.set.compareTo(((SubsetValue) obj).set);
+			}
+			this.convertAndCache();
+			return this.pset.compareTo(obj);
+		} catch (RuntimeException | OutOfMemoryError e) {
+			if (hasSource()) {
+				throw FingerprintException.getNewHead(this, e);
+			} else {
+				throw e;
+			}
+		}
+	}
 
-  public boolean equals(Object obj) {
-    try {
-      if (obj instanceof SubsetValue) {
-        return this.set.equals(((SubsetValue)obj).set);
-      }
-      this.convertAndCache();
-      return this.pset.equals(obj);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
-    }
-  }
+	public boolean equals(Object obj) {
+		try {
+			if (obj instanceof SubsetValue) {
+				return this.set.equals(((SubsetValue) obj).set);
+			}
+			this.convertAndCache();
+			return this.pset.equals(obj);
+		} catch (RuntimeException | OutOfMemoryError e) {
+			if (hasSource()) {
+				throw FingerprintException.getNewHead(this, e);
+			} else {
+				throw e;
+			}
+		}
+	}
 
-  @Override
-  public boolean member(Value val) {
-    try {
-      if (val instanceof Enumerable) {
-        ValueEnumeration Enum = ((Enumerable)val).elements();
-        Value  elem;
-        while ((elem = Enum.nextElement()) != null) {
-          if (!this.set.member(elem)) {
-        	  return false;
-          }
-        }
-      }
-      else {
-        Assert.fail("Attempted to check if the non-enumerable value\n" +
-        Values.ppr(val.toString()) + "\nis element of\n" + Values.ppr(this.toString()), getSource());
-      }
-      return true;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
-    }
-  }
+	@Override
+	public boolean member(Value val) {
+		try {
+			if (val instanceof Enumerable) {
+				ValueEnumeration Enum = ((Enumerable) val).elements();
+				Value elem;
+				while ((elem = Enum.nextElement()) != null) {
+					if (!this.set.member(elem)) {
+						return false;
+					}
+				}
+			} else {
+				Assert.fail("Attempted to check if the non-enumerable value\n" +
+						Values.ppr(val.toString()) + "\nis element of\n" + Values.ppr(this.toString()), getSource());
+			}
+			return true;
+		} catch (RuntimeException | OutOfMemoryError e) {
+			if (hasSource()) {
+				throw FingerprintException.getNewHead(this, e);
+			} else {
+				throw e;
+			}
+		}
+	}
 
-  @Override
-  public Value isSubsetEq(Value other) {
-    try {
-      // Reduce (SUBSET A \subseteq SUBSET B) to (A \subseteq B) to avoid
-      // exponential blowup inherent in generating the power set.
-	  // For KSubsetValue, delegate to the naive implementation that enumerates the
-	  // elements. In other words, don't rewrite if a KSubsetValue is involved.
-	  if (other instanceof SubsetValue && !(other instanceof KSubsetValue) && this.set instanceof Enumerable) {
-        final SubsetValue sv = (SubsetValue) other;
-        return ((Enumerable) this.set).isSubsetEq(sv.set);
-      }
-      return super.isSubsetEq(other);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
-    }
-  }
+	@Override
+	public Value isSubsetEq(Value other) {
+		try {
+			// Reduce (SUBSET A \subseteq SUBSET B) to (A \subseteq B) to avoid
+			// exponential blowup inherent in generating the power set.
+			// For KSubsetValue, delegate to the naive implementation that enumerates the
+			// elements. In other words, don't rewrite if a KSubsetValue is involved.
+			if (other instanceof SubsetValue && !(other instanceof KSubsetValue) && this.set instanceof Enumerable) {
+				final SubsetValue sv = (SubsetValue) other;
+				return ((Enumerable) this.set).isSubsetEq(sv.set);
+			}
+			return super.isSubsetEq(other);
+		} catch (RuntimeException | OutOfMemoryError e) {
+			if (hasSource()) {
+				throw FingerprintException.getNewHead(this, e);
+			} else {
+				throw e;
+			}
+		}
+	}
 
-  @Override
-  public final boolean isFinite() {
-    try {
-      return this.set.isFinite();
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
-    }
-  }
+	@Override
+	public final boolean isFinite() {
+		try {
+			return this.set.isFinite();
+		} catch (RuntimeException | OutOfMemoryError e) {
+			if (hasSource()) {
+				throw FingerprintException.getNewHead(this, e);
+			} else {
+				throw e;
+			}
+		}
+	}
 
-  @Override
-  public final Value takeExcept(ValueExcept ex) {
-    try {
-      if (ex.idx < ex.path.length) {
-        Assert.fail("Attempted to apply EXCEPT to the set " + Values.ppr(this.toString()) + ".", getSource());
-      }
-      return ex.value;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
-    }
-  }
+	@Override
+	public final Value takeExcept(ValueExcept ex) {
+		try {
+			if (ex.idx < ex.path.length) {
+				Assert.fail("Attempted to apply EXCEPT to the set " + Values.ppr(this.toString()) + ".", getSource());
+			}
+			return ex.value;
+		} catch (RuntimeException | OutOfMemoryError e) {
+			if (hasSource()) {
+				throw FingerprintException.getNewHead(this, e);
+			} else {
+				throw e;
+			}
+		}
+	}
 
-  @Override
-  public final Value takeExcept(ValueExcept[] exs) {
-    try {
-      if (exs.length != 0) {
-        Assert.fail("Attempted to apply EXCEPT to the set " + Values.ppr(this.toString()) + ".", getSource());
-      }
-      return this;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
-    }
-  }
+	@Override
+	public final Value takeExcept(ValueExcept[] exs) {
+		try {
+			if (exs.length != 0) {
+				Assert.fail("Attempted to apply EXCEPT to the set " + Values.ppr(this.toString()) + ".", getSource());
+			}
+			return this;
+		} catch (RuntimeException | OutOfMemoryError e) {
+			if (hasSource()) {
+				throw FingerprintException.getNewHead(this, e);
+			} else {
+				throw e;
+			}
+		}
+	}
 
-  @Override
-  public int size() {
-    try {
-      int sz = this.set.size();
-      if (sz >= 31) {
-        Assert.fail(EC.TLC_MODULE_OVERFLOW, "the number of elements in:\n" +
-        Values.ppr(this.toString()));
-      }
-      return (1 << sz);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
-    }
-  }
+	@Override
+	public int size() {
+		try {
+			int sz = this.set.size();
+			if (sz >= 31) {
+				Assert.fail(EC.TLC_MODULE_OVERFLOW, "the number of elements in:\n" +
+						Values.ppr(this.toString()));
+			}
+			return (1 << sz);
+		} catch (RuntimeException | OutOfMemoryError e) {
+			if (hasSource()) {
+				throw FingerprintException.getNewHead(this, e);
+			} else {
+				throw e;
+			}
+		}
+	}
 
-  @Override
-  public final boolean isNormalized() {
-    try {
-      return (this.pset != null &&
-        this.pset != SetEnumValue.DummyEnum &&
-        this.pset.isNormalized());
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
-    }
-  }
+	@Override
+	public final boolean isNormalized() {
+		try {
+			return (this.pset != null &&
+					this.pset != SetEnumValue.DummyEnum &&
+					this.pset.isNormalized());
+		} catch (RuntimeException | OutOfMemoryError e) {
+			if (hasSource()) {
+				throw FingerprintException.getNewHead(this, e);
+			} else {
+				throw e;
+			}
+		}
+	}
 
-  @Override
-  public final Value normalize() {
-    try {
-      if (this.pset == null || this.pset == SetEnumValue.DummyEnum) {
-        this.set.normalize();
-      }
-      else {
-        this.pset.normalize();
-      }
-      return this;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
-    }
-  }
+	@Override
+	public final Value normalize() {
+		try {
+			if (this.pset == null || this.pset == SetEnumValue.DummyEnum) {
+				this.set.normalize();
+			} else {
+				this.pset.normalize();
+			}
+			return this;
+		} catch (RuntimeException | OutOfMemoryError e) {
+			if (hasSource()) {
+				throw FingerprintException.getNewHead(this, e);
+			} else {
+				throw e;
+			}
+		}
+	}
 
-  @Override
-  public final void deepNormalize() {
-	    try {
-      set.deepNormalize();
-      if (pset == null) {
-        pset = SetEnumValue.DummyEnum;
-      }
-      else if (pset != SetEnumValue.DummyEnum) {
-        pset.deepNormalize();
-      }
-	    }
-	    catch (RuntimeException | OutOfMemoryError e) {
-	      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-	      else { throw e; }
-	    }
-  }
+	@Override
+	public final void deepNormalize() {
+		try {
+			set.deepNormalize();
+			if (pset == null) {
+				pset = SetEnumValue.DummyEnum;
+			} else if (pset != SetEnumValue.DummyEnum) {
+				pset.deepNormalize();
+			}
+		} catch (RuntimeException | OutOfMemoryError e) {
+			if (hasSource()) {
+				throw FingerprintException.getNewHead(this, e);
+			} else {
+				throw e;
+			}
+		}
+	}
 
-  @Override
-  public final boolean isDefined() {
-    try {
-      return this.set.isDefined();
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
-    }
-  }
+	@Override
+	public final boolean isDefined() {
+		try {
+			return this.set.isDefined();
+		} catch (RuntimeException | OutOfMemoryError e) {
+			if (hasSource()) {
+				throw FingerprintException.getNewHead(this, e);
+			} else {
+				throw e;
+			}
+		}
+	}
 
-  @Override
-  public final IValue deepCopy() { return this; }
+	@Override
+	public final IValue deepCopy() {
+		return this;
+	}
 
 	@Override
 	public final void write(final IValueOutputStream vos) throws IOException {
 		pset.write(vos);
 	}
 
-  /* The fingerprint  */
-  @Override
-  public final long fingerPrint(long fp) {
-    try {
-      this.convertAndCache();
-      return this.pset.fingerPrint(fp);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
-    }
-  }
+	/* The fingerprint */
+	@Override
+	public final long fingerPrint(long fp) {
+		try {
+			this.convertAndCache();
+			return this.pset.fingerPrint(fp);
+		} catch (RuntimeException | OutOfMemoryError e) {
+			if (hasSource()) {
+				throw FingerprintException.getNewHead(this, e);
+			} else {
+				throw e;
+			}
+		}
+	}
 
-  @Override
-  public final IValue permute(IMVPerm perm) {
-    try {
-      this.convertAndCache();
-      return this.pset.permute(perm);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
-    }
-  }
+	@Override
+	public final IValue permute(IMVPerm perm) {
+		try {
+			this.convertAndCache();
+			return this.pset.permute(perm);
+		} catch (RuntimeException | OutOfMemoryError e) {
+			if (hasSource()) {
+				throw FingerprintException.getNewHead(this, e);
+			} else {
+				throw e;
+			}
+		}
+	}
 
-  protected final void convertAndCache() {
-    if (this.pset == null) {
-      this.pset = (SetEnumValue) this.toSetEnum();
-    }
-    else if (this.pset == SetEnumValue.DummyEnum) {
-      SetEnumValue val = (SetEnumValue) this.toSetEnum();
-      val.deepNormalize();
-      this.pset = val;
-    }
-  }
+	protected final void convertAndCache() {
+		if (this.pset == null) {
+			this.pset = (SetEnumValue) this.toSetEnum();
+		} else if (this.pset == SetEnumValue.DummyEnum) {
+			SetEnumValue val = (SetEnumValue) this.toSetEnum();
+			val.deepNormalize();
+			this.pset = val;
+		}
+	}
 
-  @Override
-  public final Value toSetEnum() {
-      if (this.pset != null && this.pset != SetEnumValue.DummyEnum) {
-        return this.pset;
-      }
-      ValueVec vals = new ValueVec(this.size());
-      ValueEnumeration Enum = this.elements();
-      Value  elem;
-      while ((elem = Enum.nextElement()) != null) {
-        vals.addElement(elem);
-      }
-      // For as long as pset.elements() (SubsetValue#elements)
-      // internally calls SubsetValue#elementsNormalized, the
-      // result SetEnumValue here is indeed normalized.
-      if (coverage) {cm.incSecondary(vals.size());}
-      return new SetEnumValue(vals, true, cm);
-  }
+	@Override
+	public final Value toSetEnum() {
+		if (this.pset != null && this.pset != SetEnumValue.DummyEnum) {
+			return this.pset;
+		}
+		ValueVec vals = new ValueVec(this.size());
+		ValueEnumeration Enum = this.elements();
+		Value elem;
+		while ((elem = Enum.nextElement()) != null) {
+			vals.addElement(elem);
+		}
+		// For as long as pset.elements() (SubsetValue#elements)
+		// internally calls SubsetValue#elementsNormalized, the
+		// result SetEnumValue here is indeed normalized.
+		if (coverage) {
+			cm.incSecondary(vals.size());
+		}
+		return new SetEnumValue(vals, true, cm);
+	}
 
-  /* The string representation  */
-  @Override
-  public final StringBuffer toString(StringBuffer sb, int offset, boolean swallow) {
-    try {
-      boolean unlazy = TLCGlobals.expand;
-      try {
-        if (unlazy) {
-          unlazy = this.set.size() < 7;
-        }
-      }
-      catch (Throwable e) { if (swallow) unlazy = false; else throw e; }
+	/* The string representation */
+	@Override
+	public final StringBuffer toString(StringBuffer sb, int offset, boolean swallow) {
+		try {
+			boolean unlazy = TLCGlobals.expand;
+			try {
+				if (unlazy) {
+					unlazy = this.set.size() < 7;
+				}
+			} catch (Throwable e) {
+				if (swallow)
+					unlazy = false;
+				else
+					throw e;
+			}
 
-      if (unlazy) {
-        Value  val = this.toSetEnum();
-        return val.toString(sb, offset, swallow);
-      }
-      else {
-        sb = sb.append("SUBSET ");
-        if (this.set instanceof IntervalValue) {
-        	// MAK 07/2021:
-			// SUBSET has higher precedence than the .. (infix) operator appearing in
-			// interval definitions (see tla2sany.semantic.BuiltInLevel). Thus, printing
-        	//   SUBSET 1..2
-        	// is wrong because its meaning is
-        	//   ((SUBSET 1)..2)
-        	//
-        	// We can correct this easily here by adding parenthesis:
-        	//   SUBSET (1..2)
-        	//   SUBSET (1+2..42)
-        	sb.append(TLAConstants.L_PAREN);
-        	sb = this.set.toString(sb, offset, swallow);
-        	sb.append(TLAConstants.R_PAREN);
-        } else {
-        	sb = this.set.toString(sb, offset, swallow);
-        }
-        return sb;
-      }
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
-    }
-  }  
-  
-  	public Unrank getUnrank(final int kSubset) {
+			if (unlazy) {
+				Value val = this.toSetEnum();
+				return val.toString(sb, offset, swallow);
+			} else {
+				sb = sb.append("SUBSET ");
+				if (this.set instanceof IntervalValue) {
+					// MAK 07/2021:
+					// SUBSET has higher precedence than the .. (infix) operator appearing in
+					// interval definitions (see tla2sany.semantic.BuiltInLevel). Thus, printing
+					// SUBSET 1..2
+					// is wrong because its meaning is
+					// ((SUBSET 1)..2)
+					//
+					// We can correct this easily here by adding parenthesis:
+					// SUBSET (1..2)
+					// SUBSET (1+2..42)
+					sb.append(TLAConstants.L_PAREN);
+					sb = this.set.toString(sb, offset, swallow);
+					sb.append(TLAConstants.R_PAREN);
+				} else {
+					sb = this.set.toString(sb, offset, swallow);
+				}
+				return sb;
+			}
+		} catch (RuntimeException | OutOfMemoryError e) {
+			if (hasSource()) {
+				throw FingerprintException.getNewHead(this, e);
+			} else {
+				throw e;
+			}
+		}
+	}
+
+	public Unrank getUnrank(final int kSubset) {
 		// Convert outer set only once.
 		final SetEnumValue convert = (SetEnumValue) set.toSetEnum();
 		convert.normalize();
@@ -346,8 +381,8 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 
 		return new Unrank(kSubset, Combinatorics.bigSumChoose(elems.size(), kSubset).longValueExact(),
 				Combinatorics.pascalTableUpTo(elems.size(), kSubset), elems, kSubset);
-  	}
- 
+	}
+
 	public Enumerable getRandomSetOfSubsets(final int numOfSubsetsRequested, final int maxLengthOfSubsets) {
 		// Convert outer set only once.
 		final SetEnumValue convert = (SetEnumValue) set.toSetEnum();
@@ -385,9 +420,9 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 			// number of subsets (will be close to its calculated n anyway).
 			final RandomUnrank unrank = new RandomUnrank(rank,
 					rank == kss.length - 1 ? numOfSubsetsRequested - vec.size() : n, ppt, elems, maxLengthOfSubsets,
-							RandomEnumerableValues.get());
+					RandomEnumerableValues.get());
 
-			Value  subset;
+			Value subset;
 			while ((subset = unrank.randomSubset()) != null && vec.size() < numOfSubsetsRequested) {
 				vec.addElement(subset);
 			}
@@ -458,7 +493,7 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 
 		// Primes taken from: https://primes.utm.edu/lists/2small/0bit.html
 		// TODO: 9223372036854775783L; // 2^63 - 25
-//		private static final long x = 549755813881L; // 2^39 - 7 
+		// private static final long x = 549755813881L; // 2^39 - 7
 		private static final long x = 34359738337L; // 2^35 - 31
 
 		private final long n;
@@ -472,7 +507,7 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 			this.a = Math.abs(random.nextLong()) % n;
 		}
 
-		public Value  randomSubset() {
+		public Value randomSubset() {
 			if (i < n) {
 				return subsetAt(((x * i++) + a) % n);
 			}
@@ -482,20 +517,20 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 
 	public EnumerableValue getRandomSetOfSubsets(final int numOfPicks, final double probability) {
 		final CoinTossingSubsetEnumerator enumerator = new CoinTossingSubsetEnumerator(numOfPicks, probability);
-		
+
 		// Using a set here instead of ValueVec preserves the set invariant (no
 		// duplicates). The alternative - a ValueVec which gets sorted to remove
 		// duplicates after the while loops is slower.
 		final int estimated = (int) (numOfPicks * probability);
-		final Collection<Value > sets = new HashSet<>(estimated);
-		Value  val;
+		final Collection<Value> sets = new HashSet<>(estimated);
+		Value val;
 		while ((val = enumerator.nextElement()) != null) {
 			sets.add(val);
 		}
-		
+
 		return new SetEnumValue(new ValueVec(sets), false, cm);
 	}
-	
+
 	private final ValueEnumeration emptyEnumeration = new ValueEnumeration() {
 		private boolean done = false;
 
@@ -503,10 +538,12 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 		public void reset() {
 			done = false;
 		}
-		
+
 		@Override
 		public Value nextElement() {
-			if (done) { return null; }
+			if (done) {
+				return null;
+			}
 			done = true;
 			return new SetEnumValue(cm);
 		}
@@ -514,12 +551,15 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 
 	/**
 	 * @see file SubsetValue.tla.
-	 * <p>
-	 * In addition, this generates all subsets of this SubsetValue instance which extends
-	 * the order definition given in SubsetValue.tla such that a subset s is considered 
-	 * lower than t (s < t) if Cardinality(s) < Cardinality(t) \/ Definition in SubsetValue.tla.
-	 * <p>
-	 * The most noteworthy difference between bElements and 
+	 *      <p>
+	 *      In addition, this generates all subsets of this SubsetValue instance
+	 *      which extends
+	 *      the order definition given in SubsetValue.tla such that a subset s is
+	 *      considered
+	 *      lower than t (s < t) if Cardinality(s) < Cardinality(t) \/ Definition in
+	 *      SubsetValue.tla.
+	 *      <p>
+	 *      The most noteworthy difference between bElements and
 	 */
 	final ValueEnumeration elementsNormalized() {
 		final int n = set.size();
@@ -533,8 +573,8 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 		final Value setEnum = set.toSetEnum();
 		if (setEnum == null) {
 			// E.g. SUBSET <<1,2>> or SUBSET [ a |-> 42]
-            Assert.fail("Attempted to compute the value of an expression of form\n" +
-                    "SUBSET S, but S is a non-enumerable value:\n" + Values.ppr(this.set), getSource());
+			Assert.fail("Attempted to compute the value of an expression of form\n" +
+					"SUBSET S, but S is a non-enumerable value:\n" + Values.ppr(this.set), getSource());
 		}
 		final ValueVec elems = ((SetEnumValue) setEnum.normalize()).elems;
 		return new ValueEnumeration() {
@@ -575,7 +615,7 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 					}
 				}
 				final SetEnumValue result = new SetEnumValue(vals, true, cm);
-				
+
 				if (indices[0] == n - k) {
 					// Increment k to generate the set of k-subset for this k.
 					reset(k + 1);
@@ -594,7 +634,7 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 			}
 		};
 	}
-	
+
 	/**
 	 * @see SubsetValue#kElements(int)
 	 */
@@ -610,9 +650,10 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 		}
 		return Combinatorics.choose(size, k);
 	}
-	
+
 	/**
 	 * [S]^k (sometimes denoted S^[k]) == { t \in SUBSET S : Cardinality(t) = k }
+	 * 
 	 * @param k
 	 * @return
 	 */
@@ -627,30 +668,30 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 
 		return new KElementEnumerator(k);
 	}
-	
+
 	public final class KElementEnumerator implements ValueEnumeration {
 		private final ValueVec elems;
 		private final int numKSubsetElems;
 		private final int k;
-		
+
 		private long index;
 		private int cnt;
 
 		public KElementEnumerator(final int k) {
 			this.k = k;
-			
-			this.numKSubsetElems = (int) numberOfKElements(k); 
+
+			this.numKSubsetElems = (int) numberOfKElements(k);
 			if (numKSubsetElems < 0) {
 				throw new IllegalArgumentException("Subset too large.");
 			}
-			
+
 			final SetEnumValue convert = (SetEnumValue) set.toSetEnum();
 			convert.normalize();
 			elems = convert.elems;
 
 			reset();
 		}
-		
+
 		@Override
 		public void reset() {
 			index = (1L << k) - 1L;
@@ -689,12 +730,12 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 			assert vals.size() == k;
 			return new SetEnumValue(vals, false, cm);
 		}
-		
+
 		public KElementEnumerator sort() {
 			this.elems.sort(true);
 			return this;
 		}
-		
+
 		@Override
 		public SetEnumValue asSet() {
 			final ValueVec vv = new ValueVec(numKSubsetElems);
@@ -709,7 +750,7 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 	public final Value kSubset(int k) {
 		return kElements(k).asSet();
 	}
-	
+
 	@Override
 	public ValueEnumeration elements(final Ordering ordering) {
 		if (ordering == Ordering.RANDOMIZED) {
@@ -720,45 +761,47 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 		return elements();
 	}
 
-  @Override
-  public ValueEnumeration elements() {
-    try {
-      if (this.pset == null || this.pset == SetEnumValue.DummyEnum) {
-    	  // See note on SetEnumValue#convert for SubsetValue wrt
-    	  // the normalized SetEnumValue result.
-    	  return elementsNormalized();
-      }
-      return this.pset.elements();
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
-    }
-  }
-  
-  final ValueEnumeration elementsLexicographic() {
-      return new Enumerator();
-  }
+	@Override
+	public ValueEnumeration elements() {
+		try {
+			if (this.pset == null || this.pset == SetEnumValue.DummyEnum) {
+				// See note on SetEnumValue#convert for SubsetValue wrt
+				// the normalized SetEnumValue result.
+				return elementsNormalized();
+			}
+			return this.pset.elements();
+		} catch (RuntimeException | OutOfMemoryError e) {
+			if (hasSource()) {
+				throw FingerprintException.getNewHead(this, e);
+			} else {
+				throw e;
+			}
+		}
+	}
 
-  final class Enumerator implements ValueEnumeration {
-    private ValueVec elems;
-    private BitSet descriptor;
+	final ValueEnumeration elementsLexicographic() {
+		return new Enumerator();
+	}
 
-    public Enumerator() {
-    	//WARNING! Mutates the outer instance!?
-      set = set.toSetEnum();
-      set.normalize();
-      this.elems = ((SetEnumValue)set).elems;
-      this.descriptor = new BitSet(this.elems.size());
-    }
+	final class Enumerator implements ValueEnumeration {
+		private ValueVec elems;
+		private BitSet descriptor;
 
-    @Override
-    public final void reset() {
-      this.descriptor = new BitSet(this.elems.size());
-    }
+		public Enumerator() {
+			// WARNING! Mutates the outer instance!?
+			set = set.toSetEnum();
+			set.normalize();
+			this.elems = ((SetEnumValue) set).elems;
+			this.descriptor = new BitSet(this.elems.size());
+		}
 
-    @Override
-    public final Value nextElement() {
+		@Override
+		public final void reset() {
+			this.descriptor = new BitSet(this.elems.size());
+		}
+
+		@Override
+		public final Value nextElement() {
 			if (this.descriptor == null)
 				return null;
 			ValueVec vals;
@@ -786,11 +829,13 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 					}
 				}
 			}
-	    	  if (coverage) { cm.incSecondary(vals.size()); }
+			if (coverage) {
+				cm.incSecondary(vals.size());
+			}
 			return new SetEnumValue(vals, true, cm);
-	    }
+		}
 
-  }
+	}
 
 	@Override
 	public ValueEnumeration elements(final int k) {
@@ -803,7 +848,7 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 		}
 		return new SubsetEnumerator(k);
 	}
-	
+
 	class SubsetEnumerator extends EnumerableValue.SubsetEnumerator {
 
 		private final ValueVec elems;
@@ -811,8 +856,8 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 		SubsetEnumerator(final int k) {
 			super(k, 1 << set.size());
 			final SetEnumValue convert = (SetEnumValue) set.toSetEnum();
-      		convert.normalize();
-      		this.elems = convert.elems;
+			convert.normalize();
+			this.elems = convert.elems;
 		}
 
 		@Override
@@ -836,9 +881,10 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 	}
 
 	/*
-	 * LL: I realized that efficiently choosing a random set of k elements in "SUBSET S"
+	 * LL: I realized that efficiently choosing a random set of k elements in
+	 * "SUBSET S"
 	 * is simple. Just compute S and randomly choose k elements SS of SUBSET S by
-	 * including each element of S in SS with probability 1/2.  This looks to me as
+	 * including each element of S in SS with probability 1/2. This looks to me as
 	 * if it's completely equivalent to enumerating all the elements of SUBSET S and
 	 * choosing a random subset of those elements--except that if we want to choose
 	 * exactly k elements, then we'll have to throw away duplicates.
@@ -867,7 +913,7 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 		// Repeated invocation can yield duplicate elements due to the probabilistic
 		// nature of CoinTossingSubsetEnumerator.
 		@Override
-        public Value nextElement() {
+		public Value nextElement() {
 			if (!hasNext()) {
 				return null;
 			}
@@ -897,16 +943,17 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 
 	// This enumerator violates the expected behavior of ValueEnumeration to
 	// terminate once all elements have been enumerated, which implies that it also
-	// returns duplicates.  Its advantage over the other, stateful enumerators -that
-	// guarantee termination- is that it is very cheap.  If we ever need this, a
+	// returns duplicates. Its advantage over the other, stateful enumerators -that
+	// guarantee termination- is that it is very cheap. If we ever need this, a
 	// terminating enumerator can be implemented with SubsetValue#getUnrank combined
 	// with EnumerableValue.SubsetValueEnumerator, i.e. optimally parameterizing an
-	// LCG with period m = NcK (n choose k) where NcK = n!/k!(n-k)! to pseudo-randomly
-	// generate all values (indices) in the range [0, NcK)) and generating the 
+	// LCG with period m = NcK (n choose k) where NcK = n!/k!(n-k)! to
+	// pseudo-randomly
+	// generate all values (indices) in the range [0, NcK)) and generating the
 	// subset for each index with Unrank#subsetAt.
 	// ASSUME tlc2.tool.impl.Tool.PROBABILISTIC = TRUE
 	public class RandomSubsetGenerator implements ValueEnumeration {
-		
+
 		private final int k;
 		private final Random random;
 		private final SetEnumValue s;
@@ -914,7 +961,7 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 
 		public RandomSubsetGenerator(final int k) {
 			this.k = k;
-			
+
 			this.s = (SetEnumValue) set.toSetEnum();
 			this.s.normalize();
 			this.n = this.s.elems.size();
@@ -922,10 +969,10 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 			if (k < 0 || k > n) {
 				throw new IllegalArgumentException(String.format("k=%s and n=%s", k, n));
 			}
-			
+
 			this.random = RandomEnumerableValues.get();
 		}
-		
+
 		@Override
 		public void reset() {
 			// This enumerator is stateless and, thus, reset is a no-op.
@@ -945,13 +992,13 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 
 			final ValueVec vec = new ValueVec(k);
 
-            for (int t = 0; t < n; t++) {
+			for (int t = 0; t < n; t++) {
 				final double p = (k - vec.size()) / ((n - t) * 1d);
 
 				if (random.nextDouble() <= p) {
 					vec.addElement(s.elems.elementAt(t));
 				}
-				
+
 				if (vec.size() == k) {
 					break;
 				}
@@ -959,18 +1006,18 @@ public class SubsetValue extends EnumerableValue implements Enumerable {
 
 			// This variant reduces the number of calls to the random number generator by
 			// allocating a bit set to remember the previously drawn elements.
-//			final BitSet bs = new BitSet(n);
-//			while (vec.size() < k) {
-//				final int i = random.nextInt(n);
-//				if (!bs.get(i)) {
-//					bs.set(i);
-//					vec.addElement(s.elems.elementAt(i));
-//				}
-//			}
+			// final BitSet bs = new BitSet(n);
+			// while (vec.size() < k) {
+			// final int i = random.nextInt(n);
+			// if (!bs.get(i)) {
+			// bs.set(i);
+			// vec.addElement(s.elems.elementAt(i));
+			// }
+			// }
 
 			// This assertion holds because even with an imaginary Random#nextDouble that
 			// returns 1 the probability p of the last k values will be 1.
-            assert vec.size() == k;
+			assert vec.size() == k;
 			return new SetEnumValue(vec, false);
 		}
 	}

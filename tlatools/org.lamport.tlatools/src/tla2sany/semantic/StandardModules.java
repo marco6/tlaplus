@@ -30,7 +30,7 @@ import java.util.Set;
 
 public class StandardModules {
 	private static final Set<String> STANDARD_MODULES = new HashSet<>();
-	
+
 	static {
 		// Quick'n'Dirty hack! This breaks if any one of the operators is override by
 		// the model or a complete standard module has been replaced by a user-defined
@@ -49,18 +49,18 @@ public class StandardModules {
 	private StandardModules() {
 		// no instances
 	}
-	
+
 	public static boolean isDefinedInStandardModule(SemanticNode sn) {
 		if ((sn != null) && (sn.getLocation() != null)) {
 			return isDefinedInStandardModule(sn.getLocation().source()); // source might be null
 		}
 		return false;
 	}
-	
+
 	public static boolean isDefinedInStandardModule(final String moduleName) {
 		return STANDARD_MODULES.contains(moduleName);
 	}
-	
+
 	public static void filterNonStandardModulesFromSet(final Set<String> listOfModules) {
 		listOfModules.retainAll(STANDARD_MODULES);
 	}

@@ -105,47 +105,50 @@ Disadvantages:
 */
 public class WorkerValue {
 	/*
-	 * Demuxing is supposed to be called only once per sn/opDef whereas muxing is called many many times.
-	 */    
-    public static Object demux(final OpDefEvaluator spec, final ExprOrOpArgNode en) {
-    	return demux(spec, en, CostModel.DO_NOT_RECORD);
-    }
+	 * Demuxing is supposed to be called only once per sn/opDef whereas muxing is
+	 * called many many times.
+	 */
+	public static Object demux(final OpDefEvaluator spec, final ExprOrOpArgNode en) {
+		return demux(spec, en, CostModel.DO_NOT_RECORD);
+	}
 
 	/*
-	 * Demuxing is supposed to be called only once per sn/opDef whereas muxing is called many many times.
-	 */    
-    public static Object demux(final OpDefEvaluator spec, final ExprOrOpArgNode en, final CostModel cm) {
-        final IValue defVal = spec.eval(en, Context.Empty, TLCState.Empty, cm);
-    	defVal.deepNormalize();
-    	
-    	if (defVal.mutates() && TLCGlobals.getNumWorkers() > 1) {
-    		final IValue[] values = new IValue[TLCGlobals.getNumWorkers()];
-    		values[0] = defVal;
+	 * Demuxing is supposed to be called only once per sn/opDef whereas muxing is
+	 * called many many times.
+	 */
+	public static Object demux(final OpDefEvaluator spec, final ExprOrOpArgNode en, final CostModel cm) {
+		final IValue defVal = spec.eval(en, Context.Empty, TLCState.Empty, cm);
+		defVal.deepNormalize();
 
-    		final long seed = RandomEnumerableValues.getSeed();
-    		for (int i = 1; i < values.length; i++) {
-    			// Resetting the random seed ensures that operators involving RandomElement or
-    			// those from the Randomization module evaluate to consistent values across all
-    			// workers. Without this, workers might assign different values to constants and
-    			// constant definitions, leading to bogus counterexamples.
-    			RandomEnumerableValues.setSeed(seed);
-    			// Ideally, we could invoke IValue#deepCopy here instead of evaluating opDef again.  However,
-    			// IValue#deepCopy doesn't create copies for most values.
+		if (defVal.mutates() && TLCGlobals.getNumWorkers() > 1) {
+			final IValue[] values = new IValue[TLCGlobals.getNumWorkers()];
+			values[0] = defVal;
+
+			final long seed = RandomEnumerableValues.getSeed();
+			for (int i = 1; i < values.length; i++) {
+				// Resetting the random seed ensures that operators involving RandomElement or
+				// those from the Randomization module evaluate to consistent values across all
+				// workers. Without this, workers might assign different values to constants and
+				// constant definitions, leading to bogus counterexamples.
+				RandomEnumerableValues.setSeed(seed);
+				// Ideally, we could invoke IValue#deepCopy here instead of evaluating opDef
+				// again. However,
+				// IValue#deepCopy doesn't create copies for most values.
 				values[i] = spec.eval(en, Context.Empty, TLCState.Empty, cm);
-    			values[i].deepNormalize();
-    		}
-    		
-    		return new WorkerValue(values);
-    	} else {
-    		return defVal;
-    	}
-    }
-    
+				values[i].deepNormalize();
+			}
+
+			return new WorkerValue(values);
+		} else {
+			return defVal;
+		}
+	}
+
 	public static Object mux(final Object result) {
 		if (!(result instanceof WorkerValue)) {
 			return result;
 		}
-		
+
 		final WorkerValue vp = (WorkerValue) result;
 		final Thread t = Thread.currentThread();
 		if (t instanceof IdThread) {
@@ -155,7 +158,7 @@ public class WorkerValue {
 			return vp.values[0];
 		}
 	}
-	
+
 	private final IValue[] values;
 
 	private WorkerValue(IValue[] values) {

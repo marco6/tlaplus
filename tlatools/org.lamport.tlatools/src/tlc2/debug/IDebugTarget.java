@@ -67,9 +67,9 @@ public interface IDebugTarget {
 
 	@SuppressWarnings("serial")
 	class ResetEvalException extends RuntimeException {
-	
+
 		public final TLCStackFrame frame;
-		
+
 		public ResetEvalException(TLCStackFrame frame) {
 			assert frame != null;
 			this.frame = frame;
@@ -93,9 +93,9 @@ public interface IDebugTarget {
 	}
 
 	IDebugTarget pushFrame(Tool tool, SemanticNode expr, Context c);
-	
+
 	IDebugTarget popFrame(Tool tool, SemanticNode expr, Context c);
-	
+
 	IDebugTarget popFrame(Tool tool, SemanticNode expr, Context c, Value v);
 
 	IDebugTarget popFrame(Tool tool, SemanticNode expr, Context c, TLCState state);
@@ -110,22 +110,27 @@ public interface IDebugTarget {
 
 	IDebugTarget popFrame(Tool tool, SemanticNode expr, Context c, Value v, TLCState predecessor, TLCState state);
 
-	IDebugTarget popExceptionFrame(Tool tool, SemanticNode expr, Context c, Value v, TLCState predecessor, TLCState state, StatefulRuntimeException e);
+	IDebugTarget popExceptionFrame(Tool tool, SemanticNode expr, Context c, Value v, TLCState predecessor,
+			TLCState state, StatefulRuntimeException e);
 
 	IDebugTarget popFrame(Tool tool, OpDefNode expr, Context c, TLCState predecessor, Action a, INextStateFunctor fun);
 
 	IDebugTarget pushExceptionFrame(Tool tool, SemanticNode expr, Context c, StatefulRuntimeException e);
-	
+
 	IDebugTarget popExceptionFrame(Tool tool, SemanticNode expr, Context c, Value v, StatefulRuntimeException e);
 
-	IDebugTarget pushExceptionFrame(Tool tool, SemanticNode expr, Context c, TLCState state, StatefulRuntimeException e);
-
-	IDebugTarget popExceptionFrame(Tool tool, SemanticNode expr, Context c, Value v, TLCState state, StatefulRuntimeException e);
-
-	IDebugTarget pushExceptionFrame(Tool tool, SemanticNode expr, Context c, TLCState predecessor, Action a, TLCState state,
+	IDebugTarget pushExceptionFrame(Tool tool, SemanticNode expr, Context c, TLCState state,
 			StatefulRuntimeException e);
 
-	IDebugTarget popExceptionFrame(Tool tool, SemanticNode expr, Context c, TLCState predecessor, Action a, TLCState state,
+	IDebugTarget popExceptionFrame(Tool tool, SemanticNode expr, Context c, Value v, TLCState state,
+			StatefulRuntimeException e);
+
+	IDebugTarget pushExceptionFrame(Tool tool, SemanticNode expr, Context c, TLCState predecessor, Action a,
+			TLCState state,
+			StatefulRuntimeException e);
+
+	IDebugTarget popExceptionFrame(Tool tool, SemanticNode expr, Context c, TLCState predecessor, Action a,
+			TLCState state,
 			StatefulRuntimeException e);
 
 	IDebugTarget pushNextStatesFrame(Tool tool, INextStateFunctor functor, TLCState state);
@@ -133,10 +138,11 @@ public interface IDebugTarget {
 	IDebugTarget popNextStatesFrame(Tool tool, INextStateFunctor functor, TLCState state);
 
 	IDebugTarget pushInitStatesFrame(Tool tool, IStateFunctor functor);
-	
+
 	IDebugTarget popInitStatesFrame(Tool tool, IStateFunctor functor);
 
-	IDebugTarget markInvariantViolatedFrame(Tool debugTool, SemanticNode pred, Context c, TLCState predecessor, Action a, TLCState state, StatefulRuntimeException e);
+	IDebugTarget markInvariantViolatedFrame(Tool debugTool, SemanticNode pred, Context c, TLCState predecessor,
+			Action a, TLCState state, StatefulRuntimeException e);
 
 	IDebugTarget markAssumptionViolatedFrame(Tool debugTool, SemanticNode pred, Context c);
 
@@ -145,10 +151,10 @@ public interface IDebugTarget {
 	IDebugTarget pushUnsatisfiedFrame(Tool tool, SemanticNode expr, Context c, TLCState predecessor, Action a,
 			TLCState state);
 
-	//------------------------ Wrapper --------------------------//
-	
+	// ------------------------ Wrapper --------------------------//
+
 	IDebugTarget pushFrame(TLCState state);
-	
+
 	IDebugTarget popFrame(TLCState state);
 
 	IDebugTarget setTool(Tool tool);

@@ -42,20 +42,20 @@ public class ErrorTraceConstructionTest_TTraceTest extends TTraceModelCheckerTes
 	public ErrorTraceConstructionTest_TTraceTest() {
 		super(ErrorTraceConstructionTest.class, "symmetry", ExitStatus.VIOLATION_LIVENESS);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		// ModelChecker has finished and generated the expected amount of states
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "9", "8", "0"));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		// Assert it has found the temporal violation and also a counter example
 		assertTrue(recorder.recorded(EC.TLC_TEMPORAL_PROPERTY_VIOLATED));
 		assertTrue(recorder.recorded(EC.TLC_COUNTER_EXAMPLE));
-		
+
 		assertNodeAndPtrSizes(240, 128L);
-	
+
 		// Assert the error trace
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
 		final List<String> expectedTrace = new ArrayList<String>(4);
@@ -68,9 +68,9 @@ public class ErrorTraceConstructionTest_TTraceTest extends TTraceModelCheckerTes
 		expectedTrace.add("/\\ x = 0\n/\\ y = 6");
 		expectedTrace.add("/\\ x = 0\n/\\ y = 7");
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace);
-		
-		assertBackToState(4, "<_next line 32, col 5 to line 40, col 29 of module "+getModuleName()+">");
 
-	assertZeroUncovered();
+		assertBackToState(4, "<_next line 32, col 5 to line 40, col 29 of module " + getModuleName() + ">");
+
+		assertZeroUncovered();
 	}
 }

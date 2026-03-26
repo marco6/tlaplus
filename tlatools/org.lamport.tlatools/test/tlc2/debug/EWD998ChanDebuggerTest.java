@@ -74,26 +74,28 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 	@Test
 	public void testSpec() throws Exception {
 		StackFrame[] stackFrames = debugger.stackTrace();
-		
+
 		// ASSUME in EWD998Chan
 		assertEquals(1, stackFrames.length);
 		assertTLCFrame(stackFrames[0], 11, 11, RM);
 		// prefix depends on where the tests execute.
-		assertTrue(stackFrames[0].getSource().getPath().replace('\\', '/').endsWith("test-model/EWD998/EWD998Chan.tla"));
+		assertTrue(
+				stackFrames[0].getSource().getPath().replace('\\', '/').endsWith("test-model/EWD998/EWD998Chan.tla"));
 		stackFrames = debugger.stepIn();
 		assertEquals(2, stackFrames.length);
 		assertTLCFrame(stackFrames[1], 11, 11, RM);
 		assertTLCFrame(stackFrames[0], 11, 11, RM);
-		
+
 		// Check constant context of ASSUME.
 		TLCStackFrame stackFrame = (TLCStackFrame) stackFrames[1];
 		Variable[] constants = stackFrame.getConstants();
 		assertEquals(3, constants.length);
-		
+
 		// Check Watch expressions
 		assertEquals(new EvaluateResponse(), stackFrame.evaluate((String) null));
-		assertEquals("Syntax error while parsing breakpoint expression \\\"Does not exist\\\"", stackFrame.evaluate("Does not exist").getResult());
-		
+		assertEquals("Syntax error while parsing breakpoint expression \\\"Does not exist\\\"",
+				stackFrame.evaluate("Does not exist").getResult());
+
 		assertEquals(
 				"In evaluation, the identifier counter is either undefined or not an operator.\\nline 43, col 6 to line 43, col 12 of module EWD998Chan",
 				stackFrame.evaluate("Init").getResult());
@@ -103,11 +105,11 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 		assertEquals(
 				"In evaluation, the identifier inbox is either undefined or not an operator.\\nline 53, col 22 to line 53, col 26 of module EWD998Chan",
 				stackFrame.evaluate("System").getResult());
-		
+
 		// High-level spec constants (expected to be ordered lexicographically)
 		Variable[] consts = stackFrame.getVariables(constants[0].getVariablesReference());
 		assertEquals(3, consts.length);
-		
+
 		assertEquals("Color", consts[0].getName());
 		assertEquals(SetEnumValue.EmptySet.getTypeString(), consts[0].getType());
 		assertEquals("{\"white\", \"black\"}", consts[0].getValue());
@@ -118,48 +120,49 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 		// 'white, black' in the toString of SetEnumValue to 'b, w' in Variable.
 		assertEquals("\"black\"", stackFrame.getVariables(consts[0].getVariablesReference())[0].getValue());
 		assertEquals("\"white\"", stackFrame.getVariables(consts[0].getVariablesReference())[1].getValue());
-		
+
 		assertEquals("Nodes", consts[1].getName());
 		assertEquals(SetEnumValue.EmptySet.getTypeString(), consts[1].getType());
 		assertEquals("{0, 1, 2}", consts[1].getValue());
 		assertEquals(3, ((SetEnumValue) ((TLCVariable) consts[1]).getTLCValue()).elems.size());
-		
+
 		// This one tests if we correctly handle infinite domains, i.e. the Int.
 		assertEquals("Token", consts[2].getName());
 		assertEquals("SetOfRcdsValue: a set of the form [d1 : S1, ... , dN : SN]", consts[2].getType());
 		assertEquals("[color: {\"white\", \"black\"}, q: Int, pos: 0..2]", consts[2].getValue());
 		assertEquals(3, ((SetOfRcdsValue) ((TLCVariable) consts[2]).getTLCValue()).names.length);
-		
+
 		// nested of Token
 		consts = stackFrame.getVariables(consts[2].getVariablesReference());
 		// TODO For now, if one of the values has infinite domain, none of the values
 		// can be expanded.
 		assertEquals(0, consts.length);
-		
+
 		// Low-level spec constants
 		consts = stackFrame.getVariables(constants[1].getVariablesReference());
 		assertEquals(6, consts.length);
-		
+
 		assertEquals("BasicMsg", consts[0].getName());
 		assertEquals("SetOfRcdsValue: a set of the form [d1 : S1, ... , dN : SN]", consts[0].getType());
 		assertEquals("{[type |-> \"pl\"]}", consts[0].getValue());
-		
+
 		assertEquals("Color", consts[1].getName());
 		assertEquals(SetEnumValue.EmptySet.getTypeString(), consts[1].getType());
 		assertEquals("{\"white\", \"black\"}", consts[1].getValue());
-		
+
 		assertEquals("Message", consts[2].getName());
 		assertEquals("SetCupValue: a set of the form S \\cup T", consts[2].getType());
-		assertEquals("[color: {\"white\", \"black\"}, type: {\"tok\"}, q: Int] \\cup {[type |-> \"pl\"]}", consts[2].getValue());
-		
+		assertEquals("[color: {\"white\", \"black\"}, type: {\"tok\"}, q: Int] \\cup {[type |-> \"pl\"]}",
+				consts[2].getValue());
+
 		assertEquals("N", consts[3].getName());
 		assertEquals(IntValue.ValZero.getTypeString(), consts[3].getType());
 		assertEquals("3", consts[3].getValue());
-		
+
 		assertEquals("Nodes", consts[4].getName());
 		assertEquals(SetEnumValue.EmptySet.getTypeString(), consts[4].getType());
 		assertEquals("{0, 1, 2}", consts[4].getValue());
-		
+
 		assertEquals("TokenMsg", consts[5].getName());
 		assertEquals("SetOfRcdsValue: a set of the form [d1 : S1, ... , dN : SN]", consts[5].getType());
 		assertEquals("[color: {\"white\", \"black\"}, type: {\"tok\"}, q: Int]", consts[5].getValue());
@@ -189,14 +192,14 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 		assertEquals("2", debugger.evaluate(ea).get().getResult());
 		ea.setExpression("op(reduced[i - 1], fun[i])");
 		assertEquals("3", debugger.evaluate(ea).get().getResult());
-		
+
 		stackFrames = debugger.stepIn(); // advance to the LAMBDA expression frame.
 		ea.setExpression("<<b, a>>");
 		ea.setFrameId(stackFrames[0].getId());
 		assertEquals("<<2, 1>>", debugger.evaluate(ea).get().getResult());
 
 		// *********************************************************** //
-		
+
 		// Assert breakpoints are correctly verified, which indicates to users where
 		// breakpoints can be placed.
 		final Set<Integer> lines = IntStream.of(11, 13, 14, 15, 24, 27, 28, 29, 30, 31, 36, 37, 39, 40, 41, 45, 47, 48,
@@ -230,20 +233,21 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 		assertTrue(debugger.replaceAllBreakpointsWith(RM, 107)[0].isVerified());
 
 		// *********************************************************** //
-		
+
 		final OpDeclNode[] vars = getVars();
 
 		debugger.replaceAllBreakpointsWith(RM, 49);
 		stackFrames = debugger.continue_();
 		assertTLCStateFrame(stackFrames[0], 49, 49, RM, vars[1]);
-		
-		// Debug an operator that is evaluated as part of the refinement mapping and known to
-		// consist of a bunch of LazyValues.  LazyValues are tricky because the debugger
-		// unlazies them, which has to be ignored by DebugTool.  Otherwise, the debugger
+
+		// Debug an operator that is evaluated as part of the refinement mapping and
+		// known to
+		// consist of a bunch of LazyValues. LazyValues are tricky because the debugger
+		// unlazies them, which has to be ignored by DebugTool. Otherwise, the debugger
 		// debugs itself and deadlocks.
 		debugger.replaceAllBreakpointsWith(UTILS, 13);
 		stackFrames = debugger.continue_();
-		
+
 		int i = 19;
 		assertEquals(i, stackFrames.length);
 		i--;
@@ -254,7 +258,7 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 		assertTLCStateFrame(stackFrames[--i], 48, 48, RM, vars[0], vars[1]);
 		assertTLCStateFrame(stackFrames[--i], 49, 49, RM, vars[1]);
 		assertTLCStateFrame(stackFrames[--i], 49, 49, RM);
-		//186 186 EWD998Inv == EWD998!Inv
+		// 186 186 EWD998Inv == EWD998!Inv
 		assertTLCStateFrame(stackFrames[--i], 187, 187, RM);
 		assertTLCStateFrame(stackFrames[--i], 166, 181, RM);
 
@@ -270,10 +274,10 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 		assertTLCStateFrame(stackFrames[--i], 150, 162, FOLDER, allVariables);
 		assertTLCStateFrame(stackFrames[--i], 150, 150, FOLDER, allVariables);
 		assertTLCStateFrame(stackFrames[--i], 150, 150, FOLDER, allVariables);
-		//150 150  B in '/\ P0:: B = Reduce(sum, counter, 0, N-1, 0)'
+		// 150 150 B in '/\ P0:: B = Reduce(sum, counter, 0, N-1, 0)'
 		assertTLCStateFrame(stackFrames[--i], 150, 150, FOLDER, allVariables);
 		assertTLCStateFrame(stackFrames[--i], 133, 133, FOLDER, allVariables);
-		
+
 		allVariables.put("op", "sum(a,b) == a+b");
 		allVariables.put("fun", "(0 :> 0 @@ 1 :> 0 @@ 2 :> 0)");
 		allVariables.put("from", "0");
@@ -285,9 +289,9 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 		allVariables.put("i", "2");
 		assertTLCStateFrame(stackFrames[--i], 12, 13, UTILS, allVariables);
 		assertTLCStateFrame(stackFrames[--i], 13, 13, UTILS, allVariables);
-		
+
 		// *********************************************************** //
-		
+
 		debugger.replaceAllBreakpointsWith(RM, 63);
 		stackFrames = debugger.continue_();
 		assertTLCActionFrame(stackFrames[0], 63, 67, RM, Context.Empty.cons(null, IntValue.ValOne), vars[0], vars[1],
@@ -297,9 +301,9 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 		ea.setExpression("j");
 		ea.setFrameId(stackFrames[0].getId());
 		assertEquals("1", debugger.evaluate(ea).get().getResult());
-		
+
 		// 88888888888888888888888 Check Stack Variables 888888888888888888888888 //
-		
+
 		// InitiateProbe sub-action
 		debugger.replaceAllBreakpointsWith(RM, 71);
 		stackFrames = debugger.continue_();
@@ -317,7 +321,7 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 		assertEquals("TRUE", stackVariables.get(0).getValue());
 		assertEquals("inbox[0][j].color=\"black\"", stackVariables.get(0).getName());
 		assertEquals(BoolValue.ValFalse.getTypeString(), stackVariables.get(0).getType());
-		
+
 		// PassToken sub-action
 		debugger.replaceAllBreakpointsWith(RM, 85);
 		stackFrames = debugger.continue_();
@@ -335,14 +339,15 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 		assertEquals("TRUE", stackVariables.get(0).getValue());
 		assertEquals("inbox[i][j].type=\"tok\"", stackVariables.get(0).getName());
 		assertEquals(BoolValue.ValFalse.getTypeString(), stackVariables.get(0).getType());
-		
+
 		// 88888888888888888888888888888888888888888888888888888888888888 //
-		
-		// Step through the evaluation of a mildly complex expression. 
+
+		// Step through the evaluation of a mildly complex expression.
 		debugger.replaceAllBreakpointsWith(RM, 119);
 		stackFrames = debugger.continue_();
 		assertEquals(10, stackFrames.length);
-		Context context = Context.Empty.cons(null, IntValue.ValOne).cons(null, IntValue.ValOne).cons(null, IntValue.ValOne);
+		Context context = Context.Empty.cons(null, IntValue.ValOne).cons(null, IntValue.ValOne).cons(null,
+				IntValue.ValOne);
 		assertTLCActionFrame(stackFrames[0], 119, 119, RM, context, vars[3]);
 
 		stackFrames = debugger.stepIn();
@@ -352,54 +357,62 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 		stackFrames = debugger.stepIn(3);
 		assertEquals(12, stackFrames.length);
 		Set<Variable> variables = new HashSet<>();
-		variables.add(createVariable("i","1",IntValue.ValZero.getTypeString()));
-		variables.add(createVariable("j","1",IntValue.ValZero.getTypeString()));
-		variables.add(createVariable("@","<<[type |-> \"pl\"]>>",TupleValue.EmptyTuple.getTypeString()));
+		variables.add(createVariable("i", "1", IntValue.ValZero.getTypeString()));
+		variables.add(createVariable("j", "1", IntValue.ValZero.getTypeString()));
+		variables.add(createVariable("@", "<<[type |-> \"pl\"]>>", TupleValue.EmptyTuple.getTypeString()));
 		assertTLCActionFrame(stackFrames[0], 119, 44, 119, 57, RM, variables, vars[3]);
 
 		stackFrames = debugger.stepIn();
 		assertEquals(13, stackFrames.length);
-		variables.add(createVariable("s","<<[type |-> \"pl\"]>>",TupleValue.EmptyTuple.getTypeString()));
+		variables.add(createVariable("s", "<<[type |-> \"pl\"]>>", TupleValue.EmptyTuple.getTypeString()));
 		assertTLCActionFrame(stackFrames[0], 29, 29, UTILS, variables, vars[3]);
 
 		stackFrames = debugger.stepIn(13);
 		assertEquals(11, stackFrames.length);
 		variables = new HashSet<>();
-		variables.add(createVariable("i","1",IntValue.ValZero.getTypeString()));
-		variables.add(createVariable("j","1",IntValue.ValZero.getTypeString()));
+		variables.add(createVariable("i", "1", IntValue.ValZero.getTypeString()));
+		variables.add(createVariable("j", "1", IntValue.ValZero.getTypeString()));
 		assertTLCActionFrame(stackFrames[0], 120, 6, 120, 19, RM, variables);
-		
+
 		// 8888888888888888888 Invariant TypeOK 8888888888888888888 //
 		debugger.replaceAllBreakpointsWith(RM, 29);
 		stackFrames = debugger.continue_();
 		assertEquals(12, stackFrames.length);
 		assertTLCStateFrame(stackFrames[0], 29, 3, 37, 25, RM, Context.Empty);
-		
+
 		// 8888888888888888888 Invariant EWD998!Inv 8888888888888888888 //
 		debugger.replaceAllBreakpointsWith(FOLDER, 150);
 		stackFrames = debugger.continue_();
 		assertEquals(12, stackFrames.length);
-		assertTLCStateFrame(stackFrames[0], 150, 3, 162, 34, FOLDER, (Context) null); //TODO Assert context that contains the refinement mapping
-		
-		// 8888888888888888888 Test resolving a location (e.g. editor hovering) to a value 888888888888888 //
+		assertTLCStateFrame(stackFrames[0], 150, 3, 162, 34, FOLDER, (Context) null); // TODO Assert context that
+																						// contains the refinement
+																						// mapping
+
+		// 8888888888888888888 Test resolving a location (e.g. editor hovering) to a
+		// value 888888888888888 //
 		debugger.replaceAllBreakpointsWith(RM, 120);
 		debugger.continue_();
-		
+
 		// inbox
 		EvaluateResponse var = debugger.evaluate(RM, "inbox", 118, 14, 118, 18);
 		assertEquals("FcnRcdValue: a function  of the form (d1 :> e1 @@ ... @@ dN :> eN)", var.getType());
 		assertNotEquals(0, var.getVariablesReference());
-		assertEquals("(0 :> <<[color |-> \"black\", type |-> \"tok\", q |-> 0]>> @@ 1 :> <<[type |-> \"pl\"]>> @@ 2 :> <<>>)", var.getResult());
+		assertEquals(
+				"(0 :> <<[color |-> \"black\", type |-> \"tok\", q |-> 0]>> @@ 1 :> <<[type |-> \"pl\"]>> @@ 2 :> <<>>)",
+				var.getResult());
 		var = debugger.evaluate(RM, "inbox", 119, 24, 119, 28);
 		assertEquals("FcnRcdValue: a function  of the form (d1 :> e1 @@ ... @@ dN :> eN)", var.getType());
 		assertNotEquals(0, var.getVariablesReference());
-		assertEquals("(0 :> <<[color |-> \"black\", type |-> \"tok\", q |-> 0]>> @@ 1 :> <<[type |-> \"pl\"]>> @@ 2 :> <<>>)", var.getResult());
-		
+		assertEquals(
+				"(0 :> <<[color |-> \"black\", type |-> \"tok\", q |-> 0]>> @@ 1 :> <<[type |-> \"pl\"]>> @@ 2 :> <<>>)",
+				var.getResult());
+
 		// inbox'
 		var = debugger.evaluate(RM, "inbox", 119, 14, 119, 19);
 		assertEquals("FcnRcdValue: a function  of the form (d1 :> e1 @@ ... @@ dN :> eN)", var.getType());
 		assertNotEquals(0, var.getVariablesReference());
-		assertEquals("(0 :> <<[color |-> \"black\", type |-> \"tok\", q |-> 0]>> @@ 1 :> <<>> @@ 2 :> <<>>)", var.getResult());
+		assertEquals("(0 :> <<[color |-> \"black\", type |-> \"tok\", q |-> 0]>> @@ 1 :> <<>> @@ 2 :> <<>>)",
+				var.getResult());
 
 		// i
 		var = debugger.evaluate(RM, "i", 109, 9, 109, 9);
@@ -414,7 +427,7 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 		assertEquals(IntValue.ValZero.getTypeString(), var.getType());
 		assertEquals(0, var.getVariablesReference());
 		assertEquals("1", var.getResult());
-		
+
 		// j in \E j \in ... no longer in the current scope (ctxt).
 		var = debugger.evaluate(RM, "j", 117, 9, 117, 9);
 		assertEquals("FormalParamNode", var.getType());
@@ -437,7 +450,7 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 		// PassToken
 		debugger.replaceAllBreakpointsWith(RM, 81);
 		debugger.continue_();
-		
+
 		// inbox[i][j].type (record field)
 		var = debugger.evaluate(RM, "type", 77, 26, 77, 29);
 		assertEquals("StringValue: a string", var.getType());
@@ -447,7 +460,7 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 		var = debugger.evaluate(RM, "type", 81, 72, 81, 72);
 		assertEquals("IntValue: an integer", var.getType());
 		assertEquals("0", var.getResult());
-		
+
 		debugger.replaceAllBreakpointsWith(RM, 85);
 		debugger.continue_();
 
@@ -455,12 +468,13 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 		var = debugger.evaluate(RM, "inbox", 80, 28, 80, 32);
 		assertEquals("FcnRcdValue: a function  of the form (d1 :> e1 @@ ... @@ dN :> eN)", var.getType());
 		assertNotEquals(0, var.getVariablesReference());
-		assertEquals("(0 :> <<>> @@ 1 :> <<>> @@ 2 :> <<[color |-> \"white\", type |-> \"tok\", q |-> 0]>>)", var.getResult());
-		
+		assertEquals("(0 :> <<>> @@ 1 :> <<>> @@ 2 :> <<[color |-> \"white\", type |-> \"tok\", q |-> 0]>>)",
+				var.getResult());
+
 		// inbox' (not yet evaluated/"assigned")
 		var = debugger.evaluate(RM, "inbox", 80, 18, 80, 23);
 		assertEquals(DebuggerValue.NOT_EVALUATED, var.getResult());
-		
+
 		// lhs/rhs refinement mapping
 		debugger.replaceAllBreakpointsWith(RM, 179);
 		debugger.continue_();
@@ -473,17 +487,16 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 		// LHS must not show the value of the active variable in the current state. In
 		// case of the test case, the value of active in EWD998 and EWD998Chan happens
 		// to be indeed identical, but in other refinement mappings this is not
-		// necessarily the case.  The token and pending variable don't match the case
+		// necessarily the case. The token and pending variable don't match the case
 		// we want to test, which is identical variables in high- and low-level spec.
 		var = debugger.evaluate(RM, "active", 166, 33, 166, 40);
 		assertEquals("line 166, col 33 to line 166, col 40 of module EWD998Chan", var.getResult());
-
 
 		debugger.unsetBreakpoints();
 		SetBreakpointsArguments sba = createBreakpointArgument(RM, 107);
 		sba.getBreakpoints()[0].setHitCondition("2");
 		debugger.setBreakpoints(sba);
-		
+
 		// before the UNCHANGED is evaluated
 		stackFrames = debugger.continue_();
 		assertEquals(8, stackFrames.length);
@@ -504,11 +517,12 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 		stackFrames = debugger.continue_();
 		assertEquals(3, stackFrames.length);
 		assertTLCNextStatesFrame(stackFrames[0], 134, 20, 134, 23, RM, Context.Empty, 3);
-		
+
 		stackFrame = (TLCStackFrame) stackFrames[0];
 		assertEquals(new EvaluateResponse(), stackFrame.evaluate((String) null));
-		assertEquals("Syntax error while parsing breakpoint expression \\\"Does not exist\\\"", stackFrame.evaluate("Does not exist").getResult());
-		
+		assertEquals("Syntax error while parsing breakpoint expression \\\"Does not exist\\\"",
+				stackFrame.evaluate("Does not exist").getResult());
+
 		assertEquals("FALSE", stackFrame.evaluate("Init").getResult());
 		assertEquals("FALSE", stackFrame.evaluate("InitiateProbe").getResult());
 		assertEquals("FALSE", stackFrame.evaluate("System").getResult());
@@ -519,7 +533,7 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 		assertEquals("2", stackFrame.evaluate("tpos").getResult());
 		assertEquals("TRUE", stackFrame.evaluate("Stop").getResult());
 		assertEquals("TRUE", stackFrame.evaluate("ActionConstraint").getResult());
-		
+
 		final EvaluateResponse er = stackFrame.evaluate("EnabledAlias");
 		assertNotNull(er);
 		assertEquals(
@@ -539,12 +553,13 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 		assertEquals("SendMsg", frob[4].getName());
 		assertEquals("TRUE", frob[4].getValue());
 
-		// Dynamic watch expressions		
+		// Dynamic watch expressions
 		assertEquals("<<FALSE, FALSE>>", stackFrame.evaluate("[i \\in Nodes \\ {0} |-> PassToken(i)]").getResult());
-		assertEquals("<<FALSE, TRUE>>", stackFrame.evaluate("[i \\in Nodes \\ {0} |-> ENABLED PassToken(i)]").getResult());
-		
+		assertEquals("<<FALSE, TRUE>>",
+				stackFrame.evaluate("[i \\in Nodes \\ {0} |-> ENABLED PassToken(i)]").getResult());
+
 		// *********************************************************** //
-		
+
 		// Some parameter (ibx) of an operator.
 		debugger.replaceAllBreakpointsWith(RM, 142);
 		stackFrames = debugger.continue_();
@@ -558,15 +573,17 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 		stackFrames = debugger.continue_();
 		ea = new EvaluateArguments();
 		ea.setContext(EvaluateArgumentsContext.REPL);
-		
+
 		// Expressions that reference the @ of an EXCEPT are not supported. The @ symbol
 		// is a syntactic component of EXCEPT and cannot be used independently. More
 		// importantly, @ is merely a shorthand, and users can readily eliminate it by
 		// expanding the expression explicitly.
 		ea.setExpression("@");
 		ea.setFrameId(stackFrames[0].getId());
-		assertEquals("line 84, col 77 to line 84, col 85 of module EWD998Chan\\n\\nSemantic error while parsing breakpoint expression \\\"@\\\"", debugger.evaluate(ea).get().getResult());
-		
+		assertEquals(
+				"line 84, col 77 to line 84, col 85 of module EWD998Chan\\n\\nSemantic error while parsing breakpoint expression \\\"@\\\"",
+				debugger.evaluate(ea).get().getResult());
+
 		// An expression involving a free-standing (non-constant) operator that doesn't
 		// occur in the scope of the breakpoint.
 		ea.setExpression("tpos");
@@ -577,14 +594,14 @@ public class EWD998ChanDebuggerTest extends TLCDebuggerTestCase {
 		ea.setExpression("tkn.color"); // tkn is a LET def
 		ea.setFrameId(stackFrames[0].getId());
 		assertEquals("white", debugger.evaluate(ea).get().getResult());
-	
+
 		// A non-zero arity LET definition.
 		ea.setExpression("ccounter(0)+1");
 		ea.setFrameId(stackFrames[0].getId());
 		assertEquals("1", debugger.evaluate(ea).get().getResult());
 
 		// *********************************************************** //
-		
+
 		// POSTCONDITION
 		debugger.unsetBreakpoints();
 		sba = createBreakpointArgument(MDL, 212);

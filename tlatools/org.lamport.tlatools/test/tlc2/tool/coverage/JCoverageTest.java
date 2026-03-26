@@ -34,12 +34,12 @@ import tlc2.output.EC;
 
 public class JCoverageTest extends AbstractCoverageTest {
 
-    public JCoverageTest () {
-        super("J");
-    }
+	public JCoverageTest() {
+		super("J");
+	}
 
-    @Test
-    public void testSpec () {
+	@Test
+	public void testSpec() {
 		// ModelChecker has finished and generated the expected amount of states
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "2"));
@@ -48,20 +48,20 @@ public class JCoverageTest extends AbstractCoverageTest {
 		// No 'general' errors recorded
 		assertFalse(recorder.recorded(EC.GENERAL));
 
-		assertCoverage("<Init line 5, col 1 to line 5, col 4 of module J>: 5:5\n" + 
-				"  line 5, col 12 to line 5, col 28 of module J: 1:6\n" + 
-				"  line 6, col 12 to line 6, col 40 of module J: 5\n" + 
+		assertCoverage("<Init line 5, col 1 to line 5, col 4 of module J>: 5:5\n" +
+				"  line 5, col 12 to line 5, col 28 of module J: 1:6\n" +
+				"  line 6, col 12 to line 6, col 40 of module J: 5\n" +
 				"  |line 6, col 16 to line 6, col 40 of module J: 5:25\n" +
 				"  ||line 6, col 23 to line 6, col 33 of module J: 5:30\n" +
-				"<Next line 12, col 1 to line 12, col 4 of module J>: 1:6\n" + 
-				"  line 12, col 12 to line 12, col 22 of module J: 6\n" + 
-				"  |line 12, col 17 to line 12, col 22 of module J: 6\n" + 
-				"  ||line 9, col 2 to line 10, col 19 of module J: 6\n" + 
-				"  |||line 9, col 7 to line 9, col 11 of module J: 6\n" + 
-				"  |||line 9, col 16 to line 9, col 40 of module J: 2\n" + 
-				"  |||line 10, col 7 to line 10, col 19 of module J: 4\n" + 
-				"  ||line 12, col 21 to line 12, col 21 of module J: 6\n" + 
+				"<Next line 12, col 1 to line 12, col 4 of module J>: 1:6\n" +
+				"  line 12, col 12 to line 12, col 22 of module J: 6\n" +
+				"  |line 12, col 17 to line 12, col 22 of module J: 6\n" +
+				"  ||line 9, col 2 to line 10, col 19 of module J: 6\n" +
+				"  |||line 9, col 7 to line 9, col 11 of module J: 6\n" +
+				"  |||line 9, col 16 to line 9, col 40 of module J: 2\n" +
+				"  |||line 10, col 7 to line 10, col 19 of module J: 4\n" +
+				"  ||line 12, col 21 to line 12, col 21 of module J: 6\n" +
 				"  line 13, col 12 to line 13, col 22 of module J: 6");
 		assertFalse(recorder.recorded(EC.TLC_COVERAGE_MISMATCH));
-    }
+	}
 }

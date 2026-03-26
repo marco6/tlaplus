@@ -29,20 +29,20 @@ public class EvalControl {
    * generation of initial states.
    */
   public static final int Init = 1 << 3;
-	/**
-	 * Evaluation in the scope of {@link ITool#checkAssumptions() or
-	 * {@link Worker#doPostConditionCheck}. In other words, set during the
-	 * evaluation of ASSUME/ASSUMPTIONS or POSTCONDITION.
-	 */
-	public static final int Const = 1 << 4;
-  
+  /**
+   * Evaluation in the scope of {@link ITool#checkAssumptions() or
+   * {@link Worker#doPostConditionCheck}. In other words, set during the
+   * evaluation of ASSUME/ASSUMPTIONS or POSTCONDITION.
+   */
+  public static final int Const = 1 << 4;
+
   public static final int Clear = 0;
-  
+
   private static boolean isSet(final int control, final int constant) {
-	  // Zero all bits except constant bit(s).
-	  return (control & constant) > 0;
+    // Zero all bits except constant bit(s).
+    return (control & constant) > 0;
   }
-  
+
   public static boolean isKeepLazy(int control) {
     return isSet(control, KeepLazy);
   }
@@ -54,76 +54,90 @@ public class EvalControl {
   public static boolean isPrimed(int control) {
     return isSet(control, Primed);
   }
-    
+
   public static int setPrimed(int control) {
     return control | Primed;
   }
-    
+
   /**
-   * Sets {@link EvalControl#Primed} iff {@link EvalControl#Enabled} is already set.
+   * Sets {@link EvalControl#Primed} iff {@link EvalControl#Enabled} is already
+   * set.
    */
   public static int setPrimedIfEnabled(int control) {
-	  if (isEnabled(control)) {
-		  return setPrimed(control);
-	  }
-	  return control;
+    if (isEnabled(control)) {
+      return setPrimed(control);
+    }
+    return control;
   }
-  
+
   public static boolean isEnabled(int control) {
     return isSet(control, Enabled);
   }
 
   public static int setEnabled(int control) {
-	return  control | Enabled;
+    return control | Enabled;
   }
 
   public static boolean isInit(int control) {
-	return isSet(control, Init);
+    return isSet(control, Init);
   }
-	
-	public static boolean isConst(int control) {
-		return isSet(control, Const);
-	}
 
-    /**
-     * Determine whether two {@link EvalControl} settings are semantically equivalent.  Formally,
-     * they are semantically equivalent if
-     * <pre>
-     *     \A expr, context, behavior:
-     *         eval(expr, context, behavior, control1) =
-     *         eval(expr, context, behavior, control2)
-     * </pre>
-     *
-     * <p>Many control settings like {@link #Clear} and {@link #Enabled} are not equivalent; they
-     * will often result in different computed values.
-     *
-     * <p>This function always returns {@link PartialBoolean#YES} when
-     * <code>control1 == control2</code>, and it can identify a small set of other cases where
-     * the inputs are semantically equivalent.
-     *
-     * @param control1 the first control value
-     * @param control2 the second control value
-     * @return whether the values are semantically equivalent
-     */
-    public static PartialBoolean semanticallyEquivalent(int control1, int control2) {
-        // *** CAUTION ***
-        // The implementation of this function is quite subtle.  First we'll define `flagsThatCanBeSafelyIgnored`
-        // as a special whitelist of flags we know won't affect the evaluation outcome.  Each whitelisted flag
-        // has to be carefully justified:
-        //   - KeepLazy: this is a performance hint that affects handling of function definitions.  Although it
-        //     can change the exact structure of the IValue returned by eval(...), it does not affect the semantic
-        //     meaning of that value.
-        //   - Init: this is a flag to indicate that we are evaluating part of a specification's initial condition.
-        //     It is used for debugging.
-        //   - Const: similar to Init, this is a flag to indicate that we are evaluating part of a specification's
-        //     constant definitions.  It is used for debugging.
-        int flagsThatCanBeSafelyIgnored = KeepLazy | Init | Const;
+  public static boolean isConst(int control) {
+    return isSet(control, Const);
+  }
 
-        // Compute a mask capturing all possible flags that CAN'T be safely ignored.
-        int mask = ~flagsThatCanBeSafelyIgnored;
+  /**
+   * Determine whether two {@link EvalControl} settings are semantically
+   * equivalent. Formally,
+   * they are semantically equivalent if
+   * 
+   * <pre>
+   *     \A expr, context, behavior:
+   *         eval(expr, context, behavior, control1) =
+   *         eval(expr, context, behavior, control2)
+   * </pre>
+   *
+   * <p>
+   * Many control settings like {@link #Clear} and {@link #Enabled} are not
+   * equivalent; they
+   * will often result in different computed values.
+   *
+   * <p>
+   * This function always returns {@link PartialBoolean#YES} when
+   * <code>control1 == control2</code>, and it can identify a small set of other
+   * cases where
+   * the inputs are semantically equivalent.
+   *
+   * @param control1 the first control value
+   * @param control2 the second control value
+   * @return whether the values are semantically equivalent
+   */
+  public static PartialBoolean semanticallyEquivalent(int control1, int control2) {
+    // *** CAUTION ***
+    // The implementation of this function is quite subtle. First we'll define
+    // `flagsThatCanBeSafelyIgnored`
+    // as a special whitelist of flags we know won't affect the evaluation outcome.
+    // Each whitelisted flag
+    // has to be carefully justified:
+    // - KeepLazy: this is a performance hint that affects handling of function
+    // definitions. Although it
+    // can change the exact structure of the IValue returned by eval(...), it does
+    // not affect the semantic
+    // meaning of that value.
+    // - Init: this is a flag to indicate that we are evaluating part of a
+    // specification's initial condition.
+    // It is used for debugging.
+    // - Const: similar to Init, this is a flag to indicate that we are evaluating
+    // part of a specification's
+    // constant definitions. It is used for debugging.
+    int flagsThatCanBeSafelyIgnored = KeepLazy | Init | Const;
 
-        // If the two inputs are identical on all flags not present in `flagsThatCanBeSafelyIgnored`, then they are
-        // certainly equivalent.  Otherwise, conservatively return `MAYBE`.
-        return (control1 & mask) == (control2 & mask) ? PartialBoolean.YES : PartialBoolean.MAYBE;
-    }
+    // Compute a mask capturing all possible flags that CAN'T be safely ignored.
+    int mask = ~flagsThatCanBeSafelyIgnored;
+
+    // If the two inputs are identical on all flags not present in
+    // `flagsThatCanBeSafelyIgnored`, then they are
+    // certainly equivalent. Otherwise, conservatively return `MAYBE`.
+    return (control1 & mask) == (control2 & mask) ? PartialBoolean.YES : PartialBoolean.MAYBE;
+  }
 }

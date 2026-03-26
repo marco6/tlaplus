@@ -34,130 +34,137 @@ import tla2sany.xml.SymbolContext;
 public class NewSymbNode extends LevelNode {
 
   /*************************************************************************
-  * Fields.                                                                *
-  *************************************************************************/
+   * Fields. *
+   *************************************************************************/
   private OpDeclNode opDeclNode = null;
-    /***********************************************************************
-    * The OpDeclNode for the declaration represented by the NewSymbNode    *
-    * object.                                                              *
-    ***********************************************************************/
-  private ExprNode  set         = null;
-    /***********************************************************************
-    * The ExprNode for expression S in "CONSTANT id \in S".                *
-    ***********************************************************************/
-// There's now a level field for all LevelNode subclasses, and this.levelChecked
-// indicates if levelCheck has been callsed
-//  private int       level = -1;
-//    /***********************************************************************
-//    * The level.  The value of -1 indicates that levelCheck has not yet    *
-//    * been called.                                                         *
-//    ***********************************************************************/
+  /***********************************************************************
+   * The OpDeclNode for the declaration represented by the NewSymbNode *
+   * object. *
+   ***********************************************************************/
+  private ExprNode set = null;
+  /***********************************************************************
+   * The ExprNode for expression S in "CONSTANT id \in S". *
+   ***********************************************************************/
+  // There's now a level field for all LevelNode subclasses, and this.levelChecked
+  // indicates if levelCheck has been callsed
+  // private int level = -1;
+  // /***********************************************************************
+  // * The level. The value of -1 indicates that levelCheck has not yet *
+  // * been called. *
+  // ***********************************************************************/
 
-// Role subsumed by this.levelCorrect
-//  private boolean  theLevelCheck = true ;
-//    /***********************************************************************
-//    * Set by this.levelCheck to the value to be returned on subsequent     *
-//    * calls.                                                               *
-//    ***********************************************************************/
+  // Role subsumed by this.levelCorrect
+  // private boolean theLevelCheck = true ;
+  // /***********************************************************************
+  // * Set by this.levelCheck to the value to be returned on subsequent *
+  // * calls. *
+  // ***********************************************************************/
 
   /*************************************************************************
-  * The Constructor.                                                       *
-  *************************************************************************/
+   * The Constructor. *
+   *************************************************************************/
   public NewSymbNode(
-           OpDeclNode   opDeclNode, // The OpDeclNode for the declaration.
-           ExprNode     set,        // Expression S in "CONSTANT x \in S",
-                                    //   null for other kinds of declaration.
-           TreeNode stn             // The syntax node.
-          ) {
-    super(NewSymbKind, stn) ;
-    this.set        = set;
-    this.opDeclNode = opDeclNode ;
+      OpDeclNode opDeclNode, // The OpDeclNode for the declaration.
+      ExprNode set, // Expression S in "CONSTANT x \in S",
+                    // null for other kinds of declaration.
+      TreeNode stn // The syntax node.
+  ) {
+    super(NewSymbKind, stn);
+    this.set = set;
+    this.opDeclNode = opDeclNode;
   }
 
+  /*************************************************************************
+   * Methods particular to the NewSymb node. *
+   *************************************************************************/
+  public final ExprNode getSet() {
+    return set;
+  }
+
+  public final OpDeclNode getOpDeclNode() {
+    return opDeclNode;
+  }
 
   /*************************************************************************
-  * Methods particular to the NewSymb node.                                *
-  *************************************************************************/
-  public final ExprNode   getSet()         {return set;}
-  public final OpDeclNode getOpDeclNode() {return opDeclNode;}
-
-  /*************************************************************************
-  * The implementation of the LevelNode abstract methods.                  *
-  *                                                                        *
-  * The level of the node is the maximum of opDeclNode's level and the     *
-  * level of the `set' expression, if it's non-null.  Any other level      *
-  * information comes from the `set' expression.                           *
-  *************************************************************************/
+   * The implementation of the LevelNode abstract methods. *
+   * *
+   * The level of the node is the maximum of opDeclNode's level and the *
+   * level of the `set' expression, if it's non-null. Any other level *
+   * information comes from the `set' expression. *
+   *************************************************************************/
   @Override
-  public boolean levelCheck(int iter, Errors errors)       {
+  public boolean levelCheck(int iter, Errors errors) {
 
     if (levelChecked < iter) {
       /*********************************************************************
-      * This is the first call of levelCheck, so the level information     *
-      * must be computed.  Actually, with the current implementation,      *
-      * there's no need to call opDeclNode.levelCheck, since that just     *
-      * returns true.  However, we do it anyway in case the OpDeclNode     *
-      * class is changed to make levelCheck do something.                  *
-      *********************************************************************/
-      levelChecked = iter ;
-      boolean opDeclLevelCheck = opDeclNode.levelCheck(iter, errors) ;
-      level = opDeclNode.getLevel() ;
+       * This is the first call of levelCheck, so the level information *
+       * must be computed. Actually, with the current implementation, *
+       * there's no need to call opDeclNode.levelCheck, since that just *
+       * returns true. However, we do it anyway in case the OpDeclNode *
+       * class is changed to make levelCheck do something. *
+       *********************************************************************/
+      levelChecked = iter;
+      boolean opDeclLevelCheck = opDeclNode.levelCheck(iter, errors);
+      level = opDeclNode.getLevel();
       if (set != null) {
-        levelCorrect = set.levelCheck(iter, errors) ;
+        levelCorrect = set.levelCheck(iter, errors);
         level = Math.max(set.getLevel(), level);
         if (level == TemporalLevel) {
           levelCorrect = false;
           errors.addError(ErrorCode.ASSUME_PROVE_NEW_CONSTANT_HAS_TEMPORAL_LEVEL_BOUND,
-                          this.stn.getLocation(),
-                          "Level error:\n" +
-                          "Temporal formula used as set.");
-          }
-       }  ;
+              this.stn.getLocation(),
+              "Level error:\n" +
+                  "Temporal formula used as set.");
+        }
+      }
+      ;
       levelCorrect = levelCorrect && opDeclLevelCheck;
       if (set != null) {
         levelParams = set.getLevelParams();
         allParams = set.getAllParams();
         levelConstraints = set.getLevelConstraints();
         argLevelConstraints = set.getArgLevelConstraints();
-        argLevelParams      = set.getArgLevelParams();
-       }; // if (set != null)
-      }; // if (levelChecked < iter)
+        argLevelParams = set.getArgLevelParams();
+      }
+      ; // if (set != null)
+    }
+    ; // if (levelChecked < iter)
     return levelCorrect;
-   }
+  }
 
-//  public int getLevel()             {return this.level; }
-//
-//  public HashSet getLevelParams()   {
-//    if (set == null) {return EmptySet;}
-//    else return set.getLevelParams();
-//   }
-//
-//  public SetOfLevelConstraints getLevelConstraints() {
-//    if (set == null) {return EmptyLC;}
-//    else return set.getLevelConstraints();
-//   }
-//
-//  public SetOfArgLevelConstraints getArgLevelConstraints() {
-//    if (set == null) {return EmptyALC;}
-//    else return set.getArgLevelConstraints();
-//   }
-//
-//  public HashSet getArgLevelParams() {
-//    if (set == null) {return EmptySet;}
-//    else return set.getArgLevelParams();
-//   }
+  // public int getLevel() {return this.level; }
+  //
+  // public HashSet getLevelParams() {
+  // if (set == null) {return EmptySet;}
+  // else return set.getLevelParams();
+  // }
+  //
+  // public SetOfLevelConstraints getLevelConstraints() {
+  // if (set == null) {return EmptyLC;}
+  // else return set.getLevelConstraints();
+  // }
+  //
+  // public SetOfArgLevelConstraints getArgLevelConstraints() {
+  // if (set == null) {return EmptyALC;}
+  // else return set.getArgLevelConstraints();
+  // }
+  //
+  // public HashSet getArgLevelParams() {
+  // if (set == null) {return EmptySet;}
+  // else return set.getArgLevelParams();
+  // }
 
   /**
    * toString, levelDataToString and walkGraph methods to implement
    * ExploreNode interface
    */
-//  public final String levelDataToString() {
-//    return "Level: "               + this.level                    + "\n" +
-//           "LevelParameters: "     + this.getLevelParams()         + "\n" +
-//           "LevelConstraints: "    + this.getLevelConstraints()    + "\n" +
-//           "ArgLevelConstraints: " + this.getArgLevelConstraints() + "\n" +
-//           "ArgLevelParams: "      + this.getArgLevelParams()      + "\n";
-//  }
+  // public final String levelDataToString() {
+  // return "Level: " + this.level + "\n" +
+  // "LevelParameters: " + this.getLevelParams() + "\n" +
+  // "LevelConstraints: " + this.getLevelConstraints() + "\n" +
+  // "ArgLevelConstraints: " + this.getArgLevelConstraints() + "\n" +
+  // "ArgLevelParams: " + this.getArgLevelParams() + "\n";
+  // }
 
   /**
    * The body is the node's only child.
@@ -166,44 +173,51 @@ public class NewSymbNode extends LevelNode {
   @Override
   public SemanticNode[] getChildren() {
     if (this.set == null) {
-        return null;
+      return null;
     } else {
-      return new SemanticNode[] {this.set};
+      return new SemanticNode[] { this.set };
     }
   }
 
   @Override
   public final void walkGraph(Hashtable<Integer, ExploreNode> semNodesTable, ExplorerVisitor visitor) {
     Integer uid = Integer.valueOf(myUID);
-    if (semNodesTable.get(uid) != null) return;
+    if (semNodesTable.get(uid) != null)
+      return;
     semNodesTable.put(uid, this);
     visitor.preVisit(this);
-    if (set != null) { set.walkGraph(semNodesTable, visitor); } ;
+    if (set != null) {
+      set.walkGraph(semNodesTable, visitor);
+    }
+    ;
     visitor.postVisit(this);
-   }
+  }
 
   @Override
   public final String toString(int depth, Errors errors) {
-    if (depth <= 0) return "";
-    String setString = "" ;
+    if (depth <= 0)
+      return "";
+    String setString = "";
     if (this.set != null) {
       setString = Strings.indent(2,
-                   "\nSet:" + Strings.indent(2, this.set.toString(depth-1, errors)));
-     }
+          "\nSet:" + Strings.indent(2, this.set.toString(depth - 1, errors)));
+    }
     return "\n*NewSymbNode: " +
-	    "  " + super.toString(depth, errors) +
-             Strings.indent(2, "\nKind: " + this.getKind() +
-                          "\nopDeclNode:" + Strings.indent(2,
-                                this.opDeclNode.toString(depth-1, errors)) +
-             setString);
-   }
+        "  " + super.toString(depth, errors) +
+        Strings.indent(2, "\nKind: " + this.getKind() +
+            "\nopDeclNode:" + Strings.indent(2,
+                this.opDeclNode.toString(depth - 1, errors))
+            +
+            setString);
+  }
 
   @Override
-  protected Element getLevelElement(Document doc, SymbolContext context, BiPredicate<SemanticNode, SemanticNode> filter) {
+  protected Element getLevelElement(Document doc, SymbolContext context,
+      BiPredicate<SemanticNode, SemanticNode> filter) {
     Element e = doc.createElement("NewSymbNode");
-    e.appendChild(getOpDeclNode().export(doc,context, filter));
+    e.appendChild(getOpDeclNode().export(doc, context, filter));
     if (getSet() != null) {
-      e.appendChild(getSet().export(doc,context, filter));
+      e.appendChild(getSet().export(doc, context, filter));
     }
     return e;
   }

@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class RealQuicksort2Test extends PCalModelCheckerTestCase {
 
 	public RealQuicksort2Test() {
-		super("RealQuicksort2", "pcal", new String[] {"-wf", "-termination"});
+		super("RealQuicksort2", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test
@@ -51,28 +51,36 @@ public class RealQuicksort2Test extends PCalModelCheckerTestCase {
 	}
 }
 /*
-C:\lamport\tla\pluscal>java -mx1000m -cp "c:/lamport/tla/newtools/tla2-inria-workspace/tla2-inria/tlatools/class" tlc2.TLC -cleanup RealQuicksort2.tla         
-TLC2 Version 2.05 of 18 May 2012
-Running in Model-Checking mode.
-Parsing file RealQuicksort2.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\Naturals.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\Sequences.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\FiniteSets.tla
-Semantic processing of module Naturals
-Semantic processing of module Sequences
-Semantic processing of module FiniteSets
-Semantic processing of module RealQuicksort2
-Starting... (2012-08-10 17:38:33)
-Implied-temporal checking--satisfiability problem has 1 branches.
-Computing initial states...
-Finished computing initial states: 33 distinct states generated.
-Checking temporal properties for the complete state space...
-Model checking completed. No error has been found.
-  Estimates of the probability that TLC did not check all reachable states
-  because two distinct states had the same fingerprint:
-  calculated (optimistic):  val = 8.0E-15
-  based on the actual fingerprints:  val = 2.2E-14
-853 states generated, 612 distinct states found, 0 states left on queue.
-The depth of the complete state graph search is 11.
-Finished. (2012-08-10 17:38:33)
-*/
+ * C:\lamport\tla\pluscal>java -mx1000m -cp
+ * "c:/lamport/tla/newtools/tla2-inria-workspace/tla2-inria/tlatools/class"
+ * tlc2.TLC -cleanup RealQuicksort2.tla
+ * TLC2 Version 2.05 of 18 May 2012
+ * Running in Model-Checking mode.
+ * Parsing file RealQuicksort2.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\Naturals.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\Sequences.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\FiniteSets.tla
+ * Semantic processing of module Naturals
+ * Semantic processing of module Sequences
+ * Semantic processing of module FiniteSets
+ * Semantic processing of module RealQuicksort2
+ * Starting... (2012-08-10 17:38:33)
+ * Implied-temporal checking--satisfiability problem has 1 branches.
+ * Computing initial states...
+ * Finished computing initial states: 33 distinct states generated.
+ * Checking temporal properties for the complete state space...
+ * Model checking completed. No error has been found.
+ * Estimates of the probability that TLC did not check all reachable states
+ * because two distinct states had the same fingerprint:
+ * calculated (optimistic): val = 8.0E-15
+ * based on the actual fingerprints: val = 2.2E-14
+ * 853 states generated, 612 distinct states found, 0 states left on queue.
+ * The depth of the complete state graph search is 11.
+ * Finished. (2012-08-10 17:38:33)
+ */

@@ -38,10 +38,10 @@ import util.ToolIO;
 /**
  * This class holds the results from running the SANY on a single TLA+
  * specification.
+ * 
  * @version: $Id$
  */
-public class SpecObj
-{
+public class SpecObj {
 
     String primaryFileName;
     // The raw file name for the root (top) module, unprocessed by adding
@@ -70,23 +70,22 @@ public class SpecObj
     // external modules.
 
     /*
-     * used to translate module names to file names              
-     *                                                                      
-     * This field was made public by LL on 8 May 2008 in an effort to       
-     * track down the full file names of included modules.  It seems safer  
-     * to get the NameToFileIStream object from here in case at some later  
-     * time we add a way to allow the user to specify how the parser        
-     * should find a module's file from its name.  This would lead to the   
-     * ability to have different NameToFileIStream objects, so it's better  
-     * for a tool to do file lookup using the actual NameToFileIStream      
-     * object that the parser uses.                                         
+     * used to translate module names to file names
+     * 
+     * This field was made public by LL on 8 May 2008 in an effort to
+     * track down the full file names of included modules. It seems safer
+     * to get the NameToFileIStream object from here in case at some later
+     * time we add a way to allow the user to specify how the parser
+     * should find a module's file from its name. This would lead to the
+     * ability to have different NameToFileIStream objects, so it's better
+     * for a tool to do file lookup using the actual NameToFileIStream
+     * object that the parser uses.
      *
      * SZA: Since there is no references to this public field, it is
      * changed to private again.
      */
     // SZ 23.02.2009: renamed according to the purpose
     private FilenameToStream resolver = null;
-
 
     ParseUnit rootParseUnit = null;
     // The ParseUnit object for the first (i.e. "root") file, roughly
@@ -113,29 +112,30 @@ public class SpecObj
     public int errorLevel = 0;
 
     /**
-     * Default constructor of the SpecObj with a given primary filename and the default 
-     * NameToFileIStream for its resolution 
+     * Default constructor of the SpecObj with a given primary filename and the
+     * default
+     * NameToFileIStream for its resolution
+     * 
      * @param pfn primary filename of the specification
-     * @deprecated please use the {@link SpecObj#SpecObj(String, FilenameToStream)} 
-     * with <code>null</code> as a second argument
+     * @deprecated please use the {@link SpecObj#SpecObj(String, FilenameToStream)}
+     *             with <code>null</code> as a second argument
      */
     @Deprecated
-    public SpecObj(String pfn)
-    {
+    public SpecObj(String pfn) {
         this(pfn, null);
     }
 
     /**
-     * Constructs a SpecObj for the given filename using a specified filename resolver
-     * @param pfn primary filename of the specification
-     * @param ntfis string to named input stream resolver, if <code>null</code>, 
-     * the default from {@link ToolIO#getDefaultResolver()} is used
+     * Constructs a SpecObj for the given filename using a specified filename
+     * resolver
+     * 
+     * @param pfn   primary filename of the specification
+     * @param ntfis string to named input stream resolver, if <code>null</code>,
+     *              the default from {@link ToolIO#getDefaultResolver()} is used
      */
-    public SpecObj(String pfn, FilenameToStream ntfis)
-    {
-        if (ntfis == null) 
-        {
-            ntfis = ToolIO.getDefaultResolver(); 
+    public SpecObj(String pfn, FilenameToStream ntfis) {
+        if (ntfis == null) {
+            ntfis = ToolIO.getDefaultResolver();
         }
         this.primaryFileName = pfn;
         this.resolver = ntfis;
@@ -143,11 +143,10 @@ public class SpecObj
 
     /**
      * Any integer other than 0 returned from this method indicates a
-     * fatal error while processing the TLA+ spec.  No further use
+     * fatal error while processing the TLA+ spec. No further use
      * should be made of this object except by the maintainer.
      */
-    public final int getErrorLevel()
-    {
+    public final int getErrorLevel() {
         return errorLevel;
     }
 
@@ -155,13 +154,11 @@ public class SpecObj
      * Returns the name of the top-level module as passed to the method
      * Specification.frontEndMain().
      */
-    public final String getName()
-    {
+    public final String getName() {
         return rootModuleName;
     }
 
-    public final void setName(String name)
-    {
+    public final void setName(String name) {
         rootModuleName = name;
     }
 
@@ -169,30 +166,27 @@ public class SpecObj
      * Returns the raw file name of the top-level module as passed to
      * the method Specification.frontEndMain().
      */
-    public final String getFileName()
-    {
+    public final String getFileName() {
         return primaryFileName;
     }
-    
+
     public final ModuleNode getRootModule() {
-    	return getExternalModuleTable().getRootModule();
+        return getExternalModuleTable().getRootModule();
     }
 
     /**
      * Returns the ExternalModuleTable object that contains all of the
-     * definitions for this Specification.  May be null or incomplete if
+     * definitions for this Specification. May be null or incomplete if
      * getErrorLevel() returns a nonzero number.
      */
-    public final ExternalModuleTable getExternalModuleTable()
-    {
+    public final ExternalModuleTable getExternalModuleTable() {
         return externalModuleTable;
     }
 
     /**
      * Returns Errors object containing errors found during parsing.
      */
-    public final Errors getParseErrors()
-    {
+    public final Errors getParseErrors() {
         return parseErrors;
     }
 
@@ -200,31 +194,28 @@ public class SpecObj
      * Returns Errors object containing errors found during semantic
      * processing and level checking.
      */
-    public final Errors getSemanticErrors()
-    {
+    public final Errors getSemanticErrors() {
         return semanticErrors;
     }
 
-	public Set<String> getModuleNames() {
-		final Set<String> s = new HashSet<>();
-		final Enumeration<ModulePointer> modules = getModules();
-		while (modules.hasMoreElements()) {
-			s.add(modules.nextElement().getName());
-		}
-		return s;
-	}
+    public Set<String> getModuleNames() {
+        final Set<String> s = new HashSet<>();
+        final Enumeration<ModulePointer> modules = getModules();
+        while (modules.hasMoreElements()) {
+            s.add(modules.nextElement().getName());
+        }
+        return s;
+    }
 
     // Returns enumeration of the modules so far included in the spec.
     // As whoever wrote this documentation didn't think was worth mentioning,
     // it appears that the "modules" being returned are ModulePointer objects.
-    public final Enumeration<ModulePointer> getModules()
-    {
+    public final Enumeration<ModulePointer> getModules() {
         return moduleRelationshipsSpec.getKeys();
     }
 
     // Returns the moduleRelationshipsSpec object
-    final ModuleRelationships getModuleRelationships()
-    {
+    final ModuleRelationships getModuleRelationships() {
         return moduleRelationshipsSpec;
     }
 
@@ -237,16 +228,15 @@ public class SpecObj
     // module in the ParseUnit created is the name of the entire
     // SpecObj. Returns the ParseUnit found or created. Aborts if
     // neither happens.
-    protected ParseUnit findOrCreateParsedUnit(String name, Errors errors, boolean firstCall, SanyOutput out) throws AbortException
-    {
+    protected ParseUnit findOrCreateParsedUnit(String name, Errors errors, boolean firstCall, SanyOutput out)
+            throws AbortException {
         ParseUnit parseUnit;
 
         // See if ParseUnit "name" is already in parseUnitContext table
         parseUnit = (ParseUnit) parseUnitContext.get(name);
 
         // if not, then we have to get it from the file system
-        if (parseUnit == null)
-        {
+        if (parseUnit == null) {
             // if module "name" is not already in parseUnitContext table
 
             // find a file derived from the name and create a
@@ -260,36 +250,32 @@ public class SpecObj
                 nis = FileUtil.createNamedInputStream(name, this.resolver);
             }
 
-            if (nis != null)
-            {
+            if (nis != null) {
                 // if a non-null NamedInputStream exists, create ParseUnit
                 // from "nis", but don't parse it yet
                 parseUnit = new ParseUnit(this, nis);
 
                 // put "parseUnit" and its name in "parseUnitContext" table
                 parseUnitContext.put(parseUnit.getName(), parseUnit);
-            } else
-            {
+            } else {
                 // no such file exists---must be a missing file
                 /*******************************************************************
-                * At this point, nextExtenderOrInstancerModule is a ModulePointer  *
-                * to the module that contains the EXTENDS or INSTANCES that        *
-                * produces this error.  Hopefully, we can use this to attach a     *
-                * location to the error message.                                   *
-                *******************************************************************/
+                 * At this point, nextExtenderOrInstancerModule is a ModulePointer *
+                 * to the module that contains the EXTENDS or INSTANCES that *
+                 * produces this error. Hopefully, we can use this to attach a *
+                 * location to the error message. *
+                 *******************************************************************/
                 if (nextExtenderOrInstancerModule == null) {
-                  throw errors.addError(
-                      ErrorCode.MODULE_FILE_CANNOT_BE_FOUND,
-                      Location.nullLoc,
-                      "Cannot find source file for module " + name
-                  );
+                    throw errors.addError(
+                            ErrorCode.MODULE_FILE_CANNOT_BE_FOUND,
+                            Location.nullLoc,
+                            "Cannot find source file for module " + name);
                 } else {
-                  throw errors.addError(
-                      ErrorCode.MODULE_FILE_CANNOT_BE_FOUND,
-                      Location.moduleLocation(nextExtenderOrInstancerModule.getName()),
-                      "Cannot find source file for module " + name
-                      + " imported in module " + nextExtenderOrInstancerModule.getName() + "."
-                  );
+                    throw errors.addError(
+                            ErrorCode.MODULE_FILE_CANNOT_BE_FOUND,
+                            Location.moduleLocation(nextExtenderOrInstancerModule.getName()),
+                            "Cannot find source file for module " + name
+                                    + " imported in module " + nextExtenderOrInstancerModule.getName() + ".");
                 }
             }
         }
@@ -307,27 +293,23 @@ public class SpecObj
     // modules. The basic requirement is that if ParseUnit A extends or
     // instances ParseUnit B, then A must have a higher index in the
     // Vector than B.
-    private void calculateDependencies(ParseUnit currentParseUnit)
-    {
+    private void calculateDependencies(ParseUnit currentParseUnit) {
         final Vector<ParseUnit> extendees = currentParseUnit.getExtendees();
         final Vector<ParseUnit> instancees = currentParseUnit.getInstancees();
 
         // Make sure all extendees of currentModule are in the semanticAnalysisVector
-        for (int i = 0; i < extendees.size(); i++)
-        {
+        for (int i = 0; i < extendees.size(); i++) {
             calculateDependencies(extendees.elementAt(i));
         }
 
         // And then make sure all instancees of currentModule are in the
         // semanticAnalysisVector
-        for (int i = 0; i < instancees.size(); i++)
-        {
+        for (int i = 0; i < instancees.size(); i++) {
             calculateDependencies(instancees.elementAt(i));
         }
 
         // Then put self in the Vector, if not already there
-        if (!semanticAnalysisVector.contains(currentParseUnit.getName()))
-        {
+        if (!semanticAnalysisVector.contains(currentParseUnit.getName())) {
             semanticAnalysisVector.addElement(currentParseUnit.getName());
         }
         return;
@@ -336,11 +318,9 @@ public class SpecObj
     // Converts a Vector of ParseUnits to a string representing a
     // circular chain of references, for purposes of the error message
     // in nonCircularityBody method below.
-    private String pathToString(final Vector<ParseUnit> path)
-    {
+    private String pathToString(final Vector<ParseUnit> path) {
         String ret = "";
-        for (int i = 0; i < path.size(); i++)
-        {
+        for (int i = 0; i < path.size(); i++) {
             ret += path.elementAt(i).getFileName() + " --> ";
         }
         return ret + path.elementAt(0).getFileName();
@@ -349,8 +329,7 @@ public class SpecObj
     // This method determines whether the there is any circularity
     // detectable this far among ParseUnits that involves the one named
     // parseUnitName. If there is, cause an abort; otherwise return.
-    private void nonCircularityTest(ParseUnit parseUnit, Errors errors) throws AbortException
-    {
+    private void nonCircularityTest(ParseUnit parseUnit, Errors errors) throws AbortException {
         Set<ParseUnit> alreadyVisited = new HashSet<ParseUnit>();
         final Vector<ParseUnit> circularPath = new Vector<>();
 
@@ -364,9 +343,9 @@ public class SpecObj
     // errors, and the method aborts. The set alreadyVisited is
     // used to prevent searching paths through the same candidate
     // multiple times.
-    private void nonCircularityBody(ParseUnit parseUnit, ParseUnit candidate, Errors errors, Set<ParseUnit> alreadyVisited,
-            final Vector<ParseUnit> circularPath) throws AbortException
-    {
+    private void nonCircularityBody(ParseUnit parseUnit, ParseUnit candidate, Errors errors,
+            Set<ParseUnit> alreadyVisited,
+            final Vector<ParseUnit> circularPath) throws AbortException {
         // If we have already checked for circularities through this
         // parseUnit, just return
         if (alreadyVisited.contains(candidate))
@@ -379,22 +358,18 @@ public class SpecObj
         final Vector<ParseUnit> referencees = candidate.getExtendees();
         referencees.appendNoRepeats(candidate.getInstancees());
 
-        for (int i = 0; i < referencees.size(); i++)
-        {
+        for (int i = 0; i < referencees.size(); i++) {
             ParseUnit referencee = referencees.elementAt(i);
             // See if our search has reached "parseUnit";
             // if so, we have a circularity
-            if (referencee == parseUnit)
-            {
+            if (referencee == parseUnit) {
                 // Circularity detected
                 throw errors.addError(
-                    ErrorCode.MODULE_DEPENDENCIES_ARE_CIRCULAR,
-                    Location.nullLoc,
-                    "Circular dependency among .tla files; dependency cycle is:\n\n  "
-                    + pathToString(circularPath)
-                );
-            } else
-            {
+                        ErrorCode.MODULE_DEPENDENCIES_ARE_CIRCULAR,
+                        Location.nullLoc,
+                        "Circular dependency among .tla files; dependency cycle is:\n\n  "
+                                + pathToString(circularPath));
+            } else {
                 circularPath.addElement(referencee);
                 // See if there is a circular path continuing through this referencee
                 nonCircularityBody(parseUnit, referencee, errors, alreadyVisited, circularPath);
@@ -423,8 +398,7 @@ public class SpecObj
 
     // A wrapper for the next method, which empties the alreadyVisited
     // table calling the recursive method below
-    private boolean findNextUnresolvedExtention(ModulePointer currentModule)
-    {
+    private boolean findNextUnresolvedExtention(ModulePointer currentModule) {
         HashSet<ModulePointer> alreadyVisited = new HashSet<>();
         return findNextUnresolvedExtentionBody(currentModule, alreadyVisited);
     }
@@ -434,10 +408,9 @@ public class SpecObj
     // yet unresolved, if any, and set "nextParseUnit" to its name.
     // Return false iff there are no more unresolved EXTENDS names in
     // the entire specification.
-    private boolean findNextUnresolvedExtentionBody(ModulePointer currentModule, HashSet<ModulePointer> alreadyVisited)
-    {
-        if (alreadyVisited.contains(currentModule))
-        {
+    private boolean findNextUnresolvedExtentionBody(ModulePointer currentModule,
+            HashSet<ModulePointer> alreadyVisited) {
+        if (alreadyVisited.contains(currentModule)) {
             extentionFound = false;
             return false;
         }
@@ -449,11 +422,9 @@ public class SpecObj
 
         // for all of the modules named as extendees of the current
         // module, but which may or not be resolved yet
-        for (int i = 0; i < extendees.size(); i++)
-        {
+        for (int i = 0; i < extendees.size(); i++) {
             // if one of them is unresolved
-            if (currentContext.resolve(extendees.elementAt(i)) == null)
-            {
+            if (currentContext.resolve(extendees.elementAt(i)) == null) {
                 // then it is the next unresolved extention; return it
                 nextParseUnitName = extendees.elementAt(i);
                 nextExtenderOrInstancerModule = currentModule;
@@ -464,11 +435,9 @@ public class SpecObj
 
         // See if one of the already-resolved extendees has any unresolved
         // extentions
-        for (int i = 0; i < extendees.size(); i++)
-        {
+        for (int i = 0; i < extendees.size(); i++) {
             // by recursive invocation of this method on the extendees
-            if (findNextUnresolvedExtentionBody(currentContext.resolve(extendees.elementAt(i)), alreadyVisited))
-            {
+            if (findNextUnresolvedExtentionBody(currentContext.resolve(extendees.elementAt(i)), alreadyVisited)) {
                 extentionFound = true;
                 return true;
             }
@@ -476,15 +445,12 @@ public class SpecObj
 
         // See if one of the already-resolved instancees of currentModule
         // has any unresolved extentions
-        for (int i = 0; i < instancees.size(); i++)
-        {
+        for (int i = 0; i < instancees.size(); i++) {
             // if this instancee has been resolved
-            if (currentContext.resolve(instancees.elementAt(i)) != null)
-            {
+            if (currentContext.resolve(instancees.elementAt(i)) != null) {
                 // check by recursive invocation of this method on the instancees
                 if (findNextUnresolvedExtentionBody(currentContext.resolve(instancees.elementAt(i)),
-                        alreadyVisited))
-                {
+                        alreadyVisited)) {
                     extentionFound = true;
                     return true;
                 } // end if
@@ -495,10 +461,8 @@ public class SpecObj
         // they extend or instance) have any unresolved extentions by
         // invoking this method recursively on them.
         final Vector<ModulePointer> innerModules = currentModule.getDirectInnerModules();
-        for (int i = 0; i < innerModules.size(); i++)
-        {
-            if (findNextUnresolvedExtentionBody(innerModules.elementAt(i), alreadyVisited))
-            {
+        for (int i = 0; i < innerModules.size(); i++) {
+            if (findNextUnresolvedExtentionBody(innerModules.elementAt(i), alreadyVisited)) {
                 extentionFound = true;
                 return true;
             }
@@ -511,8 +475,7 @@ public class SpecObj
 
     // A wrapper for the next method, which empties the alreadyVisited
     // table calling the recursive method below
-    private boolean findNextUnresolvedInstantiation(ModulePointer currentModule)
-    {
+    private boolean findNextUnresolvedInstantiation(ModulePointer currentModule) {
         HashSet<ModulePointer> alreadyVisited = new HashSet<>();
         return findNextUnresolvedInstantiationBody(currentModule, alreadyVisited);
     }
@@ -523,8 +486,7 @@ public class SpecObj
     // linear search of the declaration in the syntactic tree of
     // "module". Note: this does NOT scale when there are large numbers
     // of INSTANCE decls in a long module.
-    private boolean instanceResolvesToInternalModule(ModulePointer currentModule, String instanceeName)
-    {
+    private boolean instanceResolvesToInternalModule(ModulePointer currentModule, String instanceeName) {
         // Find the body part of module tree
         TreeNode body = currentModule.getBody();
 
@@ -535,13 +497,11 @@ public class SpecObj
         // loop through the top level definitions in the body of the
         // module looking for embedded modules instantiations, and module
         // definitions
-        for (int i = 0; i < body.heirs().length; i++)
-        {
+        for (int i = 0; i < body.heirs().length; i++) {
             TreeNode def = body.heirs()[i];
 
             // if we encounter an new (inner) module
-            if (def.getImage().equals("N_Module"))
-            {
+            if (def.getImage().equals("N_Module")) {
                 // Pick off name of inner module
                 String innerModuleName = def.heirs()[0].heirs()[1].getImage();
 
@@ -550,18 +510,15 @@ public class SpecObj
             }
 
             // if we encounter an INSTANCE decl
-            else if (def.getImage().equals("N_Instance"))
-            {
+            else if (def.getImage().equals("N_Instance")) {
                 TreeNode[] instanceHeirs = def.heirs();
                 int nonLocalInstanceNodeIX;
 
                 // The modifier "LOCAL" may or may not appear in the syntax tree;
                 // if so, offset by 1
-                if (instanceHeirs[0].getImage().equals("LOCAL"))
-                {
+                if (instanceHeirs[0].getImage().equals("LOCAL")) {
                     nonLocalInstanceNodeIX = 1;
-                } else
-                {
+                } else {
                     nonLocalInstanceNodeIX = 0;
                 }
 
@@ -571,26 +528,22 @@ public class SpecObj
                 // if this is the module name we are searching for, then if it
                 // corresponds to an inner module defined earlier, then return
                 // true; else return false.
-                if (instanceModuleName.equals(instanceeName))
-                {
+                if (instanceModuleName.equals(instanceeName)) {
                     return internalModulesSeen.contains(instanceeName);
                 } // end if
             } // end if
 
             // if we encounter a module definition (i.e. D(x,y) == INSTANCE
             // Modname WITH ...) that counts as an instance also
-            else if (def.getImage().equals("N_ModuleDefinition"))
-            {
+            else if (def.getImage().equals("N_ModuleDefinition")) {
                 TreeNode[] instanceHeirs = def.heirs();
                 int nonLocalInstanceNodeIX;
 
                 // The modifier "LOCAL" may or may not appear in the syntax tree;
                 // if so, offset by 1
-                if (instanceHeirs[0].getImage().equals("LOCAL"))
-                {
+                if (instanceHeirs[0].getImage().equals("LOCAL")) {
                     nonLocalInstanceNodeIX = 3;
-                } else
-                {
+                } else {
                     nonLocalInstanceNodeIX = 2;
                 }
 
@@ -600,8 +553,7 @@ public class SpecObj
                 // if this is the module name we are searching for, then if it
                 // corresponds to an inner module defined earlier, then return
                 // true; else return false.
-                if (instanceModuleName.equals(instanceeName))
-                {
+                if (instanceModuleName.equals(instanceeName)) {
                     return internalModulesSeen.contains(instanceeName);
                 } // end if
             } // end else
@@ -614,10 +566,9 @@ public class SpecObj
     // name in an INSTANCE decl that is as yet unresolved, if any, and
     // set "nextParseUnit" to its name. Return false iff there are no
     // more unresolved INSTANCES names in the entire specification.
-    private boolean findNextUnresolvedInstantiationBody(ModulePointer currentModule, HashSet<ModulePointer> alreadyVisited)
-    {
-        if (alreadyVisited.contains(currentModule))
-        {
+    private boolean findNextUnresolvedInstantiationBody(ModulePointer currentModule,
+            HashSet<ModulePointer> alreadyVisited) {
+        if (alreadyVisited.contains(currentModule)) {
             instantiationFound = false;
             return false;
         }
@@ -629,19 +580,16 @@ public class SpecObj
 
         // for all of the modules named as instancees of the current
         // module, but which may or not be resolved yet.
-        for (int i = 0; i < instancees.size(); i++)
-        {
+        for (int i = 0; i < instancees.size(); i++) {
             // if one of them is unresolved
-            if (currentContext.resolve(instancees.elementAt(i)) == null)
-            {
+            if (currentContext.resolve(instancees.elementAt(i)) == null) {
                 // See if it can be resolved WITHIN the module in which the
                 // INSTANCE stmt occurs, i.e. does it resolve to an inner
                 // module declared above this INSTANCE stmt? Nothing in the
                 // logic so far covers this (most common) case, so we have to
                 // insert logic here to check now.
 
-                if (!instanceResolvesToInternalModule(currentModule, instancees.elementAt(i)))
-                {
+                if (!instanceResolvesToInternalModule(currentModule, instancees.elementAt(i))) {
                     // then it is the next unresolved instantiation; return it
                     nextParseUnitName = instancees.elementAt(i);
                     nextExtenderOrInstancerModule = currentModule;
@@ -653,12 +601,10 @@ public class SpecObj
 
         // See if one of the already-resolved extendees has any
         // unresolved instantiations
-        for (int i = 0; i < extendees.size(); i++)
-        {
+        for (int i = 0; i < extendees.size(); i++) {
             // by recursive invocation of this method on the extendees
             if (findNextUnresolvedInstantiationBody(currentContext.resolve(extendees.elementAt(i)),
-                    alreadyVisited))
-            {
+                    alreadyVisited)) {
                 instantiationFound = true;
                 return true;
             }
@@ -666,14 +612,11 @@ public class SpecObj
 
         // See if one of the already-resolved instancees of currentModule
         // has any unresolved extentions.
-        for (int i = 0; i < instancees.size(); i++)
-        {
+        for (int i = 0; i < instancees.size(); i++) {
             // if this instancee has been resolved
-            if (currentContext.resolve(instancees.elementAt(i)) != null)
-            {
+            if (currentContext.resolve(instancees.elementAt(i)) != null) {
                 if (findNextUnresolvedInstantiationBody(currentContext.resolve(instancees.elementAt(i)),
-                        alreadyVisited))
-                {
+                        alreadyVisited)) {
                     instantiationFound = true;
                     return true;
                 }
@@ -684,10 +627,8 @@ public class SpecObj
         // they extend) have any unresolved instantiations by invoking
         // this method recursively on them.
         final Vector<ModulePointer> innerModules = currentModule.getDirectInnerModules();
-        for (int i = 0; i < innerModules.size(); i++)
-        {
-            if (findNextUnresolvedInstantiationBody(innerModules.elementAt(i), alreadyVisited))
-            {
+        for (int i = 0; i < innerModules.size(); i++) {
+            if (findNextUnresolvedInstantiationBody(innerModules.elementAt(i), alreadyVisited)) {
                 instantiationFound = true;
                 return true;
             }
@@ -700,14 +641,12 @@ public class SpecObj
     }
 
     // Returns true iff mod1 is known to directly extend mod2
-    private boolean directlyExtends(ModulePointer mod1, ModulePointer mod2)
-    {
+    private boolean directlyExtends(ModulePointer mod1, ModulePointer mod2) {
         ModuleRelatives mod1Rels = mod1.getRelatives();
         final Vector<String> extendees = mod1Rels.directlyExtendedModuleNames;
         ModuleContext mod1Context = mod1Rels.context;
 
-        for (int i = 0; i < extendees.size(); i++)
-        {
+        for (int i = 0; i < extendees.size(); i++) {
             if (mod1Context.resolve(extendees.elementAt(i)) == mod2)
                 return true;
         }
@@ -720,8 +659,7 @@ public class SpecObj
     // itself. This method is horribly inefficient when there are a
     // large number of modules, looping as it does through ALL modules;
     // it must be rewritten recursively!!
-    private Vector<ModulePointer> getModulesIndirectlyExtending(ModulePointer module)
-    {
+    private Vector<ModulePointer> getModulesIndirectlyExtending(ModulePointer module) {
         // The Vector of Modules that equals, or directly or indirectly
         // extends, "module"
         final Vector<ModulePointer> extenders = new Vector<>();
@@ -734,23 +672,19 @@ public class SpecObj
 
         // while there were more additions to the Vector of modules
         // indirectly extending "module"
-        while (additions)
-        {
+        while (additions) {
             additions = false;
 
             // for all newly added modules, see if there are any others that
             // extend them
-            for (int i = lastAdditionsStart; i < lastAdditionsEnd; i++)
-            {
+            for (int i = lastAdditionsStart; i < lastAdditionsEnd; i++) {
                 // Check ALL modules in the entire specification (!) to see if
                 // they extend the i'th element of the vector
                 Enumeration<ModulePointer> enumModules = getModules();
-                while (enumModules.hasMoreElements())
-                {
+                while (enumModules.hasMoreElements()) {
                     ModulePointer modPointer = enumModules.nextElement();
 
-                    if (directlyExtends(modPointer, extenders.elementAt(i)))
-                    {
+                    if (directlyExtends(modPointer, extenders.elementAt(i))) {
                         if (!additions)
                             lastAdditionsStart = lastAdditionsEnd;
                         extenders.addElement(modPointer);
@@ -768,8 +702,7 @@ public class SpecObj
 
     // This modules binds the name used in an INSTANCE definition in
     // module "instancer" to the top-level module in ParseUnit instancee
-    private void resolveNamesBetweenSpecAndInstantiation(ModulePointer instancer, ParseUnit instancee)
-    {
+    private void resolveNamesBetweenSpecAndInstantiation(ModulePointer instancer, ParseUnit instancee) {
         // Bind the name of the instancee in the instancer's context
         ModuleContext instancerContext = instancer.getRelatives().context;
         instancerContext.bindIfNotBound(instancee.getName(), instancee.getRootModule());
@@ -782,8 +715,7 @@ public class SpecObj
     // module xx that extends "extender", directly or indirectly, we
     // must resolve module names in xx to top level internal modules in
     // extendeeParseUnit
-    private void resolveNamesBetweenSpecAndExtention(ModulePointer extender, ParseUnit extendee)
-    {
+    private void resolveNamesBetweenSpecAndExtention(ModulePointer extender, ParseUnit extendee) {
         // First, bind the name of the extendee in the extender's context
         ModuleContext extenderContext = extender.getRelatives().context;
         extenderContext.bindIfNotBound(extendee.getName(), extendee.getRootModule());
@@ -793,8 +725,7 @@ public class SpecObj
         // indirectly.
         final Vector<ModulePointer> modulesIndirectlyExtending = getModulesIndirectlyExtending(extender);
 
-        for (int i = 0; i < modulesIndirectlyExtending.size(); i++)
-        {
+        for (int i = 0; i < modulesIndirectlyExtending.size(); i++) {
             resolveNamesBetweenModuleAndExtention(modulesIndirectlyExtending.elementAt(i), extendee);
         }
     }
@@ -802,8 +733,7 @@ public class SpecObj
     // Add all of the top level inner modules of extendeeParseUnit to
     // the contexts of extenderModule by doing appropriate bindings, and
     // do the same for all of extenderModule's submodules
-    private void resolveNamesBetweenModuleAndExtention(ModulePointer extenderModule, ParseUnit extendeeParseUnit)
-    {
+    private void resolveNamesBetweenModuleAndExtention(ModulePointer extenderModule, ParseUnit extendeeParseUnit) {
         ModuleRelatives extenderRelatives = extenderModule.getRelatives();
         ModuleContext extenderContext = extenderRelatives.context;
         final Vector<String> instantiatedNames = extenderRelatives.directlyInstantiatedModuleNames;
@@ -814,22 +744,20 @@ public class SpecObj
 
         // for each module name extended by extenderModule, try to resolve
         // it in the module it extends
-        for (int i = 0; i < extendedNames.size(); i++)
-        {
+        for (int i = 0; i < extendedNames.size(); i++) {
             String extendedName = extendedNames.elementAt(i);
 
             // Pick up vector of top level inner modules of extendeeParseUnit
-            final Vector<ModulePointer> extendeeInnerModules = extendeeParseUnit.getRootModule().getDirectInnerModules();
+            final Vector<ModulePointer> extendeeInnerModules = extendeeParseUnit.getRootModule()
+                    .getDirectInnerModules();
 
             // See if the name occurs among the direct inner modules of extendee
-            for (int j = 0; j < extendeeInnerModules.size(); j++)
-            {
+            for (int j = 0; j < extendeeInnerModules.size(); j++) {
                 ModulePointer extendeeInnerModule = extendeeInnerModules.elementAt(j);
                 String extendeeInnerName = extendeeInnerModule.getName();
 
                 // if we have a match...
-                if (extendedName.equals(extendeeInnerName))
-                {
+                if (extendedName.equals(extendeeInnerName)) {
                     // bind the name to the inner module of extendee in the
                     // context of the extender iff it is unbound before this
                     extenderContext.bindIfNotBound(extendedName, extendeeInnerModule);
@@ -842,22 +770,20 @@ public class SpecObj
 
         // for each module name instantiated at the top level of
         // extenderModule, try to resolve it in the module it extends
-        for (int i = 0; i < instantiatedNames.size(); i++)
-        {
+        for (int i = 0; i < instantiatedNames.size(); i++) {
             String instanceName = instantiatedNames.elementAt(i);
 
             // Pick up vector of top level inner modules of extendeeParseUnit
-            final Vector<ModulePointer> extendeeInnerModules = extendeeParseUnit.getRootModule().getDirectInnerModules();
+            final Vector<ModulePointer> extendeeInnerModules = extendeeParseUnit.getRootModule()
+                    .getDirectInnerModules();
 
             // See if the name occurs among the direct inner modules of extendee
-            for (int j = 0; j < extendeeInnerModules.size(); j++)
-            {
+            for (int j = 0; j < extendeeInnerModules.size(); j++) {
                 ModulePointer extendeeInnerModule = extendeeInnerModules.elementAt(j);
                 String extendeeInnerName = extendeeInnerModule.getName();
 
                 // if we have a match...
-                if (instanceName.equals(extendeeInnerName))
-                {
+                if (instanceName.equals(extendeeInnerName)) {
                     // bind the name to the inner module of extendee in the
                     // context of the extender iff it is unbound before this
                     extenderContext.bindIfNotBound(instanceName, extendeeInnerModule);
@@ -872,8 +798,7 @@ public class SpecObj
         // modules, try to resolve ITS unresolved module names in the same
         // extendee ParseUnit.
         final Vector<ModulePointer> extenderInnerModules = extenderRelatives.directInnerModules;
-        for (int i = 0; i < extenderInnerModules.size(); i++)
-        {
+        for (int i = 0; i < extenderInnerModules.size(); i++) {
             ModulePointer nextInner = extenderInnerModules.elementAt(i);
             resolveNamesBetweenModuleAndExtention(nextInner, extendeeParseUnit);
         }
@@ -881,25 +806,28 @@ public class SpecObj
 
     /**
      * This invokes {@code loadSpec(rootExternalModuleName, errors, false);}
+     * 
      * @return Ignore; always returns true (may be pre-empted by thrown exception).
      */
-    public boolean loadSpec(final String rootExternalModuleName, final Errors errors, SanyOutput out) throws AbortException {
-    	return loadSpec(rootExternalModuleName, errors, false, out);
+    public boolean loadSpec(final String rootExternalModuleName, final Errors errors, SanyOutput out)
+            throws AbortException {
+        return loadSpec(rootExternalModuleName, errors, false, out);
     }
-    
+
     /**
-	 * This method "loads" an entire specification, starting with the top-level
-	 * rootExternalModule and followed by all of the external modules it references
-	 * via EXTENDS and INSTANCE statements.
-	 * 
-	 * @param validateParseUnits if true, each parseable unit will be checked for
-	 *                           PlusCal and its accompanied TLA translation block,
-	 *                           followed by a validation of them if they exist
-	 * @see Validator
-	 * @return Ignore; always returns true (may be pre-empted by thrown exception).
-	 */
-	public boolean loadSpec(final String rootExternalModuleName, final Errors errors, final boolean validateParseUnits, SanyOutput out)
-			throws AbortException {
+     * This method "loads" an entire specification, starting with the top-level
+     * rootExternalModule and followed by all of the external modules it references
+     * via EXTENDS and INSTANCE statements.
+     * 
+     * @param validateParseUnits if true, each parseable unit will be checked for
+     *                           PlusCal and its accompanied TLA translation block,
+     *                           followed by a validation of them if they exist
+     * @see Validator
+     * @return Ignore; always returns true (may be pre-empted by thrown exception).
+     */
+    public boolean loadSpec(final String rootExternalModuleName, final Errors errors, final boolean validateParseUnits,
+            SanyOutput out)
+            throws AbortException {
         // If rootExternalModuleName" has *not* already been parsed, then
         // go to the file system and find the file containing it, create a
         // ParseUnit for it, and parse it. Parsing includes determining
@@ -907,7 +835,7 @@ public class SpecObj
         rootParseUnit = findOrCreateParsedUnit(rootExternalModuleName, errors, true /* first call */, out);
         rootModule = rootParseUnit.getRootModule();
         if (validateParseUnits) {
-        	validateParseUnit(rootParseUnit, errors);
+            validateParseUnit(rootParseUnit, errors);
         }
 
         // Retrieve and parse all module extentions: As long as there is
@@ -925,16 +853,14 @@ public class SpecObj
 
         ParseUnit nextExtentionOrInstantiationParseUnit = null;
 
-        while (findNextUnresolvedExtention(rootModule) || findNextUnresolvedInstantiation(rootModule))
-        {
+        while (findNextUnresolvedExtention(rootModule) || findNextUnresolvedInstantiation(rootModule)) {
             // nextParseUnitName has not already been processed through some
             // other path,
-            if (parseUnitContext.get(nextParseUnitName) == null)
-            {
+            if (parseUnitContext.get(nextParseUnitName) == null) {
                 // find it in the file system (if there) and parse and analyze it.
-                nextExtentionOrInstantiationParseUnit = findOrCreateParsedUnit(nextParseUnitName, errors, false /* not first call */, out);
-            } else
-            {
+                nextExtentionOrInstantiationParseUnit = findOrCreateParsedUnit(nextParseUnitName, errors,
+                        false /* not first call */, out);
+            } else {
                 // or find it in the known parseUnitContext
                 nextExtentionOrInstantiationParseUnit = (ParseUnit) parseUnitContext.get(nextParseUnitName);
             }
@@ -945,17 +871,15 @@ public class SpecObj
             // instanced by extenderOrInstancerParseUnit.
             ParseUnit extenderOrInstancerParseUnit = nextExtenderOrInstancerModule.getParseUnit();
 
-            if (extentionFound)
-            {
+            if (extentionFound) {
                 if (validateParseUnits) {
-                	validateParseUnit(nextExtentionOrInstantiationParseUnit, errors);
+                    validateParseUnit(nextExtentionOrInstantiationParseUnit, errors);
                 }
 
                 extenderOrInstancerParseUnit.addExtendee(nextExtentionOrInstantiationParseUnit);
                 nextExtentionOrInstantiationParseUnit.addExtendedBy(extenderOrInstancerParseUnit);
             }
-            if (instantiationFound)
-            {
+            if (instantiationFound) {
                 extenderOrInstancerParseUnit.addInstancee(nextExtentionOrInstantiationParseUnit);
                 nextExtentionOrInstantiationParseUnit.addInstancedBy(extenderOrInstancerParseUnit);
             }
@@ -967,16 +891,14 @@ public class SpecObj
             // it may have inner modules that are the resolvants for
             // unresolved module names in the nextExtenderOrInstancerModule;
             // resolve the ones that are possible
-            if (extentionFound)
-            {
+            if (extentionFound) {
                 resolveNamesBetweenSpecAndExtention(nextExtenderOrInstancerModule,
                         nextExtentionOrInstantiationParseUnit);
             }
             // If this ParseUnit is loaded because of an INSTANCE stmt, then
             // the outer module of the ParseUnit is the resolution of the
             // previously unresolved instantiation.
-            if (instantiationFound)
-            {
+            if (instantiationFound) {
                 resolveNamesBetweenSpecAndInstantiation(nextExtenderOrInstancerModule,
                         nextExtentionOrInstantiationParseUnit);
             }
@@ -988,107 +910,110 @@ public class SpecObj
         calculateDependencies(rootParseUnit);
         return true;
     }
-	
-	private void validateParseUnit(final ParseUnit parseUnit, Errors errors) {
-    	final File f = parseUnit.getNis().sourceFile();
-    	
-    	try (final FileInputStream fis = new FileInputStream(f)) {
-    		final Set<ValidationResult> results = Validator.validate(parseUnit, fis);
-    		
-    		if (results.contains(ValidationResult.TLA_DIVERGENCE_EXISTS) && results.contains(ValidationResult.PCAL_DIVERGENCE_EXISTS)) {
-    		/* Both hashes are invalid.
-    	       This is probably a sequel to Case 3, in which the user has decided either
-    	       (1) she has fixed the bug or (2) wants to change the spec and will later
-    	       modify the translation.
-    	       TLC called: By default, a warning should be raised.  It should be considered
-    	          the same as Case 2. */
-    		    errors.addWarning(
-    		        ErrorCode.PLUSCAL_ALGORITHM_AND_TRANSLATION_CHANGED_SINCE_LAST_TRANSLATION,
-    		        Location.moduleLocation(parseUnit.getName()),
-    		        "Both the PlusCal algorithm and its TLA+ translation in module "
-    		        + parseUnit.getName() + " have changed since the last translation."
-    		    );
-    		} else if (results.contains(ValidationResult.TLA_DIVERGENCE_EXISTS)) {
-      	      /* The algorithm hash is valid and the translation hash is invalid.
-     	       There are two reasons: (1) The user is debugging the spec, or
-     	       (2) She needed to modify the translation because she wants a spec that can't
-     	       be produced by PlusCal.  
-     	       TLC called: In both cases, no warning should be needed.  However,
-     	          in (1), she might have finished debugging and forgotten to run the 
-     	          translator.  To handle case (1), I suggest the default should be to run
-     	          TLC but raise a transient window with a warning that is easily ignored.  
-     	          For case (2), it should be possible to put something in a translation 
-     	          comment to disable the warning. */
-    		    errors.addWarning(
-    		        ErrorCode.PLUSCAL_TRANSLATION_CHANGED_SINCE_LAST_TRANSLATION,
-    		        Location.moduleLocation(parseUnit.getName()),
-    		        "The TLA+ translation in module " + parseUnit.getName()
-    		        + " has changed since its last translation."
-    		    );
-    		} else if (results.contains(ValidationResult.PCAL_DIVERGENCE_EXISTS)) {
-       	      /* The algorithm hash is invalid and the translation hash is valid.
-     	       TLC called: By default, a warning should be generated.  I see little reason 
-     	         for not generating the warning.  So, it doesn't matter if its inconvenient
-     	         to turn off the warning, but turning it off should affect only the current
-     	         spec; and it should be easy to turn back on. */
-    		    errors.addWarning(
-    		        ErrorCode.PLUSCAL_ALGORITHM_CHANGED_SINCE_LAST_TRANSLATION,
-    		        Location.moduleLocation(parseUnit.getName()),
-    		        "The PlusCal algorithm in module " + parseUnit.getName()
-    		        + " has changed since its last translation."
-    		    );
-    		} else if (results.contains(ValidationResult.ERROR_ENCOUNTERED)) {
-    		    errors.addError(
-    		        ErrorCode.INTERNAL_ERROR,
-    		        Location.moduleLocation(parseUnit.getName()),
-    		        "A unexpected problem was encountered attempting to validate"
-    		        + " the specification for " + parseUnit.getName()
-    		    );
-    		}
-    	} catch (final IOException e) {
-    	    errors.addError(
-    	        ErrorCode.INTERNAL_ERROR,
-    	        Location.moduleLocation(parseUnit.getName()),
-    	        "Encountered an exception while attempt to validate "
-    	        + f.getAbsolutePath() + " - " + e.getMessage()
-    	    );
-    	}
-	}
+
+    private void validateParseUnit(final ParseUnit parseUnit, Errors errors) {
+        final File f = parseUnit.getNis().sourceFile();
+
+        try (final FileInputStream fis = new FileInputStream(f)) {
+            final Set<ValidationResult> results = Validator.validate(parseUnit, fis);
+
+            if (results.contains(ValidationResult.TLA_DIVERGENCE_EXISTS)
+                    && results.contains(ValidationResult.PCAL_DIVERGENCE_EXISTS)) {
+                /*
+                 * Both hashes are invalid.
+                 * This is probably a sequel to Case 3, in which the user has decided either
+                 * (1) she has fixed the bug or (2) wants to change the spec and will later
+                 * modify the translation.
+                 * TLC called: By default, a warning should be raised. It should be considered
+                 * the same as Case 2.
+                 */
+                errors.addWarning(
+                        ErrorCode.PLUSCAL_ALGORITHM_AND_TRANSLATION_CHANGED_SINCE_LAST_TRANSLATION,
+                        Location.moduleLocation(parseUnit.getName()),
+                        "Both the PlusCal algorithm and its TLA+ translation in module "
+                                + parseUnit.getName() + " have changed since the last translation.");
+            } else if (results.contains(ValidationResult.TLA_DIVERGENCE_EXISTS)) {
+                /*
+                 * The algorithm hash is valid and the translation hash is invalid.
+                 * There are two reasons: (1) The user is debugging the spec, or
+                 * (2) She needed to modify the translation because she wants a spec that can't
+                 * be produced by PlusCal.
+                 * TLC called: In both cases, no warning should be needed. However,
+                 * in (1), she might have finished debugging and forgotten to run the
+                 * translator. To handle case (1), I suggest the default should be to run
+                 * TLC but raise a transient window with a warning that is easily ignored.
+                 * For case (2), it should be possible to put something in a translation
+                 * comment to disable the warning.
+                 */
+                errors.addWarning(
+                        ErrorCode.PLUSCAL_TRANSLATION_CHANGED_SINCE_LAST_TRANSLATION,
+                        Location.moduleLocation(parseUnit.getName()),
+                        "The TLA+ translation in module " + parseUnit.getName()
+                                + " has changed since its last translation.");
+            } else if (results.contains(ValidationResult.PCAL_DIVERGENCE_EXISTS)) {
+                /*
+                 * The algorithm hash is invalid and the translation hash is valid.
+                 * TLC called: By default, a warning should be generated. I see little reason
+                 * for not generating the warning. So, it doesn't matter if its inconvenient
+                 * to turn off the warning, but turning it off should affect only the current
+                 * spec; and it should be easy to turn back on.
+                 */
+                errors.addWarning(
+                        ErrorCode.PLUSCAL_ALGORITHM_CHANGED_SINCE_LAST_TRANSLATION,
+                        Location.moduleLocation(parseUnit.getName()),
+                        "The PlusCal algorithm in module " + parseUnit.getName()
+                                + " has changed since its last translation.");
+            } else if (results.contains(ValidationResult.ERROR_ENCOUNTERED)) {
+                errors.addError(
+                        ErrorCode.INTERNAL_ERROR,
+                        Location.moduleLocation(parseUnit.getName()),
+                        "A unexpected problem was encountered attempting to validate"
+                                + " the specification for " + parseUnit.getName());
+            }
+        } catch (final IOException e) {
+            errors.addError(
+                    ErrorCode.INTERNAL_ERROR,
+                    Location.moduleLocation(parseUnit.getName()),
+                    "Encountered an exception while attempt to validate "
+                            + f.getAbsolutePath() + " - " + e.getMessage());
+        }
+    }
 
     /**
      * Getter for the name resolver used in the Spec
+     * 
      * @return name resolver
      */
-    public FilenameToStream getResolver()
-    {
+    public FilenameToStream getResolver() {
         return resolver;
     }
 
-	public ParseUnit getRootParseUnit() {
-		return this.parseUnitContext.get(this.getName());
-	}
+    public ParseUnit getRootParseUnit() {
+        return this.parseUnitContext.get(this.getName());
+    }
 
-	public List<ExprNode> getPostConditionSpecs() {
-		// overridden by sub-classes.
-		return new ArrayList<>();
-	}
+    public List<ExprNode> getPostConditionSpecs() {
+        // overridden by sub-classes.
+        return new ArrayList<>();
+    }
 
-	public List<Action> getInvariants(SpecProcessor specProcessor) throws ParseException, SemanticException, AbortException {
-		// overridden by sub-classes.
-		return new ArrayList<>();
-	}
+    public List<Action> getInvariants(SpecProcessor specProcessor)
+            throws ParseException, SemanticException, AbortException {
+        // overridden by sub-classes.
+        return new ArrayList<>();
+    }
 
-	public List<OpDefNode> getConstraints() {
-		// overridden by sub-classes.
-		return new ArrayList<>();
-	}
+    public List<OpDefNode> getConstraints() {
+        // overridden by sub-classes.
+        return new ArrayList<>();
+    }
 
-	public List<OpDefNode> getActionConstraints() {
-		// overridden by sub-classes.
-		return new ArrayList<>();
-	}
+    public List<OpDefNode> getActionConstraints() {
+        // overridden by sub-classes.
+        return new ArrayList<>();
+    }
 
-	public void processConstantDefns(final Defns defns) {
-		// overridden by sub-classes.
-	}
+    public void processConstantDefns(final Defns defns) {
+        // overridden by sub-classes.
+    }
 }

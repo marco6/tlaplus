@@ -42,7 +42,7 @@ public class SymmetryModelCheckerTest3a extends ModelCheckerTestCase {
 	public SymmetryModelCheckerTest3a() {
 		super("MCa", "symmetry");
 	}
-	
+
 	@Test
 	@Ignore("Ignored for as long as symmetry is incorrectly handled by TLC with liveness checking.")
 	public void testSpec() {
@@ -66,7 +66,7 @@ public class SymmetryModelCheckerTest3a extends ModelCheckerTestCase {
 		// Assert it has found the temporal violation and also a counter example
 		assertTrue(recorder.recorded(EC.TLC_TEMPORAL_PROPERTY_VIOLATED));
 		assertTrue(recorder.recorded(EC.TLC_COUNTER_EXAMPLE));
-		
+
 		assertNodeAndPtrSizes(72L, 32L);
 
 		// Assert the error trace
@@ -77,9 +77,9 @@ public class SymmetryModelCheckerTest3a extends ModelCheckerTestCase {
 		expectedTrace.add("/\\ x = b\n/\\ y = 0");
 		expectedTrace.add("/\\ x = b\n/\\ y = 1");
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace);
-		
+
 		assertBackToState(1);
-		
+
 		// Surprisingly enough, it turns out that LiveWorker#printTrace actually
 		// generates a partially valid trace but simply fails to correctly print
 		// it. It omits the final/last state with x=b from being printed. The

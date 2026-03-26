@@ -22,18 +22,18 @@ public final class MemObjectQueue {
   private final static int InitialSize = 4096;
   private final static int GrowthFactor = 2;
 
-  /* Fields  */
+  /* Fields */
   private int len;
   private Object[] states;
   private int start = 0;
   private String diskdir;
-    
+
   public MemObjectQueue(String metadir) {
     this.states = new Object[InitialSize];
     this.start = 0;
     this.diskdir = metadir;
   }
-    
+
   public final void enqueue(Object state) {
     if (this.len == this.states.length) {
       // grow the array
@@ -49,9 +49,10 @@ public final class MemObjectQueue {
     this.states[last] = state;
     this.len++;
   }
-    
+
   public final Object dequeue() {
-    if (this.len == 0) return null;
+    if (this.len == 0)
+      return null;
     Object res = this.states[this.start];
     this.states[this.start] = null;
     this.start = (this.start + 1) % this.states.length;
@@ -67,7 +68,8 @@ public final class MemObjectQueue {
     int index = this.start;
     for (int i = 0; i < this.len; i++) {
       oos.writeObject(this.states[index++]);
-      if (index == this.states.length) index = 0;
+      if (index == this.states.length)
+        index = 0;
     }
     oos.close();
   }
@@ -78,26 +80,24 @@ public final class MemObjectQueue {
     String newName = this.diskdir + FileUtil.separator + "queue.tmp";
     File newChkpt = new File(newName);
     if ((oldChkpt.exists() && !oldChkpt.delete()) ||
-	!newChkpt.renameTo(oldChkpt)) {
+        !newChkpt.renameTo(oldChkpt)) {
       throw new IOException("MemStateQueue.commitChkpt: cannot delete " + oldChkpt);
     }
   }
-  
+
   public final void recover() throws IOException {
     String filename = this.diskdir + FileUtil.separator + "queue.chkpt";
     ObjectInputStream ois = FileUtil.newOBFIS(filename);
     this.len = ois.readInt();
     try {
       for (int i = 0; i < this.len; i++) {
-	this.states[i] = ois.readObject();
+        this.states[i] = ois.readObject();
       }
-    }
-    catch (ClassNotFoundException e) {
-        ois.close();
-        Assert.fail(EC.SYSTEM_CHECKPOINT_RECOVERY_CORRUPT, e.getMessage());
-    } finally 
-    {
-        ois.close();
+    } catch (ClassNotFoundException e) {
+      ois.close();
+      Assert.fail(EC.SYSTEM_CHECKPOINT_RECOVERY_CORRUPT, e.getMessage());
+    } finally {
+      ois.close();
     }
   }
 

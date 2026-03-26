@@ -199,7 +199,7 @@ public class FormatterE2ETest {
     @Test
     public void testNewlinePreservation() {
         String spec = "---- MODULE NewlineTest ----\n" +
-                //"\n" + TODO: currently removing leading newlines
+        // "\n" + TODO: currently removing leading newlines
                 "VARIABLE x\n" +
                 "\n" +
                 "\n" +
@@ -267,7 +267,8 @@ public class FormatterE2ETest {
     @Test
     public void testModuleWithExtendsBreak() {
         String spec = "---- MODULE TestWithExtends ----\n" +
-                "EXTENDS Naturals, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC\n" +
+                "EXTENDS Naturals, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC\n"
+                +
                 "VARIABLE counter\n" +
                 "====\n";
         String wrapped = "---- MODULE TestWithExtends ----\n" +

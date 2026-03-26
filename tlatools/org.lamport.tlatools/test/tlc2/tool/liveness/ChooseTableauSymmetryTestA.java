@@ -43,7 +43,7 @@ public class ChooseTableauSymmetryTestA extends ModelCheckerTestCase {
 	public ChooseTableauSymmetryTestA() {
 		super("ChooseTableauSymmetryMCa", "symmetry", ExitStatus.VIOLATION_LIVENESS);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
@@ -63,7 +63,7 @@ public class ChooseTableauSymmetryTestA extends ModelCheckerTestCase {
 		expectedTrace.add("arr = (a :> \"busy\" @@ b :> \"busy\")");
 		expectedTrace.add("arr = (a :> \"done\" @@ b :> \"busy\")");
 		expectedTrace.add("arr = (a :> \"ready\" @@ b :> \"busy\")");
-		
+
 		final List<String> expectedActions = new ArrayList<>();
 		expectedActions.add(isExtendedTLCState()
 				? "<Init line 5, col 9 to line 5, col 37 of module ChooseTableauSymmetry>"
@@ -72,11 +72,11 @@ public class ChooseTableauSymmetryTestA extends ModelCheckerTestCase {
 		expectedActions.add("<Ready(b) line 7, col 13 to line 8, col 47 of module ChooseTableauSymmetry>");
 		expectedActions.add("<Busy(a) line 10, col 12 to line 11, col 46 of module ChooseTableauSymmetry>");
 		expectedActions.add("<Done(a) line 13, col 12 to line 14, col 47 of module ChooseTableauSymmetry>");
-		
+
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace, expectedActions);
-		
+
 		assertBackToState(3, "<Ready(a) line 7, col 13 to line 8, col 47 of module ChooseTableauSymmetry>");
 
-	assertZeroUncovered();
+		assertZeroUncovered();
 	}
 }

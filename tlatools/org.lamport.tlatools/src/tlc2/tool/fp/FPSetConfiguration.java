@@ -10,12 +10,12 @@ import util.TLCRuntime;
 
 @SuppressWarnings("serial")
 public class FPSetConfiguration implements Serializable {
-	
+
 	/**
-	 * N most significant bits used as address bits by a MultiFPSet. 
+	 * N most significant bits used as address bits by a MultiFPSet.
 	 */
 	protected int fpBits = 1;
-	
+
 	protected long memoryInBytes = -1L;
 	protected double ratio;
 	protected String implementation;
@@ -24,15 +24,15 @@ public class FPSetConfiguration implements Serializable {
 		// By default allocate 25% of memory for fingerprint storage
 		this(.25d);
 	}
-	
+
 	public FPSetConfiguration(Double aRatio) {
 		// Read the implementation class from the System properties instead of
-		// the cmd line. Right now I'm reluctant to expose the impl class as a 
+		// the cmd line. Right now I'm reluctant to expose the impl class as a
 		// cmd line parameter and carry it forth forever.
 		this(aRatio, System.getProperty(FPSetFactory.IMPL_PROPERTY,
 				FPSetFactory.getImplementationDefault()));
 	}
-	
+
 	public FPSetConfiguration(Double aRatio, String implementation) {
 		this.ratio = aRatio;
 		this.implementation = implementation;
@@ -41,7 +41,7 @@ public class FPSetConfiguration implements Serializable {
 	public boolean allowsNesting() {
 		return getFpBits() > 0;
 	}
-	
+
 	/**
 	 * @return The number of most significant bits that must not be used by an
 	 *         FPSet to calculate its index on. The bits are used by a
@@ -67,11 +67,11 @@ public class FPSetConfiguration implements Serializable {
 
 	public long getMemoryInBytes() {
 		final TLCRuntime instance = TLCRuntime.getInstance();
-		
-		// Here the user has given a ratio of available memory to 
+
+		// Here the user has given a ratio of available memory to
 		// use for fingerprint storage
 		if (FPSetFactory.allocatesOnHeap(implementation)) {
-			// If a user has set memory explicitly, we pass this value to 
+			// If a user has set memory explicitly, we pass this value to
 			// getFPMemSize(double) which sanitizes the value.
 			if (memoryInBytes > 0) {
 				return instance.getFPMemSize(memoryInBytes * ratio);
@@ -89,18 +89,19 @@ public class FPSetConfiguration implements Serializable {
 			return (long) (instance.getNonHeapPhysicalMemory()/* *ratio */);
 		}
 	}
-	
+
 	public long getMemoryInFingerprintCnt() {
-		//TODO Replace FPSet.LongSize with fingerprint length
-		
-		// Explicitly floor to indicate that an FPSet cannot store a portion of a fingerprint.
+		// TODO Replace FPSet.LongSize with fingerprint length
+
+		// Explicitly floor to indicate that an FPSet cannot store a portion of a
+		// fingerprint.
 		return (long) Math.floor(getMemoryInBytes() / FPSet.LongSize);
 	}
 
 	public int getMultiFPSetCnt() {
 		return 1 << getFpBits();
 	}
-	
+
 	public void setRatio(double aRatio) {
 		// Allowing aRatio to be 0.0 makes little sense semantically, but we
 		// accept it anyway and let TLCRuntime deal with it.
@@ -122,7 +123,7 @@ public class FPSetConfiguration implements Serializable {
 		Assert.check(fpMemSize >= 0, EC.GENERAL);
 		this.memoryInBytes = fpMemSize;
 	}
-	
+
 	public String getImplementation() {
 		return implementation;
 	}

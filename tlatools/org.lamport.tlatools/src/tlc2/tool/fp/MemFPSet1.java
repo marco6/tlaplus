@@ -21,6 +21,7 @@ import util.FileUtil;
 
 /**
  * Alternative implementation
+ * 
  * @deprecated not used currently
  * @version $Id$
  */
@@ -38,12 +39,16 @@ public final class MemFPSet1 extends FPSet {
   public final FPSet init(int numThreads, String metadir, String filename) {
     this.metadir = metadir;
     this.filename = filename;
-	return this;
+    return this;
   }
 
-  public final long size() { return this.set.size(); }
+  public final long size() {
+    return this.set.size();
+  }
 
-  public final long sizeof() { return 8 + this.set.sizeof(); }
+  public final long sizeof() {
+    return 8 + this.set.sizeof();
+  }
 
   public synchronized final boolean put(long fp) {
     return this.set.put(fp);
@@ -60,12 +65,14 @@ public final class MemFPSet1 extends FPSet {
       File file = new File(this.metadir);
       FileUtil.deleteDir(file, true);
     }
-    String hostname = InetAddress.getLocalHost().getHostName();    
+    String hostname = InetAddress.getLocalHost().getHostName();
     MP.printMessage(EC.TLC_FP_COMPLETED, hostname);
-    System.exit(0);    
+    System.exit(0);
   }
 
-  public final long checkFPs() { return this.set.checkFPs(); }
+  public final long checkFPs() {
+    return this.set.checkFPs();
+  }
 
   /* Checkpoint. */
   public final void beginChkpt(String fname) throws IOException {
@@ -73,22 +80,22 @@ public final class MemFPSet1 extends FPSet {
     this.set.beginChkpt(dos);
     dos.close();
   }
-  
+
   public final void commitChkpt(String fname) throws IOException {
     File oldChkpt = new File(this.chkptName(fname, "chkpt"));
     File newChkpt = new File(this.chkptName(fname, "tmp"));
     if ((oldChkpt.exists() && !oldChkpt.delete()) ||
-	!newChkpt.renameTo(oldChkpt)) {
+        !newChkpt.renameTo(oldChkpt)) {
       throw new IOException("MemFPSet1.commitChkpt: cannot delete " + oldChkpt);
     }
-  } 
+  }
 
   public final void recover(String fname) throws IOException {
-    
+
     DataInputStream dis = FileUtil.newDFIS(this.chkptName(fname, "chkpt"));
     this.set.recover(dis);
     dis.close();
-    
+
   }
 
   public final void beginChkpt() throws IOException {
@@ -98,7 +105,7 @@ public final class MemFPSet1 extends FPSet {
   public final void commitChkpt() throws IOException {
     this.commitChkpt(this.filename);
   }
-  
+
   public final void recover(TLCTrace trace) throws IOException {
     this.recover(this.filename);
   }
@@ -106,9 +113,9 @@ public final class MemFPSet1 extends FPSet {
   public final void recoverFP(long fp) throws IOException {
     Assert.check(!this.set.put(fp), EC.TLC_FP_NOT_IN_SET);
   }
-  
+
   private final String chkptName(String fname, String ext) {
     return this.metadir + FileUtil.separator + fname + ".fp." + ext;
   }
-  
+
 }

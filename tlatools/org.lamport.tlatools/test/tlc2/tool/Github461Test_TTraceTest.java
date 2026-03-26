@@ -47,7 +47,7 @@ public class Github461Test_TTraceTest extends TTraceModelCheckerTestCase {
 	public void testSpec() throws FileNotFoundException, IOException {
 		// Assert an error trace.
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
-		
+
 		// Assert the correct trace.
 		final List<String> expectedTrace = new ArrayList<String>(4);
 		expectedTrace.add("x = 0");

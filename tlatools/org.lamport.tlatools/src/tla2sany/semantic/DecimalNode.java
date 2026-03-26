@@ -15,14 +15,14 @@ import tla2sany.st.TreeNode;
 import tla2sany.xml.SymbolContext;
 
 /**
- * Describes a decimal like 1347.052.  This number is represented by the
+ * Describes a decimal like 1347.052. This number is represented by the
  * values
  *
- *   long mantissa() = 1347052
- *   int  exponent() = -3
- *   BigDecimal bigVal() = null
+ * long mantissa() = 1347052
+ * int exponent() = -3
+ * BigDecimal bigVal() = null
  *
- * so its value is mantissa() * 10^(exponent).  However, if the number
+ * so its value is mantissa() * 10^(exponent). However, if the number
  * can't be represented in this way, then bigVal() is the value as a
  * BigDecimal and the other fields are meaningless.
  *
@@ -31,8 +31,8 @@ import tla2sany.xml.SymbolContext;
  */
 public class DecimalNode extends ExprNode {
 
-  private long       mantissa;
-  private int        exponent;
+  private long mantissa;
+  private int exponent;
   private BigDecimal bigVal = null;
   private String integralPart;
   private String fractionalPart;
@@ -43,74 +43,82 @@ public class DecimalNode extends ExprNode {
     this.integralPart = a;
     this.fractionalPart = b;
     try {
-      this.mantissa = Long.parseLong( a + b );
-      this.exponent = - b.length();
-     }
-     catch (NumberFormatException e) {
+      this.mantissa = Long.parseLong(a + b);
+      this.exponent = -b.length();
+    } catch (NumberFormatException e) {
       this.bigVal = new BigDecimal(this.toString());
     }
-   }
+  }
 
   /**
    * Returns the mantissa of the decimal number, i.e its value after scaling
    * by a power of 10 until the fractional part is zero; e.g. the mantissa of
    * 1.23 is 123.
    */
-  public final long mantissa() { return this.mantissa; }
+  public final long mantissa() {
+    return this.mantissa;
+  }
 
   /**
-   * The power of 10 which, when multiplied by the mantissa, yields the original number,
+   * The power of 10 which, when multiplied by the mantissa, yields the original
+   * number,
    * e.g. the exponent of 1.23 is -2.
    */
-  public final int exponent() { return this.exponent; }
+  public final int exponent() {
+    return this.exponent;
+  }
 
   /**
    * Returns the number in BigDecimal form
    */
-  public final BigDecimal bigVal() { return this.bigVal; }
+  public final BigDecimal bigVal() {
+    return this.bigVal;
+  }
 
   /**
    * Returns the value as a string, exactly the way the user typed it--e.g.,
    * without any normalization, removal of leading or trailing zero's, etc.
    */
   @Override
-  public final String toString() { return this.integralPart + "." + this.fractionalPart; }
+  public final String toString() {
+    return this.integralPart + "." + this.fractionalPart;
+  }
 
   /* Level checking */
   @Override
   public final boolean levelCheck(int iter, Errors errors) {
     levelChecked = iter;
-      /*********************************************************************
-      * Set it just to show that levelCHeck was called.                    *
-      *********************************************************************/
+    /*********************************************************************
+     * Set it just to show that levelCHeck was called. *
+     *********************************************************************/
     return true;
   }
 
-//  public final int getLevel() { return ConstantLevel; }
-//
-//  public final HashSet getLevelParams() { return EmptySet; }
-//
-//  public final SetOfLevelConstraints getLevelConstraints() {
-//    return EmptyLC;
-//  }
-//
-//  public final SetOfArgLevelConstraints getArgLevelConstraints() {
-//    return EmptyALC;
-//  }
-//
-//  public final HashSet getArgLevelParams() { return EmptySet; }
+  // public final int getLevel() { return ConstantLevel; }
+  //
+  // public final HashSet getLevelParams() { return EmptySet; }
+  //
+  // public final SetOfLevelConstraints getLevelConstraints() {
+  // return EmptyLC;
+  // }
+  //
+  // public final SetOfArgLevelConstraints getArgLevelConstraints() {
+  // return EmptyALC;
+  // }
+  //
+  // public final HashSet getArgLevelParams() { return EmptySet; }
 
   /**
-   *  toString, levelDataToString(), and walkGraph methods to implement
-   *  ExploreNode interface
+   * toString, levelDataToString(), and walkGraph methods to implement
+   * ExploreNode interface
    */
-//  public final String levelDataToString() {
-//    return "Level: "               + this.getLevel()               + "\n" +
-//           "LevelParameters: "     + this.getLevelParams()         + "\n" +
-//           "LevelConstraints: "    + this.getLevelConstraints()    + "\n" +
-//           "ArgLevelConstraints: " + this.getArgLevelConstraints() + "\n" +
-//           "ArgLevelParams: "      + this.getArgLevelParams()      + "\n" ;
-//  }
+  // public final String levelDataToString() {
+  // return "Level: " + this.getLevel() + "\n" +
+  // "LevelParameters: " + this.getLevelParams() + "\n" +
+  // "LevelConstraints: " + this.getLevelConstraints() + "\n" +
+  // "ArgLevelConstraints: " + this.getArgLevelConstraints() + "\n" +
+  // "ArgLevelParams: " + this.getArgLevelParams() + "\n" ;
+  // }
 
   /**
    * walkGraph finds all reachable nodes in the semantic graph and
@@ -120,7 +128,8 @@ public class DecimalNode extends ExprNode {
   @Override
   public final void walkGraph(Hashtable<Integer, ExploreNode> semNodesTable, ExplorerVisitor visitor) {
     Integer uid = Integer.valueOf(myUID);
-    if (semNodesTable.get(uid) != null) return;
+    if (semNodesTable.get(uid) != null)
+      return;
 
     semNodesTable.put(uid, this);
     visitor.preVisit(this);
@@ -134,24 +143,24 @@ public class DecimalNode extends ExprNode {
    */
   @Override
   public final String toString(int depth, Errors errors) {
-    if (depth <= 0) return "";
-    return( "\n*DecimalNode" + super.toString(depth, errors) + "Mantissa: "
-            + mantissa + "; exponent: " + exponent
-            + "; big value: " + (bigVal != null ? bigVal.toString() : "<null>")
-            + "\n; image = " + this.toString()
-          );
+    if (depth <= 0)
+      return "";
+    return ("\n*DecimalNode" + super.toString(depth, errors) + "Mantissa: "
+        + mantissa + "; exponent: " + exponent
+        + "; big value: " + (bigVal != null ? bigVal.toString() : "<null>")
+        + "\n; image = " + this.toString());
   }
 
   @Override
-  protected Element getLevelElement(Document doc, SymbolContext context, BiPredicate<SemanticNode, SemanticNode> filter) {
+  protected Element getLevelElement(Document doc, SymbolContext context,
+      BiPredicate<SemanticNode, SemanticNode> filter) {
     Element e = doc.createElement("DecimalNode");
     if (bigVal != null) {
-      e.appendChild(appendText(doc,"mantissa",bigVal.unscaledValue().toString()));
-      e.appendChild(appendText(doc,"exponent",Integer.toString(bigVal.scale())));
-    }
-    else {
-      e.appendChild(appendText(doc,"mantissa",Long.toString(mantissa)));
-      e.appendChild(appendText(doc,"exponent",Integer.toString(exponent)));
+      e.appendChild(appendText(doc, "mantissa", bigVal.unscaledValue().toString()));
+      e.appendChild(appendText(doc, "exponent", Integer.toString(bigVal.scale())));
+    } else {
+      e.appendChild(appendText(doc, "mantissa", Long.toString(mantissa)));
+      e.appendChild(appendText(doc, "exponent", Integer.toString(exponent)));
     }
 
     e.appendChild(appendText(doc, "integralPart", this.integralPart));

@@ -35,26 +35,26 @@ import tlc2.util.BitVector;
  * <h3>Relationship to the tableau</h3>
  * The PEM is a <em>decomposition</em> of the negated liveness formula that
  * exploits the mathematical structure of {@code []<>} and {@code <>[]} over
- * omega-regular cycles.  In the standard Vardi-Wolper / Manna-Pnueli approach,
+ * omega-regular cycles. In the standard Vardi-Wolper / Manna-Pnueli approach,
  * the <em>entire</em> negated property is translated into a Büchi automaton:
  * every {@code []<>P} conjunct adds automaton nodes (tracking "waiting for P"
  * vs "P just seen") and an acceptance set, and every {@code <>[]E} conjunct
- * adds structure to track whether E has become permanently true.  Each such
+ * adds structure to track whether E has become permanently true. Each such
  * conjunct enlarges the tableau and, because the product graph has size
  * |states| × |tableau nodes|, directly inflates memory and SCC analysis cost.
  * <p>
  * TLC instead extracts top-level {@code []<>} and {@code <>[]} conjuncts from
  * the negated formula and stores them in the PEM, leaving only the "complex"
  * temporal structure (nested eventualities such as {@code <>(P /\ <>Q)},
- * counting sequences, etc.) in the tableau.  The extracted conditions have
+ * counting sequences, etc.) in the tableau. The extracted conditions have
  * trivial characterizations over SCCs:
  * <ul>
  * <li>{@code []<>S} (AEState) holds on a lasso iff S holds at some state in
- *     the cycle (the cycle repeats forever, so S recurs infinitely often).</li>
+ * the cycle (the cycle repeats forever, so S recurs infinitely often).</li>
  * <li>{@code []<>A} (AEAction) holds iff A fires on some transition in the
- *     cycle.</li>
+ * cycle.</li>
  * <li>{@code <>[]E} (EAAction) holds iff E holds on <em>every</em> transition
- *     in the cycle (once inside the cycle, E holds permanently).</li>
+ * in the cycle (once inside the cycle, E holds permanently).</li>
  * </ul>
  * These are evaluated as simple predicates during
  * {@link LiveWorker#checkComponent()} rather than being tracked as automaton
@@ -62,22 +62,22 @@ import tlc2.util.BitVector;
  * <p>
  * <h3>Fairness and property conditions in the same PEM</h3>
  * TLC checks {@code Spec => Property} by searching for behaviors satisfying
- * {@code Spec /\ ~Property}.  Both the fairness constraints (from Spec) and the
+ * {@code Spec /\ ~Property}. Both the fairness constraints (from Spec) and the
  * negated property can contribute conditions to the PEM:
  * <ul>
- * <li><b>Fairness → AEAction / EAAction:</b>  {@code WF_v(A)} expands to
- *     {@code []<><<A>>_v \/ <>[]~ENABLED<<A>>_v}, contributing an AEAction and
- *     an EAAction conjunct.  {@code SF_v(A)} similarly contributes an EAAction
- *     and an AEAction conjunct.</li>
- * <li><b>Property negation → AEState / AEAction / EAAction:</b>  If the
- *     property is {@code <>[]P}, its negation {@code []<>~P} becomes an
- *     AEState entry.  Properties like {@code []<><<A>>_v} contribute AEAction
- *     upon negation.</li>
+ * <li><b>Fairness → AEAction / EAAction:</b> {@code WF_v(A)} expands to
+ * {@code []<><<A>>_v \/ <>[]~ENABLED<<A>>_v}, contributing an AEAction and
+ * an EAAction conjunct. {@code SF_v(A)} similarly contributes an EAAction
+ * and an AEAction conjunct.</li>
+ * <li><b>Property negation → AEState / AEAction / EAAction:</b> If the
+ * property is {@code <>[]P}, its negation {@code []<>~P} becomes an
+ * AEState entry. Properties like {@code []<><<A>>_v} contribute AEAction
+ * upon negation.</li>
  * </ul>
  * Because the PEM is a <em>conjunction</em>, a cycle (SCC) is only a valid
  * counter-example when <em>all</em> conditions hold simultaneously: the
  * behavior must be fair (honoring the spec's fairness constraints) <em>and</em>
- * the property must be genuinely violated.  This is critical: without the
+ * the property must be genuinely violated. This is critical: without the
  * fairness conditions in the PEM, TLC could report counter-examples on unfair
  * behaviors that are not valid behaviors of the spec.
  * <p>
@@ -101,13 +101,13 @@ public class PossibleErrorModel {
 	final int[] EAAction; // <>[]act's (Eventually Always actions) (Strong fairness)
 	final int[] AEState; // []<>state's (Infinitely Often states)
 	final int[] AEAction; // []<>act's (Infinitely Often actions) (Weak fairness)
-	
+
 	public PossibleErrorModel(int[] aeAction, int[] aeState, int[] eaAction) {
 		this.AEAction = aeAction;
 		this.AEState = aeState;
 		this.EAAction = eaAction;
 	}
-	
+
 	public final boolean isEmpty() {
 		return (this.EAAction.length == 0 && this.AEState.length == 0 && this.AEAction.length == 0);
 	}
@@ -118,7 +118,8 @@ public class PossibleErrorModel {
 	 * <ul>
 	 * <li>[]<>S (AEState) holds iff S(s) is true (state never changes)</li>
 	 * <li>[]<>A (AEAction) holds iff A(s,s) is true (every step is (s,s))</li>
-	 * <li><>[]E (EAAction) holds iff E(s,s) is true (E holds forever trivially)</li>
+	 * <li><>[]E (EAAction) holds iff E(s,s) is true (E holds forever
+	 * trivially)</li>
 	 * </ul>
 	 *
 	 * @param checkStateRes  result of evaluating all state predicates at s

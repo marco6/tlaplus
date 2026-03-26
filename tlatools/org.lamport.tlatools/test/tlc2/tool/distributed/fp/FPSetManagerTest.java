@@ -104,35 +104,35 @@ public class FPSetManagerTest {
 
 		final Set<Long> fps = new HashSet<Long>();
 		// fps.add(0L); // Not accepted by nested FPSets
-		fps.add(1L);              // 00...0001
+		fps.add(1L); // 00...0001
 		fps.add((1L << 62) + 1L); // 01...0001
 		fps.add((1L << 63) + 1L); // 10...0001
 		fps.add((3L << 62) + 1L); // 11...0001
-		fps.add(2L);              // 00...0010
+		fps.add(2L); // 00...0010
 		fps.add((1L << 62) + 2L); // 01...0010
 		fps.add((1L << 63) + 2L); // 10...0010
 		fps.add((3L << 62) + 2L); // 11...0010
-		fps.add(3L);              // 00...0011
+		fps.add(3L); // 00...0011
 		fps.add((1L << 62) + 3L); // 01...0011
 		fps.add((1L << 63) + 3L); // 10...0011
 		fps.add((3L << 62) + 3L); // 11...0011
-		fps.add(4L);              // 00...0100
+		fps.add(4L); // 00...0100
 		fps.add((1L << 62) + 4L); // 01...0100
 		fps.add((1L << 63) + 4L); // 10...0100
 		fps.add((3L << 62) + 4L); // 11...0100
-		fps.add(5L);              // 00...0101
+		fps.add(5L); // 00...0101
 		fps.add((1L << 62) + 5L); // 01...0101
 		fps.add((1L << 63) + 5L); // 10...0101
 		fps.add((3L << 62) + 5L); // 11...0101
-		fps.add(6L);              // 00...0110
+		fps.add(6L); // 00...0110
 		fps.add((1L << 62) + 6L); // 01...0110
 		fps.add((1L << 63) + 6L); // 10...0110
 		fps.add((3L << 62) + 6L); // 11...0110
-		fps.add(7L);              // 00...0110
+		fps.add(7L); // 00...0110
 		fps.add((1L << 62) + 7L); // 01...0111
 		fps.add((1L << 63) + 7L); // 10...0111
 		fps.add((3L << 62) + 7L); // 11...0111
-		fps.add(8L);              // 00...1000
+		fps.add(8L); // 00...1000
 		fps.add((1L << 62) + 8L); // 01...1000
 		fps.add((1L << 63) + 8L); // 10...1000
 		fps.add((3L << 62) + 8L); // 11...1000

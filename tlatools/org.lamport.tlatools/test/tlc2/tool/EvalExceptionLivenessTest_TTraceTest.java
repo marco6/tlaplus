@@ -38,31 +38,31 @@ import tlc2.tool.liveness.TTraceModelCheckerTestCase;
 
 public class EvalExceptionLivenessTest_TTraceTest extends TTraceModelCheckerTestCase {
 
-    public EvalExceptionLivenessTest_TTraceTest() {
-        super(EvalExceptionLivenessTest.class, EC.ExitStatus.ERROR);
-    }	
-    
-    @Override
+	public EvalExceptionLivenessTest_TTraceTest() {
+		super(EvalExceptionLivenessTest.class, EC.ExitStatus.ERROR);
+	}
+
+	@Override
 	protected boolean doCoverage() {
 		return false;
 	}
 
-    // See https://github.com/tlaplus/tlaplus/pull/588#issuecomment-821745313.
-    @Ignore("TESpec Bug - Monolith")
+	// See https://github.com/tlaplus/tlaplus/pull/588#issuecomment-821745313.
+	@Ignore("TESpec Bug - Monolith")
 	@Test
-    public void testSpec() {
-        assertTrue(recorder.recorded(EC.TLC_FINISHED));
-        assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "950", "555", "89"));
+	public void testSpec() {
+		assertTrue(recorder.recorded(EC.TLC_FINISHED));
+		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "950", "555", "89"));
 
-        // Error: The first argument of <= should be an integer, but instead it is:
-        // (-1 :> 0)
+		// Error: The first argument of <= should be an integer, but instead it is:
+		// (-1 :> 0)
 		assertTrue(recorder.recordedWithStringValues(EC.GENERAL,
 				"TLC threw an unexpected exception.\n"
-				+ "This was probably caused by an error in the spec or model.\n"
-				+ "See the User Output or TLC Console for clues to what happened.\n"
-				+ "The exception was a java.lang.RuntimeException\n"
-				+ ": Attempted to check equality of the function <<-2>> with the value:\n"
-				+ "-2"));
+						+ "This was probably caused by an error in the spec or model.\n"
+						+ "See the User Output or TLC Console for clues to what happened.\n"
+						+ "The exception was a java.lang.RuntimeException\n"
+						+ ": Attempted to check equality of the function <<-2>> with the value:\n"
+						+ "-2"));
 
 		final List<String> expectedTrace = new ArrayList<String>(15);
 		// 1

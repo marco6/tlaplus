@@ -27,7 +27,7 @@ public class TestBuiltInOperatorInitialization {
       Assert.assertTrue(name, context.occurSymbol(expected.Name));
       SymbolNode node = context.getSymbol(expected.Name);
       Assert.assertTrue(name, node instanceof OpDefNode);
-      OpDefNode actual = (OpDefNode)node;
+      OpDefNode actual = (OpDefNode) node;
       Assert.assertEquals(name, expected.Name, actual.getName());
       Assert.assertEquals(name, ASTConstants.BuiltInKind, actual.getKind());
       Assert.assertTrue(name, node.isBuiltIn());
@@ -50,7 +50,8 @@ public class TestBuiltInOperatorInitialization {
     int builtInCount = 0;
     for (Enumeration<Context.Pair> e = Context.getGlobalContext().content(); e.hasMoreElements();) {
       UniqueString builtInName = e.nextElement().getSymbol().getName();
-      Assert.assertTrue(builtInName.toString(), Arrays.stream(BuiltInOperators.Properties).anyMatch(op -> op.Name == builtInName));
+      Assert.assertTrue(builtInName.toString(),
+          Arrays.stream(BuiltInOperators.Properties).anyMatch(op -> op.Name == builtInName));
       builtInCount++;
     }
 

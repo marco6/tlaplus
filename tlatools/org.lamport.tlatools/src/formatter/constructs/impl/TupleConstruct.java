@@ -10,7 +10,8 @@ import java.util.List;
 
 /**
  * Construct implementation for tuples.
- * Handles formatting of tuple expressions like <<element1, element2, element3>>.
+ * Handles formatting of tuple expressions like <<element1, element2,
+ * element3>>.
  */
 public class TupleConstruct implements TlaConstruct {
 

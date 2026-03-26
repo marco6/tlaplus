@@ -30,29 +30,30 @@ import tlc2.value.impl.Value;
 
 public class UserModuleOverrideAnnotationImpl {
 
-	@TLAPlusOperator(identifier="Get", module="UserModuleOverrideAnnotation")
+	@TLAPlusOperator(identifier = "Get", module = "UserModuleOverrideAnnotation")
 	public static Value getNumberOne() {
 		return BoolValue.ValTrue;
 	}
-	
-	@TLAPlusOperator(identifier="Get2", module="UserModuleOverrideAnnotation")
+
+	@TLAPlusOperator(identifier = "Get2", module = "UserModuleOverrideAnnotation")
 	public static Value Get2() {
 		return BoolValue.ValTrue;
 	}
-	
-	//************ The ones below will cause warnings because they don't match ************//
-	
-	@TLAPlusOperator(identifier="Get2", module="UserModuleOverrideAnnotation")
+
+	// ************ The ones below will cause warnings because they don't match
+	// ************//
+
+	@TLAPlusOperator(identifier = "Get2", module = "UserModuleOverrideAnnotation")
 	public static Value Get2(Value v1) {
 		return BoolValue.ValFalse;
 	}
 
-	@TLAPlusOperator(identifier="NoSuchIdentifier", module="UserModuleOverrideAnnotation")
+	@TLAPlusOperator(identifier = "NoSuchIdentifier", module = "UserModuleOverrideAnnotation")
 	public static Value noSuchIdentifier() {
 		return BoolValue.ValFalse;
 	}
-	
-	@TLAPlusOperator(identifier="Get", module="NoSuchModule")
+
+	@TLAPlusOperator(identifier = "Get", module = "NoSuchModule")
 	public static Value noSuchModule() {
 		return BoolValue.ValFalse;
 	}

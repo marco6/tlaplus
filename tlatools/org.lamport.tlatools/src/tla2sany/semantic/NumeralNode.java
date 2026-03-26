@@ -16,11 +16,11 @@ import tla2sany.st.TreeNode;
 import tla2sany.xml.SymbolContext;
 
 /**
- * Describes a numeral like 4095.  This number is represented by the
+ * Describes a numeral like 4095. This number is represented by the
  * values
  *
- *   int val()          = 4095
- *   BigInteger bigVal() = null
+ * int val() = 4095
+ * BigInteger bigVal() = null
  *
  * However, if the number is too big to be represented as an
  * integer, then its value is bigVal() and the value of val() is
@@ -40,96 +40,102 @@ public class NumeralNode extends ExprNode {
    * @param stn
    * @throws AbortException
    */
-  public NumeralNode( String s, TreeNode stn, Errors errors ) throws AbortException {
+  public NumeralNode(String s, TreeNode stn, Errors errors) throws AbortException {
     super(NumeralKind, stn);
     this.image = s;
     String num = s.toLowerCase();
     int radix = 10;
-    if (num.charAt(0)=='\\') {
-      if (num.charAt(1)=='b') {
+    if (num.charAt(0) == '\\') {
+      if (num.charAt(1) == 'b') {
         radix = 2;
-      } else if (num.charAt(1)=='o') {
+      } else if (num.charAt(1) == 'o') {
         radix = 8;
-      } else if (num.charAt(1)=='h') {
+      } else if (num.charAt(1) == 'h') {
         radix = 16;
       } else {
         throw errors.addError(
-          ErrorCode.INTERNAL_ERROR,
-          stn.getLocation(),
-          "Unknown numeral format: " + num
-        );
-     }
-     num = num.substring(2);
+            ErrorCode.INTERNAL_ERROR,
+            stn.getLocation(),
+            "Unknown numeral format: " + num);
+      }
+      num = num.substring(2);
     }
 
     try {
-      this.value = Integer.parseInt( num, radix );
-    } catch ( NumberFormatException e ) {
-      this.bigValue = new BigInteger( s, radix );
+      this.value = Integer.parseInt(num, radix);
+    } catch (NumberFormatException e) {
+      this.bigValue = new BigInteger(s, radix);
     }
   }
 
-  public final int val() { return this.value; }
+  public final int val() {
+    return this.value;
+  }
 
-  public final BigInteger bigVal() { return this.bigValue; }
-
-  	/**
-	 * @return true if the numerical value of this instance should be referenced via
-	 *         {@link #val()}, false if it should be referenced via
-	 *         {@link #bigVal()}
-	 */
-  public final boolean useVal() {
-	  return (bigValue == null);
+  public final BigInteger bigVal() {
+    return this.bigValue;
   }
 
   /**
-   * Returns the value as a string--for example, "4095".  This string
+   * @return true if the numerical value of this instance should be referenced via
+   *         {@link #val()}, false if it should be referenced via
+   *         {@link #bigVal()}
+   */
+  public final boolean useVal() {
+    return (bigValue == null);
+  }
+
+  /**
+   * Returns the value as a string--for example, "4095". This string
    * reflects how the value appeared in the input, so it should be
    * "\O7777" if that's what appears in the source.
    */
   @Override
-  public final String toString() { return this.image; }
+  public final String toString() {
+    return this.image;
+  }
 
   /* Level Checking */
   @Override
   public final boolean levelCheck(int iter, Errors errors) {
     levelChecked = iter;
-      /*********************************************************************
-      * Set it just to show that levelCHeck was called.                    *
-      *********************************************************************/
+    /*********************************************************************
+     * Set it just to show that levelCHeck was called. *
+     *********************************************************************/
     return true;
   }
 
-//  public final int getLevel() { return ConstantLevel; }
-//
-//  public final HashSet getLevelParams() { return EmptySet; }
-//
-//  public final SetOfLevelConstraints getLevelConstraints() {
-//    return EmptyLC;
-//  }
-//
-//  public final SetOfArgLevelConstraints getArgLevelConstraints() {
-//    return EmptyALC;
-//  }
-//
-//  public final HashSet getArgLevelParams() { return EmptySet; }
+  // public final int getLevel() { return ConstantLevel; }
+  //
+  // public final HashSet getLevelParams() { return EmptySet; }
+  //
+  // public final SetOfLevelConstraints getLevelConstraints() {
+  // return EmptyLC;
+  // }
+  //
+  // public final SetOfArgLevelConstraints getArgLevelConstraints() {
+  // return EmptyALC;
+  // }
+  //
+  // public final HashSet getArgLevelParams() { return EmptySet; }
 
   /**
    * toString, levelDataToString, and walkGraph methods to implement
    * ExploreNode interface
    */
-//  public final String levelDataToString() {
-//    return "Level: "               + this.getLevel()               + "\n" +
-//           "LevelParameters: "     + this.getLevelParams()         + "\n" +
-//           "LevelConstraints: "    + this.getLevelConstraints()    + "\n" +
-//           "ArgLevelConstraints: " + this.getArgLevelConstraints() + "\n" +
-//           "ArgLevelParams: "      + this.getArgLevelParams()      + "\n" ;
-//  }
+  // public final String levelDataToString() {
+  // return "Level: " + this.getLevel() + "\n" +
+  // "LevelParameters: " + this.getLevelParams() + "\n" +
+  // "LevelConstraints: " + this.getLevelConstraints() + "\n" +
+  // "ArgLevelConstraints: " + this.getArgLevelConstraints() + "\n" +
+  // "ArgLevelParams: " + this.getArgLevelParams() + "\n" ;
+  // }
 
   @Override
   public final void walkGraph(Hashtable<Integer, ExploreNode> semNodesTable, ExplorerVisitor visitor) {
     Integer uid = Integer.valueOf(myUID);
-    if (semNodesTable.get(uid) != null) return;
+    if (semNodesTable.get(uid) != null)
+      return;
 
     semNodesTable.put(uid, this);
     visitor.preVisit(this);
@@ -138,21 +144,23 @@ public class NumeralNode extends ExprNode {
 
   @Override
   public final String toString(int depth, Errors errors) {
-    if (depth <= 0) return "";
+    if (depth <= 0)
+      return "";
 
-    return("\n*NumeralNode: " + super.toString(depth, errors) + " Value: " + value +
-	   (bigValue != null ? ("; big value: " + bigValue.toString()) : "") +
-	   "; image: " + image);
+    return ("\n*NumeralNode: " + super.toString(depth, errors) + " Value: " + value +
+        (bigValue != null ? ("; big value: " + bigValue.toString()) : "") +
+        "; image: " + image);
   }
 
   @Override
-  protected Element getLevelElement(Document doc, SymbolContext context, BiPredicate<SemanticNode, SemanticNode> filter) {
-      String v = (bigValue != null) ? bigValue.toString() : (Integer.toString(value));
-      Element e = doc.createElement("IntValue");
-      Node n = doc.createTextNode(v);
-      e.appendChild(n);
-      return appendElement(doc, "NumeralNode", e);
-    //return appendText(doc,"NumeralNode",(bigValue != null) ? bigValue.toString() : (Integer.toString(value)));
+  protected Element getLevelElement(Document doc, SymbolContext context,
+      BiPredicate<SemanticNode, SemanticNode> filter) {
+    String v = (bigValue != null) ? bigValue.toString() : (Integer.toString(value));
+    Element e = doc.createElement("IntValue");
+    Node n = doc.createTextNode(v);
+    e.appendChild(n);
+    return appendElement(doc, "NumeralNode", e);
+    // return appendText(doc,"NumeralNode",(bigValue != null) ? bigValue.toString()
+    // : (Integer.toString(value)));
   }
 }
-

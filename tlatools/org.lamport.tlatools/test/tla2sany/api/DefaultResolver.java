@@ -92,18 +92,18 @@ public class DefaultResolver implements Resolver {
    * A list of all standard modules.
    */
   private static final String[] STANDARD_MODULES = new String[] {
-    "Naturals",
-    "Sequences",
-    "FiniteSets",
-    "TLC",
-    "Bags",
-    "Integers",
-    "Reals",
-    "Json",
-    "Randomization",
-    "RealTime",
-    "TLCExt",
-    "Toolbox"
+      "Naturals",
+      "Sequences",
+      "FiniteSets",
+      "TLC",
+      "Bags",
+      "Integers",
+      "Reals",
+      "Json",
+      "Randomization",
+      "RealTime",
+      "TLCExt",
+      "Toolbox"
   };
 
   /**

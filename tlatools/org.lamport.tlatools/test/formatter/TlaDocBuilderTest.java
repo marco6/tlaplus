@@ -27,7 +27,7 @@ public class TlaDocBuilderTest {
     @Test
     public void testBuildWithNullNode() {
         Doc result = builder.build(null);
-        
+
         assertEquals(Doc.empty(), result);
         assertEquals("", result.render(80));
     }
@@ -35,12 +35,12 @@ public class TlaDocBuilderTest {
     @Test
     public void testBuilderWithSimpleModule() throws IOException, SanyFrontendException {
         String spec = "---- MODULE SimpleTest ----\n" +
-                     "VARIABLE x\n" +
-                     "====\n";
+                "VARIABLE x\n" +
+                "====\n";
 
         TLAPlusFormatter formatter = new TLAPlusFormatter(spec, config);
         String output = formatter.getOutput();
-        
+
         assertTrue(output.contains("---- MODULE SimpleTest ----"));
         assertTrue(output.contains("VARIABLE x"));
         assertTrue(output.contains("===="));
@@ -49,12 +49,12 @@ public class TlaDocBuilderTest {
     @Test
     public void testBuilderWithMultipleVariables() throws IOException, SanyFrontendException {
         String spec = "---- MODULE MultiVar ----\n" +
-                     "VARIABLES x, y, z\n" +
-                     "====\n";
+                "VARIABLES x, y, z\n" +
+                "====\n";
 
         TLAPlusFormatter formatter = new TLAPlusFormatter(spec, config);
         String output = formatter.getOutput();
-        
+
         assertTrue(output.contains("VARIABLES"));
         assertTrue(output.contains("x"));
         assertTrue(output.contains("y"));
@@ -64,14 +64,14 @@ public class TlaDocBuilderTest {
     @Test
     public void testBuilderWithOperatorDefinition() throws IOException, SanyFrontendException {
         String spec = "---- MODULE OpTest ----\n" +
-                     "EXTENDS Naturals\n" +
-                     "VARIABLE x\n" +
-                     "Inc == x + 1\n" +
-                     "====\n";
+                "EXTENDS Naturals\n" +
+                "VARIABLE x\n" +
+                "Inc == x + 1\n" +
+                "====\n";
 
         TLAPlusFormatter formatter = new TLAPlusFormatter(spec, config);
         String output = formatter.getOutput();
-        
+
         assertTrue(output.contains("Inc =="));
         assertTrue(output.contains("x + 1"));
     }
@@ -79,13 +79,13 @@ public class TlaDocBuilderTest {
     @Test
     public void testBuilderWithExtends() throws IOException, SanyFrontendException {
         String spec = "---- MODULE ExtendsTest ----\n" +
-                     "EXTENDS Naturals, TLC\n" +
-                     "VARIABLE counter\n" +
-                     "====\n";
+                "EXTENDS Naturals, TLC\n" +
+                "VARIABLE counter\n" +
+                "====\n";
 
         TLAPlusFormatter formatter = new TLAPlusFormatter(spec, config);
         String output = formatter.getOutput();
-        
+
         assertTrue(output.contains("EXTENDS"));
         assertTrue(output.contains("Naturals"));
         assertTrue(output.contains("TLC"));
@@ -95,7 +95,7 @@ public class TlaDocBuilderTest {
     public void testBuilderConfigurationUsage() {
         FormatConfig customConfig = new FormatConfig(40, 2);
         TlaDocBuilder customBuilder = new TlaDocBuilder(customConfig);
-        
+
         // Just verify builder can be created with different configs
         assertNotNull(customBuilder);
     }

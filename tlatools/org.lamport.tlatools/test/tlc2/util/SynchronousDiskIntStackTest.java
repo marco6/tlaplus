@@ -40,9 +40,9 @@ public class SynchronousDiskIntStackTest {
 				+ System.currentTimeMillis();
 
 		final int size = 8;
-		
+
 		final IntStack diskIntStack = new SynchronousDiskIntStack(diskdir, "SynchronousDiskIntStackTest", size);
-		
+
 		// Fill stack
 		for (int i = 0; i < size; i++) {
 			diskIntStack.pushInt(i);
@@ -61,19 +61,19 @@ public class SynchronousDiskIntStackTest {
 		new File(diskdir).mkdirs();
 
 		final int size = 8;
-		
+
 		final IntStack diskIntStack = new SynchronousDiskIntStack(diskdir, "SynchronousDiskIntStackTest", size);
-		
+
 		// Fill stack trice
 		for (int i = 0; i < (size * 3); i++) {
 			diskIntStack.pushInt(i);
 		}
 
 		// Check all elements still on stack
-		for (int i = (3*size) - 1; i >= 0; i--) {
+		for (int i = (3 * size) - 1; i >= 0; i--) {
 			assertEquals(i, diskIntStack.popInt());
 		}
-		
+
 		assertEquals(0, diskIntStack.size());
 	}
 }

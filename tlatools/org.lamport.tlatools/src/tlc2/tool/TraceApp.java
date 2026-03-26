@@ -14,28 +14,28 @@ import tlc2.tool.impl.SymbolNodeValueLookupProvider;
 
 public interface TraceApp extends SymbolNodeValueLookupProvider {
 
-  /* Reconstruct the initial state whose fingerprint is fp. */
-  public TLCStateInfo getState(long fp);
-  
-  /* Reconstruct the next state of state s whose fingerprint is fp. */
-  public TLCStateInfo getState(long fp, TLCState s);
+	/* Reconstruct the initial state whose fingerprint is fp. */
+	public TLCStateInfo getState(long fp);
 
-  /* Reconstruct the info for the transition from s to s1. */
-  public TLCStateInfo getState(TLCState s1, TLCState s);
+	/* Reconstruct the next state of state s whose fingerprint is fp. */
+	public TLCStateInfo getState(long fp, TLCState s);
+
+	/* Reconstruct the info for the transition from s to s1. */
+	public TLCStateInfo getState(TLCState s1, TLCState s);
 
 	default public TLCStateInfo evalAlias(TLCStateInfo current, TLCState successor, TLCStateInfo[] prefix) {
 		return evalAlias(current, successor, (Supplier<List<TLCStateInfo>>) () -> Arrays.asList(prefix));
 	}
-	
-	default public TLCStateInfo evalAlias(TLCStateInfo current, TLCState successor, TLCStateInfo[] prefix, TLCStateInfo... suffix) {
+
+	default public TLCStateInfo evalAlias(TLCStateInfo current, TLCState successor, TLCStateInfo[] prefix,
+			TLCStateInfo... suffix) {
 		return evalAlias(current, successor, (Supplier<List<TLCStateInfo>>) () -> {
 			final List<TLCStateInfo> l = new ArrayList<>(Arrays.asList(prefix));
 			l.addAll(Arrays.asList(suffix));
 			return l;
 		});
 	}
-  
-  public TLCStateInfo evalAlias(TLCStateInfo current, TLCState successor, Supplier<List<TLCStateInfo>> prefix);
+
+	public TLCStateInfo evalAlias(TLCStateInfo current, TLCState successor, Supplier<List<TLCStateInfo>> prefix);
 
 }
-

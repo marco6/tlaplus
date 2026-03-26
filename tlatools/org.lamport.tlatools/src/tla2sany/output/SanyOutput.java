@@ -38,15 +38,16 @@ public interface SanyOutput {
    * messages, similar to {@link PrintStream#println()}. The variable args
    * are interpolated into the format string using {@link String#format}.
    *
-   * @param level The level at which to log the message.
+   * @param level  The level at which to log the message.
    * @param format A string into which args is interpolated.
-   * @param args Parameters to interpolate into the format string.
+   * @param args   Parameters to interpolate into the format string.
    */
   public void log(LogLevel level, String format, Object... args);
 
   /**
    * For the rare cases requiring an explicit stream associated with the
-   * given {@link LogLevel}, for example {@link Exception#printStackTrace(PrintStream)},
+   * given {@link LogLevel}, for example
+   * {@link Exception#printStackTrace(PrintStream)},
    * retrieve a stream to which output can be printed. Callers must not close
    * the returned {@link PrintStream} instance.
    *

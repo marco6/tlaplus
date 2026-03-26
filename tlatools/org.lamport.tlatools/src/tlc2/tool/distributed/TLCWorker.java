@@ -42,18 +42,19 @@ import tlc2.util.SimpleCache;
 import util.Assert;
 import util.ToolIO;
 import util.UniqueString;
+
 @SuppressWarnings("serial")
 public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 
 	private static final boolean unsorted = Boolean.getBoolean(TLCWorker.class.getName() + ".unsorted");
-	
+
 	private static Timer keepAliveTimer;
 	private static RMIFilenameToStreamResolver fts;
 	private static final ExecutorService executorService = Executors.newCachedThreadPool();
 	private static TLCWorkerRunnable[] runnables = new TLCWorkerRunnable[0];
 
 	private static volatile CountDownLatch cdl;
-	
+
 	private DistApp work;
 	private IFPSetManager fpSetManager;
 	private final URI uri;
@@ -63,9 +64,8 @@ public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 	private volatile boolean computing = false;
 	private long lastInvocation;
 	private long overallStatesComputed;
-	
+
 	private final Cache cache;
-	
 
 	public TLCWorker(final int threadId, DistApp work, IFPSetManager fpSetManager, String aHostname)
 			throws RemoteException {
@@ -73,11 +73,11 @@ public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 		this.fpSetManager = fpSetManager;
 		this.uri = URI.create("rmi://" + aHostname + ":" + getPort() + "/"
 				+ threadId);
-		
+
 		this.cache = new SimpleCache();
 	}
-	
-	//TODO Remove once performance tests show superiority of TreeSet
+
+	// TODO Remove once performance tests show superiority of TreeSet
 	private Set<Holder> getSet() {
 		if (unsorted) {
 			return new HashSet<Holder>();
@@ -86,19 +86,21 @@ public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.TLCWorkerRMI#getNextStates(tlc2.tool.TLCState[])
 	 */
 	public synchronized NextStateResult getNextStates(final TLCState[] states)
 			throws WorkerException, RemoteException {
-		
+
 		computing = true;
-		
+
 		// statistics
 		lastInvocation = System.currentTimeMillis();
 		// Amount of states computed in this single invocation
 		long statesComputed = 0L;
-		
+
 		TLCState state1 = null, state2 = null;
 		try {
 			TLCState[] nstates;
@@ -109,7 +111,8 @@ public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 				nstates = this.work.getNextStates(state1);
 				// Keep statistics about states computed during this invocation
 				statesComputed += nstates.length;
-				// add all succ states/fps to the array designated for the corresponding fp server
+				// add all succ states/fps to the array designated for the corresponding fp
+				// server
 				for (int j = 0; j < nstates.length; j++) {
 					long fp = nstates[j].fingerPrint();
 					if (!cache.hit(fp)) {
@@ -117,10 +120,10 @@ public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 					}
 				}
 			}
-			
+
 			// Amount of states computed in during all invocations
 			overallStatesComputed += statesComputed;
-			
+
 			// create containers for each fingerprint _server_
 			int fpServerCnt = this.fpSetManager.numOfServers();
 			// previous state
@@ -134,7 +137,7 @@ public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 				nvv[i] = new TLCStateVec();
 				fpvv[i] = new LongVec();
 			}
-			
+
 			// Add elements of treeSet in sorted order to pvv, nvv, fpvv.
 			// This is done hoping (not yet measured) that it will cause less
 			// disk seeks at the fingerprint server since fingerprints are
@@ -182,7 +185,7 @@ public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 					}
 				}
 			}
-			
+
 			// Prepare the return value.
 			final long computationTime = System.currentTimeMillis() - lastInvocation;
 			return new NextStateResult(newStates, newFps, computationTime, statesComputed);
@@ -199,7 +202,9 @@ public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.TLCWorkerRMI#exit()
 	 */
 	public void exit() throws NoSuchObjectException {
@@ -207,43 +212,49 @@ public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 				+ overallStatesComputed
 				+ " and a cache hit ratio of " + this.cache.getHitRatioAsString()
 				+ ", Thank you!");
-		
+
 		executorService.shutdown();
-		
+
 		keepAliveTimer.cancel();
-		
+
 		UnicastRemoteObject.unexportObject(TLCWorker.this, true);
-		
+
 		cdl.countDown();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.TLCWorkerRMI#isAlive()
 	 */
 	public boolean isAlive() {
 		return true;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.TLCWorkerRMI#getURI()
 	 */
 	public URI getURI() throws RemoteException {
 		return uri;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.TLCWorkerRMI#getCacheRateRatio()
 	 */
 	public double getCacheRateRatio() throws RemoteException {
 		return this.cache.getHitRatio();
 	}
-	
+
 	private int getPort() {
 		try {
 			// this only works on >= Sun Java 1.6
-//			sun.rmi.transport.LiveRef liveRef = ((UnicastRef) ref).getLiveRef();
-//			return liveRef.getPort();
-			
+			// sun.rmi.transport.LiveRef liveRef = ((UnicastRef) ref).getLiveRef();
+			// return liveRef.getPort();
+
 			// load the SUN class if available
 			ClassLoader cl = ClassLoader.getSystemClassLoader();
 			Class<?> unicastRefClass = cl.loadClass("sun.rmi.server.UnicastRef");
@@ -263,9 +274,9 @@ public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 		} catch (SecurityException e) {
 			MP.printError(EC.GENERAL, "trying to get a port for a worker", e); // LL changed call on 7 April 2012
 		} catch (IllegalArgumentException e) {
-			MP.printError(EC.GENERAL, "trying to get a port for a worker",e);  // LL changed call on 7 April 2012
+			MP.printError(EC.GENERAL, "trying to get a port for a worker", e); // LL changed call on 7 April 2012
 		} catch (ClassCastException e) {
-			MP.printError(EC.GENERAL, "trying to get a port for a worker",e);  // LL changed call on 7 April 2012
+			MP.printError(EC.GENERAL, "trying to get a port for a worker", e); // LL changed call on 7 April 2012
 		} catch (NoSuchMethodException e) {
 			MP.printError(EC.TLC_DISTRIBUTED_VM_VERSION, e);
 		} catch (IllegalAccessException e) {
@@ -281,17 +292,17 @@ public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 	long getLastInvocation() {
 		return lastInvocation;
 	}
-	
+
 	boolean isComputing() {
 		return computing;
 	}
-	
+
 	public static void main(String args[]) {
 		ToolIO.out.println("TLC Worker " + TLCGlobals.Version.get());
 
 		// Must have exactly one arg: a hostname (spec is read from the server
 		// connecting to).
-		if(args.length != 1) {
+		if (args.length != 1) {
 			printErrorMsg("Error: Missing hostname of the TLC server to be contacted.");
 			return;
 		}
@@ -300,19 +311,20 @@ public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 		// spawn as many worker threads as we have cores unless user
 		// explicitly passes thread count
 		final int numCores = Integer.getInteger(TLCWorker.class.getName()
-				+ ".threadCount", Runtime.getRuntime()
-				.availableProcessors());
-		
+				+ ".threadCount",
+				Runtime.getRuntime()
+						.availableProcessors());
+
 		cdl = new CountDownLatch(numCores);
-		
+
 		try {
 			final String url = "//" + serverName + ":" + TLCServer.Port
 					+ "/" + TLCServer.SERVER_WORKER_NAME;
-			
+
 			// try to repeatedly connect to the server until it becomes available
 			int i = 1;
 			TLCServerRMI server = null;
-			while(true) {
+			while (true) {
 				try {
 					server = (TLCServerRMI) Naming.lookup(url);
 					break;
@@ -320,7 +332,7 @@ public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 					// if the cause is a java.NET.ConnectException the server is
 					// simply not ready yet
 					final Throwable cause = e.getCause();
-					if(cause instanceof java.net.ConnectException) {
+					if (cause instanceof java.net.ConnectException) {
 						long sleep = (long) Math.sqrt(i);
 						ToolIO.out.println("Server " + serverName
 								+ " unreachable, sleeping " + sleep
@@ -347,7 +359,7 @@ public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 				// either of the two is thrown. The rational is that the while
 				// loop could be going while TLCServer is busy generating a huge
 				// set of init states. Close to completion, it finds a violating
-				// state and terminates. In case of cloud distributed TLC 
+				// state and terminates. In case of cloud distributed TLC
 				// (see CloudDistributedTLCJob), the host/vm running the master
 				// immediately shuts down. That is when the NoRouteToHostException
 				// will make sure that the set of TLCWorkers will terminate the VM
@@ -364,29 +376,29 @@ public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 			// this call has to be made before the first UniqueString gets
 			// created! Otherwise workers and server end up creating different
 			// unique strings for the same String value.
-			UniqueString.setSource((InternRMI)server);
+			UniqueString.setSource((InternRMI) server);
 
 			if (fts == null) {
 				fts = new RMIFilenameToStreamResolver();
 			}
 			fts.setTLCServer(server);
-			
+
 			DistApp work = new TLCApp(server.getSpecFileName(),
 					server.getConfigFileName(), server.getCheckDeadlock(), fts);
 
 			final IFPSetManager fpSetManager = server.getFPSetManager();
-			
+
 			runnables = new TLCWorkerRunnable[numCores];
 			for (int j = 0; j < numCores; j++) {
 				runnables[j] = new TLCWorkerRunnable(j, server, fpSetManager, work);
 				Thread t = new Thread(runnables[j], TLCServer.THREAD_NAME_PREFIX + String.format("%03d", j));
 				t.start();
 			}
-			
-			// schedule a timer to periodically (60s) check server aliveness 
+
+			// schedule a timer to periodically (60s) check server aliveness
 			keepAliveTimer = new Timer("TLCWorker KeepAlive Timer", true);
 			keepAliveTimer.schedule(new TLCTimerTask(keepAliveTimer, runnables, url), 10000, TLCTimerTask.PERIOD);
-			
+
 			ToolIO.out.println("TLC worker with " + numCores + " threads ready at: "
 					+ new Date());
 		} catch (Throwable e) {
@@ -406,7 +418,7 @@ public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 	}
 
 	public static void setFilenameToStreamResolver(RMIFilenameToStreamResolver aFTS) {
-		fts  = aFTS;
+		fts = aFTS;
 	}
 
 	/**
@@ -419,7 +431,7 @@ public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 		if (keepAliveTimer != null) {
 			keepAliveTimer.cancel();
 		}
-		
+
 		// Exit and unregister all worker threads
 		for (int i = 0; i < runnables.length; i++) {
 			TLCWorker worker = runnables[i].getTLCWorker();
@@ -431,14 +443,14 @@ public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 				// may happen, ignore
 			}
 		}
-		
+
 		fts = null;
 		runnables = new TLCWorkerRunnable[0];
 	}
 
 	public static void awaitTermination() throws InterruptedException {
 		cdl.await();
-		
+
 		// Sleep 10 seconds for TLCServer to dispose itself. Otherwise
 		// if callees wait for this termination, they might end up connecting to
 		// the old TLCServer instance once
@@ -460,8 +472,10 @@ public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 			this.anFpSetManager = anFpSetManager;
 			this.aWork = aWork;
 		}
-		
-		/* (non-Javadoc)
+
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Runnable#run()
 		 */
 		public void run() {
@@ -477,12 +491,12 @@ public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 				throw new RuntimeException(e);
 			}
 		}
-		
+
 		public TLCWorker getTLCWorker() {
 			return worker;
 		}
 	}
-	
+
 	public static class Holder implements Comparable<Holder> {
 
 		private final long fp;
@@ -516,7 +530,9 @@ public class TLCWorker extends UnicastRemoteObject implements TLCWorkerRMI {
 			return predecessor;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Comparable#compareTo(java.lang.Object)
 		 */
 		public int compareTo(Holder o) {

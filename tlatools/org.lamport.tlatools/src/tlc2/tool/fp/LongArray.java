@@ -45,7 +45,7 @@ import util.TLCRuntime;
 public final class LongArray {
 
 	private final sun.misc.Unsafe unsafe;
-	
+
 	/**
 	 * The base address of this direct memory allocated with Unsafe.
 	 */
@@ -55,16 +55,17 @@ public final class LongArray {
 	 * Maximum number of elements that can be contained in this array.
 	 */
 	private final long length;
-	
+
 	/**
-	 * CHOOSE logAddressSize \in 1..(Long.SIZE / 8): 2^logAddressSize = (Long.SIZE / 8)
+	 * CHOOSE logAddressSize \in 1..(Long.SIZE / 8): 2^logAddressSize = (Long.SIZE /
+	 * 8)
 	 */
 	private static final int logAddressSize = 3;
 
 	LongArray(final long positions) {
 		this.length = positions;
 		this.unsafe = getUnsafe();
-		
+
 		// LongArray is only implemented for 64bit architectures. A 32bit
 		// implementation might be possible. However, implementing CAS (see
 		// trySet) seems impossible when values have to be split in two
@@ -76,13 +77,13 @@ public final class LongArray {
 		Assert.check(this.unsafe.addressSize() == (Long.SIZE / 8), EC.GENERAL);
 		baseAddress = this.unsafe.allocateMemory(positions << logAddressSize);
 	}
-	
+
 	LongArray(final Collection<Long> from) {
 		this(from.size());
-		
+
 		final Iterator<Long> itr = from.iterator();
 		long i = 0L;
-		while(itr.hasNext()) {
+		while (itr.hasNext()) {
 			Long next = itr.next();
 			set(i++, next);
 		}
@@ -106,12 +107,14 @@ public final class LongArray {
 			return false;
 		}
 	}
-	
+
 	/**
-	 * @return An Unsafe object or a {@link RuntimeException} wrapping any {@link Exception}. 
+	 * @return An Unsafe object or a {@link RuntimeException} wrapping any
+	 *         {@link Exception}.
 	 */
 	private static sun.misc.Unsafe getUnsafe() {
-		// More Details can be found at: http://www.mydailyjava.blogspot.no/2013/12/sunmiscunsafe.html
+		// More Details can be found at:
+		// http://www.mydailyjava.blogspot.no/2013/12/sunmiscunsafe.html
 		try {
 			// Use reflection API to unhide Unsafe
 			final Field f = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
@@ -134,7 +137,7 @@ public final class LongArray {
 			throws IOException {
 		this.unsafe.setMemory(baseAddress, length * 8L, (byte) 0); // times 8L because it only writes a single byte.
 	}
-	
+
 	/**
 	 * Initializes the memory by overriding each byte with zero starting at
 	 * <code>baseAddress</code> and ending when all positions have been written.
@@ -143,14 +146,14 @@ public final class LongArray {
 	 * thread count with which zeroing is done in parallel.
 	 * 
 	 * @param numThreads
-	 *            Number of threads used to zero memory
+	 *                   Number of threads used to zero memory
 	 * @throws IOException
 	 */
 	public final void zeroMemory(final int numThreads)
 			throws IOException {
 
 		final long segmentSize = (long) Math.floor(length / numThreads);
-		
+
 		final ExecutorService es = Executors.newFixedThreadPool(numThreads);
 		try {
 			final Collection<Callable<Boolean>> tasks = new ArrayList<Callable<Boolean>>(numThreads);
@@ -187,7 +190,7 @@ public final class LongArray {
 	}
 
 	/**
-	 * Converts from logical positions to 
+	 * Converts from logical positions to
 	 * physical memory addresses.
 	 * 
 	 * @param logical position (zero indexed)
@@ -196,45 +199,45 @@ public final class LongArray {
 	private final long log2phy(long logicalAddress) {
 		return baseAddress + (logicalAddress << logAddressSize);
 	}
-	
-    private final void rangeCheck(final long position) {
+
+	private final void rangeCheck(final long position) {
 		assert position >= 0 && position < this.length;
-    }
-	
+	}
+
 	/**
 	 * CAS (compare and swap) variant of {@link LongArray#set(long, long)}.
 	 * 
 	 * @param position
 	 * @param expected
 	 * @param value
-	 * @return true iff successful 
-     * @throws IndexOutOfBoundsException
+	 * @return true iff successful
+	 * @throws IndexOutOfBoundsException
 	 */
 	public final boolean trySet(final long position, final long expected, final long value) {
 		rangeCheck(position);
 		return this.unsafe.compareAndSwapLong(null, log2phy(position), expected, value);
 	}
-	
-    /**
-     * Inserts the specified element at the specified position in this
-     * array. Overwrites any previous occupant of the specified position.
-     *
-     * @param position position at which the specified element is to be inserted
-     * @param value element to be inserted
-     * @throws IndexOutOfBoundsException
-     */
+
+	/**
+	 * Inserts the specified element at the specified position in this
+	 * array. Overwrites any previous occupant of the specified position.
+	 *
+	 * @param position position at which the specified element is to be inserted
+	 * @param value    element to be inserted
+	 * @throws IndexOutOfBoundsException
+	 */
 	public final void set(final long position, final long value) {
 		rangeCheck(position);
 		this.unsafe.putAddress(log2phy(position), value);
 	}
 
-    /**
-     * Returns the element at the specified position in this array.
-     *
-     * @param  position position of the element to return
-     * @return the element at the specified position in this array
-     * @throws IndexOutOfBoundsException
-     */
+	/**
+	 * Returns the element at the specified position in this array.
+	 *
+	 * @param position position of the element to return
+	 * @return the element at the specified position in this array
+	 * @throws IndexOutOfBoundsException
+	 */
 	public final long get(final long position) {
 		rangeCheck(position);
 		return this.unsafe.getAddress(log2phy(position));
@@ -251,7 +254,7 @@ public final class LongArray {
 		set(position1, get(position2));
 		set(position2, tmp);
 	}
-	
+
 	/*
 	 * Variant of swap that uses copyMemory. This implementation - suprisingly - is
 	 * *not* faster compared to swap above (see LongArrayBenchmark).
@@ -262,17 +265,18 @@ public final class LongArray {
 		unsafe.putAddress(log2phy(position2), tmp);
 	}
 
-	
-    /**
-     * Returns the number of elements in this array.
-     *
-     * @return the number of elements in this array
-     */
+	/**
+	 * Returns the number of elements in this array.
+	 *
+	 * @return the number of elements in this array
+	 */
 	public final long size() {
 		return length;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
@@ -280,27 +284,27 @@ public final class LongArray {
 	}
 
 	public String toString(long start, long end) {
-        long iMax = end;
-        if (iMax == -1L) {
-        	return "[]";
-        }
+		long iMax = end;
+		if (iMax == -1L) {
+			return "[]";
+		}
 
-        final StringBuilder b = new StringBuilder();
-        b.append('[');
-        for (long i = start; ; i++) {
-            final long lng = get(i);
-            if (lng == 0L) {
-            	b.append("e");
-            } else {
-            	b.append(lng);
-            }
-            if (i == iMax) {
-            	return b.append(']').toString();
-            }
-            b.append(", ");
-        }
+		final StringBuilder b = new StringBuilder();
+		b.append('[');
+		for (long i = start;; i++) {
+			final long lng = get(i);
+			if (lng == 0L) {
+				b.append("e");
+			} else {
+				b.append(lng);
+			}
+			if (i == iMax) {
+				return b.append(']').toString();
+			}
+			b.append(", ");
+		}
 	}
-	
+
 	public static void main(final String[] args) throws IOException {
 		final long elements = 1L << Integer.valueOf(args[0]);
 		System.out.format("Allocating LongArray with %,d elements.\n", elements);

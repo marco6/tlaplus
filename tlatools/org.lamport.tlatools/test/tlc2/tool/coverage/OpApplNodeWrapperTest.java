@@ -52,103 +52,103 @@ public class OpApplNodeWrapperTest {
 		TLCGlobals.coverageInterval = 1;
 		ToolIO.out = new TestPrintStream();
 	}
-	
+
 	@Test
 	public void testReportCoverage01() {
 		final OpApplNodeWrapper root = new OpApplNodeWrapper();
 		root.report();
 		((TestPrintStream) ToolIO.out).assertEmpty();
-		
+
 		root.addChild(new OpApplNodeWrapper());
 	}
-	
+
 	@Test
 	public void testReportCoverage02() {
 		final OpApplNodeWrapper root = new OpApplNodeWrapper();
 		root.incInvocations(42);
-		
+
 		root.addChild(getNode(23));
 		root.addChild(getNode(24));
 		root.addChild(getNode(0)); // Not reported
 
 		root.report();
 		((TestPrintStream) ToolIO.out)
-				.assertContains("  Unknown location: 42\n" + 
-						"  |In module --TLA+ BUILTINS--: 23\n" + 
+				.assertContains("  Unknown location: 42\n" +
+						"  |In module --TLA+ BUILTINS--: 23\n" +
 						"  |In module --TLA+ BUILTINS--: 24");
 	}
-	
+
 	@Test
 	public void testReportCoverage03() {
 		final OpApplNodeWrapper root = new OpApplNodeWrapper();
 		root.incInvocations(42);
-		
+
 		OpApplNodeWrapper childA = getNode(23);
 		childA.addChild(getNode(546));
 		root.addChild(childA);
-		
+
 		OpApplNodeWrapper childB = getNode(24);
 		root.addChild(childB);
 		childB.addChild(getNode(0)); // Not reported because 0
-		
+
 		OpApplNodeWrapper childC = getNode(0);
 		root.addChild(childC); // Not reported
 
 		childC.addChild(getNode(17)); // Must be reported despite C being 0
-		
+
 		root.report();
 		((TestPrintStream) ToolIO.out)
-				.assertContains("  Unknown location: 42\n" + 
-						"  |In module --TLA+ BUILTINS--: 23\n" + 
-						"  ||In module --TLA+ BUILTINS--: 546\n" + 
-						"  |In module --TLA+ BUILTINS--: 24\n" + 
+				.assertContains("  Unknown location: 42\n" +
+						"  |In module --TLA+ BUILTINS--: 23\n" +
+						"  ||In module --TLA+ BUILTINS--: 546\n" +
+						"  |In module --TLA+ BUILTINS--: 24\n" +
 						"  |In module --TLA+ BUILTINS--: 17");
 	}
-	
+
 	/*
-  line 8, col 12 to line 8, col 21 of module A: 1
-  |line 5, col 11 to line 5, col 49 of module A: 1
-  ||line 5, col 31 to line 5, col 49 of module A: 131072
-  ||line 5, col 20 to line 5, col 27 of module A: 131072
-  |||line 5, col 27 to line 5, col 27 of module A: 1
-  |line 8, col 16 to line 8, col 20 of module A: 1
+	 * line 8, col 12 to line 8, col 21 of module A: 1
+	 * |line 5, col 11 to line 5, col 49 of module A: 1
+	 * ||line 5, col 31 to line 5, col 49 of module A: 131072
+	 * ||line 5, col 20 to line 5, col 27 of module A: 131072
+	 * |||line 5, col 27 to line 5, col 27 of module A: 1
+	 * |line 8, col 16 to line 8, col 20 of module A: 1
 	 */
 	@Test
 	public void testReportCoverage04() {
 		final OpApplNodeWrapper root = new OpApplNodeWrapper();
 		root.incInvocations(1);
-		
+
 		OpApplNodeWrapper childA = getNode(1);
 		root.addChild(childA);
-		
+
 		childA.addChild(getNode(131072));
-		
+
 		OpApplNodeWrapper cChildA = getNode(131072);
 		childA.addChild(cChildA);
-		
+
 		cChildA.addChild(getNode(1));
-		
+
 		OpApplNodeWrapper childB = getNode(1);
 		root.addChild(childB);
-		
+
 		root.report();
 		((TestPrintStream) ToolIO.out)
-				.assertContains("  Unknown location: 1\n" + 
-						"  |In module --TLA+ BUILTINS--: 1\n" + 
-						"  ||In module --TLA+ BUILTINS--: 131072\n" + 
-						"  ||In module --TLA+ BUILTINS--: 131072\n" + 
-						"  |||In module --TLA+ BUILTINS--: 1\n" + 
+				.assertContains("  Unknown location: 1\n" +
+						"  |In module --TLA+ BUILTINS--: 1\n" +
+						"  ||In module --TLA+ BUILTINS--: 131072\n" +
+						"  ||In module --TLA+ BUILTINS--: 131072\n" +
+						"  |||In module --TLA+ BUILTINS--: 1\n" +
 						"  |In module --TLA+ BUILTINS--: 1");
 	}
-	
+
 	// It is dummies all the way down...
-	
+
 	private OpApplNodeWrapper getNode(long count) {
 		final SymbolNode sn = new DummySymbolNode(Long.toString(count));
 		final OpApplNode node = new DummyOpApplNode(sn);
 		return new OpApplNodeWrapper(node, count);
 	}
-	
+
 	private static class DummySymbolNode extends SymbolNode {
 
 		protected DummySymbolNode(String name) {
@@ -171,7 +171,8 @@ public class OpApplNodeWrapperTest {
 		}
 
 		@Override
-		protected Element getSymbolElement(Document doc, SymbolContext context, BiPredicate<SemanticNode, SemanticNode> filter) {
+		protected Element getSymbolElement(Document doc, SymbolContext context,
+				BiPredicate<SemanticNode, SemanticNode> filter) {
 			throw new UnsupportedOperationException("not implemented");
 		}
 
@@ -179,9 +180,9 @@ public class OpApplNodeWrapperTest {
 		protected String getNodeRef() {
 			throw new UnsupportedOperationException("not implemented");
 		}
-		
+
 	}
-	
+
 	private static class DummyOpApplNode extends OpApplNode {
 
 		public DummyOpApplNode(SymbolNode sn) {

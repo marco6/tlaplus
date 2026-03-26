@@ -45,11 +45,11 @@ public class IsolatedTestCaseRunner extends Runner {
 	public IsolatedTestCaseRunner(final Class<?> testFileClass)
 			throws InitializationError, ClassNotFoundException, InstantiationException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-	
+
 		// Since IsolatedTestCaseRunner runs several isolated tests in a single VM, it
 		// is good practice to clean resources before each new test.
 		System.gc();
-		
+
 		ClassLoader classLoader = IsolatedTestCaseRunner.class.getClassLoader();
 		if (classLoader instanceof URLClassLoader) {
 			// When run within e.g. Eclipse, the classloader might not be of instance
@@ -70,16 +70,16 @@ public class IsolatedTestCaseRunner extends Runner {
 	public void run(RunNotifier notifier) {
 		delegate.run(notifier);
 	}
-	
+
 	private class IsolatedTestCaseClassLoader extends URLClassLoader {
 
 		private final Map<String, Class<?>> cache = new HashMap<>();
 		private final Set<String> packages = new HashSet<>();
-		
+
 		public IsolatedTestCaseClassLoader(URLClassLoader classLoader) {
 			super(classLoader.getURLs());
-			
-			// All of TLC's java packages. 
+
+			// All of TLC's java packages.
 			packages.add("tla2sany");
 			packages.add("pcal");
 			packages.add("util");

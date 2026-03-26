@@ -16,7 +16,7 @@ import java.util.regex.*;
  * Handles reading and parsing the corpus test files.
  */
 public class SyntaxCorpusFileParser {
-	
+
 	/**
 	 * Holds info about tokens in the AST DSL.
 	 */
@@ -31,22 +31,22 @@ public class SyntaxCorpusFileParser {
 			RPAREN,
 			COLON
 		}
-		
+
 		/**
 		 * The actual string classified as the given token kind.
 		 */
 		public final String lexeme;
-		
+
 		/**
 		 * The token kind associated with the given lexeme.
 		 */
-		public final Kind kind; 
-		
+		public final Kind kind;
+
 		/**
 		 * Constructs a new instance of the token class.
 		 * 
 		 * @param lexeme The lexeme underlying this token.
-		 * @param kind The kind of the lexeme.
+		 * @param kind   The kind of the lexeme.
 		 */
 		public Token(String lexeme, Kind kind) {
 			this.lexeme = lexeme;
@@ -102,29 +102,29 @@ public class SyntaxCorpusFileParser {
 		 * The parser's current index in the token array.
 		 */
 		public int current;
-		
+
 		/**
 		 * The unparsed input string tokens.
 		 */
 		public final List<Token> tokens;
-		
+
 		/**
 		 * Whether to log each token consumed.
 		 */
 		private final boolean log;
-		
+
 		/**
 		 * Initializes the parser state with the input string.
 		 * 
 		 * @param token The tokens to parse.
-		 * @param log Whether to log each consumed char.
+		 * @param log   Whether to log each consumed char.
 		 */
 		public ParserState(List<Token> tokens, boolean log) {
 			this.current = 0;
 			this.tokens = tokens;
 			this.log = log;
 		}
-		
+
 		/**
 		 * Whether parse is at the end of the token array.
 		 * 
@@ -133,7 +133,7 @@ public class SyntaxCorpusFileParser {
 		public boolean isAtEnd() {
 			return current == tokens.size();
 		}
-		
+
 		/**
 		 * Peeks the current token without consuming it.
 		 * 
@@ -142,7 +142,7 @@ public class SyntaxCorpusFileParser {
 		public Token peek() {
 			return tokens.get(current);
 		}
-		
+
 		/**
 		 * Gets the token last consumed.
 		 * 
@@ -151,7 +151,7 @@ public class SyntaxCorpusFileParser {
 		public Token previous() {
 			return tokens.get(current - 1);
 		}
-		
+
 		/**
 		 * Checks whether the current token is of the given kind.
 		 * 
@@ -159,10 +159,11 @@ public class SyntaxCorpusFileParser {
 		 * @return True if current token is of the given kind.
 		 */
 		public boolean check(Token.Kind kind) {
-			if (isAtEnd()) return false;
+			if (isAtEnd())
+				return false;
 			return peek().kind == kind;
 		}
-		
+
 		/**
 		 * Advances the parser and returns the token advanced past. Prints
 		 * out the token to standard output if logging is flagged true.
@@ -170,13 +171,14 @@ public class SyntaxCorpusFileParser {
 		 * @return The token advanced past.
 		 */
 		public Token advance() {
-			if (!isAtEnd()) current++;
+			if (!isAtEnd())
+				current++;
 			if (log) {
 				System.out.println(previous().lexeme);
 			}
 			return previous();
 		}
-		
+
 		/**
 		 * Consume the current token; if current token is not of the given
 		 * kind, throw a parse exception. Also throw an exception if no
@@ -187,11 +189,12 @@ public class SyntaxCorpusFileParser {
 		 * @throws ParseException If current token is not of the given kind.
 		 */
 		public Token consume(Token.Kind kind) throws ParseException {
-			if (check(kind)) return advance();
+			if (check(kind))
+				return advance();
 			throw new ParseException(String.format("Expected %s", kind), current);
 		}
 	}
-	
+
 	/**
 	 * Performs the actual parsing of the AST DSL by mutating a parser state
 	 * in place. Thankfully S-expressions are easy to parse in a single
@@ -233,12 +236,12 @@ public class SyntaxCorpusFileParser {
 		}
 		return parseTree;
 	}
-	
+
 	/**
 	 * Class holding info about a single corpus test.
 	 */
 	public static class CorpusTest {
-		
+
 		/**
 		 * Attributes associated with this test, given as colon-prefixed
 		 * tags in the header below the test name. See this for details:
@@ -258,123 +261,122 @@ public class SyntaxCorpusFileParser {
 			 */
 			ERROR
 		}
-		
+
 		/**
 		 * The path to the corpus file containing this test.
 		 */
 		public final Path file;
-		
+
 		/**
 		 * The name of the corpus test.
 		 */
 		public final String name;
-		
+
 		/**
 		 * The unparsed TLA+ code to be given to the parser.
 		 */
 		public final String tlaplusInput;
-		
+
 		/**
 		 * The expected parse tree, in normalized form. This will be null if
 		 * this test has the ERROR attribute.
 		 */
 		public final AstNode expectedAst;
-		
+
 		/**
 		 * Attributes possessed by this test.
 		 */
 		public final List<Attribute> attributes;
-		
+
 		/**
 		 * Initializes corpus test info by parsing the expected syntax tree.
 		 * 
-		 * @param file The path to the file containing this test.
-		 * @param header The header text of the corpus test.
+		 * @param file         The path to the file containing this test.
+		 * @param header       The header text of the corpus test.
 		 * @param tlaplusInput The unparsed TLA+ code.
-		 * @param expectedAst The expected syntax tree, as an unparsed S-expression.
+		 * @param expectedAst  The expected syntax tree, as an unparsed S-expression.
 		 */
 		public CorpusTest(Path file, String header, String tlaplusInput, String expectedAst) throws ParseException {
 			this.file = file;
 			this.name = getTestName(header);
 			this.attributes = getTestAttributes(header);
 			this.tlaplusInput = tlaplusInput;
-			this.expectedAst =
-				this.attributes.contains(Attribute.ERROR)
-				? null : parseAst(expectedAst);
+			this.expectedAst = this.attributes.contains(Attribute.ERROR)
+					? null
+					: parseAst(expectedAst);
 		}
-	
+
 		@Override
 		public String toString() {
 			return this.name;
 		}
-	
+
 		/**
 		 * Gets the test name from the test header.
+		 * 
 		 * @param header The header to parse.
 		 * @return The test's name.
 		 */
 		private static String getTestName(String header) {
 			return header
-				.lines()
-				.takeWhile(line -> !line.startsWith(":"))
-				.collect(Collectors.joining("\n"))
-				.trim();
+					.lines()
+					.takeWhile(line -> !line.startsWith(":"))
+					.collect(Collectors.joining("\n"))
+					.trim();
 		}
-		
+
 		/**
 		 * Gets the list of attributes from the test header.
+		 * 
 		 * @param header The header to parse.
 		 * @return A list of attributes found in the header.
 		 */
 		private static List<Attribute> getTestAttributes(String header) {
 			return header
-				.lines()
-				.filter(line -> line.startsWith(":"))
-				.map(tag -> tagToAttribute(tag))
-				.collect(Collectors.toList());
+					.lines()
+					.filter(line -> line.startsWith(":"))
+					.map(tag -> tagToAttribute(tag))
+					.collect(Collectors.toList());
 		}
-		
+
 		/**
 		 * Resolves a tag name found in the header to an attribute.
+		 * 
 		 * @param tag The tag to resolve to an attribute.
 		 * @return An attribute corresponding to the tag.
 		 */
 		private static Attribute tagToAttribute(String tag) {
 			String tagName = tag.strip().substring(1); // Chop leading colon
 			return Stream
-				.of(Attribute.values())
-				.filter(attribute -> attribute.name().equalsIgnoreCase(tagName))
-				.findFirst()
-				.orElseThrow(
-					() -> new RuntimeException(
-						String.format("Invalid test attribute %s", tag)));
+					.of(Attribute.values())
+					.filter(attribute -> attribute.name().equalsIgnoreCase(tagName))
+					.findFirst()
+					.orElseThrow(
+							() -> new RuntimeException(
+									String.format("Invalid test attribute %s", tag)));
 		}
 	}
-	
+
 	/**
 	 * Regex for identifying test headers.
 	 */
-	private static final Pattern headerRegex =
-		Pattern.compile(
+	private static final Pattern headerRegex = Pattern.compile(
 			"^===+\\|\\|\\|\r?\n"
-			+ "(?<testName>.*?(?=\r?\n===+\\|\\|\\|))\r?\n"
-			+ "===+\\|\\|\\|\r?\n",
-			Pattern.MULTILINE | Pattern.DOTALL
-		);
+					+ "(?<testName>.*?(?=\r?\n===+\\|\\|\\|))\r?\n"
+					+ "===+\\|\\|\\|\r?\n",
+			Pattern.MULTILINE | Pattern.DOTALL);
 
 	/**
 	 * Regex for identifying test separators.
 	 */
-	private static final Pattern separatorRegex =
-		Pattern.compile(
+	private static final Pattern separatorRegex = Pattern.compile(
 			"^---+\\|\\|\\|\r?\n",
-			Pattern.MULTILINE
-		);
+			Pattern.MULTILINE);
 
 	/**
 	 * Parses the contents of a corpus test file into a list of corpus tests.
 	 *
-	 * @param path The path to the corpus test file.
+	 * @param path    The path to the corpus test file.
 	 * @param content The string content of the test file.
 	 * @throws ParseException If the content contains invalid test file syntax.
 	 */
@@ -390,8 +392,7 @@ public class SyntaxCorpusFileParser {
 			}
 			String tlaplusInput = content.substring(headerMatcher.end(), separatorMatcher.start());
 			hasNext = headerMatcher.find();
-			String expectedAst =
-					hasNext
+			String expectedAst = hasNext
 					? content.substring(separatorMatcher.end(), headerMatcher.start())
 					: content.substring(separatorMatcher.end());
 			tests.add(new CorpusTest(path, testName, tlaplusInput, expectedAst));
@@ -403,14 +404,14 @@ public class SyntaxCorpusFileParser {
 
 		return tests;
 	}
-	
+
 	/**
 	 * Gets all .txt files in the corpus tests directory then parses their
 	 * contents into a list of tests.
 	 * 
 	 * @param corpusDir Directory in which to look for test files.
 	 * @return A list of all corpus tests.
-	 * @throws IOException If a file could not be found or opened or read.
+	 * @throws IOException    If a file could not be found or opened or read.
 	 * @throws ParseException If a file contains invalid test syntax.
 	 */
 	public static List<CorpusTest> getAllTestsUnder(Path corpusDir) throws IOException, ParseException {
@@ -420,7 +421,7 @@ public class SyntaxCorpusFileParser {
 			String content = Files.readString(path);
 			corpus.addAll(getCorpusTests(path, content));
 		}
-	
+
 		return corpus;
 	}
 }

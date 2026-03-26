@@ -41,89 +41,113 @@ public class BucketStatisticsMXWrapper extends TLCStandardMBean implements Bucke
 			throws NotCompliantMBeanException {
 		super(BucketStatisticsMXBean.class);
 		this.graphStats = graphStats;
-		
+
 		objectName = graphName;
 		registerMBean(String.format("%s:type=%s", pkg, objectName));
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.management.GraphStatisticsMXBean#getObjectName()
 	 */
 	public String getObjectName() {
 		return objectName;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.management.GraphStatisticsMXBean#getObservations()
 	 */
 	public long getObservations() {
 		return graphStats.getObservations();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.management.GraphStatisticsMXBean#getMedian()
 	 */
 	public int getMedian() {
 		return graphStats.getMedian();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.management.GraphStatisticsMXBean#getMean()
 	 */
 	public double getMean() {
 		return graphStats.getMean();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.management.GraphStatisticsMXBean#getMin()
 	 */
 	public int getMin() {
 		return graphStats.getMin();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.management.GraphStatisticsMXBean#getMax()
 	 */
 	public int getMax() {
 		return graphStats.getMax();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.management.GraphStatisticsMXBean#getStdDev()
 	 */
 	public double getStdDev() {
 		return graphStats.getStdDev();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.management.GraphStatisticsMXBean#get75Percentile()
 	 */
 	public double get75Percentile() {
 		return graphStats.getPercentile(0.75d);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.management.GraphStatisticsMXBean#get95Percentile()
 	 */
 	public double get95Percentile() {
 		return graphStats.getPercentile(0.95d);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.management.GraphStatisticsMXBean#get98Percentile()
 	 */
 	public double get98Percentile() {
 		return graphStats.getPercentile(0.98d);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.management.GraphStatisticsMXBean#get99Percentile()
 	 */
 	public double get99Percentile() {
 		return graphStats.getPercentile(0.99d);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.management.GraphStatisticsMXBean#get999Percentile()
 	 */
 	public double get999Percentile() {

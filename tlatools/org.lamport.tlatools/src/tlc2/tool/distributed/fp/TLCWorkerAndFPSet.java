@@ -8,7 +8,9 @@ public class TLCWorkerAndFPSet {
 	public static void main(final String[] args) {
 		// Start distributed FPSet first
 		new Thread(new Runnable() {
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see java.lang.Runnable#run()
 			 */
 			public void run() {
@@ -18,7 +20,9 @@ public class TLCWorkerAndFPSet {
 
 		// Start worker afterwards as it requires FPSets to be available
 		new Thread(new Runnable() {
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see java.lang.Runnable#run()
 			 */
 			public void run() {

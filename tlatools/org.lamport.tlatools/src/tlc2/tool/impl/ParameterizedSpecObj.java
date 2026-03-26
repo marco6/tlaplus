@@ -70,12 +70,13 @@ public class ParameterizedSpecObj extends SpecObj {
 	}
 
 	@Override
-	protected final ParseUnit findOrCreateParsedUnit(final String name, final Errors errors, final boolean firstCall, final SanyOutput out)
+	protected final ParseUnit findOrCreateParsedUnit(final String name, final Errors errors, final boolean firstCall,
+			final SanyOutput out)
 			throws AbortException {
 		final ParseUnit pu = super.findOrCreateParsedUnit(name, errors, firstCall, out);
 		if (firstCall && params.containsKey(POST_CONDITIONS)) {
 			final ModulePointer rootModule = pu.getRootModule();
-			
+
 			@SuppressWarnings("unchecked")
 			final List<PostCondition> pcs = (List<PostCondition>) params.get(POST_CONDITIONS);
 			for (PostCondition pc : pcs) {
@@ -84,17 +85,20 @@ public class ParameterizedSpecObj extends SpecObj {
 		}
 		if (firstCall && params.containsKey(INVARIANT)) {
 			final ModulePointer rootModule = pu.getRootModule();
-			
+
 			@SuppressWarnings("unchecked")
 			final List<InvariantTemplate> invs = (List<InvariantTemplate>) params.get(INVARIANT);
 			for (InvariantTemplate inv : invs) {
 				inv.getModules().forEach(rootModule.getRelatives()::addExtendee);
 			}
 		}
-		// TODO: The current approach forcefully extends the root module with the constraints’
+		// TODO: The current approach forcefully extends the root module with the
+		// constraints’
 		// modules. This should be replaced with infrastructure similar to
-		// tlc2.debug.TLCDebuggerExpression.process(SpecProcessor, ModuleNode, Location, String),
-		// which allows the root module’s extendees to remain unchanged. The existing approach
+		// tlc2.debug.TLCDebuggerExpression.process(SpecProcessor, ModuleNode, Location,
+		// String),
+		// which allows the root module’s extendees to remain unchanged. The existing
+		// approach
 		// pollutes the module namespace and may introduce cyclic module dependencies.
 		if (firstCall && params.containsKey(CONSTRAINTS)) {
 			final ModulePointer rootModule = pu.getRootModule();
@@ -183,7 +187,7 @@ public class ParameterizedSpecObj extends SpecObj {
 		@SuppressWarnings("unchecked")
 		final List<PostCondition> pcs = (List<PostCondition>) params.getOrDefault(POST_CONDITIONS, new ArrayList<>());
 		for (PostCondition pc : pcs) {
-			
+
 			final ExternalModuleTable mt = getExternalModuleTable();
 			final ModuleNode moduleNode = mt.getModuleNode(pc.module);
 			Assert.check(moduleNode != null, EC.GENERAL, "Could not find module: " + pc.module);
@@ -194,16 +198,16 @@ public class ParameterizedSpecObj extends SpecObj {
 		}
 		return res;
 	}
-	
+
 	public static class PostCondition {
 		public final String module;
 		public final String operator;
 		public final Map<String, String> constDecls;
-		
+
 		public PostCondition(String module, String operator) {
 			this(module, operator, new HashMap<>());
 		}
-		
+
 		public PostCondition(final String module, final String operator, final String def, final String constDef) {
 			this(module, operator);
 			this.constDecls.put(def, constDef);
@@ -220,12 +224,13 @@ public class ParameterizedSpecObj extends SpecObj {
 	public static abstract class InvariantTemplate {
 
 		protected final Set<String> modules;
-		
+
 		public InvariantTemplate(final Set<String> modules) {
 			this.modules = modules;
 		}
-		
-		public abstract Action getAction(final SpecProcessor spec) throws ParseException, SemanticException, AbortException;
+
+		public abstract Action getAction(final SpecProcessor spec)
+				throws ParseException, SemanticException, AbortException;
 
 		public Set<String> getModules() {
 			// TODO:
@@ -236,8 +241,8 @@ public class ParameterizedSpecObj extends SpecObj {
 			// separately by TLCDebuggerExpression.
 			return modules;
 		}
-	}	
-	
+	}
+
 	public static class RuntimeInvariantTemplate extends InvariantTemplate {
 		private final String expr;
 
@@ -254,11 +259,13 @@ public class ParameterizedSpecObj extends SpecObj {
 	}
 
 	@Override
-	public List<Action> getInvariants(final SpecProcessor specProcessor) throws ParseException, SemanticException, AbortException {
+	public List<Action> getInvariants(final SpecProcessor specProcessor)
+			throws ParseException, SemanticException, AbortException {
 		final List<Action> res = new ArrayList<>();
 
 		@SuppressWarnings("unchecked")
-		final List<InvariantTemplate> invs = (List<InvariantTemplate>) params.getOrDefault(INVARIANT, new ArrayList<>());
+		final List<InvariantTemplate> invs = (List<InvariantTemplate>) params.getOrDefault(INVARIANT,
+				new ArrayList<>());
 		for (InvariantTemplate inv : invs) {
 			res.add(inv.getAction(specProcessor));
 		}

@@ -53,6 +53,6 @@ public class LoopTestWeakFair extends ModelCheckerTestCase {
 
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_CHECKING_TEMPORAL_PROPS, "complete", "4"));
 
-	assertZeroUncovered();
+		assertZeroUncovered();
 	}
 }

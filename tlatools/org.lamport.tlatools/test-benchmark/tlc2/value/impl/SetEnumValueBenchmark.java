@@ -55,15 +55,15 @@ public class SetEnumValueBenchmark {
 		}
 		return vec;
 	}
-	
-	@Param({"10", "12", "14", "16"})
+
+	@Param({ "10", "12", "14", "16" })
 	public int numOfElements;
-	
-	@Param({"16", "18", "20", "22"})
+
+	@Param({ "16", "18", "20", "22" })
 	public int size;
 
 	public Enumerable setEnumValue;
-		
+
 	@Setup(Level.Invocation)
 	public void setup() {
 		setEnumValue = (Enumerable) new SetEnumValue(getValues(1, 1 << size), false).normalize();

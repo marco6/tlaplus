@@ -75,7 +75,7 @@ class LNDisj extends LiveExprNode {
 	public final boolean containAction() {
 		return (this.info & 8) > 0;
 	}
-	
+
 	@Override
 	public final boolean isPositiveForm() {
 		for (int i = 0; i < disjs.size(); i++) {
@@ -113,8 +113,10 @@ class LNDisj extends LiveExprNode {
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.LiveExprNode#toDotViz()
 	 */
 	public String toDotViz() {
@@ -130,6 +132,7 @@ class LNDisj extends LiveExprNode {
 		}
 		return sb.toString();
 	}
+
 	public void extractPromises(TBPar promises) {
 		getBody(0).extractPromises(promises);
 		getBody(1).extractPromises(promises);

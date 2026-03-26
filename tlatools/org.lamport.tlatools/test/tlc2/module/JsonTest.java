@@ -35,7 +35,7 @@ import tlc2.tool.liveness.ModelCheckerTestCase;
 public class JsonTest extends ModelCheckerTestCase {
 
 	public JsonTest() {
-		super("JsonTests", new String[] {"-config", "JsonTests.tla"});
+		super("JsonTests", new String[] { "-config", "JsonTests.tla" });
 	}
 
 	@Test

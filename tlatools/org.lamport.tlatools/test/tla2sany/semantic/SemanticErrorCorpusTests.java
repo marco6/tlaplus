@@ -77,16 +77,18 @@ public class SemanticErrorCorpusTests {
 
     public final Path modulePath;
     public final ErrorCode expectedCode;
+
     public SemanticErrorTestCase(final Path modulePath) {
       this.modulePath = modulePath;
       final String filename = modulePath.getFileName().toString();
       final Matcher m = FILENAME_PATTERN.matcher(filename);
       if (!m.matches()) {
-          throw new IllegalArgumentException(filename);
+        throw new IllegalArgumentException(filename);
       }
       final int errorCode = Integer.parseInt(m.group("code"));
       this.expectedCode = ErrorCode.fromStandardValue(errorCode);
     }
+
     // Used by JUnit to identify this test case.
     public String toString() {
       return this.modulePath.getFileName().toString();
@@ -110,11 +112,11 @@ public class SemanticErrorCorpusTests {
     Path corpusDir = Paths.get(CommonTestCase.BASE_DIR).resolve(CORPUS_DIR);
     PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**/*Test.tla");
     return Files
-      .walk(corpusDir)
-      .filter(matcher::matches)
-      .map(SemanticErrorTestCase::new)
-      .sorted(Comparator.comparing(SemanticErrorTestCase::toString))
-      .collect(Collectors.toList());
+        .walk(corpusDir)
+        .filter(matcher::matches)
+        .map(SemanticErrorTestCase::new)
+        .sorted(Comparator.comparing(SemanticErrorTestCase::toString))
+        .collect(Collectors.toList());
   }
 
   /**
@@ -129,10 +131,14 @@ public class SemanticErrorCorpusTests {
   @Test
   public void test() {
     final Errors log = parse(this.testCase.modulePath);
-    Assert.assertEquals(log.toString(), this.testCase.expectedCode.getSeverityLevel() == ErrorLevel.ERROR, log.isFailure());
+    Assert.assertEquals(log.toString(), this.testCase.expectedCode.getSeverityLevel() == ErrorLevel.ERROR,
+        log.isFailure());
     final List<ErrorDetails> actual = log.getMessages();
-    Assert.assertTrue(actual.stream().allMatch(error -> error.getCode().getParameterCount() == ErrorCode.VARIADIC_PARAMETERS || error.getCode().getParameterCount() == error.getParameters().size()));
-    Assert.assertEquals(new ArrayList<>(), actual.stream().filter(error -> error.getCode() == ErrorCode.SUSPECTED_UNREACHABLE_CHECK).collect(Collectors.toList()));
+    Assert.assertTrue(
+        actual.stream().allMatch(error -> error.getCode().getParameterCount() == ErrorCode.VARIADIC_PARAMETERS
+            || error.getCode().getParameterCount() == error.getParameters().size()));
+    Assert.assertEquals(new ArrayList<>(), actual.stream()
+        .filter(error -> error.getCode() == ErrorCode.SUSPECTED_UNREACHABLE_CHECK).collect(Collectors.toList()));
     Assert.assertTrue(log.toString(), actual.stream().anyMatch(error -> error.getCode() == this.testCase.expectedCode));
   }
 
@@ -156,7 +162,8 @@ public class SemanticErrorCorpusTests {
     } catch (ParseException e) {
       Assert.assertNotEquals(e.toString() + out.toString(), 0, spec.parseErrors.getNumMessages());
       return spec.parseErrors;
-    } try {
+    }
+    try {
       SANY.frontEndSemanticAnalysis(spec, out, true);
     } catch (SemanticException e) {
       return spec.semanticErrors;
@@ -164,7 +171,7 @@ public class SemanticErrorCorpusTests {
       // https://github.com/tlaplus/tlaplus/issues/1149
       return spec.semanticErrors;
     }
-      SANY.frontEndLinting(spec, out);
+    SANY.frontEndLinting(spec, out);
     return spec.semanticErrors;
   }
 }

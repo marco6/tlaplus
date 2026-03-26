@@ -37,7 +37,7 @@ import tlc2.tool.liveness.ModelCheckerTestCase;
 public class EmptyTest extends ModelCheckerTestCase {
 
 	public EmptyTest() {
-		super("Empty", "", new String[] {"-coverage", "1"});
+		super("Empty", "", new String[] { "-coverage", "1" });
 	}
 
 	@Test

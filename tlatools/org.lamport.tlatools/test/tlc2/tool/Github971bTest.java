@@ -43,7 +43,8 @@ import tlc2.value.impl.IntValue;
 public class Github971bTest extends ModelCheckerTestCase {
 
 	public Github971bTest() {
-		super("Github971", new String[] { "-lncheck", "off", "-config", "Github971b.cfg" }, EC.ExitStatus.VIOLATION_SAFETY);
+		super("Github971", new String[] { "-lncheck", "off", "-config", "Github971b.cfg" },
+				EC.ExitStatus.VIOLATION_SAFETY);
 	}
 
 	@Override

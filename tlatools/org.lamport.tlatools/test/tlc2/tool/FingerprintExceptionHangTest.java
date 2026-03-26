@@ -10,7 +10,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Regression test for an infinite loop in {@link FingerprintException#asTrace()}.
+ * Regression test for an infinite loop in
+ * {@link FingerprintException#asTrace()}.
  */
 public class FingerprintExceptionHangTest extends ModelCheckerTestCase {
 

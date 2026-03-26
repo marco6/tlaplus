@@ -43,9 +43,9 @@ import util.ToolIO;
  */
 @SuppressWarnings("serial")
 public abstract class FPSetManager implements IFPSetManager {
-	
+
 	private static final Random rnd = new Random();
-	
+
 	private final static Logger LOGGER = Logger.getLogger(FPSetManager.class.getName());
 
 	protected long mask = 0x7FFFFFFFFFFFFFFFL;
@@ -55,16 +55,16 @@ public abstract class FPSetManager implements IFPSetManager {
 	 * case, where it's impossible to call {@link FPSetRMI#getHostname}.
 	 */
 	protected List<FPSets> fpSets;
-	
-	protected boolean managerIsBroken = false; 
+
+	protected boolean managerIsBroken = false;
 
 	// SZ Jul 13, 2009: moved from FPSetRMI
 	public static int Port = 10998; // port # for fpset server
 
 	public FPSetManager() {
-		 this(new ArrayList<FPSets>());
+		this(new ArrayList<FPSets>());
 	}
-	
+
 	public FPSetManager(List<FPSets> fpSets) {
 		this.fpSets = fpSets;
 	}
@@ -74,14 +74,18 @@ public abstract class FPSetManager implements IFPSetManager {
 		this.fpSets.add(new FPSets(fpSet, fpSet.toString()));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.IFPSetManager#numOfServers()
 	 */
 	public int numOfServers() {
 		return this.fpSets.size();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.fp.IFPSetManager#numOfAliveServers()
 	 */
 	public int numOfAliveServers() {
@@ -89,7 +93,7 @@ public abstract class FPSetManager implements IFPSetManager {
 		// from reassigning alive fpsets to the slot of a dead one.
 		final Set<FPSets> s = new HashSet<FPSets>();
 		s.addAll(this.fpSets);
-		
+
 		int aliveServer = 0;
 
 		final Iterator<FPSets> itr = s.iterator();
@@ -106,14 +110,15 @@ public abstract class FPSetManager implements IFPSetManager {
 	 * next available successor in the list.
 	 * 
 	 * @param index Corresponds to the FPSet to be replaced
-	 * @return The index of the replacement or <code>-1</code> if no functional FPSet left.
+	 * @return The index of the replacement or <code>-1</code> if no functional
+	 *         FPSet left.
 	 */
 	public synchronized int reassign(final int index) {
 		// Guard against invalid indices
 		if (index < 0 || index >= this.fpSets.size()) {
 			throw new IllegalArgumentException("index not within bounds");
 		}
-		
+
 		// Avoid cycling over the list of broken FPSets if all are broken
 		// anyway. This is just a performance enhancement in that it prevents
 		// the code from looping over the (potentially large) list of nested
@@ -123,14 +128,14 @@ public abstract class FPSetManager implements IFPSetManager {
 		if (managerIsBroken) {
 			return -1;
 		}
-		
+
 		// The broken FPSet
 		final FPSets broken = this.fpSets.get(index);
 		broken.setUnavailable();
 
 		// Calculate the index of the successor
 		int next = (index + 1) % this.fpSets.size();
-		
+
 		// Loop until we wrap around which would indicate that no functional
 		// FPsets are left
 		while (next != index) {
@@ -143,16 +148,18 @@ public abstract class FPSetManager implements IFPSetManager {
 			}
 			next = (next + 1) % this.fpSets.size();
 		}
-		
+
 		// No FPSets left that can be used.
 		// Mark the FPSetManager itself as broken and cache it for subsequent
 		// calls.
 		managerIsBroken = true;
-		
+
 		return -1;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.IFPSetManager#close(boolean)
 	 */
 	public void close(boolean cleanup) throws IOException {
@@ -207,7 +214,9 @@ public abstract class FPSetManager implements IFPSetManager {
 		return hostname;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.IFPSetManager#put(long)
 	 */
 	public boolean put(long fp) {
@@ -227,8 +236,10 @@ public abstract class FPSetManager implements IFPSetManager {
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.IFPSetManager#contains(long)
 	 */
 	public boolean contains(long fp) {
@@ -249,14 +260,18 @@ public abstract class FPSetManager implements IFPSetManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.fp.IFPSetManager#getFPSetIndex(long)
 	 */
 	public int getFPSetIndex(long fp) {
 		return (int) ((fp & mask) % numOfServers());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.IFPSetManager#putBlock(tlc2.util.LongVec[])
 	 */
 	public BitVector[] putBlock(LongVec[] fps) {
@@ -285,8 +300,11 @@ public abstract class FPSetManager implements IFPSetManager {
 		return res;
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.distributed.fp.IFPSetManager#putBlock(tlc2.util.LongVec[], java.util.concurrent.ExecutorService)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.tool.distributed.fp.IFPSetManager#putBlock(tlc2.util.LongVec[],
+	 * java.util.concurrent.ExecutorService)
 	 */
 	public BitVector[] putBlock(final LongVec[] fps, final ExecutorService executorService) {
 		// Create a Callable for each fingerprint set
@@ -299,7 +317,9 @@ public abstract class FPSetManager implements IFPSetManager {
 		return executeCallablesAndCollect(executorService, solvers);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.IFPSetManager#containsBlock(tlc2.util.LongVec[])
 	 */
 	public BitVector[] containsBlock(LongVec[] fps) {
@@ -328,8 +348,12 @@ public abstract class FPSetManager implements IFPSetManager {
 		return res;
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.distributed.fp.IFPSetManager#containsBlock(tlc2.util.LongVec[], java.util.concurrent.ExecutorService)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * tlc2.tool.distributed.fp.IFPSetManager#containsBlock(tlc2.util.LongVec[],
+	 * java.util.concurrent.ExecutorService)
 	 */
 	public BitVector[] containsBlock(final LongVec[] fps, final ExecutorService executorService) {
 		// Create a Callable for each fingerprint set
@@ -346,11 +370,12 @@ public abstract class FPSetManager implements IFPSetManager {
 	 * Executes the given solvers by using the executor service. Afterwards it
 	 * waits for completion and collects the results.
 	 */
-	private BitVector[] executeCallablesAndCollect(final ExecutorService executorService, 
+	private BitVector[] executeCallablesAndCollect(final ExecutorService executorService,
 			final List<Callable<BitVectorWrapper>> solvers) {
 		// Have the callables executed by the executor service
 		int retry = 0;
-		final CompletionService<BitVectorWrapper> ecs = new ExecutorCompletionService<BitVectorWrapper>(executorService);
+		final CompletionService<BitVectorWrapper> ecs = new ExecutorCompletionService<BitVectorWrapper>(
+				executorService);
 		for (int i = 0; i < solvers.size(); i++) {
 			final Callable<BitVectorWrapper> s = solvers.get(i);
 			try {
@@ -364,11 +389,11 @@ public abstract class FPSetManager implements IFPSetManager {
 					// Determine sleep interval [1,5] randomly to prevent all waiters
 					// from retrying at the same moment.
 					int sleep = 1 + rnd.nextInt(5);
-					
+
 					LOGGER.log(
 							Level.FINE,
 							"{0}. time throttleing task submission due to overload during FPSetManager callable execution #{1} for {2} seconds",
-							new Object[] {retry, i});
+							new Object[] { retry, i });
 
 					// Sleep for n seconds
 					try {
@@ -377,7 +402,7 @@ public abstract class FPSetManager implements IFPSetManager {
 						// not expected to happen
 						e1.printStackTrace();
 					}
-					
+
 					// rewind for loop by one to have it schedule the same
 					// callable again
 					i -= 1;
@@ -418,12 +443,15 @@ public abstract class FPSetManager implements IFPSetManager {
 		return res;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.IFPSetManager#checkFPs()
 	 */
 	public long checkFPs() {
 		final int len = this.fpSets.size();
-		// Instantiation of a thread pool here is fine, as long as checkFPs is only called seldomly.
+		// Instantiation of a thread pool here is fine, as long as checkFPs is only
+		// called seldomly.
 		final ExecutorService executorService = Executors.newFixedThreadPool(len);
 		try {
 			// Start checkFP on all FPSets concurrently
@@ -454,12 +482,15 @@ public abstract class FPSetManager implements IFPSetManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.fp.IFPSetManager#checkInvariant()
 	 */
 	public boolean checkInvariant() {
 		final int len = this.fpSets.size();
-		// Instantiation of a thread pool here is fine, as long as checkFPs is only called seldomly.
+		// Instantiation of a thread pool here is fine, as long as checkFPs is only
+		// called seldomly.
 		final ExecutorService executorService = Executors.newFixedThreadPool(len);
 		try {
 			// Start checkFP on all FPSets concurrently
@@ -471,7 +502,7 @@ public abstract class FPSetManager implements IFPSetManager {
 			// Return minimum value
 			for (int i = 0; i < len; i++) {
 				try {
-					if(!ecs.take().get()) {
+					if (!ecs.take().get()) {
 						return false;
 					}
 				} catch (InterruptedException e) {
@@ -491,7 +522,9 @@ public abstract class FPSetManager implements IFPSetManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.IFPSetManager#size()
 	 */
 	public long size() {
@@ -512,13 +545,15 @@ public abstract class FPSetManager implements IFPSetManager {
 		}
 		return res;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.IFPSetManager#getStatesSeen()
 	 */
 	public long getStatesSeen() {
 		long res = 1; // the initial state
-		
+
 		int len = this.fpSets.size();
 		for (int i = 0; i < len; i++) {
 			try {
@@ -535,8 +570,10 @@ public abstract class FPSetManager implements IFPSetManager {
 		}
 		return res;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.IFPSetManager#getMask()
 	 */
 	public long getMask() {
@@ -583,21 +620,27 @@ public abstract class FPSetManager implements IFPSetManager {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.IFPSetManager#checkpoint(java.lang.String)
 	 */
 	public void checkpoint(String fname) throws InterruptedException, IOException {
 		chkptInner(fname, true);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.fp.IFPSetManager#commitChkpt()
 	 */
 	public void commitChkpt() throws IOException {
 		// no-op, added due to polymorphism with NonDistribuedFPSetManager
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.distributed.IFPSetManager#recover(java.lang.String)
 	 */
 	public void recover(String fname) throws InterruptedException, IOException {
@@ -631,7 +674,7 @@ public abstract class FPSetManager implements IFPSetManager {
 			}
 		}
 	}
-	
+
 	public static class FPSets implements Serializable {
 		private final String hostname;
 		private final FPSetRMI fpset;
@@ -649,7 +692,7 @@ public abstract class FPSetManager implements IFPSetManager {
 		public void setUnavailable() {
 			isAvailable = false;
 		}
-		
+
 		public boolean isAvailable() {
 			return isAvailable;
 		}
@@ -693,7 +736,7 @@ public abstract class FPSetManager implements IFPSetManager {
 		public boolean contains(long fp) throws IOException {
 			return fpset.contains(fp);
 		}
-		
+
 		public String getHostname() {
 			return hostname;
 		}

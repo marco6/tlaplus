@@ -50,26 +50,34 @@ public class MultiprocDefineTest extends PCalModelCheckerTestCase {
 	}
 }
 /*
-C:\lamport\tla\pluscal>java -mx1000m -cp "c:/lamport/tla/newtools/tla2-inria-workspace/tla2-inria/tlatools/class" tlc2.TLC -cleanup MultiprocDefine.tla         
-TLC2 Version 2.05 of 18 May 2012
-Running in Model-Checking mode.
-Parsing file MultiprocDefine.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\Naturals.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\Sequences.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\TLC.tla
-Semantic processing of module Naturals
-Semantic processing of module Sequences
-Semantic processing of module TLC
-Semantic processing of module MultiprocDefine
-Starting... (2012-08-10 17:40:00)
-Computing initial states...
-Finished computing initial states: 1 distinct state generated.
-Model checking completed. No error has been found.
-  Estimates of the probability that TLC did not check all reachable states
-  because two distinct states had the same fingerprint:
-  calculated (optimistic):  val = 2.6E-18
-  based on the actual fingerprints:  val = 4.8E-19
-14 states generated, 8 distinct states found, 0 states left on queue.
-The depth of the complete state graph search is 4.
-Finished. (2012-08-10 17:40:00)
-*/
+ * C:\lamport\tla\pluscal>java -mx1000m -cp
+ * "c:/lamport/tla/newtools/tla2-inria-workspace/tla2-inria/tlatools/class"
+ * tlc2.TLC -cleanup MultiprocDefine.tla
+ * TLC2 Version 2.05 of 18 May 2012
+ * Running in Model-Checking mode.
+ * Parsing file MultiprocDefine.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\Naturals.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\Sequences.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\TLC.tla
+ * Semantic processing of module Naturals
+ * Semantic processing of module Sequences
+ * Semantic processing of module TLC
+ * Semantic processing of module MultiprocDefine
+ * Starting... (2012-08-10 17:40:00)
+ * Computing initial states...
+ * Finished computing initial states: 1 distinct state generated.
+ * Model checking completed. No error has been found.
+ * Estimates of the probability that TLC did not check all reachable states
+ * because two distinct states had the same fingerprint:
+ * calculated (optimistic): val = 2.6E-18
+ * based on the actual fingerprints: val = 4.8E-19
+ * 14 states generated, 8 distinct states found, 0 states left on queue.
+ * The depth of the complete state graph search is 4.
+ * Finished. (2012-08-10 17:40:00)
+ */

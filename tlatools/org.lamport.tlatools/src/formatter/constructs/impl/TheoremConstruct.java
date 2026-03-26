@@ -1,6 +1,5 @@
 package formatter.constructs.impl;
 
-
 import com.opencastsoftware.prettier4j.Doc;
 import formatter.constructs.ConstructContext;
 import formatter.constructs.NodeKind;
@@ -43,8 +42,7 @@ public class TheoremConstruct implements TlaConstruct {
                 proof = Doc.line().append(context.buildChild(z[2]));
             }
             return Doc.group(
-                    theoremKeyword.appendLineOrSpace(expr)
-            ).indent(z[0].getImage().length() + 1).append(proof);
+                    theoremKeyword.appendLineOrSpace(expr)).indent(z[0].getImage().length() + 1).append(proof);
         } else {
             // Named theorem: THEOREM Name == expr [proof]
             assert z.length == 4 || z.length == 5;

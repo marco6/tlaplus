@@ -36,7 +36,7 @@ import tlc2.tool.liveness.ModelCheckerTestCase;
 public class TLCExtTest extends ModelCheckerTestCase {
 
 	public TLCExtTest() {
-		super("TLCExtTest", new String[] {"-config", "TLCExtTest.tla"});
+		super("TLCExtTest", new String[] { "-config", "TLCExtTest.tla" });
 	}
 
 	@Override

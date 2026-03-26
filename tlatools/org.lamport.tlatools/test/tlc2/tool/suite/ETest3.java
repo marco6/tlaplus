@@ -38,8 +38,10 @@ public class ETest3 extends SuiteETestCase {
 	public ETest3() {
 		super(ExitStatus.VIOLATION_DEADLOCK);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ModelCheckerTestCase#checkDeadLock()
 	 */
 	protected boolean checkDeadLock() {

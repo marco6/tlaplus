@@ -43,7 +43,7 @@ public class ChooseTableauSymmetryTestA_TTraceTest extends TTraceModelCheckerTes
 	public ChooseTableauSymmetryTestA_TTraceTest() {
 		super(ChooseTableauSymmetryTestA.class, "symmetry", ExitStatus.VIOLATION_LIVENESS);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
@@ -63,7 +63,7 @@ public class ChooseTableauSymmetryTestA_TTraceTest extends TTraceModelCheckerTes
 		expectedTrace.add("arr = (a :> \"busy\" @@ b :> \"busy\")");
 		expectedTrace.add("arr = (a :> \"done\" @@ b :> \"busy\")");
 		expectedTrace.add("arr = (a :> \"ready\" @@ b :> \"busy\")");
-		
+
 		final List<String> expectedActions = new ArrayList<>();
 		expectedActions.add(isExtendedTLCState()
 				? "<_init line 23, col 5 to line 23, col 28 of module ChooseTableauSymmetryTestATTrace>"
@@ -72,11 +72,11 @@ public class ChooseTableauSymmetryTestA_TTraceTest extends TTraceModelCheckerTes
 		expectedActions.add("<_next line 27, col 5 to line 33, col 33 of module ChooseTableauSymmetryTestATTrace>");
 		expectedActions.add("<_next line 27, col 5 to line 33, col 33 of module ChooseTableauSymmetryTestATTrace>");
 		expectedActions.add("<_next line 27, col 5 to line 33, col 33 of module ChooseTableauSymmetryTestATTrace>");
-		
+
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace, expectedActions);
-		
+
 		assertBackToState(3, "<_next line 27, col 5 to line 33, col 33 of module ChooseTableauSymmetryTestATTrace>");
 
-	assertZeroUncovered();
+		assertZeroUncovered();
 	}
 }

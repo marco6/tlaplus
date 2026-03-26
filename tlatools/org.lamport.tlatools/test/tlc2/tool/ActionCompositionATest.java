@@ -39,10 +39,10 @@ import tlc2.tool.liveness.ModelCheckerTestCase;
 public class ActionCompositionATest extends ModelCheckerTestCase {
 
 	public ActionCompositionATest() {
-		super("ActionComposition", "cdot", new String[] {"-config", "ActionCompositionA.cfg"});
+		super("ActionComposition", "cdot", new String[] { "-config", "ActionCompositionA.cfg" });
 		System.setProperty(Tool.CDOT_KEY, Boolean.TRUE.toString());
 	}
-	
+
 	protected boolean doCoverage() {
 		return false;
 	}

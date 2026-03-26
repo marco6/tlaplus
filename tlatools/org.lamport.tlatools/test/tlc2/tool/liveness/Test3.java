@@ -46,18 +46,18 @@ public class Test3 extends ModelCheckerTestCase {
 	public Test3() {
 		super("Test3", ExitStatus.VIOLATION_LIVENESS);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		// ModelChecker has finished and generated the expected amount of states
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "5", "3", "0"));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		// Assert it has found the temporal violation and also a counter example
 		assertTrue(recorder.recorded(EC.TLC_TEMPORAL_PROPERTY_VIOLATED));
 		assertTrue(recorder.recorded(EC.TLC_COUNTER_EXAMPLE));
-		
+
 		// Assert the error trace
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
 		final List<String> expectedTrace = new ArrayList<String>(4);
@@ -66,11 +66,11 @@ public class Test3 extends ModelCheckerTestCase {
 		expectedTrace.add("x = 0");
 		expectedTrace.add("x = 2");
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace);
-		
+
 		assertBackToState(1);
 
 		assertZeroUncovered();
-		
+
 		// Assert POSTCONDITION.
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_FALSE));
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_EVALUATION_ERROR));

@@ -14,16 +14,14 @@ public class Utils {
 			final int ordinal,
 			final String name,
 			final String location,
-			final String ...assignments)
-	{
+			final String... assignments) {
 		MCVariable[] variables = new MCVariable[assignments.length];
-		for (int i = 0; i < assignments.length; i++)
-		{
+		for (int i = 0; i < assignments.length; i++) {
 			String assignment = assignments[i];
 			String[] split = assignment.split("=");
 			variables[i] = new MCVariable(split[0].trim(), split[1].trim());
 		}
-		
+
 		return new MCState(
 				variables,
 				name,
@@ -33,19 +31,16 @@ public class Utils {
 				false,
 				ordinal);
 	}
-	
-	public static String toLabelFormat(String name, String location)
-	{
+
+	public static String toLabelFormat(String name, String location) {
 		String label = String.format("%s %s", name, location).trim();
 		return String.format("<%s>", label);
 	}
-	
-	public static List<String> toTlcOutputFormat(final MCState state)
-	{
+
+	public static List<String> toTlcOutputFormat(final MCState state) {
 		List<String> inputLines = new ArrayList<String>();
 		inputLines.add(String.format("%d: %s", state.getStateNumber(), state.getLabel()));
-		for (MCVariable variable : state.getVariables())
-		{
+		for (MCVariable variable : state.getVariables()) {
 			inputLines.add(String.format("/\\ %s = %s", variable.getName(), variable.getValueAsString()));
 		}
 

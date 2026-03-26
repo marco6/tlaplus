@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class QuicksortMacroTest extends PCalModelCheckerTestCase {
 
 	public QuicksortMacroTest() {
-		super("QuicksortMacro", "pcal", new String[] {"-wf", "-termination"});
+		super("QuicksortMacro", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test
@@ -51,26 +51,32 @@ public class QuicksortMacroTest extends PCalModelCheckerTestCase {
 	}
 }
 /*
-C:\lamport\tla\pluscal>java -mx1000m -cp "c:/lamport/tla/newtools/tla2-inria-workspace/tla2-inria/tlatools/class" tlc2.TLC -cleanup QuicksortMacro.tla         
-TLC2 Version 2.05 of 18 May 2012
-Running in Model-Checking mode.
-Parsing file QuicksortMacro.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\Naturals.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\Sequences.tla
-Semantic processing of module Naturals
-Semantic processing of module Sequences
-Semantic processing of module QuicksortMacro
-Starting... (2012-08-10 17:38:27)
-Implied-temporal checking--satisfiability problem has 1 branches.
-Computing initial states...
-Finished computing initial states: 27 distinct states generated.
-Checking temporal properties for the complete state space...
-Model checking completed. No error has been found.
-  Estimates of the probability that TLC did not check all reachable states
-  because two distinct states had the same fingerprint:
-  calculated (optimistic):  val = 1.4E-15
-  based on the actual fingerprints:  val = 4.6E-15
-390 states generated, 306 distinct states found, 0 states left on queue.
-The depth of the complete state graph search is 13.
-Finished. (2012-08-10 17:38:28)
-*/
+ * C:\lamport\tla\pluscal>java -mx1000m -cp
+ * "c:/lamport/tla/newtools/tla2-inria-workspace/tla2-inria/tlatools/class"
+ * tlc2.TLC -cleanup QuicksortMacro.tla
+ * TLC2 Version 2.05 of 18 May 2012
+ * Running in Model-Checking mode.
+ * Parsing file QuicksortMacro.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\Naturals.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\Sequences.tla
+ * Semantic processing of module Naturals
+ * Semantic processing of module Sequences
+ * Semantic processing of module QuicksortMacro
+ * Starting... (2012-08-10 17:38:27)
+ * Implied-temporal checking--satisfiability problem has 1 branches.
+ * Computing initial states...
+ * Finished computing initial states: 27 distinct states generated.
+ * Checking temporal properties for the complete state space...
+ * Model checking completed. No error has been found.
+ * Estimates of the probability that TLC did not check all reachable states
+ * because two distinct states had the same fingerprint:
+ * calculated (optimistic): val = 1.4E-15
+ * based on the actual fingerprints: val = 4.6E-15
+ * 390 states generated, 306 distinct states found, 0 states left on queue.
+ * The depth of the complete state graph search is 13.
+ * Finished. (2012-08-10 17:38:28)
+ */

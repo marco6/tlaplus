@@ -60,14 +60,14 @@ import util.SimpleFilenameToStream;
  * and level checking. This is done in two ways:
  *
  * 1. For testing reference resolution, an operator RefersTo(op, id) is
- *    defined; the op is any identifier (an {@link OpApplNode}) referring to
- *    a definition. The id is a string used to identify the operator being
- *    referred to, by way of prepending a comment to that operator's
- *    definition containing a string ID.
+ * defined; the op is any identifier (an {@link OpApplNode}) referring to
+ * a definition. The id is a string used to identify the operator being
+ * referred to, by way of prepending a comment to that operator's
+ * definition containing a string ID.
  *
  * 2. For testing level-checking, an operator IsLevel(expr, level) is defined
- *    accepting an expression (which could be an operator reference or label)
- *    along with an assertion about its level.
+ * accepting an expression (which could be an operator reference or label)
+ * along with an assertion about its level.
  *
  * Both RefersTo and IsLevel are defined in a module Semantics.tla which is
  * included in the test corpus directory and resolved during parsing. The
@@ -79,9 +79,11 @@ public class SemanticCorpusTests {
 
   private static class SemanticTestCase {
     public final Path ModulePath;
+
     public SemanticTestCase(Path modulePath) {
       this.ModulePath = modulePath;
     }
+
     // Used by JUnit to identify this test case.
     public String toString() {
       return this.ModulePath.getFileName().toString();
@@ -96,6 +98,7 @@ public class SemanticCorpusTests {
     public final OpDefNode VariableLevel;
     public final OpDefNode ActionLevel;
     public final OpDefNode TemporalLevel;
+
     public SemanticsModule(ExternalModuleTable modules) {
       this.Modules = modules;
       ModuleNode semanticsModule = modules.getModuleNode("Semantics");
@@ -106,6 +109,7 @@ public class SemanticCorpusTests {
       this.ActionLevel = semanticsModule.getOpDef("ActionLevel");
       this.TemporalLevel = semanticsModule.getOpDef("TemporalLevel");
     }
+
     public int getExpectedLevel(final SymbolNode level) {
       if (this.ConstantLevel == level) {
         return LevelConstants.ConstantLevel;
@@ -119,9 +123,11 @@ public class SemanticCorpusTests {
         throw new IllegalArgumentException("Not a level: " + level.getName());
       }
     }
+
     public List<OpApplNode> findRefersToAssertions() {
       return findAllReferences(this.Modules.getRootModule(), this.RefersTo);
     }
+
     public List<OpApplNode> findIsLevelAssertions() {
       return findAllReferences(this.Modules.getRootModule(), this.IsLevel);
     }
@@ -144,10 +150,10 @@ public class SemanticCorpusTests {
     Path corpusDir = Paths.get(CommonTestCase.BASE_DIR).resolve(CORPUS_DIR);
     PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**/*.tla");
     return Files
-      .walk(corpusDir)
-      .filter(matcher::matches)
-      .map(SemanticTestCase::new)
-      .collect(Collectors.toList());
+        .walk(corpusDir)
+        .filter(matcher::matches)
+        .map(SemanticTestCase::new)
+        .collect(Collectors.toList());
   }
 
   /**
@@ -208,12 +214,12 @@ public class SemanticCorpusTests {
   private static void checkRefersToAssertions(List<OpApplNode> assertions) {
     for (OpApplNode assertion : assertions) {
       final ExprOrOpArgNode[] parameters = assertion.getArgs();
-      SymbolNode symbol = ((OpApplNode)parameters[0]).getOperator();
+      SymbolNode symbol = ((OpApplNode) parameters[0]).getOperator();
       if (symbol instanceof OpDefNode) {
         // Go to original op in module imported by INSTANCE
-        symbol = ((OpDefNode)symbol).getSource();
+        symbol = ((OpDefNode) symbol).getSource();
       }
-      final String expectedId = ((StringNode)parameters[1]).getRep().toString();
+      final String expectedId = ((StringNode) parameters[1]).getRep().toString();
       final String actualId = getId(symbol);
       Assert.assertEquals(assertion.getLocation().toString(), expectedId, actualId);
     }
@@ -258,7 +264,7 @@ public class SemanticCorpusTests {
    * TODO: Actually implement the syntax-level validation.
    *
    * @param module The module in which to search for references.
-   * @param def The definition for which to find references.
+   * @param def    The definition for which to find references.
    * @return A list of all references to the definition in the module.
    */
   private static List<OpApplNode> findAllReferences(ModuleNode module, OpDefNode def) {
@@ -266,7 +272,7 @@ public class SemanticCorpusTests {
     final ExplorerVisitor<Void> visitor = new ExplorerVisitor<Void>() {
       public void postVisit(final ExploreNode node) {
         if (node instanceof OpApplNode) {
-          final OpApplNode op = (OpApplNode)node;
+          final OpApplNode op = (OpApplNode) node;
           if (op.getOperator() == def) {
             assertions.add(op);
           }
@@ -285,12 +291,11 @@ public class SemanticCorpusTests {
    *                   supplied level.
    */
   private static void checkLevelAssertions(
-    List<OpApplNode> assertions,
-    SemanticsModule semantics
-  ) {
+      List<OpApplNode> assertions,
+      SemanticsModule semantics) {
     for (OpApplNode assertion : assertions) {
       ExprOrOpArgNode[] parameters = assertion.getArgs();
-      int expectedLevel = semantics.getExpectedLevel(((OpApplNode)parameters[1]).getOperator());
+      int expectedLevel = semantics.getExpectedLevel(((OpApplNode) parameters[1]).getOperator());
       Assert.assertEquals(assertion.toString(), expectedLevel, parameters[0].getLevel());
     }
   }

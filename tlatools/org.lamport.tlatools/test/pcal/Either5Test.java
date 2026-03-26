@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class Either5Test extends PCalModelCheckerTestCase {
 
 	public Either5Test() {
-		super("Either5", "pcal", new String[] {"-wf", "-termination"});
+		super("Either5", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test

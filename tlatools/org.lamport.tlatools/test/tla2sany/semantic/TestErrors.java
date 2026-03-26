@@ -41,7 +41,7 @@ public class TestErrors {
 
   private static Location genLocation() {
     final String filename = String.format("Test%d.tla", seed);
-    final Location loc = new Location(filename, seed*3, seed*5, seed*7, seed*11);
+    final Location loc = new Location(filename, seed * 3, seed * 5, seed * 7, seed * 11);
     seed++;
     return loc;
   }
@@ -142,7 +142,8 @@ public class TestErrors {
     final String expectedWarning = loc1.toString() + "\n\n" + message1;
     final String[] expectedWarnings = new String[] { expectedWarning };
     final List<ErrorDetails> expectedWarningDetails = new ArrayList<ErrorDetails>();
-    expectedWarningDetails.add(new ErrorDetails(ErrorCode.EXTENDED_MODULES_SYMBOL_UNIFICATION_AMBIGUITY, loc1, message1));
+    expectedWarningDetails
+        .add(new ErrorDetails(ErrorCode.EXTENDED_MODULES_SYMBOL_UNIFICATION_AMBIGUITY, loc1, message1));
 
     final Location loc2 = genLocation();
     final String message2 = "This is a test error message";
@@ -179,7 +180,8 @@ public class TestErrors {
     final String expectedWarning = loc1.toString() + "\n\n" + message1;
     final String[] expectedWarnings = new String[] { expectedWarning };
     final List<ErrorDetails> expectedWarningDetails = new ArrayList<ErrorDetails>();
-    expectedWarningDetails.add(new ErrorDetails(ErrorCode.EXTENDED_MODULES_SYMBOL_UNIFICATION_AMBIGUITY, loc1, message1));
+    expectedWarningDetails
+        .add(new ErrorDetails(ErrorCode.EXTENDED_MODULES_SYMBOL_UNIFICATION_AMBIGUITY, loc1, message1));
 
     final Location loc2 = genLocation();
     final String message2 = "This is a test error message";

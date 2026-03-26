@@ -21,8 +21,8 @@ import tlc2.value.Values;
 import util.Assert;
 
 public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
-  public final Value domain;        /* Function domain  */
-  public final Value range;         /* Function range   */
+  public final Value domain; /* Function domain */
+  public final Value range; /* Function range */
   protected SetEnumValue fcnSet;
 
   /* Constructor */
@@ -33,38 +33,44 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
   }
 
   public SetOfFcnsValue(Value domain, Value range, CostModel cm) {
-	  this(domain, range);
-	  this.cm = cm;
+    this(domain, range);
+    this.cm = cm;
   }
 
   @Override
-  public final byte getKind() { return SETOFFCNSVALUE; }
+  public final byte getKind() {
+    return SETOFFCNSVALUE;
+  }
 
   @Override
   public final int compareTo(Object obj) {
     try {
       this.convertAndCache();
       return this.fcnSet.compareTo(obj);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   public final boolean equals(Object obj) {
     try {
       if (obj instanceof SetOfFcnsValue) {
-        SetOfFcnsValue fcns = (SetOfFcnsValue)obj;
+        SetOfFcnsValue fcns = (SetOfFcnsValue) obj;
         return (this.domain.equals(fcns.domain) &&
-          this.range.equals(fcns.range));
+            this.range.equals(fcns.range));
       }
       this.convertAndCache();
       return this.fcnSet.equals(obj);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -74,9 +80,9 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
       FcnRcdValue fcn = (FcnRcdValue) elem.toFcnRcd();
       if (fcn == null) {
         if (elem instanceof ModelValue)
-           return ((ModelValue) elem).modelValueMember(this) ;
+          return ((ModelValue) elem).modelValueMember(this);
         Assert.fail("Attempted to check if \n" + elem + "\nwhich is not a TLC function" +
-        " value, is in the set of functions:\n" + Values.ppr(this.toString()), getSource());
+            " value, is in the set of functions:\n" + Values.ppr(this.toString()), getSource());
       }
       if (fcn.intv == null) {
         fcn.normalize();
@@ -89,20 +95,22 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
           }
           return true;
         }
-      }
-      else {
+      } else {
         if (fcn.intv.equals(this.domain)) {
           for (int i = 0; i < fcn.values.length; i++) {
-            if (!this.range.member(fcn.values[i])) return false;
+            if (!this.range.member(fcn.values[i]))
+              return false;
           }
           return true;
         }
       }
       return false;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -110,10 +118,12 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
   public final boolean isFinite() {
     try {
       return this.domain.isFinite() && this.range.isFinite();
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -122,13 +132,15 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
     try {
       if (ex.idx < ex.path.length) {
         Assert.fail("Attempted to apply EXCEPT to the set of functions:\n" +
-        Values.ppr(this.toString()), getSource());
+            Values.ppr(this.toString()), getSource());
       }
       return ex.value;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -137,13 +149,15 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
     try {
       if (exs.length != 0) {
         Assert.fail("Attempted to apply EXCEPT to the set of functions:\n" +
-        Values.ppr(this.toString()), getSource());
+            Values.ppr(this.toString()), getSource());
       }
       return this;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -157,30 +171,32 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
         sz *= rsz;
         if (sz < -2147483648 || sz > 2147483647) {
           Assert.fail("Overflow when computing the number of elements in:\n" +
-                Values.ppr(toString()), getSource());
+              Values.ppr(toString()), getSource());
         }
       }
-      return (int)sz;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+      return (int) sz;
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
-	@Override
-	protected boolean needBigInteger() {
-		final int rsz = this.range.size();
-		final int dsz = this.domain.size();
-		long sz = 1;
-		for (int i = 0; i < dsz; i++) {
-			sz *= rsz;
-			if (sz < -2147483648 || sz > 2147483647) {
-				return true;
-			}
-		}
-		return false;
-	}
+  @Override
+  protected boolean needBigInteger() {
+    final int rsz = this.range.size();
+    final int dsz = this.domain.size();
+    long sz = 1;
+    for (int i = 0; i < dsz; i++) {
+      sz *= rsz;
+      if (sz < -2147483648 || sz > 2147483647) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   @Override
   public final boolean isNormalized() {
@@ -189,10 +205,12 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
         return this.domain.isNormalized() && this.range.isNormalized();
       }
       return this.fcnSet.isNormalized();
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -202,60 +220,68 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
       if (this.fcnSet == null || this.fcnSet == SetEnumValue.DummyEnum) {
         this.domain.normalize();
         this.range.normalize();
-      }
-      else {
+      } else {
         this.fcnSet.normalize();
       }
       return this;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   @Override
   public final void deepNormalize() {
-	    try {
+    try {
       domain.deepNormalize();
       range.deepNormalize();
       if (fcnSet == null) {
         fcnSet = SetEnumValue.DummyEnum;
-      }
-      else if (fcnSet != SetEnumValue.DummyEnum) {
+      } else if (fcnSet != SetEnumValue.DummyEnum) {
         fcnSet.deepNormalize();
       }
-	    }
-	    catch (RuntimeException | OutOfMemoryError e) {
-	      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-	      else { throw e; }
-	    }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
+    }
   }
 
   @Override
   public final boolean isDefined() {
     try {
       return this.domain.isDefined() && this.range.isDefined();
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   @Override
-  public final IValue deepCopy() { return this; }
+  public final IValue deepCopy() {
+    return this;
+  }
 
-  /* The fingerprint  */
+  /* The fingerprint */
   @Override
   public final long fingerPrint(long fp) {
     try {
       this.convertAndCache();
       return this.fcnSet.fingerPrint(fp);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -264,18 +290,19 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
     try {
       this.convertAndCache();
       return this.fcnSet.permute(perm);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   private final void convertAndCache() {
     if (this.fcnSet == null) {
       this.fcnSet = (SetEnumValue) this.toSetEnum();
-    }
-    else if (this.fcnSet == SetEnumValue.DummyEnum) {
+    } else if (this.fcnSet == SetEnumValue.DummyEnum) {
       SetEnumValue val = (SetEnumValue) this.toSetEnum();
       val.deepNormalize();
       this.fcnSet = val;
@@ -284,22 +311,24 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
 
   @Override
   public final Value toSetEnum() {
-      if (this.fcnSet != null && this.fcnSet != SetEnumValue.DummyEnum) {
-        return this.fcnSet;
-      }
-      ValueVec vals = new ValueVec();
-      ValueEnumeration Enum = this.elements();
-      Value elem;
-      while ((elem = Enum.nextElement()) != null) {
-        vals.addElement(elem);
-      }
-      if (coverage) {cm.incSecondary(vals.size());}
-      return new SetEnumValue(vals, this.isNormalized(), cm);
+    if (this.fcnSet != null && this.fcnSet != SetEnumValue.DummyEnum) {
+      return this.fcnSet;
+    }
+    ValueVec vals = new ValueVec();
+    ValueEnumeration Enum = this.elements();
+    Value elem;
+    while ((elem = Enum.nextElement()) != null) {
+      vals.addElement(elem);
+    }
+    if (coverage) {
+      cm.incSecondary(vals.size());
+    }
+    return new SetEnumValue(vals, this.isNormalized(), cm);
   }
 
   @Override
   public final void write(final IValueOutputStream vos) throws IOException {
-	  fcnSet.write(vos);
+    fcnSet.write(vos);
   }
 
   /* The string representation of the value. */
@@ -321,14 +350,17 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
           }
           unlazy = sz < TLCGlobals.enumBound;
         }
+      } catch (Throwable e) {
+        if (swallow)
+          unlazy = false;
+        else
+          throw e;
       }
-      catch (Throwable e) { if (swallow) unlazy = false; else throw e; }
 
       if (unlazy) {
         Value val = this.toSetEnum();
         return val.toString(sb, offset, swallow);
-      }
-      else {
+      } else {
         sb.append("[");
         this.domain.toString(sb, offset, swallow);
         sb.append(" -> ");
@@ -336,10 +368,12 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
         sb.append("]");
         return sb;
       }
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -347,25 +381,27 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
   public final ValueEnumeration elements() {
     try {
       if (this.fcnSet == null || this.fcnSet == SetEnumValue.DummyEnum) {
-    	  if (this.domain instanceof IntervalValue) {
-    		  return new DomIVEnumerator();
-    	  }
+        if (this.domain instanceof IntervalValue) {
+          return new DomIVEnumerator();
+        }
         return new Enumerator();
       }
       return this.fcnSet.elements();
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   final class DomIVEnumerator implements ValueEnumeration {
-	protected ValueEnumeration[] enums;
-	protected Value[] currentElems;
-	protected boolean isDone;
+    protected ValueEnumeration[] enums;
+    protected Value[] currentElems;
+    protected boolean isDone;
 
-	public DomIVEnumerator() {
+    public DomIVEnumerator() {
       this.isDone = false;
       int sz = domain.size();
       if (range instanceof Enumerable) {
@@ -374,7 +410,7 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
         // SZ Feb 24, 2009: never read locally
         // ValueEnumeration enumeration = ((Enumerable)domSet).elements();
         for (int i = 0; i < sz; i++) {
-          this.enums[i] = ((Enumerable)range).elements();
+          this.enums[i] = ((Enumerable) range).elements();
           this.currentElems[i] = this.enums[i].nextElement();
           if (this.currentElems[i] == null) {
             this.enums = null;
@@ -382,13 +418,12 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
             break;
           }
         }
-      }
-      else {
+      } else {
         Assert.fail("Attempted to enumerate a set of the form [D -> R]," +
-              "but the range R:\n" + Values.ppr(range.toString()) +
-              "\ncannot be enumerated.", getSource());
+            "but the range R:\n" + Values.ppr(range.toString()) +
+            "\ncannot be enumerated.", getSource());
       }
-	}
+    }
 
     @Override
     public final void reset() {
@@ -400,43 +435,47 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
         this.isDone = false;
       }
     }
-    
-	@Override
-    public final Value nextElement() {
-		if (this.isDone) {
-			return null;
-		}
-		if (this.currentElems.length == 0) {
-	    	  if (coverage) { cm.incSecondary(); }
-			this.isDone = true;
-			return new FcnRcdValue((IntervalValue) domain, new Value[this.currentElems.length], cm);
-		} else {
-			// Take and store a snapshot of currentElems as the element to return for
-			// this invocation of nextElement().
-			final Value[] elems = new Value[this.currentElems.length];
-			System.arraycopy(this.currentElems, 0, elems, 0, this.currentElems.length);
 
-			// Eagerly generate the next element which is going to be returned the upon next
-			// invocation of nextElement().
-	    	  if (coverage) { cm.incSecondary(this.currentElems.length); }
-			for (int i = this.currentElems.length - 1; i >= 0; i--) {
-				this.currentElems[i] = this.enums[i].nextElement();
-				if (this.currentElems[i] != null) {
-					break;
-				}
-				if (i == 0) {
-					this.isDone = true;
-					break;
-				}
-				this.enums[i].reset();
-				this.currentElems[i] = this.enums[i].nextElement();
-			}
-			
-			return new FcnRcdValue((IntervalValue) domain, elems, cm);
-		}
-	}
+    @Override
+    public final Value nextElement() {
+      if (this.isDone) {
+        return null;
+      }
+      if (this.currentElems.length == 0) {
+        if (coverage) {
+          cm.incSecondary();
+        }
+        this.isDone = true;
+        return new FcnRcdValue((IntervalValue) domain, new Value[this.currentElems.length], cm);
+      } else {
+        // Take and store a snapshot of currentElems as the element to return for
+        // this invocation of nextElement().
+        final Value[] elems = new Value[this.currentElems.length];
+        System.arraycopy(this.currentElems, 0, elems, 0, this.currentElems.length);
+
+        // Eagerly generate the next element which is going to be returned the upon next
+        // invocation of nextElement().
+        if (coverage) {
+          cm.incSecondary(this.currentElems.length);
+        }
+        for (int i = this.currentElems.length - 1; i >= 0; i--) {
+          this.currentElems[i] = this.enums[i].nextElement();
+          if (this.currentElems[i] != null) {
+            break;
+          }
+          if (i == 0) {
+            this.isDone = true;
+            break;
+          }
+          this.enums[i].reset();
+          this.currentElems[i] = this.enums[i].nextElement();
+        }
+
+        return new FcnRcdValue((IntervalValue) domain, elems, cm);
+      }
+    }
   }
-  
+
   final class Enumerator implements ValueEnumeration {
     private Value[] dom;
     private ValueEnumeration[] enums;
@@ -448,8 +487,8 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
       SetEnumValue domSet = (SetEnumValue) domain.toSetEnum();
       if (domSet == null)
         Assert.fail("Attempted to enumerate a set of the form [D -> R]," +
-              "but the domain D:\n" + Values.ppr(domain.toString()) +
-              "\ncannot be enumerated.", getSource());
+            "but the domain D:\n" + Values.ppr(domain.toString()) +
+            "\ncannot be enumerated.", getSource());
       domSet.normalize();
       ValueVec elems = domSet.elems;
       int sz = elems.size();
@@ -461,7 +500,7 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
         // ValueEnumeration enumeration = ((Enumerable)domSet).elements();
         for (int i = 0; i < sz; i++) {
           this.dom[i] = elems.elementAt(i);
-          this.enums[i] = ((Enumerable)range).elements();
+          this.enums[i] = ((Enumerable) range).elements();
           this.currentElems[i] = this.enums[i].nextElement();
           if (this.currentElems[i] == null) {
             this.enums = null;
@@ -469,11 +508,10 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
             break;
           }
         }
-      }
-      else {
+      } else {
         Assert.fail("Attempted to enumerate a set of the form [D -> R]," +
-              "but the range R:\n" + Values.ppr(range.toString()) +
-              "\ncannot be enumerated.", getSource());
+            "but the range R:\n" + Values.ppr(range.toString()) +
+            "\ncannot be enumerated.", getSource());
       }
     }
 
@@ -488,119 +526,124 @@ public class SetOfFcnsValue extends SetOfFcnsOrRcdsValue implements Enumerable {
       }
     }
 
-		@Override
-        public final Value nextElement() {
-			if (this.isDone) {
-				return null;
-			}
-			if (this.currentElems.length == 0) {
-		    	  if (coverage) { cm.incSecondary(); }
-				this.isDone = true;
-				return new FcnRcdValue(this.dom, new Value[this.currentElems.length], true, cm);
-			} else {
-				// Take and store a snapshot of currentElems as the element to return for
-				// this invocation of nextElement().
-				final Value[] elems = new Value[this.currentElems.length];
-				System.arraycopy(this.currentElems, 0, elems, 0, this.currentElems.length);
+    @Override
+    public final Value nextElement() {
+      if (this.isDone) {
+        return null;
+      }
+      if (this.currentElems.length == 0) {
+        if (coverage) {
+          cm.incSecondary();
+        }
+        this.isDone = true;
+        return new FcnRcdValue(this.dom, new Value[this.currentElems.length], true, cm);
+      } else {
+        // Take and store a snapshot of currentElems as the element to return for
+        // this invocation of nextElement().
+        final Value[] elems = new Value[this.currentElems.length];
+        System.arraycopy(this.currentElems, 0, elems, 0, this.currentElems.length);
 
-				// Eagerly generate the next element which is going to be returned the upon next
-				// invocation of nextElement().
-		    	  if (coverage) { cm.incSecondary(this.currentElems.length); }
-				for (int i = this.currentElems.length - 1; i >= 0; i--) {
-					this.currentElems[i] = this.enums[i].nextElement();
-					if (this.currentElems[i] != null) {
-						break;
-					}
-					if (i == 0) {
-						this.isDone = true;
-						break;
-					}
-					this.enums[i].reset();
-					this.currentElems[i] = this.enums[i].nextElement();
-				}
-				
-				return new FcnRcdValue(this.dom, elems, true, cm);
-			}
-		}
+        // Eagerly generate the next element which is going to be returned the upon next
+        // invocation of nextElement().
+        if (coverage) {
+          cm.incSecondary(this.currentElems.length);
+        }
+        for (int i = this.currentElems.length - 1; i >= 0; i--) {
+          this.currentElems[i] = this.enums[i].nextElement();
+          if (this.currentElems[i] != null) {
+            break;
+          }
+          if (i == 0) {
+            this.isDone = true;
+            break;
+          }
+          this.enums[i].reset();
+          this.currentElems[i] = this.enums[i].nextElement();
+        }
+
+        return new FcnRcdValue(this.dom, elems, true, cm);
+      }
+    }
 
   }
-	
-	@Override
-	protected tlc2.value.impl.SetOfFcnsOrRcdsValue.SubsetEnumerator getSubsetEnumerator(int k, int n) {
-		return new SubsetEnumerator(k, n);
-	}
 
-	class SubsetEnumerator extends SetOfFcnsOrRcdsValue.SubsetEnumerator {
-		private final SetEnumValue domSet;
-		private final SetEnumValue rangeSet;
-		private final int mod;
-		
-		SubsetEnumerator(final int k, final int n) {
-			super(k, n);
-			domSet = (SetEnumValue) domain.toSetEnum();
-			domSet.normalize();
+  @Override
+  protected tlc2.value.impl.SetOfFcnsOrRcdsValue.SubsetEnumerator getSubsetEnumerator(int k, int n) {
+    return new SubsetEnumerator(k, n);
+  }
 
-			rangeSet = (SetEnumValue) range.toSetEnum();
+  class SubsetEnumerator extends SetOfFcnsOrRcdsValue.SubsetEnumerator {
+    private final SetEnumValue domSet;
+    private final SetEnumValue rangeSet;
+    private final int mod;
 
-			mod = range.size();
-		}
+    SubsetEnumerator(final int k, final int n) {
+      super(k, n);
+      domSet = (SetEnumValue) domain.toSetEnum();
+      domSet.normalize();
 
-		@Override
-		protected Value elementAt(final int idx) {
-			assert 0 <= idx && idx < size();
+      rangeSet = (SetEnumValue) range.toSetEnum();
 
-			final Value[] range = new Value[domSet.size()];
+      mod = range.size();
+    }
 
-			for (int i = 0; i < domSet.size(); i++) {
-				final int elementAt = (int) (Math.floor(idx / Math.pow(mod, i)) % mod);
-				range[range.length - 1 - i] = rangeSet.elems.elementAt(elementAt);
-			}
+    @Override
+    protected Value elementAt(final int idx) {
+      assert 0 <= idx && idx < size();
 
-			return new FcnRcdValue(domSet.elems, range, true);
-		}
-	}
+      final Value[] range = new Value[domSet.size()];
 
-	@Override
-	protected tlc2.value.impl.SetOfFcnsOrRcdsValue.BigIntegerSubsetEnumerator getBigSubsetEnumerator(int k) {
-		return new BigIntegerSubsetEnumerator(k);
-	}
-	
-	class BigIntegerSubsetEnumerator extends SetOfFcnsOrRcdsValue.BigIntegerSubsetEnumerator {
-		
-		private final SetEnumValue domSet;
-		private final SetEnumValue rangeSet;
-		private final BigInteger bMod;
-		private final int mod;
+      for (int i = 0; i < domSet.size(); i++) {
+        final int elementAt = (int) (Math.floor(idx / Math.pow(mod, i)) % mod);
+        range[range.length - 1 - i] = rangeSet.elems.elementAt(elementAt);
+      }
 
-		public BigIntegerSubsetEnumerator(final int k) {
-			super(k);
-			this.domSet = (SetEnumValue) domain.toSetEnum();
-			this.domSet.normalize();
-			
-			this.rangeSet = (SetEnumValue) range.toSetEnum();
-			this.mod = range.size();
-			this.bMod = BigInteger.valueOf(mod);
+      return new FcnRcdValue(domSet.elems, range, true);
+    }
+  }
 
-			this.sz = bMod.pow(domSet.size());
-		}
+  @Override
+  protected tlc2.value.impl.SetOfFcnsOrRcdsValue.BigIntegerSubsetEnumerator getBigSubsetEnumerator(int k) {
+    return new BigIntegerSubsetEnumerator(k);
+  }
 
-		@Override
-		protected Value elementAt(final BigInteger idx) {
-			final Value[] range = new Value[domSet.size()];
+  class BigIntegerSubsetEnumerator extends SetOfFcnsOrRcdsValue.BigIntegerSubsetEnumerator {
 
-			for (int i = 0; i < domSet.size(); i++) {
-				final long scale = (long) Math.pow(mod, i);
-				final BigInteger bScale = BigInteger.valueOf(scale);
-				// idx2 is the index in the range (0,range.size^domset.size] 
-				final BigInteger idx2 = idx.divide(bScale);
-				final int elementAt = idx2.mod(bMod).intValueExact();
-				range[range.length - 1 - i] = rangeSet.elems.elementAt(elementAt);
-			}
+    private final SetEnumValue domSet;
+    private final SetEnumValue rangeSet;
+    private final BigInteger bMod;
+    private final int mod;
 
-			return new FcnRcdValue(domSet.elems, range, true);
-		}
-	}
-	public TLCVariable toTLCVariable(final TLCVariable variable, Random rnd) {
-		return super.toTLCVariable(variable, rnd);
-	}
+    public BigIntegerSubsetEnumerator(final int k) {
+      super(k);
+      this.domSet = (SetEnumValue) domain.toSetEnum();
+      this.domSet.normalize();
+
+      this.rangeSet = (SetEnumValue) range.toSetEnum();
+      this.mod = range.size();
+      this.bMod = BigInteger.valueOf(mod);
+
+      this.sz = bMod.pow(domSet.size());
+    }
+
+    @Override
+    protected Value elementAt(final BigInteger idx) {
+      final Value[] range = new Value[domSet.size()];
+
+      for (int i = 0; i < domSet.size(); i++) {
+        final long scale = (long) Math.pow(mod, i);
+        final BigInteger bScale = BigInteger.valueOf(scale);
+        // idx2 is the index in the range (0,range.size^domset.size]
+        final BigInteger idx2 = idx.divide(bScale);
+        final int elementAt = idx2.mod(bMod).intValueExact();
+        range[range.length - 1 - i] = rangeSet.elems.elementAt(elementAt);
+      }
+
+      return new FcnRcdValue(domSet.elems, range, true);
+    }
+  }
+
+  public TLCVariable toTLCVariable(final TLCVariable variable, Random rnd) {
+    return super.toTLCVariable(variable, rnd);
+  }
 }

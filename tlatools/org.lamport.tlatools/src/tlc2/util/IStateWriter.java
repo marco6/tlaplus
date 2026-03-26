@@ -32,7 +32,7 @@ import tlc2.tool.Action;
 import tlc2.tool.TLCState;
 
 public interface IStateWriter {
-	
+
 	public enum Visualization {
 		/**
 		 * If successor and the current state are identical and the transition
@@ -48,11 +48,11 @@ public interface IStateWriter {
 		 */
 		DOTTED;
 	}
-	
+
 	public static final short IsNotInModel = 1 << 1;
 	public static final short IsUnseen = 0;
 	public static final short IsSeen = 1;
-	
+
 	default boolean isSet(int v, int control) {
 		return (v & control) == control;
 	}
@@ -60,25 +60,26 @@ public interface IStateWriter {
 	void writeState(TLCState state);
 
 	void writeState(TLCState state, TLCState successor, short stateFlags);
-	
+
 	void writeState(TLCState state, TLCState successor, short stateFlags, Action action);
 
 	void writeState(TLCState state, TLCState successor, short stateFlags, Action action, SemanticNode pred);
 
 	void writeState(TLCState state, TLCState successor, short stateFlags, Visualization visualization);
-	
+
 	void writeState(TLCState state, TLCState successor, BitVector actionChecks, int from, int length, short stateFlags);
 
-	void writeState(TLCState state, TLCState successor, BitVector actionChecks, int from, int length, short stateFlags, Visualization visualization);
-	
+	void writeState(TLCState state, TLCState successor, BitVector actionChecks, int from, int length, short stateFlags,
+			Visualization visualization);
+
 	void close();
 
 	String getDumpFileName();
 
 	boolean isNoop();
-	
+
 	boolean isDot();
-	
+
 	boolean isConstrained();
 
 	void snapshot() throws IOException;

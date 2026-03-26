@@ -27,45 +27,52 @@ public class SetOfTuplesValue extends EnumerableValue implements Enumerable {
     this.sets = sets;
     this.tupleSet = null;
   }
+
   public SetOfTuplesValue(Value[] set, CostModel cm) {
-	  this(set);
-	  this.cm = cm;
+    this(set);
+    this.cm = cm;
   }
 
   public SetOfTuplesValue(Value val) {
-	  this(new Value[1]);
+    this(new Value[1]);
     this.sets[0] = val;
   }
 
   public SetOfTuplesValue(Value v1, Value v2) {
-	  this(new Value[2]);
+    this(new Value[2]);
     this.sets[0] = v1;
     this.sets[1] = v2;
   }
 
   @Override
-  public final byte getKind() { return SETOFTUPLESVALUE; }
+  public final byte getKind() {
+    return SETOFTUPLESVALUE;
+  }
 
   @Override
   public final int compareTo(Object obj) {
     try {
       this.convertAndCache();
       return this.tupleSet.compareTo(obj);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   public final boolean equals(Object obj) {
     try {
       if (obj instanceof SetOfTuplesValue) {
-        SetOfTuplesValue tvs = (SetOfTuplesValue)obj;
+        SetOfTuplesValue tvs = (SetOfTuplesValue) obj;
 
         boolean isEmpty1 = this.isEmpty();
-        if (isEmpty1) return tvs.isEmpty();
-        if (tvs.isEmpty()) return isEmpty1;
+        if (isEmpty1)
+          return tvs.isEmpty();
+        if (tvs.isEmpty())
+          return isEmpty1;
 
         if (this.sets.length != tvs.sets.length) {
           return false;
@@ -79,10 +86,12 @@ public class SetOfTuplesValue extends EnumerableValue implements Enumerable {
       }
       this.convertAndCache();
       return this.tupleSet.equals(obj);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -94,15 +103,16 @@ public class SetOfTuplesValue extends EnumerableValue implements Enumerable {
         FcnRcdValue fcn = (FcnRcdValue) elem.toFcnRcd();
         if (fcn == null) {
           if (elem instanceof ModelValue)
-            return ((ModelValue) elem).modelValueMember(this) ;
+            return ((ModelValue) elem).modelValueMember(this);
           Assert.fail("Attempted to check if non-tuple\n" + Values.ppr(elem.toString()) +
-                "\nis in the set of tuples:\n" + Values.ppr(this.toString()), getSource());
+              "\nis in the set of tuples:\n" + Values.ppr(this.toString()), getSource());
         }
-        if (fcn.intv != null) return false;
+        if (fcn.intv != null)
+          return false;
         for (int i = 0; i < fcn.domain.length; i++) {
           if (!(fcn.domain[i] instanceof IntValue)) {
             Assert.fail("Attempted to check if non-tuple\n" + Values.ppr(elem.toString()) +
-                  "\nis in the set of tuples:\n" + Values.ppr(this.toString()), getSource());
+                "\nis in the set of tuples:\n" + Values.ppr(this.toString()), getSource());
           }
         }
         return false;
@@ -115,10 +125,12 @@ public class SetOfTuplesValue extends EnumerableValue implements Enumerable {
         return true;
       }
       return false;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -131,10 +143,12 @@ public class SetOfTuplesValue extends EnumerableValue implements Enumerable {
         }
       }
       return true;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -143,13 +157,15 @@ public class SetOfTuplesValue extends EnumerableValue implements Enumerable {
     try {
       if (ex.idx < ex.path.length) {
         Assert.fail("Attempted to apply EXCEPT construct to the set of tuples:\n" +
-        Values.ppr(this.toString()), getSource());
+            Values.ppr(this.toString()), getSource());
       }
       return ex.value;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -158,13 +174,15 @@ public class SetOfTuplesValue extends EnumerableValue implements Enumerable {
     try {
       if (exs.length != 0) {
         Assert.fail("Attempted to apply EXCEPT construct to the set of tuples:\n" +
-        Values.ppr(this.toString()), getSource());
+            Values.ppr(this.toString()), getSource());
       }
       return this;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -176,14 +194,16 @@ public class SetOfTuplesValue extends EnumerableValue implements Enumerable {
         sz *= this.sets[i].size();
         if (sz < -2147483648 || sz > 2147483647) {
           Assert.fail("Overflow when computing the number of elements in " +
-                Values.ppr(this.toString()), getSource());
+              Values.ppr(this.toString()), getSource());
         }
       }
-      return (int)sz;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+      return (int) sz;
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -199,10 +219,12 @@ public class SetOfTuplesValue extends EnumerableValue implements Enumerable {
         return true;
       }
       return this.tupleSet.isNormalized();
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -213,35 +235,37 @@ public class SetOfTuplesValue extends EnumerableValue implements Enumerable {
         for (int i = 0; i < this.sets.length; i++) {
           this.sets[i].normalize();
         }
-      }
-      else {
+      } else {
         this.tupleSet.normalize();
       }
       return this;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   @Override
   public final void deepNormalize() {
-	    try {
+    try {
       for (int i = 0; i < sets.length; i++) {
-          sets[i].deepNormalize();
-        }
-        if (tupleSet == null) {
-          tupleSet = SetEnumValue.DummyEnum;
-        }
-        else if (tupleSet != SetEnumValue.DummyEnum) {
-          tupleSet.deepNormalize();
-        }
-	    }
-	    catch (RuntimeException | OutOfMemoryError e) {
-	      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-	      else { throw e; }
-	    }
+        sets[i].deepNormalize();
+      }
+      if (tupleSet == null) {
+        tupleSet = SetEnumValue.DummyEnum;
+      } else if (tupleSet != SetEnumValue.DummyEnum) {
+        tupleSet.deepNormalize();
+      }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
+    }
   }
 
   @Override
@@ -252,26 +276,32 @@ public class SetOfTuplesValue extends EnumerableValue implements Enumerable {
         defined = defined && this.sets[i].isDefined();
       }
       return defined;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   @Override
-  public final IValue deepCopy() { return this; }
+  public final IValue deepCopy() {
+    return this;
+  }
 
-  /* The fingerprint  */
+  /* The fingerprint */
   @Override
   public final long fingerPrint(long fp) {
     try {
       this.convertAndCache();
       return this.tupleSet.fingerPrint(fp);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -280,18 +310,19 @@ public class SetOfTuplesValue extends EnumerableValue implements Enumerable {
     try {
       this.convertAndCache();
       return this.tupleSet.permute(perm);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   private final void convertAndCache() {
     if (this.tupleSet == null) {
       this.tupleSet = (SetEnumValue) this.toSetEnum();
-    }
-    else if (this.tupleSet == SetEnumValue.DummyEnum) {
+    } else if (this.tupleSet == SetEnumValue.DummyEnum) {
       SetEnumValue val = (SetEnumValue) this.toSetEnum();
       val.deepNormalize();
       this.tupleSet = val;
@@ -300,22 +331,24 @@ public class SetOfTuplesValue extends EnumerableValue implements Enumerable {
 
   @Override
   public final Value toSetEnum() {
-      if (this.tupleSet != null && this.tupleSet != SetEnumValue.DummyEnum) {
-        return this.tupleSet;
-      }
-      ValueVec vals = new ValueVec();
-      ValueEnumeration Enum = this.elements();
-      Value elem;
-      while ((elem = Enum.nextElement()) != null) {
-        vals.addElement(elem);
-      }
-      if (coverage) {cm.incSecondary(vals.size());}
-      return new SetEnumValue(vals, this.isNormalized(), cm);
+    if (this.tupleSet != null && this.tupleSet != SetEnumValue.DummyEnum) {
+      return this.tupleSet;
+    }
+    ValueVec vals = new ValueVec();
+    ValueEnumeration Enum = this.elements();
+    Value elem;
+    while ((elem = Enum.nextElement()) != null) {
+      vals.addElement(elem);
+    }
+    if (coverage) {
+      cm.incSecondary(vals.size());
+    }
+    return new SetEnumValue(vals, this.isNormalized(), cm);
   }
 
   @Override
   public final void write(final IValueOutputStream vos) throws IOException {
-	  tupleSet.write(vos);
+    tupleSet.write(vos);
   }
 
   /* The string representation of the value. */
@@ -335,14 +368,17 @@ public class SetOfTuplesValue extends EnumerableValue implements Enumerable {
           }
           unlazy = sz < TLCGlobals.enumBound;
         }
+      } catch (Throwable e) {
+        if (swallow)
+          unlazy = false;
+        else
+          throw e;
       }
-      catch (Throwable e) { if (swallow) unlazy = false; else throw e; }
 
       if (unlazy) {
         Value val = this.toSetEnum();
         return val.toString(sb, offset, swallow);
-      }
-      else {
+      } else {
         if (this.sets.length > 0) {
           sb.append("(");
           this.sets[0].toString(sb, offset, swallow);
@@ -356,10 +392,12 @@ public class SetOfTuplesValue extends EnumerableValue implements Enumerable {
         }
         return sb;
       }
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -370,10 +408,12 @@ public class SetOfTuplesValue extends EnumerableValue implements Enumerable {
         return new Enumerator();
       }
       return this.tupleSet.elements();
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -388,17 +428,16 @@ public class SetOfTuplesValue extends EnumerableValue implements Enumerable {
       this.isDone = false;
       for (int i = 0; i < sets.length; i++) {
         if (sets[i] instanceof Enumerable) {
-          this.enums[i] = ((Enumerable)sets[i]).elements();
+          this.enums[i] = ((Enumerable) sets[i]).elements();
           this.currentElems[i] = this.enums[i].nextElement();
           if (this.currentElems[i] == null) {
             this.enums = null;
             this.isDone = true;
             break;
           }
-        }
-        else {
+        } else {
           Assert.fail("Attempted to enumerate a set of the form s1 \\X s2 ... \\X sn," +
-                "\nbut can't enumerate s" + i + ":\n" + Values.ppr(sets[i].toString()), getSource());
+              "\nbut can't enumerate s" + i + ":\n" + Values.ppr(sets[i].toString()), getSource());
         }
       }
     }
@@ -416,15 +455,19 @@ public class SetOfTuplesValue extends EnumerableValue implements Enumerable {
 
     @Override
     public final Value nextElement() {
-      if (this.isDone) return null;
+      if (this.isDone)
+        return null;
       Value[] elems = new Value[this.currentElems.length];
-	  if (coverage) { cm.incSecondary(elems.length); }
+      if (coverage) {
+        cm.incSecondary(elems.length);
+      }
       for (int i = 0; i < elems.length; i++) {
         elems[i] = this.currentElems[i];
       }
-      for (int i = elems.length-1; i >= 0; i--) {
+      for (int i = elems.length - 1; i >= 0; i--) {
         this.currentElems[i] = this.enums[i].nextElement();
-        if (this.currentElems[i] != null) break;
+        if (this.currentElems[i] != null)
+          break;
         if (i == 0) {
           this.isDone = true;
           break;

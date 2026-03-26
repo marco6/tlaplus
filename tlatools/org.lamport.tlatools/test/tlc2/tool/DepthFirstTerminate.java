@@ -46,12 +46,15 @@ public class DepthFirstTerminate extends ModelCheckerTestCase {
 		assertFalse(recorder.recorded(EC.GENERAL));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ModelCheckerTestCase#getNumberOfThreads()
 	 */
 	@Override
 	protected int getNumberOfThreads() {
-		// Run this test with as many threads possible to hopefully spot concurrency issues.
+		// Run this test with as many threads possible to hopefully spot concurrency
+		// issues.
 		return Runtime.getRuntime().availableProcessors();
 	}
 }

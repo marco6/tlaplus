@@ -35,13 +35,14 @@ import tlc2.output.EC;
 public class TreeBarrierTest extends PCalModelCheckerTestCase {
 
 	public TreeBarrierTest() {
-		super("TreeBarrier", "pcal", new String[] {"-wfNext"});
+		super("TreeBarrier", "pcal", new String[] { "-wfNext" });
 	}
 
 	@Test
 	public void testSpec() {
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_INIT_GENERATED1, "1"));
-		assertTrue(recorder.recordedWithStringValues(EC.TLC_CHECKING_TEMPORAL_PROPS, "complete", "12570", "6 branches of ")); // 6 * 2095 = 12570 
+		assertTrue(recorder.recordedWithStringValues(EC.TLC_CHECKING_TEMPORAL_PROPS, "complete", "12570",
+				"6 branches of ")); // 6 * 2095 = 12570
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "5414", "2095", "0"));
@@ -51,26 +52,32 @@ public class TreeBarrierTest extends PCalModelCheckerTestCase {
 	}
 }
 /*
-C:\lamport\tla\pluscal>java -mx1000m -cp "c:/lamport/tla/newtools/tla2-inria-workspace/tla2-inria/tlatools/class" tlc2.TLC -cleanup TreeBarrier.tla         
-TLC2 Version 2.05 of 18 May 2012
-Running in Model-Checking mode.
-Parsing file TreeBarrier.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\Naturals.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\Sequences.tla
-Semantic processing of module Naturals
-Semantic processing of module Sequences
-Semantic processing of module TreeBarrier
-Starting... (2012-08-10 17:39:50)
-Implied-temporal checking--satisfiability problem has 6 branches.
-Computing initial states...
-Finished computing initial states: 1 distinct state generated.
-Checking temporal properties for the complete state space...
-Model checking completed. No error has been found.
-  Estimates of the probability that TLC did not check all reachable states
-  because two distinct states had the same fingerprint:
-  calculated (optimistic):  val = 3.8E-13
-  based on the actual fingerprints:  val = 6.4E-14
-5414 states generated, 2095 distinct states found, 0 states left on queue.
-The depth of the complete state graph search is 106.
-Finished. (2012-08-10 17:39:53)
-*/
+ * C:\lamport\tla\pluscal>java -mx1000m -cp
+ * "c:/lamport/tla/newtools/tla2-inria-workspace/tla2-inria/tlatools/class"
+ * tlc2.TLC -cleanup TreeBarrier.tla
+ * TLC2 Version 2.05 of 18 May 2012
+ * Running in Model-Checking mode.
+ * Parsing file TreeBarrier.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\Naturals.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\Sequences.tla
+ * Semantic processing of module Naturals
+ * Semantic processing of module Sequences
+ * Semantic processing of module TreeBarrier
+ * Starting... (2012-08-10 17:39:50)
+ * Implied-temporal checking--satisfiability problem has 6 branches.
+ * Computing initial states...
+ * Finished computing initial states: 1 distinct state generated.
+ * Checking temporal properties for the complete state space...
+ * Model checking completed. No error has been found.
+ * Estimates of the probability that TLC did not check all reachable states
+ * because two distinct states had the same fingerprint:
+ * calculated (optimistic): val = 3.8E-13
+ * based on the actual fingerprints: val = 6.4E-14
+ * 5414 states generated, 2095 distinct states found, 0 states left on queue.
+ * The depth of the complete state graph search is 106.
+ * Finished. (2012-08-10 17:39:53)
+ */

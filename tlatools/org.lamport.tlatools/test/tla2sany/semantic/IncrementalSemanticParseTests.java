@@ -56,21 +56,22 @@ public class IncrementalSemanticParseTests {
     return resolveDependencies(new ExternalModuleTable(), dependencies);
   }
 
-  private static ExternalModuleTable resolveDependencies(ExternalModuleTable emt, String... dependencies) throws AbortException {
+  private static ExternalModuleTable resolveDependencies(ExternalModuleTable emt, String... dependencies)
+      throws AbortException {
     for (String moduleName : dependencies) {
       try (final InputStream moduleSource = new FileInputStream(
-				ToolIO.getDefaultResolver().resolve(moduleName + TLAConstants.Files.TLA_EXTENSION, false))) {
+          ToolIO.getDefaultResolver().resolve(moduleName + TLAConstants.Files.TLA_EXTENSION, false))) {
 
-    	final TLAplusParser parser = new TLAplusParser(new SilentSanyOutput(), moduleSource);
+        final TLAplusParser parser = new TLAplusParser(new SilentSanyOutput(), moduleSource);
         Assert.assertTrue(parser.parse());
-        
+
         // Transitively resolve dependencies.
-		for (String dep : parser.dependencies()) {
-			if (emt.getModuleNode(dep) == null) {
-				resolveDependencies(emt, dep);
-			}
-		}
-        
+        for (String dep : parser.dependencies()) {
+          if (emt.getModuleNode(dep) == null) {
+            resolveDependencies(emt, dep);
+          }
+        }
+
         final Errors log = new Errors();
         final Generator semanticParser = new Generator(emt, log);
         final ModuleNode module = semanticParser.generate(parser.rootNode());
@@ -136,11 +137,11 @@ public class IncrementalSemanticParseTests {
     Assert.assertEquals(syntax, result.getTreeNode());
     Assert.assertEquals(LevelConstants.ConstantLevel, result.getLevel());
     Assert.assertEquals(LetInNode.class, result.getClass());
-    final LetInNode actual = (LetInNode)result;
+    final LetInNode actual = (LetInNode) result;
     Assert.assertEquals(OpApplNode.class, actual.getBody().getClass());
-    final OpApplNode actualOp = (OpApplNode)actual.getBody();
+    final OpApplNode actualOp = (OpApplNode) actual.getBody();
     Assert.assertEquals(OpDefNode.class, actualOp.getOperator().getClass());
-    final OpDefNode actualOpRef = (OpDefNode)actualOp.getOperator();
+    final OpDefNode actualOpRef = (OpDefNode) actualOp.getOperator();
     Assert.assertEquals(emt.getModuleNode("Naturals").getOpDef("+"), actualOpRef.getSource());
   }
 
@@ -164,11 +165,11 @@ public class IncrementalSemanticParseTests {
     Assert.assertEquals(syntax, result.getTreeNode());
     Assert.assertEquals(LevelConstants.ConstantLevel, result.getLevel());
     Assert.assertEquals(LetInNode.class, result.getClass());
-    final LetInNode actual = (LetInNode)result;
+    final LetInNode actual = (LetInNode) result;
     Assert.assertEquals(OpApplNode.class, actual.getBody().getClass());
-    final OpApplNode actualOp = (OpApplNode)actual.getBody();
+    final OpApplNode actualOp = (OpApplNode) actual.getBody();
     Assert.assertEquals(OpDefNode.class, actualOp.getOperator().getClass());
-    final OpDefNode actualOpRef = (OpDefNode)actualOp.getOperator();
+    final OpDefNode actualOpRef = (OpDefNode) actualOp.getOperator();
     Assert.assertEquals(emt.getModuleNode("TLC").getOpDef("JavaTime"), actualOpRef.getSource());
   }
 }

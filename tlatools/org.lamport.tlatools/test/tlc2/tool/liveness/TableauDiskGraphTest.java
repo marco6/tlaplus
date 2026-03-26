@@ -46,40 +46,40 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 	private static final int NUMBER_OF_SOLUTIONS = 1;
 	private static final int NUMBER_OF_ACTIONS = 0;
 	private static final BitVector NO_ACTIONS = null;
-	
-	
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.DiskGraphTest#getDiskGraph()
 	 */
 	protected AbstractDiskGraph getDiskGraph() throws IOException {
 		return new TableauDiskGraph(createTempDirectory().getAbsolutePath(), NUMBER_OF_SOLUTIONS, GRAPH_STATS);
 	}
-	
+
 	@Override
 	protected int getTableauIndex() {
 		return 0;
 	}
 
-	/* 
+	/*
 	 * Tests that the path is correctly reconstructed when a node's predecessors
 	 * have an identical fingerprint but different tableau indices.
 	 * 
-	 *                  +------+                          
-	 *	+-------+       |      |                          
-	 *	|       |       |second+---------+                
-	 *	| init  +-----> |0     |         |                
-	 *	|       |       +------+         ^                
-	 *	+-------+       +------+     +---+--+     +------+
-	 *	                |(init)|     |      |     |      |
-	 *	                |second+----->third +----->final |
-	 *	+-------+       |1     |     |      |     |      |
-	 *	|       |       +------+     +---+--+     +------+
-	 *	| init  |       +------+         ^                
-	 *	|       +-----> |      |         |                
-	 *	+-------+       |second+---------+                
-	 *	                |2     |                          
-	 *	                +------+                           
+	 * +------+
+	 * +-------+ | |
+	 * | | |second+---------+
+	 * | init +-----> |0 | |
+	 * | | +------+ ^
+	 * +-------+ +------+ +---+--+ +------+
+	 * |(init)| | | | |
+	 * |second+----->third +----->final |
+	 * +-------+ |1 | | | | |
+	 * | | +------+ +---+--+ +------+
+	 * | init | +------+ ^
+	 * | +-----> | | |
+	 * +-------+ |second+---------+
+	 * |2 |
+	 * +------+
 	 *
 	 */
 	@Test
@@ -88,22 +88,22 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 
 		long initState = 1L;
 		int initTableauIdx = 0;
-		
+
 		long secondState = 2L;
 		// Its tableau indices range from 0 to 2. Tableau idx
 		// 1 is an init state too.
 
 		long thirdState = 3L;
 		int thirdTableauIdx = 0;
-				
+
 		long finalState = 4L;
 		int finalTableauIdx = 0;
-		
+
 		// init#1
 		dg.addInitNode(initState, initTableauIdx);
 		// second#1
 		dg.addInitNode(secondState, 1);
-		
+
 		// Init#1
 		GraphNode node = new GraphNode(initState, initTableauIdx);
 		node.addTransition(secondState, 0, NUMBER_OF_SOLUTIONS, NUMBER_OF_ACTIONS, NO_ACTIONS,
@@ -111,7 +111,7 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 		node.addTransition(secondState, 2, NUMBER_OF_SOLUTIONS, NUMBER_OF_ACTIONS, NO_ACTIONS,
 				NUMBER_OF_ACTIONS, 1);
 		dg.addNode(node);
-		
+
 		// second#0
 		node = new GraphNode(secondState, 0);
 		node.addTransition(thirdState, thirdTableauIdx, NUMBER_OF_SOLUTIONS, NUMBER_OF_ACTIONS, NO_ACTIONS,
@@ -127,21 +127,21 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 		node.addTransition(thirdState, thirdTableauIdx, NUMBER_OF_SOLUTIONS, NUMBER_OF_ACTIONS, NO_ACTIONS,
 				NUMBER_OF_ACTIONS, 1);
 		dg.addNode(node);
-		
+
 		// third#0
 		node = new GraphNode(thirdState, thirdTableauIdx);
 		node.addTransition(finalState, finalTableauIdx, NUMBER_OF_SOLUTIONS, NUMBER_OF_ACTIONS, NO_ACTIONS,
 				NUMBER_OF_ACTIONS, 1);
 		dg.addNode(node);
-		
+
 		// final#0
 		node = new GraphNode(finalState, finalTableauIdx);
 		dg.addNode(node);
-		
+
 		dg.createCache();
 		final LongVec path = dg.getPath(finalState, finalTableauIdx);
 		dg.destroyCache();
-		
+
 		// It is important that it finds the shortest path.
 		assertEquals(3, path.size());
 		assertEquals(finalState, path.elementAt(0));
@@ -150,24 +150,24 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 	}
 
 	/*
-	 *                       +---------+                        
-	 *	                     |         |                        
-	 *	     +--------------->  second +------------------+     
-	 *	     |               |         |                  |     
-	 *	     |               +---------+                  |     
-	 *	     |                                            |     
-	 *	+----+---+                                   +----v----+
-	 *	|        |                                   |         |
-	 *	| init   |                                   | final   |
-	 *	|        |                                   |         |
-	 *	+----+---+                                   +----+----+
-	 *	     |                                            ^     
-	 *	     |                +---------+                 |     
-	 *	     |                |         |                 |     
-	 *	     +---------------->  third  +-----------------+     
-	 *	                      |         |                       
-	 *	                      +---------+                        
- 	 *
+	 * +---------+
+	 * | |
+	 * +---------------> second +------------------+
+	 * | | | |
+	 * | +---------+ |
+	 * | |
+	 * +----+---+ +----v----+
+	 * | | | |
+	 * | init | | final |
+	 * | | | |
+	 * +----+---+ +----+----+
+	 * | ^
+	 * | +---------+ |
+	 * | | | |
+	 * +----------------> third +-----------------+
+	 * | |
+	 * +---------+
+	 *
 	 * (Drawn with http://asciiflow.com/)
 	 */
 	@Test
@@ -176,22 +176,22 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 
 		long initState = 1L;
 		int initTableauIdx = 0;
-		
+
 		long secondState = 2L;
 		int secondTableauIdx = 0;
 
 		long thirdState = 3L;
 		int thirdTableauIdx = 0;
-				
+
 		long finalState = 4L;
 		int finalTableauIdx = 0;
-		
+
 		// Init
 		dg.addInitNode(initState, initTableauIdx);
-		
+
 		// Init
 		GraphNode node = new GraphNode(initState, initTableauIdx);
-		
+
 		/*
 		 * The *order* in which the transitions are added to the init node define,
 		 * which one of the two possible pathes is later found. Since we add
@@ -201,29 +201,29 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 				NUMBER_OF_ACTIONS, 1);
 		node.addTransition(thirdState, thirdTableauIdx, NUMBER_OF_SOLUTIONS, NUMBER_OF_ACTIONS, NO_ACTIONS,
 				NUMBER_OF_ACTIONS, 1);
-		
+
 		dg.addNode(node);
-		
+
 		// second
 		node = new GraphNode(secondState, secondTableauIdx);
 		node.addTransition(finalState, finalTableauIdx, NUMBER_OF_SOLUTIONS, NUMBER_OF_ACTIONS, NO_ACTIONS,
 				NUMBER_OF_ACTIONS, 1);
 		dg.addNode(node);
-		
+
 		// third
 		node = new GraphNode(thirdState, thirdTableauIdx);
 		node.addTransition(finalState, finalTableauIdx, NUMBER_OF_SOLUTIONS, NUMBER_OF_ACTIONS, NO_ACTIONS,
 				NUMBER_OF_ACTIONS, 1);
 		dg.addNode(node);
-		
+
 		// final
 		node = new GraphNode(finalState, finalTableauIdx);
 		dg.addNode(node);
-		
+
 		dg.createCache();
 		final LongVec path = dg.getPath(finalState, finalTableauIdx);
 		dg.destroyCache();
-		
+
 		// There are now two path with identical length:
 		// init -> second -> final & init -> third -> final
 		// and both are correct path.
@@ -239,23 +239,23 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 	 * final because it is shorter regardless of second being added as a
 	 * transition first.
 	 *
-	 *              +---------+       +---------+                        
-	 *	            |         |       |         |                        
-	 *	     +------>  frob   +------->  second +---------+     
-	 *	     |      |         |       |         |         |     
-	 *	     |      +---------+       +---------+         |     
-	 *	     |                                            |     
-	 *	+----+---+                                   +----v----+
-	 *	|        |                                   |         |
-	 *	| init   |                                   | final   |
-	 *	|        |                                   |         |
-	 *	+----+---+                                   +----+----+
-	 *	     |                                            ^     
-	 *	     |                +---------+                 |     
-	 *	     |                |         |                 |     
-	 *	     +---------------->  third  +-----------------+     
-	 *	                      |         |                       
-	 *	                      +---------+                        
+	 * +---------+ +---------+
+	 * | | | |
+	 * +------> frob +-------> second +---------+
+	 * | | | | | |
+	 * | +---------+ +---------+ |
+	 * | |
+	 * +----+---+ +----v----+
+	 * | | | |
+	 * | init | | final |
+	 * | | | |
+	 * +----+---+ +----+----+
+	 * | ^
+	 * | +---------+ |
+	 * | | | |
+	 * +----------------> third +-----------------+
+	 * | |
+	 * +---------+
 	 */
 	@Test
 	public void testUnifyingNodeShortestPath() throws IOException {
@@ -263,25 +263,25 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 
 		long initState = 1L;
 		int initTableauIdx = 0;
-		
+
 		long frob = 5;
 		int frobTableauIdx = 0;
-		
+
 		long secondState = 2L;
 		int secondTableauIdx = 0;
 
 		long thirdState = 3L;
 		int thirdTableauIdx = 0;
-				
+
 		long finalState = 4L;
 		int finalTableauIdx = 0;
-		
+
 		// Init
 		dg.addInitNode(initState, initTableauIdx);
-		
+
 		// Init
 		GraphNode node = new GraphNode(initState, initTableauIdx);
-		
+
 		/*
 		 * The *order* in which the transitions are added to the init node define,
 		 * which one of the two possible pathes is later found. Since we add
@@ -291,36 +291,35 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 				NUMBER_OF_ACTIONS, 1);
 		node.addTransition(thirdState, thirdTableauIdx, NUMBER_OF_SOLUTIONS, NUMBER_OF_ACTIONS, NO_ACTIONS,
 				NUMBER_OF_ACTIONS, 1);
-		
+
 		dg.addNode(node);
-		
+
 		// frob
 		node = new GraphNode(frob, frobTableauIdx);
 		node.addTransition(secondState, secondTableauIdx, NUMBER_OF_SOLUTIONS, NUMBER_OF_ACTIONS, NO_ACTIONS,
 				NUMBER_OF_ACTIONS, 1);
 		dg.addNode(node);
-		
-		
+
 		// second
 		node = new GraphNode(secondState, secondTableauIdx);
 		node.addTransition(finalState, finalTableauIdx, NUMBER_OF_SOLUTIONS, NUMBER_OF_ACTIONS, NO_ACTIONS,
 				NUMBER_OF_ACTIONS, 1);
 		dg.addNode(node);
-		
+
 		// third
 		node = new GraphNode(thirdState, thirdTableauIdx);
 		node.addTransition(finalState, finalTableauIdx, NUMBER_OF_SOLUTIONS, NUMBER_OF_ACTIONS, NO_ACTIONS,
 				NUMBER_OF_ACTIONS, 1);
 		dg.addNode(node);
-		
+
 		// final
 		node = new GraphNode(finalState, finalTableauIdx);
 		dg.addNode(node);
-		
+
 		dg.createCache();
 		final LongVec path = dg.getPath(finalState, finalTableauIdx);
 		dg.destroyCache();
-		
+
 		// There are now two path with identical length:
 		// init -> second -> final & init -> third -> final
 		// and both are correct path.
@@ -331,21 +330,22 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 	}
 
 	/*
-	 * +----------+                   
-	 * |          |                   
-	 * | init     |                   
-	 * |          |                   
-	 * |          |                   
-	 * +----------+                   
-	 *                                
-	 * +----------+       +----------+
-	 * |          |       |          |
-	 * | second   +------->  final   |
-	 * | init     |       |          |
-	 * |          |       |          |
-	 * +----------+       +----------+
+	 * +----------+
+	 * | |
+	 * | init |
+	 * | |
+	 * | |
+	 * +----------+
 	 * 
-	 * The specialty here is that there are *two* init nodes and one them has *no* successors.
+	 * +----------+ +----------+
+	 * | | | |
+	 * | second +-------> final |
+	 * | init | | |
+	 * | | | |
+	 * +----------+ +----------+
+	 * 
+	 * The specialty here is that there are *two* init nodes and one them has *no*
+	 * successors.
 	 * 
 	 * @see Bug #293 in general/bugzilla/index.html
 	 */
@@ -356,35 +356,35 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 		long noSuccessorInitState = 1L;
 
 		long regularInitState = 2L;
-		
+
 		long finalState = 3L;
 
 		// Init
 		dg.addInitNode(noSuccessorInitState, 0);
-		
+
 		/*
 		 * Intentionally *NOT* adding the init via dg.addNode(init)
 		 */
-		
+
 		// second init (this one gets added via addNode
 		dg.addInitNode(regularInitState, 0);
 		GraphNode node = new GraphNode(regularInitState, 0);
 		node.addTransition(finalState, 0, NUMBER_OF_SOLUTIONS, NUMBER_OF_ACTIONS, NO_ACTIONS,
 				NUMBER_OF_ACTIONS, 0);
 		dg.addNode(node);
-		
+
 		// final
 		node = new GraphNode(finalState, 0);
 		dg.addNode(node);
-		
+
 		dg.createCache();
 		LongVec path = dg.getPath(finalState, 0);
 		dg.destroyCache();
-		
+
 		assertEquals(2, path.size());
 		assertEquals(finalState, path.elementAt(0));
 		assertEquals(regularInitState, path.elementAt(1));
-		
+
 		// Make sure it also returns a path if init is searched
 		dg.createCache();
 		path = dg.getPath(noSuccessorInitState, 0);
@@ -393,7 +393,7 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 		assertEquals(1, path.size());
 		assertEquals(noSuccessorInitState, path.elementAt(0));
 	}
-	
+
 	/*
 	 * Test that getPath returns the correct init state if the graph contains
 	 * multiple initial states with the same fingerprint but different tableau idxs.
@@ -401,12 +401,12 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 	@Test
 	public void testGetPathWithTwoInits() throws IOException {
 		final AbstractDiskGraph dg = getDiskGraph();
-		
+
 		final long fingerprint = 1L;
-		
+
 		dg.addInitNode(fingerprint, 0);
 		dg.addInitNode(fingerprint, 1);
-		
+
 		try {
 			// Requesting path to node with tidx 2 is supposed to fail when no
 			// such node is in the graph.
@@ -416,18 +416,18 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 		} catch (RuntimeException e) {
 			// Now that it has been added, it should be found.
 			dg.addInitNode(fingerprint, 2);
-			
+
 			dg.createCache();
 			LongVec path = dg.getPath(fingerprint, 2);
 			dg.destroyCache();
-			
+
 			assertEquals(1, path.size());
 			assertEquals(fingerprint, path.elementAt(0));
 			return;
 		}
 		fail("Returned path to non-existing node");
 	}
-	
+
 	/*
 	 * Test how an initial node transitions through the done state
 	 */
@@ -449,7 +449,7 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 		// It is done now
 		assertTrue(dg.isDone(fingerprint));
 	}
-	
+
 	/*
 	 * Tests a path where both states have an identical fingerprint and only
 	 * differ in the tableau idx.
@@ -466,12 +466,11 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 		node.addTransition(fingerprint, 1, NUMBER_OF_SOLUTIONS, NUMBER_OF_ACTIONS, NO_ACTIONS,
 				NUMBER_OF_ACTIONS, 0);
 		dg.addNode(node);
-		
+
 		// second
 		node = new GraphNode(fingerprint, 1);
 		dg.addNode(node);
 
-		
 		dg.createCache();
 		final LongVec path = dg.getPath(fingerprint, 1);
 		dg.destroyCache();
@@ -480,33 +479,33 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 		assertEquals(fingerprint, path.elementAt(0));
 		assertEquals(fingerprint, path.elementAt(1));
 	}
-	
+
 	/*
 	 * Test that it is possible to "update" a GraphNode's outgoing transitions.
 	 */
 	@Test
 	public void testLookupExistingNodeWithTidx() throws IOException {
 		final TableauDiskGraph dg = (TableauDiskGraph) getDiskGraph();
-		
+
 		GraphNode node = dg.getNode(1L, 1);
 		assertEquals(0, node.succSize());
 		dg.addNode(node);
-		
+
 		// Cause the DiskGraph to be read from disk
 		dg.makeNodePtrTbl();
-		
+
 		node = dg.getNode(1L, 1);
 		dg.addNode(node);
 		assertEquals(0, node.succSize());
-		
+
 		node.addTransition(2, 2, NUMBER_OF_SOLUTIONS, NUMBER_OF_ACTIONS, NO_ACTIONS,
 				NUMBER_OF_ACTIONS, 0);
 		dg.addNode(node);
 		assertEquals(1, node.succSize());
 		assertTrue(node.transExists(2, 2));
-		
+
 		dg.makeNodePtrTbl();
-		
+
 		node = dg.getNode(1L, 1);
 		assertEquals(1, node.succSize());
 
@@ -516,12 +515,12 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 		assertEquals(2, node.succSize());
 		assertTrue(node.transExists(2, 2));
 		assertTrue(node.transExists(3, 3));
-		
+
 		// commit/chkpt
 		dg.beginChkpt();
 		dg.commitChkpt();
 		dg.recover();
-		
+
 		node = dg.getNode(1L, 1);
 		assertEquals(2, node.succSize());
 		assertTrue(node.transExists(2, 2));
@@ -531,17 +530,17 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 	@Test
 	public void testWhatsDoneIsDoneRRS() throws IOException {
 		final TableauDiskGraph dg = (TableauDiskGraph) getDiskGraph();
-		
+
 		final long fp = 42L;
 		final int t = 1;
-		final int u = 2;		
+		final int u = 2;
 
 		dg.recordNode(fp, t);
 		assertFalse(dg.isDone(fp));
 
 		dg.recordNode(fp, u);
 		assertFalse(dg.isDone(fp));
-		
+
 		dg.setDone(fp);
 		assertTrue(dg.isDone(fp));
 	}
@@ -549,17 +548,17 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 	@Test
 	public void testWhatsDoneIsDoneRSR() throws IOException {
 		final TableauDiskGraph dg = (TableauDiskGraph) getDiskGraph();
-		
+
 		final long fp = 42L;
 		final int t = 1;
-		final int u = 2;		
+		final int u = 2;
 
 		dg.recordNode(fp, t);
 		assertFalse(dg.isDone(fp));
-		
+
 		dg.setDone(fp);
 		assertTrue(dg.isDone(fp));
-		
+
 		dg.recordNode(fp, u);
 		assertTrue(dg.isDone(fp));
 	}
@@ -567,17 +566,17 @@ public class TableauDiskGraphTest extends DiskGraphTest {
 	@Test
 	public void testWhatsDoneIsDoneSRR() throws IOException {
 		final TableauDiskGraph dg = (TableauDiskGraph) getDiskGraph();
-		
+
 		final long fp = 42L;
 		final int t = 1;
-		final int u = 2;		
-		
+		final int u = 2;
+
 		dg.setDone(fp);
 		assertTrue(dg.isDone(fp));
 
 		dg.recordNode(fp, t);
 		assertTrue(dg.isDone(fp));
-		
+
 		dg.recordNode(fp, u);
 		assertTrue(dg.isDone(fp));
 	}

@@ -50,7 +50,7 @@ public class Github743Test extends ModelCheckerTestCase {
 		assertFalse(recorder.recorded(EC.GENERAL));
 
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
-		
+
 		// Assert the correct trace.
 		final List<String> expectedTrace = new ArrayList<String>(4);
 		expectedTrace.add("/\\ x = \"foo\"\n"

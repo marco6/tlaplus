@@ -8,18 +8,23 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.Random;
 
-
 public class BigInt extends BigInteger implements ExternalSortable {
 
   public final static BigInt BigZero = new BigInt("0");
   public final static BigInt BigOne = new BigInt("1");
   public final static BigInt BigTwo = new BigInt("2");
 
-  public BigInt(String val) { super(val); }
-  
-  public BigInt(byte[] val) { super(val); }
+  public BigInt(String val) {
+    super(val);
+  }
 
-  public BigInt(int numBits, Random rnd) { super(numBits, rnd); }
+  public BigInt(byte[] val) {
+    super(val);
+  }
+
+  public BigInt(int numBits, Random rnd) {
+    super(numBits, rnd);
+  }
 
   /* Returns the fingerprint of this. */
   public final long fingerPrint() {
@@ -27,9 +32,9 @@ public class BigInt extends BigInteger implements ExternalSortable {
   }
 
   /**
-    * Returns true iff x is a BigInt whose value is equal to this.value.
-    * This method is provided so that BigInts can be used as hash keys.
-    */
+   * Returns true iff x is a BigInt whose value is equal to this.value.
+   * This method is provided so that BigInts can be used as hash keys.
+   */
   public final boolean equals(Object x) {
     return ((x instanceof BigInt) && super.equals(x));
   }
@@ -37,7 +42,7 @@ public class BigInt extends BigInteger implements ExternalSortable {
   public final void write(OutputStream out) throws IOException {
     ByteUtils.writeSizeBigInt(out, this);
   }
-    
+
   public final BigInt read(InputStream in) throws IOException {
     return ByteUtils.readSizeBigInt(in);
   }

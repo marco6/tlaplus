@@ -44,7 +44,7 @@ import tlc2.value.impl.RecordValue;
 import util.Assert.TLCRuntimeException;
 
 public class TLCActionStackFrame extends TLCStateStackFrame {
-	
+
 	public static final String SCOPE = "Action";
 
 	@Override
@@ -67,21 +67,22 @@ public class TLCActionStackFrame extends TLCStateStackFrame {
 		assert ps != null;
 		// either ps is a stuttering state or has a predecessor.
 		assert predecessor.getLevel() == ps.getLevel() || ps.getPredecessor() != null || ps.isInitial();
-		// We *cannot* assert allAssigned here cause the check if ps is a good state (Tool#isGoodState) happens later.
-//		assert predecessor.allAssigned();
-//		assert ps.getPredecessor().allAssigned();
+		// We *cannot* assert allAssigned here cause the check if ps is a good state
+		// (Tool#isGoodState) happens later.
+		// assert predecessor.allAssigned();
+		// assert ps.getPredecessor().allAssigned();
 	}
-	
+
 	@Override
 	protected TLCState getS() {
 		return state.getPredecessor();
 	}
-	
+
 	@Override
 	protected TLCState getT() {
 		return state;
 	}
-	
+
 	@Override
 	protected RecordValue toRecordValue() {
 		return new RecordValue(getS(), getT(), NOT_EVAL);
@@ -90,7 +91,7 @@ public class TLCActionStackFrame extends TLCStateStackFrame {
 	@Override
 	protected Variable getVariable(final LinkedList<SemanticNode> path) {
 		assert !path.isEmpty();
-		
+
 		if (isPrimeScope(path)) {
 			// No need to call getPrimedVar because sn.getFirst is the child of the
 			// OpApplNode that represents the prime.
@@ -114,7 +115,7 @@ public class TLCActionStackFrame extends TLCStateStackFrame {
 	protected Object unlazy(final LazyValue lv) {
 		return unlazy(lv, null);
 	}
-	
+
 	@Override
 	protected Object unlazy(final LazyValue lv, final Object fallback) {
 		return tool.eval(() -> {

@@ -40,7 +40,8 @@ import tlc2.tool.liveness.ModelCheckerTestCase;
 public class TraceWithLargeSetOfInitialStatesTest extends ModelCheckerTestCase {
 
 	public TraceWithLargeSetOfInitialStatesTest() {
-		super("TraceWithLargeSetOfInitialStatesTest", new String[] { "-maxSetSize", "10" }, ExitStatus.VIOLATION_SAFETY);
+		super("TraceWithLargeSetOfInitialStatesTest", new String[] { "-maxSetSize", "10" },
+				ExitStatus.VIOLATION_SAFETY);
 	}
 
 	@Test
@@ -50,7 +51,7 @@ public class TraceWithLargeSetOfInitialStatesTest extends ModelCheckerTestCase {
 		assertFalse(recorder.recorded(EC.TLC_BUG));
 
 		assertTrue(recorder.recorded(EC.TLC_BEHAVIOR_UP_TO_THIS_POINT));
-		
+
 		final List<String> expectedTrace = new ArrayList<String>(2);
 		expectedTrace.add("/\\ x = 1\n/\\ y = FALSE");
 		expectedTrace.add("/\\ x = 1\n/\\ y = TRUE");
@@ -59,8 +60,8 @@ public class TraceWithLargeSetOfInitialStatesTest extends ModelCheckerTestCase {
 				? "<Initial predicate line 6, col 25 to line 6, col 33 of module TraceWithLargeSetOfInitialStatesTest>"
 				: TLCStateInfo.INITIAL_PREDICATE);
 		expectedActions.add("<Action line 6, col 42 to line 6, col 60 of module TraceWithLargeSetOfInitialStatesTest>");
-		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace, expectedActions );
+		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace, expectedActions);
 
-	assertZeroUncovered();
+		assertZeroUncovered();
 	}
 }

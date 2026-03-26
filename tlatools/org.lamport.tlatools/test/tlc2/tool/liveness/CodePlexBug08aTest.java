@@ -49,20 +49,20 @@ public class CodePlexBug08aTest extends ModelCheckerTestCase {
 	public CodePlexBug08aTest() {
 		super("MCa", "CodePlexBug08", ExitStatus.VIOLATION_LIVENESS);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		// ModelChecker has finished and generated the expected amount of states
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "18", "11", "0"));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		// Assert it has found the temporal violation and also a counter example
 		assertTrue(recorder.recorded(EC.TLC_TEMPORAL_PROPERTY_VIOLATED));
 		assertTrue(recorder.recorded(EC.TLC_COUNTER_EXAMPLE));
-		
+
 		assertNodeAndPtrSizes(816L, 352L);
-		
+
 		// Assert the error trace
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
 		final List<String> expectedTrace = new ArrayList<String>(4);
@@ -84,12 +84,12 @@ public class CodePlexBug08aTest extends ModelCheckerTestCase {
 		expectedActions.add("<B line 11, col 6 to line 13, col 18 of module CodeplexBug8>");
 		expectedTrace.add("/\\ b = TRUE\n/\\ x = 5");
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace, expectedActions);
-		
+
 		// Assert the error trace contains a stuttering step at position 5
 		assertStuttering(9);
 
 		assertZeroUncovered();
-		
+
 		// Assert POSTCONDITION.
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_FALSE));
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_EVALUATION_ERROR));

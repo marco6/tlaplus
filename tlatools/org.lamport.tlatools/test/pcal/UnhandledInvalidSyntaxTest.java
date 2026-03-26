@@ -39,42 +39,40 @@ public class UnhandledInvalidSyntaxTest extends PCalTest {
 
 	@Test
 	public void test1() throws IOException {
-		assertEquals(trans.STATUS_EXIT_WITH_ERRORS, trans.runMe(new String[] {"-nocfg", 
-							writeTempFile("MissingSemicolonTest1", 
-				"---- MODULE algo ----\n" + 
-				"(*\n" + 
-				" --algorithm algo\n" + 
-				" begin\n" + 
-				" await;\n" +
-				" end algorithm;\n" +
-				"*)\n" + 
-				"===="
-			)}));
-		
+		assertEquals(trans.STATUS_EXIT_WITH_ERRORS, trans.runMe(new String[] { "-nocfg",
+				writeTempFile("MissingSemicolonTest1",
+						"---- MODULE algo ----\n" +
+								"(*\n" +
+								" --algorithm algo\n" +
+								" begin\n" +
+								" await;\n" +
+								" end algorithm;\n" +
+								"*)\n" +
+								"====") }));
+
 		assertTrue(Arrays.toString(ToolIO.getAllMessages()),
 				Arrays.asList(ToolIO.getAllMessages()).contains("\nUnrecoverable error:\n"
-					+ " -- Unknown error at or before\n"
-					+ "    line 5, column 2.\n"));
+						+ " -- Unknown error at or before\n"
+						+ "    line 5, column 2.\n"));
 	}
-	
+
 	@Test
 	public void test2() throws IOException {
-		assertEquals(trans.STATUS_EXIT_WITH_ERRORS, trans.runMe(new String[] {"-nocfg", 
-							writeTempFile("MissingSemicolonTest2", 
-				"---- MODULE algo ----\n" + 
-				"(*\n" + 
-				" --algorithm algo\n" + 
-				" begin\n" + 
-				" if TRUE then\n" + // missing semicolon
-				" end if;\n" +
-				" end algorithm;\n" +
-				"*)\n" + 
-				"===="
-			)}));
-		
+		assertEquals(trans.STATUS_EXIT_WITH_ERRORS, trans.runMe(new String[] { "-nocfg",
+				writeTempFile("MissingSemicolonTest2",
+						"---- MODULE algo ----\n" +
+								"(*\n" +
+								" --algorithm algo\n" +
+								" begin\n" +
+								" if TRUE then\n" + // missing semicolon
+								" end if;\n" +
+								" end algorithm;\n" +
+								"*)\n" +
+								"====") }));
+
 		assertTrue(Arrays.toString(ToolIO.getAllMessages()),
 				Arrays.asList(ToolIO.getAllMessages()).contains("\nUnrecoverable error:\n"
-					+ " -- Unknown error at or before\n"
-					+ "    line 6, column 8.\n"));
+						+ " -- Unknown error at or before\n"
+						+ "    line 6, column 8.\n"));
 	}
 }

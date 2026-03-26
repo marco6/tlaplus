@@ -31,6 +31,7 @@ import tlc2.tool.liveness.ModelCheckerTestCase;
 public abstract class AbstractCoverageTest extends ModelCheckerTestCase {
 
 	public AbstractCoverageTest(String spec) {
-        super(spec, "coverage", new String[] {"-coverage", "9999"}); // To not interfere with testing, 9999 to make sure only final coverage is reported.
+		super(spec, "coverage", new String[] { "-coverage", "9999" }); // To not interfere with testing, 9999 to make
+																		// sure only final coverage is reported.
 	}
 }

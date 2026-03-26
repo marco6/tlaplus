@@ -63,7 +63,7 @@ public class ChainedCdotsTest extends ModelCheckerTestCase {
 
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "9", "4", "0"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "2"));
-		
+
 		// Assert POSTCONDITION.
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_FALSE));
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_EVALUATION_ERROR));

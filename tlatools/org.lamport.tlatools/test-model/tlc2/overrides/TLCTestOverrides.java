@@ -29,7 +29,9 @@ import tlc2.tool.EvaluatingValueTest;
 
 public class TLCTestOverrides implements ITLCOverrides {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.overrides.ITLCOverrides#get()
 	 */
 	@Override

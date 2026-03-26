@@ -30,7 +30,7 @@ import util.WrongInvocationException;
 
 /**
  * This class represents a TLA+ state, which simply is an assignment
- * of explicit values to all the global variables.  This is the
+ * of explicit values to all the global variables. This is the
  * mutable version, which means that in-place updates are used for
  * improved performance and reduced allocation.
  *
@@ -52,23 +52,24 @@ public final class TLCStateMut extends TLCState implements Serializable {
    */
   private static IMVPerm[] perms = null;
 
-  private TLCStateMut(IValue[] vals) { this.values = vals; }
-  
-  public static void setVariables(OpDeclNode[] variables) 
-  {
-      vars = variables;
-      IValue[] vals = new IValue[vars.length];
-      Empty = new TLCStateMut(vals);
+  private TLCStateMut(IValue[] vals) {
+    this.values = vals;
+  }
 
-      // SZ 10.04.2009: since this method is called exactly one from Spec#processSpec
-      // moved the call of UniqueString#setVariables to that place
-      
-      // UniqueString[] varNames = new UniqueString[variables.length];
-      // for (int i = 0; i < varNames.length; i++)
-      // {
-      //  varNames[i] = variables[i].getName();
-      //}
-      //UniqueString.setVariables(varNames);
+  public static void setVariables(OpDeclNode[] variables) {
+    vars = variables;
+    IValue[] vals = new IValue[vars.length];
+    Empty = new TLCStateMut(vals);
+
+    // SZ 10.04.2009: since this method is called exactly one from Spec#processSpec
+    // moved the call of UniqueString#setVariables to that place
+
+    // UniqueString[] varNames = new UniqueString[variables.length];
+    // for (int i = 0; i < varNames.length; i++)
+    // {
+    // varNames[i] = variables[i].getName();
+    // }
+    // UniqueString.setVariables(varNames);
   }
 
   public static void setTool(ITool tool) {
@@ -78,30 +79,30 @@ public final class TLCStateMut extends TLCState implements Serializable {
   }
 
   public final TLCState createEmpty() {
-	  IValue[] vals = new IValue[vars.length];
+    IValue[] vals = new IValue[vars.length];
     return new TLCStateMut(vals);
   }
 
-  //TODO equals without hashcode!
+  // TODO equals without hashcode!
   public final boolean equals(Object obj) {
     if (obj instanceof TLCStateMut) {
-      TLCStateMut state = (TLCStateMut)obj;
+      TLCStateMut state = (TLCStateMut) obj;
       for (int i = 0; i < this.values.length; i++) {
-	if (this.values[i] == null) {
-	  if (state.values[i] != null) return false;
-	}
-	else if (state.values[i] == null ||
-		 !this.values[i].equals(state.values[i])) {
-	  return false;
-	}
+        if (this.values[i] == null) {
+          if (state.values[i] != null)
+            return false;
+        } else if (state.values[i] == null ||
+            !this.values[i].equals(state.values[i])) {
+          return false;
+        }
       }
       return true;
     }
     return false;
   }
-  
+
   public final TLCState bind(UniqueString name, IValue value) {
-	  // Note, tla2sany.semantic.OpApplNode.toString(Value) relies on this ordering.
+    // Note, tla2sany.semantic.OpApplNode.toString(Value) relies on this ordering.
     int loc = name.getVarLoc();
     this.values[loc] = value;
     return this;
@@ -110,7 +111,7 @@ public final class TLCStateMut extends TLCState implements Serializable {
   public final TLCState bind(SymbolNode id, IValue value) {
     throw new WrongInvocationException("TLCStateMut.bind: This is a TLC bug.");
   }
-  
+
   public final TLCState unbind(UniqueString name) {
     int loc = name.getVarLoc();
     this.values[loc] = null;
@@ -119,7 +120,8 @@ public final class TLCStateMut extends TLCState implements Serializable {
 
   public final IValue lookup(UniqueString var) {
     int loc = var.getVarLoc();
-    if (loc < 0) return null;
+    if (loc < 0)
+      return null;
     return this.values[loc];
   }
 
@@ -140,21 +142,21 @@ public final class TLCStateMut extends TLCState implements Serializable {
     for (int i = 0; i < len; i++) {
       IValue val = this.values[i];
       if (val != null) {
-	vals[i] = val.deepCopy();
+        vals[i] = val.deepCopy();
       }
     }
-	return deepCopy(new TLCStateMut(vals));
+    return deepCopy(new TLCStateMut(vals));
   }
 
   public final StateVec addToVec(StateVec states) {
     return states.addElement(this.copy());
   }
-  
+
   public final void deepNormalize() {
     for (int i = 0; i < this.values.length; i++) {
       IValue val = this.values[i];
       if (val != null) {
-	val.deepNormalize();
+        val.deepNormalize();
       }
     }
   }
@@ -166,147 +168,150 @@ public final class TLCStateMut extends TLCState implements Serializable {
    *
    * Since the values in this state can be shared by multiple threads
    * via the state queue. They have to be normalized before adding to
-   * the state queue.  We do that here.
+   * the state queue. We do that here.
    */
-	public final long fingerPrint() {
-		int sz = this.values.length;
+  public final long fingerPrint() {
+    int sz = this.values.length;
 
-		// TLC supports symmetry reduction. Symmetry reduction works by defining classes
-		// of symmetrically equivalent states for which TLC only checks a
-		// single representative of the equivalence class (orbit). E.g. in a two
-		// process mutual exclusion problem, the process ids are - most of the time -
-		// not relevant with regards to mutual exclusion: We don't care if process A or
-		// B is in the critical section as long as only a single process is in CS. Thus
-		// two states are symmetric that only differ in the process id variable value.
-		// Symmetry can also be observed graphically in the state graph s.t. subgraphs
-		// are isomorphic (Graph Isomorphism). Instead of enumerating the complete state
-		// graph, TLC enumerates one of the isomorphic subgraphs whose state correspond
-		// to the representatives. With respect to the corresponding Kripke structure M,
-		// the resulting Kripke M' is called the "quotient structure" (see "Exploiting
-		// Symmetry in Temporal Logic Model Checking" by Clarke et al).
-		// 
-		// The definition of equivalence classes (orbits) is provided manually by the
-		// user at startup by defining 1 to n symmetry sets. Thus TLC has to find
-		// representative at runtime only which happens below. Given any state s, TLC
-		// evaluates rep(s) to find the lexicographically smallest state ss = rep(s)
-		// with regards to the variable values. The state ss is then fingerprint instead
-		// of s.
-		//
-		// Evaluating rep(s) - to reduce s to ss - requires to apply all permutations in
-		// the group this.perms (derived from the user-defined orbit). This is known as
-		// the constructive orbit problem and is NP-hard. The loop has O(|perms| * |this.values|)
-		// with |prems| = |symmetry set 1|! * |symmetry set 2|! * ... * |symmetry set n|. 
-        //		
-		// minVals is what is used to calculate/generate the fingerprint below.
-		// If this state is not the lexicographically smallest state ss, its current
-		// minVals will be replaced temporarily with the values of ss for the
-		// calculation of the fingerprint.
-		IValue[] minVals = this.values;
-		if (perms != null) {
-			IValue[] vals = new IValue[sz];
-			// The following for loop converges to the smallest state ss under symmetry by
-			// looping over all permutations applying each. If the outcome turns out to be
-			// lexicographically smaller than the currently smallest, it replaces the
-			// current smallest. Once all permutations (perms) have been processed, we know
-			// we have found the smallest state.
-			NEXT_PERM: for (int i = 0; i < perms.length; i++) {
-				int cmp = 0;
-				// For each value in values succinctly permute the current value
-				// and compare it to its corresponding minValue in minVals.
-				for (int j = 0; j < sz; j++) {
-					vals[j] = this.values[j].permute(perms[i]);
-					if (cmp == 0) {
-						// Only compare unless an earlier compare has found a
-						// difference already (if a difference has been found
-						// earlier, still permute the remaining values of the
-						// state to fully permute all state values).
-						cmp = vals[j].compareTo(minVals[j]);
-						if (cmp > 0) {
-							// When cmp evaluates to >0, all subsequent
-							// applications of perms[i] for the remaining values
-							// won't make the resulting vals[] smaller than
-							// minVals. Thus, exit preemptively from the loop
-							// over vals. This works because perms is the cross
-							// product of all symmetry sets.
-							continue NEXT_PERM;
-						}
-					}
-				}
-				// cmp < 0 means the current state is part of a symmetry
-				// permutation set/group and not the "smallest" one.
-				if (cmp < 0) {
-					if (minVals == this.values) {
-						minVals = vals;
-						vals = new IValue[sz];
-					} else {
-						IValue[] temp = minVals;
-						minVals = vals;
-						vals = temp;
-					}
-				}
-			}
-		}
-		// Fingerprint the state:
-		long fp = FP64.New();
-		if (viewMap == null) {
-			for (int i = 0; i < sz; i++) {
-				fp = minVals[i].fingerPrint(fp);
-			}
-			if (this.values != minVals) {
-				for (int i = 0; i < sz; i++) {
-					this.values[i].deepNormalize();
-				}
-			}
-		} else {
-			for (int i = 0; i < sz; i++) {
-				this.values[i].deepNormalize();
-			}
-			TLCStateMut state = this;
-			if (minVals != this.values) {
-				state = new TLCStateMut(minVals);
-			}
-			IValue val = mytool.eval(viewMap, Context.Empty, state);
-			fp = val.fingerPrint(fp);
-		}
-		return fp;
-	}
+    // TLC supports symmetry reduction. Symmetry reduction works by defining classes
+    // of symmetrically equivalent states for which TLC only checks a
+    // single representative of the equivalence class (orbit). E.g. in a two
+    // process mutual exclusion problem, the process ids are - most of the time -
+    // not relevant with regards to mutual exclusion: We don't care if process A or
+    // B is in the critical section as long as only a single process is in CS. Thus
+    // two states are symmetric that only differ in the process id variable value.
+    // Symmetry can also be observed graphically in the state graph s.t. subgraphs
+    // are isomorphic (Graph Isomorphism). Instead of enumerating the complete state
+    // graph, TLC enumerates one of the isomorphic subgraphs whose state correspond
+    // to the representatives. With respect to the corresponding Kripke structure M,
+    // the resulting Kripke M' is called the "quotient structure" (see "Exploiting
+    // Symmetry in Temporal Logic Model Checking" by Clarke et al).
+    //
+    // The definition of equivalence classes (orbits) is provided manually by the
+    // user at startup by defining 1 to n symmetry sets. Thus TLC has to find
+    // representative at runtime only which happens below. Given any state s, TLC
+    // evaluates rep(s) to find the lexicographically smallest state ss = rep(s)
+    // with regards to the variable values. The state ss is then fingerprint instead
+    // of s.
+    //
+    // Evaluating rep(s) - to reduce s to ss - requires to apply all permutations in
+    // the group this.perms (derived from the user-defined orbit). This is known as
+    // the constructive orbit problem and is NP-hard. The loop has O(|perms| *
+    // |this.values|)
+    // with |prems| = |symmetry set 1|! * |symmetry set 2|! * ... * |symmetry set
+    // n|.
+    //
+    // minVals is what is used to calculate/generate the fingerprint below.
+    // If this state is not the lexicographically smallest state ss, its current
+    // minVals will be replaced temporarily with the values of ss for the
+    // calculation of the fingerprint.
+    IValue[] minVals = this.values;
+    if (perms != null) {
+      IValue[] vals = new IValue[sz];
+      // The following for loop converges to the smallest state ss under symmetry by
+      // looping over all permutations applying each. If the outcome turns out to be
+      // lexicographically smaller than the currently smallest, it replaces the
+      // current smallest. Once all permutations (perms) have been processed, we know
+      // we have found the smallest state.
+      NEXT_PERM: for (int i = 0; i < perms.length; i++) {
+        int cmp = 0;
+        // For each value in values succinctly permute the current value
+        // and compare it to its corresponding minValue in minVals.
+        for (int j = 0; j < sz; j++) {
+          vals[j] = this.values[j].permute(perms[i]);
+          if (cmp == 0) {
+            // Only compare unless an earlier compare has found a
+            // difference already (if a difference has been found
+            // earlier, still permute the remaining values of the
+            // state to fully permute all state values).
+            cmp = vals[j].compareTo(minVals[j]);
+            if (cmp > 0) {
+              // When cmp evaluates to >0, all subsequent
+              // applications of perms[i] for the remaining values
+              // won't make the resulting vals[] smaller than
+              // minVals. Thus, exit preemptively from the loop
+              // over vals. This works because perms is the cross
+              // product of all symmetry sets.
+              continue NEXT_PERM;
+            }
+          }
+        }
+        // cmp < 0 means the current state is part of a symmetry
+        // permutation set/group and not the "smallest" one.
+        if (cmp < 0) {
+          if (minVals == this.values) {
+            minVals = vals;
+            vals = new IValue[sz];
+          } else {
+            IValue[] temp = minVals;
+            minVals = vals;
+            vals = temp;
+          }
+        }
+      }
+    }
+    // Fingerprint the state:
+    long fp = FP64.New();
+    if (viewMap == null) {
+      for (int i = 0; i < sz; i++) {
+        fp = minVals[i].fingerPrint(fp);
+      }
+      if (this.values != minVals) {
+        for (int i = 0; i < sz; i++) {
+          this.values[i].deepNormalize();
+        }
+      }
+    } else {
+      for (int i = 0; i < sz; i++) {
+        this.values[i].deepNormalize();
+      }
+      TLCStateMut state = this;
+      if (minVals != this.values) {
+        state = new TLCStateMut(minVals);
+      }
+      IValue val = mytool.eval(viewMap, Context.Empty, state);
+      fp = val.fingerPrint(fp);
+    }
+    return fp;
+  }
 
   public final boolean allAssigned() {
-    int len = this.values.length;    
+    int len = this.values.length;
     for (int i = 0; i < len; i++) {
-      if (values[i] == null) return false;
+      if (values[i] == null)
+        return false;
     }
     return true;
   }
 
-    @Override
-	public boolean noneAssigned() {
-		int len = this.values.length;
-		for (int i = 0; i < len; i++) {
-			if (values[i] != null) {
-				return false;
-			}
-		}
-		return true;
-	}
- 
-    @Override
-	public final Set<OpDeclNode> getUnassigned() {
-		// Return sorted set (lexicographical).
-		final Set<OpDeclNode> unassignedVars = new TreeSet<OpDeclNode>(new Comparator<OpDeclNode>() {
-			@Override
-			public int compare(OpDeclNode o1, OpDeclNode o2) {
-				return o1.getName().toString().compareTo(o2.getName().toString());
-			}
-		});
-		int len = this.values.length;
-		for (int i = 0; i < len; i++) {
-			if (values[i] == null) {
-				unassignedVars.add(vars[i]);
-			}
-		}
-		return unassignedVars;
-	}
+  @Override
+  public boolean noneAssigned() {
+    int len = this.values.length;
+    for (int i = 0; i < len; i++) {
+      if (values[i] != null) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @Override
+  public final Set<OpDeclNode> getUnassigned() {
+    // Return sorted set (lexicographical).
+    final Set<OpDeclNode> unassignedVars = new TreeSet<OpDeclNode>(new Comparator<OpDeclNode>() {
+      @Override
+      public int compare(OpDeclNode o1, OpDeclNode o2) {
+        return o1.getName().toString().compareTo(o2.getName().toString());
+      }
+    });
+    int len = this.values.length;
+    for (int i = 0; i < len; i++) {
+      if (values[i] == null) {
+        unassignedVars.add(vars[i]);
+      }
+    }
+    return unassignedVars;
+  }
 
   public final void read(IValueInputStream vis) throws IOException {
     super.read(vis);
@@ -320,11 +325,11 @@ public final class TLCStateMut extends TLCState implements Serializable {
     super.write(vos);
     int len = this.values.length;
     for (int i = 0; i < len; i++) {
-    	this.values[i].write(vos);
+      this.values[i].write(vos);
     }
   }
-  
-  /* Returns a string representation of this state.  */
+
+  /* Returns a string representation of this state. */
   public final String toString() {
     if (TLCGlobals.useView && viewMap != null) {
       IValue val = mytool.eval(viewMap, Context.Empty, this);
@@ -339,29 +344,28 @@ public final class TLCStateMut extends TLCState implements Serializable {
       result.append(" = ");
       result.append(Values.ppr(val));
       result.append("\n");
-    }
-    else {
+    } else {
       for (int i = 0; i < vlen; i++) {
-	UniqueString key = vars[i].getName();
-	IValue val = this.lookup(key);
-	result.append("/\\ ");
-	result.append(key.toString());
-    result.append(" = ");
-    result.append(Values.ppr(val));
-    result.append("\n");
+        UniqueString key = vars[i].getName();
+        IValue val = this.lookup(key);
+        result.append("/\\ ");
+        result.append(key.toString());
+        result.append(" = ");
+        result.append(Values.ppr(val));
+        result.append("\n");
       }
     }
     return result.toString();
   }
-  
-  /* Returns a string representation of this state.  */
+
+  /* Returns a string representation of this state. */
   public final String toString(TLCState lastState) {
-		return toString(
-				Arrays.stream(vars).map(o -> o.getName()).collect(Collectors.toList()).toArray(UniqueString[]::new),
-				lastState);
+    return toString(
+        Arrays.stream(vars).map(o -> o.getName()).collect(Collectors.toList()).toArray(UniqueString[]::new),
+        lastState);
   }
-  
-  /* Returns a string representation of this state.  */
+
+  /* Returns a string representation of this state. */
   public final String toString(UniqueString[] vars, TLCState lastState) {
     StringBuffer result = new StringBuffer();
     TLCState lstate = lastState;
@@ -372,31 +376,30 @@ public final class TLCStateMut extends TLCState implements Serializable {
       IValue val = this.lookup(key);
       IValue lstateVal = lstate.lookup(key);
       if (!lstateVal.equals(val)) {
-	result.append(key.toString());
-	result.append(" = " + Values.ppr(val) + "\n");
+        result.append(key.toString());
+        result.append(" = " + Values.ppr(val) + "\n");
       }
-    }
-    else {
+    } else {
       for (int i = 0; i < vlen; i++) {
-	UniqueString key = vars[i];
-	IValue val = this.lookup(key);
-	IValue lstateVal = lstate.lookup(key);
-	if (!lstateVal.equals(val)) {
-	  result.append("/\\ ");
-	  result.append(key.toString());
-	  result.append(" = " + Values.ppr(val) + "\n");
-	}
+        UniqueString key = vars[i];
+        IValue val = this.lookup(key);
+        IValue lstateVal = lstate.lookup(key);
+        if (!lstateVal.equals(val)) {
+          result.append("/\\ ");
+          result.append(key.toString());
+          result.append(" = " + Values.ppr(val) + "\n");
+        }
       }
     }
     return result.toString();
   }
-	
-  	@Override
-	public TLCState evalStateLevelAlias() {
-		// We are passing TLCState.Empty to the evalAlias method, which will result in
-		// evalAlias returning this if the alias is an action-level formula, without
-		// raising an error.
-		return mytool.evalAlias(this, TLCState.Empty);
-	}
+
+  @Override
+  public TLCState evalStateLevelAlias() {
+    // We are passing TLCState.Empty to the evalAlias method, which will result in
+    // evalAlias returning this if the alias is an action-level formula, without
+    // raising an error.
+    return mytool.evalAlias(this, TLCState.Empty);
+  }
 
 }

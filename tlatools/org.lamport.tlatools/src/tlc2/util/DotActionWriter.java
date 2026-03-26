@@ -38,38 +38,41 @@ import util.FileUtil;
  * @see https://en.wikipedia.org/wiki/DOT_(graph_description_language)
  * 
  * 
- * To ASCII-render a graph (on Debian|Ubuntu) install cpanminus, sudo cpanm Graph::Easy and run:
- * cat your.dot | graph-easy --from=dot --as_ascii
- * (https://stackoverflow.com/questions/3211801/graphviz-and-ascii-output)
+ *      To ASCII-render a graph (on Debian|Ubuntu) install cpanminus, sudo cpanm
+ *      Graph::Easy and run:
+ *      cat your.dot | graph-easy --from=dot --as_ascii
+ *      (https://stackoverflow.com/questions/3211801/graphviz-and-ascii-output)
  */
 public class DotActionWriter {
 
-    protected final PrintWriter writer;
-    protected final String fname;
-	
-	public DotActionWriter(final String fname, final String strict) throws IOException {
-        this.fname = fname;
-        this.writer = new PrintWriter(FileUtil.newBFOS(fname));
-		this.writer.append(strict + "digraph ActionGraph {\n"); // strict removes redundant edges
-		// Turned off LR because top to bottom provides better results with GraphViz viewer.
-//		this.writer.append("rankdir=LR;\n"); // Left to right rather than top to bottom
-        
-		// Spread out state nodes a bit more.
-        this.writer.append("nodesep=0.35;\n");
+	protected final PrintWriter writer;
+	protected final String fname;
 
-        // Add a legend explaining the semantics of the arcs.
-        //TODO penwidth should be explained too!
-//        subgraph cluster_legend {
-//            label = "Legend";
-//            node [shape=point] {
-//                d0 [style = invis];
-//                d1 [style = invis];
-//                p0 [style = invis];
-//                p1 [style = invis];
-//            }
-//            d0 -> d1 [label=unseen color=green style=dotted]
-//            p0 -> p1 [label=seen]
-//        }
+	public DotActionWriter(final String fname, final String strict) throws IOException {
+		this.fname = fname;
+		this.writer = new PrintWriter(FileUtil.newBFOS(fname));
+		this.writer.append(strict + "digraph ActionGraph {\n"); // strict removes redundant edges
+		// Turned off LR because top to bottom provides better results with GraphViz
+		// viewer.
+		// this.writer.append("rankdir=LR;\n"); // Left to right rather than top to
+		// bottom
+
+		// Spread out state nodes a bit more.
+		this.writer.append("nodesep=0.35;\n");
+
+		// Add a legend explaining the semantics of the arcs.
+		// TODO penwidth should be explained too!
+		// subgraph cluster_legend {
+		// label = "Legend";
+		// node [shape=point] {
+		// d0 [style = invis];
+		// d1 [style = invis];
+		// p0 [style = invis];
+		// p1 [style = invis];
+		// }
+		// d0 -> d1 [label=unseen color=green style=dotted]
+		// p0 -> p1 [label=seen]
+		// }
 		this.writer.append("subgraph cluster_legend {\n");
 		this.writer.append("label = \"Coverage\";\n");
 		this.writer.append("node [shape=point] {\n");

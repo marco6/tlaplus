@@ -44,36 +44,38 @@ import tlc2.value.impl.StringValue;
 import tlc2.value.impl.Value;
 
 public class RandomizationTest {
-	
+
 	@BeforeClass
 	public static void setup() {
-		// Make test repeatable by setting random seed always to same value. 
+		// Make test repeatable by setting random seed always to same value.
 		RandomEnumerableValues.setSeed(15041980L);
-		
-		// Initialize FP64 to prevent NPE in hashCode (which relies on Value#fingerprint).
+
+		// Initialize FP64 to prevent NPE in hashCode (which relies on
+		// Value#fingerprint).
 		FP64.Init();
 	}
 
 	/* RandomSubset */
-	
 
 	@Test
 	public void testRandomSubsetNonFinite() {
 		try {
 			Randomization.RandomSubset(IntValue.gen(23), Naturals.Nat());
 		} catch (final EvalException ee) {
-			assertTrue(ee.getMessage().contains("The second argument of RandomSubset should be a a finite set, but instead it is:\n"
-					+ "Nat"));
+			assertTrue(ee.getMessage()
+					.contains("The second argument of RandomSubset should be a a finite set, but instead it is:\n"
+							+ "Nat"));
 			return;
 		}
 		fail();
 	}
-	
+
 	/* RandomSubsetSet */
 
 	@Test
 	public void testV1Valid() {
-		final Enumerable randomSubset = (Enumerable) Randomization.RandomSubsetSet(IntValue.gen(42), new StringValue("0.1"),
+		final Enumerable randomSubset = (Enumerable) Randomization.RandomSubsetSet(IntValue.gen(42),
+				new StringValue("0.1"),
 				new IntervalValue(1, 42));
 
 		assertNotNull(randomSubset);
@@ -96,13 +98,14 @@ public class RandomizationTest {
 		try {
 			Randomization.RandomSubsetSet(IntValue.gen(23), new StringValue("1.0"), Naturals.Nat());
 		} catch (final EvalException ee) {
-			assertTrue(ee.getMessage().contains("The third argument of RandomSubsetSetProbability should be a finite set, but instead it is:\n"
-					+ "Nat"));
+			assertTrue(ee.getMessage().contains(
+					"The third argument of RandomSubsetSetProbability should be a finite set, but instead it is:\n"
+							+ "Nat"));
 			return;
 		}
 		fail();
 	}
-		
+
 	/* RandomSetOfSubsets */
 
 	@Test
@@ -111,19 +114,21 @@ public class RandomizationTest {
 		try {
 			Randomization.RandomSetOfSubsets(v1, IntValue.gen(42), new IntervalValue(1, 42));
 		} catch (final EvalException ee) {
-			assertTrue(ee.getMessage().contains("The first argument of RandomSetOfSubsets should be a nonnegative integer, but instead it is:\n-42"));
+			assertTrue(ee.getMessage().contains(
+					"The first argument of RandomSetOfSubsets should be a nonnegative integer, but instead it is:\n-42"));
 			return;
 		}
 		fail();
 	}
-	
+
 	@Test
 	public void testV1NoIntValue() {
 		final Value v1 = new StringValue("52");
 		try {
 			Randomization.RandomSetOfSubsets(v1, IntValue.gen(42), new IntervalValue(1, 42));
 		} catch (final EvalException ee) {
-			assertTrue(ee.getMessage().contains("The first argument of RandomSetOfSubsets should be a nonnegative integer, but instead it is:\n\"52\""));
+			assertTrue(ee.getMessage().contains(
+					"The first argument of RandomSetOfSubsets should be a nonnegative integer, but instead it is:\n\"52\""));
 			return;
 		}
 		fail();
@@ -153,7 +158,8 @@ public class RandomizationTest {
 		try {
 			Randomization.RandomSetOfSubsets(IntValue.gen(23), IntValue.gen(-1), new IntervalValue(1, 42));
 		} catch (final EvalException ee) {
-			assertTrue(ee.getMessage().contains("The second argument of RandomSetOfSubsets should be a nonnegative integer, but instead it is:\n-1"));
+			assertTrue(ee.getMessage().contains(
+					"The second argument of RandomSetOfSubsets should be a nonnegative integer, but instead it is:\n-1"));
 			return;
 		}
 		fail();
@@ -170,16 +176,17 @@ public class RandomizationTest {
 		}
 		fail();
 	}
-	
+
 	@Test
 	public void testV3AstronomicallyLarge() {
-		final Enumerable randomSubset = (Enumerable) Randomization.RandomSetOfSubsets(IntValue.gen(42), IntValue.gen(42),
+		final Enumerable randomSubset = (Enumerable) Randomization.RandomSetOfSubsets(IntValue.gen(42),
+				IntValue.gen(42),
 				new IntervalValue(1, 256));
 
 		assertNotNull(randomSubset);
 		assertEquals(42, randomSubset.size());
 	}
-	
+
 	@Test
 	public void testV3isInfinite() {
 		try {
@@ -206,12 +213,13 @@ public class RandomizationTest {
 		try {
 			Randomization.RandomSetOfSubsets(IntValue.gen(23), IntValue.gen(-1), new IntervalValue(1, 42));
 		} catch (final EvalException ee) {
-			assertTrue(ee.getMessage().contains("The second argument of RandomSetOfSubsets should be a nonnegative integer, but instead it is:\n-1"));
+			assertTrue(ee.getMessage().contains(
+					"The second argument of RandomSetOfSubsets should be a nonnegative integer, but instead it is:\n-1"));
 			return;
 		}
 		fail();
 	}
-	
+
 	@Test
 	public void testRSSV2Cardinality() {
 		final Enumerable randomSubset = (Enumerable) Randomization.RandomSetOfSubsets(IntValue.gen(32), IntValue.gen(5),
@@ -221,7 +229,7 @@ public class RandomizationTest {
 		// a single subset which is the input set.
 		assertTrue(randomSubset.member(new IntervalValue(1, 5)));
 	}
-	
+
 	@Test
 	public void testRSSV2TwiceCardinality() {
 		try {

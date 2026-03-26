@@ -27,7 +27,7 @@ class LNNext extends LiveExprNode {
 	public final boolean containAction() {
 		return this.body.containAction();
 	}
-	
+
 	@Override
 	public final boolean isPositiveForm() {
 		return this.body.isPositiveForm();
@@ -61,7 +61,9 @@ class LNNext extends LiveExprNode {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.LiveExprNode#toDotViz()
 	 */
 	public String toDotViz() {

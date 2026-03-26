@@ -56,12 +56,12 @@ public class Github866Test extends ModelCheckerTestCase {
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_FALSE));
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_EVALUATION_ERROR));
 	}
-	
+
 	@Override
 	protected boolean doCoverage() {
 		return false;
 	}
-	
+
 	// overrides below are nice-to-have but not relevant for the test.
 
 	@Override

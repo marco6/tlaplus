@@ -39,7 +39,7 @@ public class AssignmentTest {
 		final Assignment a = new Assignment("X", new String[0], "X");
 		a.setModelValue(true);
 		assertEquals("X", a.prettyPrint());
-		
+
 		final Assignment b = new Assignment("Y", new String[0], "{a1, b1}");
 		b.setModelValue(true);
 		assertEquals("Y" + Assignment.ASSIGNMENT_SIGN + "{a1, b1}", b.prettyPrint());

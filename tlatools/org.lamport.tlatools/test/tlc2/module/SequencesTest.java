@@ -43,10 +43,10 @@ public class SequencesTest {
 
 	// Tail("abc") = "bc"
 	// TLC can evaluate Tail("abc") because its value, "bc", can be written without
-	// explicitly writing any character (characters would be 'b' and 'c', which do 
+	// explicitly writing any character (characters would be 'b' and 'c', which do
 	// not exist in TLC).
 	// https://github.com/tlaplus/tlaplus/issues/512#issuecomment-717602371
-	
+
 	@Test
 	public void testTailString() {
 		Value v = Sequences.Tail(new StringValue("abc"));
@@ -54,10 +54,10 @@ public class SequencesTest {
 		assertEquals(UniqueString.of("bc"), ((StringValue) v).val);
 	}
 
-	// Head("a") = "a"[1]  and TLC cannot evaluate "a"[1]:
+	// Head("a") = "a"[1] and TLC cannot evaluate "a"[1]:
 	// Error evaluating expression: '"abc"[1]'
 	// A non-function (a string) was applied as a function.
-	
+
 	@Test
 	public void testHeadString() {
 		try {
@@ -101,6 +101,7 @@ public class SequencesTest {
 		}
 		fail();
 	}
+
 	@Test
 	public void testAppendStringNonString() {
 		try {
@@ -114,7 +115,7 @@ public class SequencesTest {
 
 	// "a" \o <<>> or <<>> \o "a" should produce an error. There is little value in
 	// implementing it because concat would only work for the empty sequence.
-	
+
 	@Test
 	public void testConcatStringToSeq() {
 		try {
@@ -138,7 +139,7 @@ public class SequencesTest {
 	}
 
 	// "a" \o "b" = "ab"
-	
+
 	@Test
 	public void testConcatStringToString() {
 		Value v = Sequences.Concat(new StringValue("abc"), (new StringValue("d")));
@@ -169,7 +170,7 @@ public class SequencesTest {
 	}
 
 	// 1 \o 1 # 11
-	
+
 	@Test
 	public void testConcatIntToInt() {
 		try {
@@ -180,9 +181,9 @@ public class SequencesTest {
 		}
 		fail();
 	}
-	
+
 	// SubSeq("abc", 1, 1) = "a"
-	
+
 	@Test
 	public void testSubseq() {
 		Value v = Sequences.SubSeq(new StringValue("abc"), IntValue.ValOne, IntValue.ValOne);

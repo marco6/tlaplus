@@ -103,8 +103,10 @@ public class DiskStateQueue extends StateQueue {
 		}
 		return this.deqBuf[this.deqIndex++];
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.queue.StateQueue#peekInner()
 	 */
 	TLCState peekInner() {
@@ -146,7 +148,7 @@ public class DiskStateQueue extends StateQueue {
 			}
 			// Notify the cleaner to do its job unless its waits for more work
 			// to pile up.
-			if ((loPool - lastLoPool) > 100) { //TODO Take BufSize into account. It defines the disc file size.
+			if ((loPool - lastLoPool) > 100) { // TODO Take BufSize into account. It defines the disc file size.
 				synchronized (this.cleaner) {
 					this.cleaner.deleteUpTo = loPool - 1;
 					this.cleaner.notifyAll();
@@ -167,7 +169,7 @@ public class DiskStateQueue extends StateQueue {
 			this.cleaner.finished = true;
 			this.cleaner.notifyAll();
 		}
-		
+
 		String filename = this.filePrefix + "queue.tmp";
 		ValueOutputStream vos = new ValueOutputStream(filename);
 		vos.writeLongNat(this.len);
@@ -248,12 +250,14 @@ public class DiskStateQueue extends StateQueue {
 
 		private volatile boolean finished = false;
 		public int deleteUpTo;
-		
+
 		private StatePoolCleaner() {
 			super("TLCStatePoolCleaner");
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Thread#run()
 		 */
 		public void run() {
@@ -264,7 +268,7 @@ public class DiskStateQueue extends StateQueue {
 						if (this.finished) {
 							return;
 						}
-						
+
 						for (int i = lastLoPool; i < deleteUpTo; i++) {
 							final File oldPoolFile = new File(filePrefix + Integer.toString(i));
 							if (!oldPoolFile.delete()) {
@@ -287,7 +291,9 @@ public class DiskStateQueue extends StateQueue {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.queue.IStateQueue#delete()
 	 */
 	@Override

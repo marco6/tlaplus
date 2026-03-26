@@ -40,7 +40,7 @@ class LNAll extends LiveExprNode {
 	public final boolean containAction() {
 		return this.body.containAction();
 	}
-	
+
 	@Override
 	public final boolean isPositiveForm() {
 		return this.body.isPositiveForm();
@@ -55,7 +55,7 @@ class LNAll extends LiveExprNode {
 		sb.append(ALWAYS);
 		this.getBody().toString(sb, padding + "  ");
 	}
-	
+
 	/* Return A if this expression is of form []<>A. */
 	public LiveExprNode getAEBody() {
 		LiveExprNode allBody = getBody();
@@ -116,7 +116,9 @@ class LNAll extends LiveExprNode {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.LiveExprNode#toDotViz()
 	 */
 	public String toDotViz() {

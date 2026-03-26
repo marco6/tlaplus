@@ -42,7 +42,7 @@ public class ChooseTableauSymmetryTest extends ModelCheckerTestCase {
 	public ChooseTableauSymmetryTest() {
 		super("ChooseTableauSymmetryMC", "symmetry");
 	}
-	
+
 	@Test
 	@Ignore("Ignored for as long as symmetry is incorrectly handled by TLC with liveness checking.")
 	public void testSpec() {
@@ -65,7 +65,7 @@ public class ChooseTableauSymmetryTest extends ModelCheckerTestCase {
 		expectedTrace.add("arr = (a :> \"done\" @@ b :> \"done\")");
 		expectedTrace.add("arr = (a :> \"done\" @@ b :> \"ready\")");
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace);
-		
+
 		assertBackToState(4, "<Action line 7, col 13 to line 8, col 47 of module ChooseTableauSymmetry>");
 	}
 }

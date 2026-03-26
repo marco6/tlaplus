@@ -20,35 +20,49 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Fuzz testing for {@link BufferedRandomAccessFile}.
  *
- * <p>This fuzzer generates many random lists of file operations ({@link FileOperation}) and validates that executing
- * those operations has the same outcome whether applied to a {@link RandomAccessFile} or a
+ * <p>
+ * This fuzzer generates many random lists of file operations
+ * ({@link FileOperation}) and validates that executing
+ * those operations has the same outcome whether applied to a
+ * {@link RandomAccessFile} or a
  * {@link BufferedRandomAccessFile}.
  *
- * <p>Not all lists of operations result in well-defined behavior.  For instance, some writes fill the file with
- * arbitrary bytes, and reads at those positions are not well-defined.  When randomly generating operations, this test
- * simulates the operations on a lightweight in-memory representation of the file ({@link AbstractFileState}) which has
- * helpers to indicate if an operation would result in undefined output.  Those undefined operations are omitted from
+ * <p>
+ * Not all lists of operations result in well-defined behavior. For instance,
+ * some writes fill the file with
+ * arbitrary bytes, and reads at those positions are not well-defined. When
+ * randomly generating operations, this test
+ * simulates the operations on a lightweight in-memory representation of the
+ * file ({@link AbstractFileState}) which has
+ * helpers to indicate if an operation would result in undefined output. Those
+ * undefined operations are omitted from
  * the generated list.
  */
 public class BufferedRandomAccessFileFuzzTest {
 
-    /** The number of threads to use for fuzzing, to explore more traces in less time. */
+    /**
+     * The number of threads to use for fuzzing, to explore more traces in less
+     * time.
+     */
     private static final int THREAD_COUNT = Runtime.getRuntime().availableProcessors();
 
     /** How much fuzzing to do before declaring success. */
     private static final int TRACES_TO_EXPLORE_PER_THREAD = 10_000;
 
     /**
-     * A bound on various operation parameters, like how far to seek or how many bytes to read.  As a sort of grey-box
-     * testing technique, the bound is larger than {@link BufferedRandomAccessFile#BuffSz}.
+     * A bound on various operation parameters, like how far to seek or how many
+     * bytes to read. As a sort of grey-box
+     * testing technique, the bound is larger than
+     * {@link BufferedRandomAccessFile#BuffSz}.
      */
     private static final int BOUND = BufferedRandomAccessFile.BuffSz * 2;
 
     /**
      * Fuzz test {@link BufferedRandomAccessFile}.
      *
-     * @throws IOException if an I/O error occurs
-     * @throws RuntimeException if an erroneous trace is discovered; the trace will be minimized and written to stdout
+     * @throws IOException      if an I/O error occurs
+     * @throws RuntimeException if an erroneous trace is discovered; the trace will
+     *                          be minimized and written to stdout
      */
     @Test
     public void fuzz() throws IOException {
@@ -131,12 +145,16 @@ public class BufferedRandomAccessFileFuzzTest {
     }
 
     /**
-     * Try to find a smaller version of the given <code>list</code> that satisfies the given <code>test</code>.
+     * Try to find a smaller version of the given <code>list</code> that satisfies
+     * the given <code>test</code>.
      * Uses a crude version of the "delta debugging" algorithm:
      * <ul>
-     *     <li>Zeller, Andreas. "Yesterday, my program worked. Today, it does not. Why?". ESEC/FSE '99.
-     *         doi:<a href="https://doi.org/10.1007%2F3-540-48166-4_16">10.1007/3-540-48166-4_16</a>.</li>
-     *     <li><a href="https://en.wikipedia.org/wiki/Delta_debugging">Delta debugging on Wikipedia</a></li>
+     * <li>Zeller, Andreas. "Yesterday, my program worked. Today, it does not.
+     * Why?". ESEC/FSE '99.
+     * doi:<a href=
+     * "https://doi.org/10.1007%2F3-540-48166-4_16">10.1007/3-540-48166-4_16</a>.</li>
+     * <li><a href="https://en.wikipedia.org/wiki/Delta_debugging">Delta debugging
+     * on Wikipedia</a></li>
      * </ul>
      *
      * @param list the list to minimize
@@ -145,7 +163,8 @@ public class BufferedRandomAccessFileFuzzTest {
      * @param <T> the element type
      * @throws IOException if some application of the test fails
      */
-    private static <T> java.util.List<T> minimize(java.util.List<T> list, IOPredicate<List<T>> test) throws IOException {
+    private static <T> java.util.List<T> minimize(java.util.List<T> list, IOPredicate<List<T>> test)
+            throws IOException {
         int stride = list.size() / 2;
 
         while (stride > 0) {
@@ -175,8 +194,11 @@ public class BufferedRandomAccessFileFuzzTest {
     /**
      * Helper to append two lists (in TLA+, <code>a \o b</code>).
      *
-     * <p>The arguments should be immutable lists.  The returned object may be a new list, it may be <code>==</code> to
-     * one of the arguments, or it may be some sort of view backed by one or both of the arguments.
+     * <p>
+     * The arguments should be immutable lists. The returned object may be a new
+     * list, it may be <code>==</code> to
+     * one of the arguments, or it may be some sort of view backed by one or both of
+     * the arguments.
      *
      * @param a the first list
      * @param b the second list
@@ -197,7 +219,9 @@ public class BufferedRandomAccessFileFuzzTest {
     }
 
     /**
-     * A version of {@link java.util.function.Predicate} that can throw {@link IOException}.
+     * A version of {@link java.util.function.Predicate} that can throw
+     * {@link IOException}.
+     * 
      * @param <T> the argument type
      */
     private interface IOPredicate<T> {
@@ -205,10 +229,13 @@ public class BufferedRandomAccessFileFuzzTest {
     }
 
     /**
-     * The result of checking a list of operations.  Because this is an internal helper class, it has public fields
+     * The result of checking a list of operations. Because this is an internal
+     * helper class, it has public fields
      * rather than getters.
      *
-     * <p>Note that although this class stores the list of operations for convenience ({@link #ops}), that field does
+     * <p>
+     * Note that although this class stores the list of operations for convenience
+     * ({@link #ops}), that field does
      * not play a part in equals/hashCode.
      *
      * @see #checkBufferedRandomAccessFileBehavior(List)
@@ -218,8 +245,10 @@ public class BufferedRandomAccessFileFuzzTest {
         final java.util.List<FileOperation<?>> ops;
 
         /**
-         * The number of operations that succeeded.  If this is equal to <code>{@link #ops}.length()</code> then all
-         * the operations succeeded and this is a successful result.  Otherwise, the operation
+         * The number of operations that succeeded. If this is equal to
+         * <code>{@link #ops}.length()</code> then all
+         * the operations succeeded and this is a successful result. Otherwise, the
+         * operation
          * <code>{@link #ops}.get(successes)</code> was the first one that failed.
          */
         final int successes;
@@ -247,8 +276,10 @@ public class BufferedRandomAccessFileFuzzTest {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             RunResult runResult = (RunResult) o;
             return successes == runResult.successes &&
                     Objects.equals(expected, runResult.expected) &&
@@ -271,7 +302,8 @@ public class BufferedRandomAccessFileFuzzTest {
     }
 
     /**
-     * Execute the given operations against {@link RandomAccessFile} and {@link BufferedRandomAccessFile}.
+     * Execute the given operations against {@link RandomAccessFile} and
+     * {@link BufferedRandomAccessFile}.
      *
      * @param ops the operations to execute
      * @return a result that captures any disagreement
@@ -285,7 +317,7 @@ public class BufferedRandomAccessFileFuzzTest {
         tmpFile2.deleteOnExit();
 
         try (RandomAccessFile f1 = new RandomAccessFile(tmpFile1, "rw");
-             BufferedRandomAccessFile f2 = new BufferedRandomAccessFile(tmpFile2, "rw")) {
+                BufferedRandomAccessFile f2 = new BufferedRandomAccessFile(tmpFile2, "rw")) {
 
             for (int i = 0; i < ops.size(); ++i) {
                 FileOperation<?> op = ops.get(i);
@@ -307,7 +339,8 @@ public class BufferedRandomAccessFileFuzzTest {
     }
 
     /**
-     * Check if a list of operations is well-defined (i.e. no operation reads arbitrary data).
+     * Check if a list of operations is well-defined (i.e. no operation reads
+     * arbitrary data).
      *
      * @param ops the operations to check
      * @return whether the list of operations is well-defined
@@ -331,15 +364,17 @@ public class BufferedRandomAccessFileFuzzTest {
                 new Read1Operation(), // well-defined (EOF)
                 new SeekOperation(12637), // seek far forward
                 new Read1Operation(), // well-defined (EOF)
-                new Write1Operation((byte)(-39)), // fills the file with mostly arbitrary data, followed by -39
+                new Write1Operation((byte) (-39)), // fills the file with mostly arbitrary data, followed by -39
                 new SeekOperation(4953), // seek to some arbitrary data
 
-                // This final read observes arbitrary data, so the whole list of operations is not well-defined.
+                // This final read observes arbitrary data, so the whole list of operations is
+                // not well-defined.
                 new ReadArrayOperation(new byte[BOUND], 2121, 4449))));
     }
 
     /**
-     * Helper class that uses {@link AbstractFileState} to generate well-defined lists of operations.
+     * Helper class that uses {@link AbstractFileState} to generate well-defined
+     * lists of operations.
      *
      * @see #nextRandomOperation()
      */
@@ -353,7 +388,8 @@ public class BufferedRandomAccessFileFuzzTest {
         }
 
         public FileOperation<?> nextRandomOperation() {
-            while (true) { // rejection sampling: the loop body can fail to generate a well-defined operation
+            while (true) { // rejection sampling: the loop body can fail to generate a well-defined
+                           // operation
                 FileOperation<?> result = arbitraryRandomOperation();
                 if (result.simulateIfWellDefined(state)) {
                     return result;
@@ -376,7 +412,8 @@ public class BufferedRandomAccessFileFuzzTest {
                     return new Read1Operation();
                 }
                 case 3: {
-                    // read() shouldn't depend on the contents of the buffer---but randomizing it helps catch bugs
+                    // read() shouldn't depend on the contents of the buffer---but randomizing it
+                    // helps catch bugs
                     // (if the implementation doesn't correctly set the bytes of the output)
                     byte[] bytes = randomByteArray(rng);
                     int offset = rng.nextInt(bytes.length);
@@ -402,8 +439,10 @@ public class BufferedRandomAccessFileFuzzTest {
     }
 
     /**
-     * Generate a new byte array filled with random data.  The length of the array is randomly chosen from the
+     * Generate a new byte array filled with random data. The length of the array is
+     * randomly chosen from the
      * inclusive-inclusive interval <code>[1, {@link #BOUND}]</code>.
+     * 
      * @param rng the source of randomness to use
      * @return a new array of random data
      */
@@ -419,6 +458,7 @@ public class BufferedRandomAccessFileFuzzTest {
 
     /**
      * An operation that can be performed on a file.
+     * 
      * @param <T> the type of output the operation produces
      *
      * @see Write1Operation
@@ -442,12 +482,15 @@ public class BufferedRandomAccessFileFuzzTest {
         T execute(RandomAccessFile file) throws IOException;
 
         /**
-         * If this operation is well-defined when applied to the given {@link AbstractFileState}, then apply it to
-         * the state and return true; otherwise, do nothing and return false.  This method is used by
+         * If this operation is well-defined when applied to the given
+         * {@link AbstractFileState}, then apply it to
+         * the state and return true; otherwise, do nothing and return false. This
+         * method is used by
          * {@link RandomOperationGenerator} to find well-defined lists of operations.
          *
          * @param state the abstract file state to modify
-         * @return true if the output of this operation would be well-defined, or false otherwise
+         * @return true if the output of this operation would be well-defined, or false
+         *         otherwise
          */
         boolean simulateIfWellDefined(AbstractFileState state);
     }
@@ -548,7 +591,8 @@ public class BufferedRandomAccessFileFuzzTest {
             List<Byte> result = null;
 
             // Implementations are allowed to read fewer than the requested number of bytes.
-            // To smooth out these differences, let's do a full read of exactly the requested
+            // To smooth out these differences, let's do a full read of exactly the
+            // requested
             // length.
             while (result == null || result.size() < length) {
                 int nread = file.read(buffer, offset, length - (result == null ? 0 : result.size()));

@@ -14,7 +14,7 @@ public class Node {
   public static final int RECORDPAIR = 5;
   public static final int FUNCTION = 6;
   public static final int FUNCTIONPAIR = 7;
-  public static final int SUBSET = 8;  
+  public static final int SUBSET = 8;
 
   private int type;
   private int first;
@@ -24,7 +24,7 @@ public class Node {
   private String string;
   private String formatted;
 
-/***************************************************************************/
+  /***************************************************************************/
 
   Node(String str, int s, int t) {
     string = str;
@@ -33,7 +33,7 @@ public class Node {
     last = 0;
     children = null;
     next = null;
-    formatted =null;
+    formatted = null;
   }
 
   Node(String str, int s, int e, int t) {
@@ -43,76 +43,89 @@ public class Node {
     last = e;
     children = null;
     next = null;
-    formatted =null;
-  }    
+    formatted = null;
+  }
 
-/***************************************************************************/
+  /***************************************************************************/
 
   public int type() {
     return type;
   }
+
   public int first() {
     return first;
   }
+
   public int last() {
     return last;
   }
+
   public Node children() {
     return children;
   }
+
   public Node next() {
     return next;
   }
+
   public String string() {
     return string;
   }
+
   public String formatted() {
     return formatted;
   }
 
-/***************************************************************************/
+  /***************************************************************************/
 
   public void type(int t) {
     type = t;
     return;
   }
+
   public void first(int s) {
     first = s;
     return;
   }
+
   public void last(int e) {
     last = e;
     return;
   }
+
   public void children(Node c) {
     children = c;
     return;
   }
+
   public void next(Node n) {
     next = n;
     return;
   }
+
   public void string(String s) {
     string = s;
     return;
   }
+
   public void formatted(String s) {
     formatted = s;
     return;
   }
 
-/***************************************************************************/
+  /***************************************************************************/
 
   public String value() {
-    return string.substring(first,last+1);
+    return string.substring(first, last + 1);
   }
+
   public int length() {
-    return last-first+1;
+    return last - first + 1;
   }
 
   public void appendChild(Node n) {
     Node ch = this.children();
-    
+
     if (ch == null) {
       this.children(n);
       return;
@@ -133,7 +146,7 @@ public class Node {
     }
     return s + first() + " " + last() + " " + value() + "\n";
   }
-  
-/***************************************************************************/
+
+  /***************************************************************************/
 
 }

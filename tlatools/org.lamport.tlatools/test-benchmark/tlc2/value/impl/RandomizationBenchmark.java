@@ -55,7 +55,7 @@ public class RandomizationBenchmark {
 	private static final Enumerable enum16384;
 	private static final Enumerable enum32768;
 	private static final Enumerable enumTLCBound;
-	
+
 	private static final Enumerable interval16;
 	private static final Enumerable interval20;
 	private static final Enumerable interval24;
@@ -78,7 +78,7 @@ public class RandomizationBenchmark {
 	private static final SubsetValue subset2pow65; // ~2^65
 	private static final SubsetValue subset2pow150; // ~2^150
 	private static final SubsetValue subset2pow268; // ~2^268
-	
+
 	private static ValueVec getValues(int from, int to) {
 		final ValueVec vec = new ValueVec(to - from);
 		for (int i = from; i <= to; i++) {
@@ -112,7 +112,7 @@ public class RandomizationBenchmark {
 		interval24 = new IntervalValue(0, 2 << 24);
 		interval28 = new IntervalValue(0, 2 << 28);
 		interval31 = new IntervalValue(0, Integer.MAX_VALUE); // maximum possible value for internal ValueVec
-		
+
 		fcns008x008 = new SetOfFcnsValue(new SetEnumValue(getValues(1, 8), true),
 				new SetEnumValue(getValues(1, 8), true));
 		fcns011x011 = new SetOfFcnsValue(new SetEnumValue(getValues(1, 11), true),
@@ -127,16 +127,16 @@ public class RandomizationBenchmark {
 				new SetEnumValue(getValues(1, 32), true));
 		fcns048x048 = new SetOfFcnsValue(new SetEnumValue(getValues(1, 48), true),
 				new SetEnumValue(getValues(1, 48), true));
-		
+
 		subset2pow24 = new SubsetValue(new IntervalValue(1, 24));
 		subset2pow31 = new SubsetValue(new IntervalValue(1, 31));
 		subset2pow65 = new SubsetValue(new IntervalValue(1, 65));
 		subset2pow150 = new SubsetValue(new IntervalValue(1, 150));
 		subset2pow268 = new SubsetValue(new IntervalValue(1, 268));
 	}
-	
+
 	/* exact */
-	
+
 	@Benchmark
 	public Enumerable randomSetOfSubsetExact024k008() {
 		return subset2pow24.getRandomSetOfSubsets(twoPow08, 10);
@@ -211,9 +211,9 @@ public class RandomizationBenchmark {
 	public Enumerable randomSetOfSubsetExact268k016() {
 		return subset2pow268.getRandomSetOfSubsets(twoPow16, 10);
 	}
-	
+
 	/* probabilistic */
-	
+
 	@Benchmark
 	public Enumerable randomSetOfSubset024k008() {
 		return subset2pow24.getRandomSetOfSubsets(twoPow08, .1d);
@@ -288,66 +288,66 @@ public class RandomizationBenchmark {
 	public Enumerable randomSetOfSubset268k016() {
 		return subset2pow268.getRandomSetOfSubsets(twoPow16, .1d);
 	}
-	
+
 	/* IntervalValue */
-	
+
 	@Benchmark
 	public Enumerable randomInterval016setBound() {
 		return interval16.getRandomSubset(TLCGlobals.setBound);
 	}
-	
+
 	@Benchmark
 	public Enumerable randomInterval020setBound() {
 		return interval20.getRandomSubset(TLCGlobals.setBound);
 	}
-	
+
 	@Benchmark
 	public Enumerable randomInterval024setBound() {
 		return interval24.getRandomSubset(TLCGlobals.setBound);
 	}
-	
+
 	@Benchmark
 	public Enumerable randomInterval028setBound() {
 		return interval28.getRandomSubset(TLCGlobals.setBound);
 	}
-	
+
 	@Benchmark
 	public Enumerable randomInterval031setBound() {
 		return interval31.getRandomSubset(TLCGlobals.setBound);
 	}
-	
+
 	@Benchmark
 	public Enumerable randomIntervalt016all() {
 		return interval16.getRandomSubset(interval16.size() - 1);
 	}
-	
+
 	@Benchmark
 	public Enumerable randomInterval020all() {
 		return interval20.getRandomSubset(interval20.size() - 1);
 	}
-	
+
 	@Benchmark
 	public Enumerable randomInterval024all() {
 		return interval24.getRandomSubset(interval24.size() - 1);
 	}
-	
+
 	@Benchmark
 	public Enumerable randomIntervalt016half() {
 		return interval16.getRandomSubset(interval16.size() / 2);
 	}
-	
+
 	@Benchmark
 	public Enumerable randomInterval020half() {
 		return interval20.getRandomSubset(interval20.size() / 2);
 	}
-	
+
 	@Benchmark
 	public Enumerable randomInterval024half() {
 		return interval24.getRandomSubset(interval24.size() / 2);
 	}
-	
+
 	/* SetEnumValue */
-	
+
 	@Benchmark
 	public Enumerable randomSubset016() {
 		return enum016.getRandomSubset(enum016.size() - 1);
@@ -412,7 +412,7 @@ public class RandomizationBenchmark {
 	public Enumerable randomSubsetTLCBound() {
 		return enumTLCBound.getRandomSubset(enumTLCBound.size() - 1);
 	}
-	
+
 	/* randomSubset with SetOfFcns */
 
 	@Benchmark
@@ -444,7 +444,7 @@ public class RandomizationBenchmark {
 	public Enumerable randomSubsetFcns011x011p12() {
 		return fcns011x011.getRandomSubset(twoPow12);
 	}
-	
+
 	@Benchmark
 	public Enumerable randomSubsetFcns016x008p16() {
 		return fcns011x011.getRandomSubset(twoPow16);

@@ -28,26 +28,31 @@ public class TBGraph extends Vect<TBGraphNode> {
 	public TBGraph(final LiveExprNode tf) {
 		this.tf = tf;
 		// The following assert follows from comments and has been validated with the
-		// TLC test suite.  It is commented to not cause regressions if for some reason
-		// the comments are wrong.  That would be fatal, though, because the tableau
-		// method in Manna & Pnueli book does not consider actions because it is for LTL.
-		//assert !tf.containAction();
-		
+		// TLC test suite. It is commented to not cause regressions if for some reason
+		// the comments are wrong. That would be fatal, though, because the tableau
+		// method in Manna & Pnueli book does not consider actions because it is for
+		// LTL.
+		// assert !tf.containAction();
+
 		this.initCnt = 0;
-		
+
 		final TBPar initTerms = new TBPar(1);
 		initTerms.addElement(tf);
-		
+
 		// TBPar#particleClosure implements the tableau construction method described on
 		// page 452 of the Manna & Pnueli book, which works under the assumption that
 		// the temporal formulae (tf) are in positive form, i.e., negation is only
-		// applies to/is pushed down to the (state) formulas (atoms).  The tf here has been
-		// brought into positive form in Liveness.java during the conversion into disjunct
-		// normal form (DNF).  Thus, we should probably assert that tf is in positive form.
-		// Unfortunately, neither the TLC test suite nor the TLA+ examples have properties
-		// that are locally inconsistent.  In other words, the test coverage WRT to local
+		// applies to/is pushed down to the (state) formulas (atoms). The tf here has
+		// been
+		// brought into positive form in Liveness.java during the conversion into
+		// disjunct
+		// normal form (DNF). Thus, we should probably assert that tf is in positive
+		// form.
+		// Unfortunately, neither the TLC test suite nor the TLA+ examples have
+		// properties
+		// that are locally inconsistent. In other words, the test coverage WRT to local
 		// consistency is zero.
-		//assert tf.isPositiveForm();
+		// assert tf.isPositiveForm();
 		final TBParVec pars = initTerms.particleClosure();
 
 		for (int i = 0; i < pars.size(); i++) {
@@ -71,7 +76,7 @@ public class TBGraph extends Vect<TBGraphNode> {
 			this.getNode(i).setIndex(i);
 		}
 	}
-	
+
 	/**
 	 * The method findOrCreateNode, given a list of particles, either finds the
 	 * particle in that list, or creates a new one and puts it in the list. If
@@ -100,7 +105,7 @@ public class TBGraph extends Vect<TBGraphNode> {
 	public int getInitCnt() {
 		return this.initCnt;
 	}
-	
+
 	private boolean isInitNode(TBGraphNode aNode) {
 		return aNode.getIndex() < getInitCnt();
 	}
@@ -133,7 +138,7 @@ public class TBGraph extends Vect<TBGraphNode> {
 		sb.append("digraph TableauGraph {\n");
 		sb.append("nodesep = 0.7\n");
 		sb.append("rankdir=LR;\n"); // Left to right rather than top to bottom
-		for(int i = 0; i < size(); i++) {
+		for (int i = 0; i < size(); i++) {
 			final TBGraphNode node = getNode(i);
 			sb.append(node.toDotViz(isInitNode(node)));
 		}

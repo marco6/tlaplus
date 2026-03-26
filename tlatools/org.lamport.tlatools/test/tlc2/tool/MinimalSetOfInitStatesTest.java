@@ -43,7 +43,7 @@ public class MinimalSetOfInitStatesTest extends ModelCheckerTestCase {
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		// Without the fix to tlc2.tool.Tool.getInitStates(ActionItemList, TLCState,
 		// IStateFunctor), the number of generated initial states would be 6 with
 		// 4 being distinct. The fix in getInitStates causes TLC to more efficiently
@@ -52,6 +52,6 @@ public class MinimalSetOfInitStatesTest extends ModelCheckerTestCase {
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "14", "6", "0"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "1"));
 
-	assertZeroUncovered();
+		assertZeroUncovered();
 	}
 }

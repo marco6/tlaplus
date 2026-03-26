@@ -46,8 +46,10 @@ class LNStateAST extends LNState {
 	public final void toString(StringBuffer sb, String padding) {
 		sb.append(this.body);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.LiveExprNode#toDotViz()
 	 */
 	public String toDotViz() {

@@ -35,12 +35,12 @@ import tlc2.value.impl.IntervalValue;
 import tlc2.value.impl.SetOfTuplesValue;
 
 public class SetOfTuplesValueTest {
-	
+
 	@Test
 	public void testToStringLazy() {
 		// Force toString representation to be lazy.
 		TLCGlobals.enumBound = 1;
-		
+
 		final IntervalValue intVal = new IntervalValue(1, 2);
 		final SetOfTuplesValue inner = new SetOfTuplesValue(intVal, intVal);
 		final SetOfTuplesValue outter = new SetOfTuplesValue(inner, inner);

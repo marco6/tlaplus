@@ -4,14 +4,12 @@ package pcal.exception;
  * @author Simon Zambrovski
  * @version $Id$
  */
-public class TokenizerException extends UnrecoverableException
-{
+public class TokenizerException extends UnrecoverableException {
 
     /**
      * @param message
      */
-    public TokenizerException(String message)
-    {
+    public TokenizerException(String message) {
         super(message);
     }
 

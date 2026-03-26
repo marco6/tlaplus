@@ -24,7 +24,7 @@ public abstract class FPSetFactory {
 	 * {@link FPSet} implementation to use.
 	 */
 	public static final String IMPL_PROPERTY = FPSet.class.getName() + ".impl";
-	
+
 	private static boolean allocatesOnHeap(final Class<? extends FPSet> clazz) {
 		return !OffHeapDiskFPSet.class.isAssignableFrom(clazz);
 	}
@@ -60,7 +60,7 @@ public abstract class FPSetFactory {
 		}
 		return true;
 	}
-	
+
 	private static boolean isDiskFPSet(Class<? extends FPSet> cls) {
 		return DiskFPSet.class.isAssignableFrom(cls);
 	}
@@ -80,7 +80,7 @@ public abstract class FPSetFactory {
 	/**
 	 * @see getFPSet
 	 * @return
-	 * @throws RemoteException 
+	 * @throws RemoteException
 	 */
 	public static FPSet getFPSet() throws RemoteException {
 		return getFPSet(new FPSetConfiguration());
@@ -88,15 +88,17 @@ public abstract class FPSetFactory {
 
 	/**
 	 * Creates a new {@link FPSet} depending on what the caller wants.
-	 * @param fpBits if 0, a {@link DiskFPSet} will be returned, a {@link MultiFPSet} otherwise.
+	 * 
+	 * @param fpBits           if 0, a {@link DiskFPSet} will be returned, a
+	 *                         {@link MultiFPSet} otherwise.
 	 * @param fpMemSizeInBytes
 	 * @return
 	 * @throws RemoteException
 	 */
 	public static FPSet getFPSet(final FPSetConfiguration fpSetConfig) throws RemoteException {
-		
+
 		final String implClassname = fpSetConfig.getImplementation();
-		
+
 		// fpBits > 0 indicates that the consumer requires a MultiFPSet
 		if (fpSetConfig.allowsNesting()) {
 			// Pass physical memory instead of logical FP count to adhere to
@@ -121,7 +123,6 @@ public abstract class FPSetFactory {
 			return new MSBDiskFPSet(fpSetConfig);
 		}
 	}
-	
 
 	/**
 	 * Create and *initialize* the set.
@@ -149,7 +150,7 @@ public abstract class FPSetFactory {
 	 */
 	public static String[] getImplementations() {
 		final List<String> l = new ArrayList<String>();
-		
+
 		l.add(MSBDiskFPSet.class.getName());
 		l.add(LSBDiskFPSet.class.getName());
 		l.add(OffHeapDiskFPSet.class.getName());
@@ -165,7 +166,7 @@ public abstract class FPSetFactory {
 	}
 
 	/**
-	 * @param clazz FPSet implementation to use
+	 * @param clazz  FPSet implementation to use
 	 * @param memory Memory dedicated to the FPSet implementation in MiB
 	 * @return
 	 */
@@ -182,8 +183,8 @@ public abstract class FPSetFactory {
 	 * loader. Thus, the class has to be available to it.
 	 * 
 	 * @param clazz
-	 * @param fpMemSizeInBytes 
-	 * @param fpBits 
+	 * @param fpMemSizeInBytes
+	 * @param fpBits
 	 * @return
 	 */
 	private static FPSet loadImplementation(final String clazz, final FPSetConfiguration fpSetConfig) {
@@ -192,14 +193,15 @@ public abstract class FPSetFactory {
 			// poor mans version of modularity, booh!
 			final ClassLoader classLoader = FPSet.class.getClassLoader();
 			final Class<?> factoryClass = classLoader.loadClass(clazz);
-			
-//			// HACK class loading to pass _non heap_ memory into subclasses of
-//			// OffHeapFPSet.
-//			if (!allocatesOnHeap(clazz)) {
-//				long l = TLCRuntime.getInstance().getNonHeapPhysicalMemory() / (long) LongSize;
-//				// divide l among all FPSet instances
-//				fpMemSizeInFPs = l >> fpBits; 
-//			}
+
+			// // HACK class loading to pass _non heap_ memory into subclasses of
+			// // OffHeapFPSet.
+			// if (!allocatesOnHeap(clazz)) {
+			// long l = TLCRuntime.getInstance().getNonHeapPhysicalMemory() / (long)
+			// LongSize;
+			// // divide l among all FPSet instances
+			// fpMemSizeInFPs = l >> fpBits;
+			// }
 
 			final Constructor<?> constructor = factoryClass
 					.getDeclaredConstructor(new Class[] { FPSetConfiguration.class });

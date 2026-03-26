@@ -91,10 +91,10 @@ public class OperatorPrecedenceTests {
     /**
      * Creates a new instance of the Operator class.
      *
-     * @param fix The operator fix kind.
-     * @param symbols The operator symbol alternatives.
-     * @param low The operator precedence lower bound.
-     * @param high The operator precedence upper bound.
+     * @param fix         The operator fix kind.
+     * @param symbols     The operator symbol alternatives.
+     * @param low         The operator precedence lower bound.
+     * @param high        The operator precedence upper bound.
      * @param associative Whether the operator is associative.
      */
     private Operator(FixKind fix, String[] symbols, int low, int high, boolean associative) {
@@ -143,7 +143,8 @@ public class OperatorPrecedenceTests {
         return (this.lowPrecedence <= other.lowPrecedence && other.lowPrecedence <= this.highPrecedence) // overlap low
             || (this.lowPrecedence <= other.lowPrecedence && other.highPrecedence <= this.highPrecedence) // enclose
             || (other.lowPrecedence <= this.lowPrecedence && this.highPrecedence <= other.highPrecedence) // enclosed by
-            || (this.lowPrecedence <= other.highPrecedence && other.highPrecedence <= this.highPrecedence); // overlap high
+            || (this.lowPrecedence <= other.highPrecedence && other.highPrecedence <= this.highPrecedence); // overlap
+                                                                                                            // high
       }
     }
 
@@ -174,134 +175,149 @@ public class OperatorPrecedenceTests {
    * that operator.
    */
   public static final Operator[] OPERATORS = new Operator[] {
-    new Operator(FixKind.PREFIX, new String[] {"\\lnot", "~", "\\neg"}, 4, 4, false),
-    new Operator(FixKind.PREFIX, new String[] {"ENABLED"}, 4, 15, false),
-    new Operator(FixKind.PREFIX, new String[] {"UNCHANGED"}, 4, 15, false),
-    new Operator(FixKind.PREFIX, new String[] {"[]"}, 4, 15, false),
-    new Operator(FixKind.PREFIX, new String[] {"<>"}, 4, 15, false),
-    new Operator(FixKind.PREFIX, new String[] {"SUBSET"}, 10, 13, false),
-    new Operator(FixKind.PREFIX, new String[] {"UNION"}, 10, 13, false),
-    new Operator(FixKind.PREFIX, new String[] {"DOMAIN"}, 10, 13, false),
-    new Operator(FixKind.PREFIX, new String[] {"-"}, 12, 12, false),
-    new Operator(FixKind.INFIX, new String[] {"=>"}, 1, 1, false),
-    new Operator(FixKind.INFIX, new String[] {"-+->"}, 2, 2, false),
-    new Operator(FixKind.INFIX, new String[] {"\\equiv", "<=>"}, 2, 2, false),
-    new Operator(FixKind.INFIX, new String[] {"~>"}, 2, 2, false),
-    new Operator(FixKind.INFIX, new String[] {"\\lor", "\\/"}, 3, 3, true),
-    new Operator(FixKind.INFIX, new String[] {"\\land", "/\\"}, 3, 3, true),
-    new Operator(FixKind.INFIX, new String[] {"/=", "#"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"-|"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"::="}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {":="}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"<"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"="}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"=|"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {">"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\approx"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\asymp"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\cong"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\doteq"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\geq", ">="}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\gg"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\in"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\notin"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\leq", "<=", "=<"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\ll"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\prec"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\preceq"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\propto"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\sim"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\simeq"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\sqsubset"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\sqsubseteq"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\sqsupset"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\sqsupseteq"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\subset"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\subseteq"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\succ"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\succeq"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\supset"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\supseteq"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"|-"}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"|="}, 5, 5, false),
-    new Operator(FixKind.INFIX, new String[] {"\\cdot"}, 5, 14, true),
-    new Operator(FixKind.INFIX, new String[] {"@@"}, 6, 6, true),
-    new Operator(FixKind.INFIX, new String[] {":>"}, 7, 7, false),
-    new Operator(FixKind.INFIX, new String[] {"<:"}, 7, 7, false),
-    new Operator(FixKind.INFIX, new String[] {"\\"}, 8, 8, false),
-    new Operator(FixKind.INFIX, new String[] {"\\intersect", "\\cap"}, 8, 8, true),
-    new Operator(FixKind.INFIX, new String[] {"\\union", "\\cup"}, 8, 8, true),
-    new Operator(FixKind.INFIX, new String[] {".."}, 9, 9, false),
-    new Operator(FixKind.INFIX, new String[] {"..."}, 9, 9, false),
-    new Operator(FixKind.INFIX, new String[] {"!!"}, 9, 13, false),
-    new Operator(FixKind.INFIX, new String[] {"##"}, 9, 13, true),
-    new Operator(FixKind.INFIX, new String[] {"$"}, 9, 13, true),
-    new Operator(FixKind.INFIX, new String[] {"$$"}, 9, 13, true),
-    new Operator(FixKind.INFIX, new String[] {"??"}, 9, 13, true),
-    new Operator(FixKind.INFIX, new String[] {"\\sqcap"}, 9, 13, true),
-    new Operator(FixKind.INFIX, new String[] {"\\sqcup"}, 9, 13, true),
-    new Operator(FixKind.INFIX, new String[] {"\\uplus"}, 9, 13, true),
-    new Operator(FixKind.INFIX, new String[] {"\\wr"}, 9, 14, false),
-    new Operator(FixKind.INFIX, new String[] {"\\oplus", "(+)"}, 10, 10, true),
-    new Operator(FixKind.INFIX, new String[] {"+"}, 10, 10, true),
-    new Operator(FixKind.INFIX, new String[] {"++"}, 10, 10, true),
-    new Operator(FixKind.INFIX, new String[] {"%"}, 10, 11, false),
-    new Operator(FixKind.INFIX, new String[] {"%%"}, 10, 11, true),
-    new Operator(FixKind.INFIX, new String[] {"|"}, 10, 11, true),
-    new Operator(FixKind.INFIX, new String[] {"||"}, 10, 11, true),
-    new Operator(FixKind.INFIX, new String[] {"\\ominus", "(-)"}, 11, 11, true),
-    new Operator(FixKind.INFIX, new String[] {"-"}, 11, 11, true),
-    new Operator(FixKind.INFIX, new String[] {"--"}, 11, 11, true),
-    new Operator(FixKind.INFIX, new String[] {"&"}, 13, 13, true),
-    new Operator(FixKind.INFIX, new String[] {"&&"}, 13, 13, true),
-    new Operator(FixKind.INFIX, new String[] {"\\odot", "(.)"}, 13, 13, true),
-    new Operator(FixKind.INFIX, new String[] {"\\oslash", "(/)"}, 13, 13, false),
-    new Operator(FixKind.INFIX, new String[] {"\\otimes", "(\\X)"}, 13, 13, true),
-    new Operator(FixKind.INFIX, new String[] {"*"}, 13, 13, true),
-    new Operator(FixKind.INFIX, new String[] {"**"}, 13, 13, true),
-    new Operator(FixKind.INFIX, new String[] {"/"}, 13, 13, false),
-    new Operator(FixKind.INFIX, new String[] {"//"}, 13, 13, false),
-    new Operator(FixKind.INFIX, new String[] {"\\bigcirc"}, 13, 13, true),
-    new Operator(FixKind.INFIX, new String[] {"\\bullet"}, 13, 13, true),
-    new Operator(FixKind.INFIX, new String[] {"\\div"}, 13, 13, false),
-    new Operator(FixKind.INFIX, new String[] {"\\o", "\\circ"}, 13, 13, true),
-    new Operator(FixKind.INFIX, new String[] {"\\star"}, 13, 13, true),
-    new Operator(FixKind.INFIX, new String[] {"^"}, 14, 14, false),
-    new Operator(FixKind.INFIX, new String[] {"^^"}, 14, 14, false),
-    new Operator(FixKind.POSTFIX, new String[] {"^+"}, 15, 15, false),
-    new Operator(FixKind.POSTFIX, new String[] {"^*"}, 15, 15, false),
-    new Operator(FixKind.POSTFIX, new String[] {"^#"}, 15, 15, false),
-    new Operator(FixKind.POSTFIX, new String[] {"'"}, 15, 15, false),
+      new Operator(FixKind.PREFIX, new String[] { "\\lnot", "~", "\\neg" }, 4, 4, false),
+      new Operator(FixKind.PREFIX, new String[] { "ENABLED" }, 4, 15, false),
+      new Operator(FixKind.PREFIX, new String[] { "UNCHANGED" }, 4, 15, false),
+      new Operator(FixKind.PREFIX, new String[] { "[]" }, 4, 15, false),
+      new Operator(FixKind.PREFIX, new String[] { "<>" }, 4, 15, false),
+      new Operator(FixKind.PREFIX, new String[] { "SUBSET" }, 10, 13, false),
+      new Operator(FixKind.PREFIX, new String[] { "UNION" }, 10, 13, false),
+      new Operator(FixKind.PREFIX, new String[] { "DOMAIN" }, 10, 13, false),
+      new Operator(FixKind.PREFIX, new String[] { "-" }, 12, 12, false),
+      new Operator(FixKind.INFIX, new String[] { "=>" }, 1, 1, false),
+      new Operator(FixKind.INFIX, new String[] { "-+->" }, 2, 2, false),
+      new Operator(FixKind.INFIX, new String[] { "\\equiv", "<=>" }, 2, 2, false),
+      new Operator(FixKind.INFIX, new String[] { "~>" }, 2, 2, false),
+      new Operator(FixKind.INFIX, new String[] { "\\lor", "\\/" }, 3, 3, true),
+      new Operator(FixKind.INFIX, new String[] { "\\land", "/\\" }, 3, 3, true),
+      new Operator(FixKind.INFIX, new String[] { "/=", "#" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "-|" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "::=" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { ":=" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "<" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "=" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "=|" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { ">" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\approx" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\asymp" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\cong" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\doteq" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\geq", ">=" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\gg" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\in" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\notin" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\leq", "<=", "=<" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\ll" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\prec" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\preceq" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\propto" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\sim" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\simeq" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\sqsubset" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\sqsubseteq" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\sqsupset" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\sqsupseteq" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\subset" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\subseteq" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\succ" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\succeq" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\supset" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\supseteq" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "|-" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "|=" }, 5, 5, false),
+      new Operator(FixKind.INFIX, new String[] { "\\cdot" }, 5, 14, true),
+      new Operator(FixKind.INFIX, new String[] { "@@" }, 6, 6, true),
+      new Operator(FixKind.INFIX, new String[] { ":>" }, 7, 7, false),
+      new Operator(FixKind.INFIX, new String[] { "<:" }, 7, 7, false),
+      new Operator(FixKind.INFIX, new String[] { "\\" }, 8, 8, false),
+      new Operator(FixKind.INFIX, new String[] { "\\intersect", "\\cap" }, 8, 8, true),
+      new Operator(FixKind.INFIX, new String[] { "\\union", "\\cup" }, 8, 8, true),
+      new Operator(FixKind.INFIX, new String[] { ".." }, 9, 9, false),
+      new Operator(FixKind.INFIX, new String[] { "..." }, 9, 9, false),
+      new Operator(FixKind.INFIX, new String[] { "!!" }, 9, 13, false),
+      new Operator(FixKind.INFIX, new String[] { "##" }, 9, 13, true),
+      new Operator(FixKind.INFIX, new String[] { "$" }, 9, 13, true),
+      new Operator(FixKind.INFIX, new String[] { "$$" }, 9, 13, true),
+      new Operator(FixKind.INFIX, new String[] { "??" }, 9, 13, true),
+      new Operator(FixKind.INFIX, new String[] { "\\sqcap" }, 9, 13, true),
+      new Operator(FixKind.INFIX, new String[] { "\\sqcup" }, 9, 13, true),
+      new Operator(FixKind.INFIX, new String[] { "\\uplus" }, 9, 13, true),
+      new Operator(FixKind.INFIX, new String[] { "\\wr" }, 9, 14, false),
+      new Operator(FixKind.INFIX, new String[] { "\\oplus", "(+)" }, 10, 10, true),
+      new Operator(FixKind.INFIX, new String[] { "+" }, 10, 10, true),
+      new Operator(FixKind.INFIX, new String[] { "++" }, 10, 10, true),
+      new Operator(FixKind.INFIX, new String[] { "%" }, 10, 11, false),
+      new Operator(FixKind.INFIX, new String[] { "%%" }, 10, 11, true),
+      new Operator(FixKind.INFIX, new String[] { "|" }, 10, 11, true),
+      new Operator(FixKind.INFIX, new String[] { "||" }, 10, 11, true),
+      new Operator(FixKind.INFIX, new String[] { "\\ominus", "(-)" }, 11, 11, true),
+      new Operator(FixKind.INFIX, new String[] { "-" }, 11, 11, true),
+      new Operator(FixKind.INFIX, new String[] { "--" }, 11, 11, true),
+      new Operator(FixKind.INFIX, new String[] { "&" }, 13, 13, true),
+      new Operator(FixKind.INFIX, new String[] { "&&" }, 13, 13, true),
+      new Operator(FixKind.INFIX, new String[] { "\\odot", "(.)" }, 13, 13, true),
+      new Operator(FixKind.INFIX, new String[] { "\\oslash", "(/)" }, 13, 13, false),
+      new Operator(FixKind.INFIX, new String[] { "\\otimes", "(\\X)" }, 13, 13, true),
+      new Operator(FixKind.INFIX, new String[] { "*" }, 13, 13, true),
+      new Operator(FixKind.INFIX, new String[] { "**" }, 13, 13, true),
+      new Operator(FixKind.INFIX, new String[] { "/" }, 13, 13, false),
+      new Operator(FixKind.INFIX, new String[] { "//" }, 13, 13, false),
+      new Operator(FixKind.INFIX, new String[] { "\\bigcirc" }, 13, 13, true),
+      new Operator(FixKind.INFIX, new String[] { "\\bullet" }, 13, 13, true),
+      new Operator(FixKind.INFIX, new String[] { "\\div" }, 13, 13, false),
+      new Operator(FixKind.INFIX, new String[] { "\\o", "\\circ" }, 13, 13, true),
+      new Operator(FixKind.INFIX, new String[] { "\\star" }, 13, 13, true),
+      new Operator(FixKind.INFIX, new String[] { "^" }, 14, 14, false),
+      new Operator(FixKind.INFIX, new String[] { "^^" }, 14, 14, false),
+      new Operator(FixKind.POSTFIX, new String[] { "^+" }, 15, 15, false),
+      new Operator(FixKind.POSTFIX, new String[] { "^*" }, 15, 15, false),
+      new Operator(FixKind.POSTFIX, new String[] { "^#" }, 15, 15, false),
+      new Operator(FixKind.POSTFIX, new String[] { "'" }, 15, 15, false),
   };
 
   /**
    * Given two operators, derive a syntactically-plausible expression that
    * uses them.
    *
-   * @param op1 The operator which should appear first.
+   * @param op1       The operator which should appear first.
    * @param op1Symbol The symbol of the operator which should appear first.
-   * @param op2 The operator which should appear second.
+   * @param op2       The operator which should appear second.
    * @param op2Symbol The symbol of the operator which should appear second.
    * @return A syntactically-plausible expression.
    */
   private static String deriveExpression(Operator op1, String op1Symbol, Operator op2, String op2Symbol) {
     switch (op1.fix) {
-      case PREFIX: switch (op2.fix) {
-        case PREFIX: return String.format("%s %s A", op1Symbol, op2Symbol);
-        case INFIX: return String.format("%s A %s B", op1Symbol, op2Symbol);
-        case POSTFIX: return String.format("%s A %s", op1Symbol, op2Symbol);
-      }
-      case INFIX: switch (op2.fix) {
-        case PREFIX: return String.format("A %s %s B", op1Symbol, op2Symbol);
-        case INFIX: return String.format("A %s B %s C", op1Symbol, op2Symbol);
-        case POSTFIX: return String.format("A %s B %s", op1Symbol, op2Symbol);
-      }
-      case POSTFIX: switch (op2.fix) {
-        case PREFIX: Assert.fail(); return "";
-        case INFIX: return String.format("A %s %s B", op1Symbol, op2Symbol);
-        case POSTFIX: return String.format("A %s %s", op1Symbol, op2Symbol);
-      }
-      default: Assert.fail(); return "";
+      case PREFIX:
+        switch (op2.fix) {
+          case PREFIX:
+            return String.format("%s %s A", op1Symbol, op2Symbol);
+          case INFIX:
+            return String.format("%s A %s B", op1Symbol, op2Symbol);
+          case POSTFIX:
+            return String.format("%s A %s", op1Symbol, op2Symbol);
+        }
+      case INFIX:
+        switch (op2.fix) {
+          case PREFIX:
+            return String.format("A %s %s B", op1Symbol, op2Symbol);
+          case INFIX:
+            return String.format("A %s B %s C", op1Symbol, op2Symbol);
+          case POSTFIX:
+            return String.format("A %s B %s", op1Symbol, op2Symbol);
+        }
+      case POSTFIX:
+        switch (op2.fix) {
+          case PREFIX:
+            Assert.fail();
+            return "";
+          case INFIX:
+            return String.format("A %s %s B", op1Symbol, op2Symbol);
+          case POSTFIX:
+            return String.format("A %s %s", op1Symbol, op2Symbol);
+        }
+      default:
+        Assert.fail();
+        return "";
     }
   }
 
@@ -330,12 +346,14 @@ public class OperatorPrecedenceTests {
   private static SyntaxTreeNode getHigherPrecOp(SyntaxTreeNode lowerPrecOp) {
     SyntaxTreeNode[] lowerPrecOpHeirs = lowerPrecOp.getHeirs();
     switch (lowerPrecOp.getKind()) {
-      case SyntaxTreeConstants.N_PrefixExpr: return lowerPrecOpHeirs[1];
+      case SyntaxTreeConstants.N_PrefixExpr:
+        return lowerPrecOpHeirs[1];
       case SyntaxTreeConstants.N_InfixExpr:
         return lowerPrecOpHeirs[0].isKind(SyntaxTreeConstants.N_GeneralId)
             ? lowerPrecOpHeirs[2]
             : lowerPrecOpHeirs[0];
-      case SyntaxTreeConstants.N_PostfixExpr: return lowerPrecOpHeirs[0];
+      case SyntaxTreeConstants.N_PostfixExpr:
+        return lowerPrecOpHeirs[0];
     }
     Assert.fail();
     return null;
@@ -351,9 +369,12 @@ public class OperatorPrecedenceTests {
   private static String getOpImage(SyntaxTreeNode op) {
     SyntaxTreeNode[] opHeirs = op.getHeirs();
     switch (op.getKind()) {
-      case SyntaxTreeConstants.N_PrefixExpr: return opHeirs[0].getHeirs()[1].getImage();
-      case SyntaxTreeConstants.N_InfixExpr: return opHeirs[1].getHeirs()[1].getImage();
-      case SyntaxTreeConstants.N_PostfixExpr: return opHeirs[1].getHeirs()[1].getImage();
+      case SyntaxTreeConstants.N_PrefixExpr:
+        return opHeirs[0].getHeirs()[1].getImage();
+      case SyntaxTreeConstants.N_InfixExpr:
+        return opHeirs[1].getHeirs()[1].getImage();
+      case SyntaxTreeConstants.N_PostfixExpr:
+        return opHeirs[1].getHeirs()[1].getImage();
     }
     Assert.fail();
     return null;
@@ -362,10 +383,10 @@ public class OperatorPrecedenceTests {
   /**
    * Checks the parse tree to ensure the operators were parsed as expected.
    *
-   * @param root The root of the parse tree.
-   * @param op1 The operator appearing first.
+   * @param root      The root of the parse tree.
+   * @param op1       The operator appearing first.
    * @param op1Symbol The symbol of the operator appearing first.
-   * @param op2 The operator appearing second.
+   * @param op2       The operator appearing second.
    * @param op2Symbol The symbol of the operator appearing second.
    */
   private static void checkParsePrecedence(
@@ -373,8 +394,7 @@ public class OperatorPrecedenceTests {
       Operator op1,
       String op1Symbol,
       Operator op2,
-      String op2Symbol
-  ) {
+      String op2Symbol) {
     SyntaxTreeNode lowerPrecOp = getExpressionInModule(root);
     String lowerPrecOpSymbol = getOpImage(lowerPrecOp);
     SyntaxTreeNode higherPrecOp = getHigherPrecOp(lowerPrecOp);
@@ -450,11 +470,10 @@ public class OperatorPrecedenceTests {
     // Skip this case because it's bugged; see
     // https://github.com/tlaplus/tlaplus/issues/893
     Assume.assumeFalse(
-      FixKind.INFIX == op1.fix
-      && FixKind.PREFIX == op2.fix
-      && "-" == op2.symbols[0]
-      && op2.lowerPrecThan(op1)
-    );
+        FixKind.INFIX == op1.fix
+            && FixKind.PREFIX == op2.fix
+            && "-" == op2.symbols[0]
+            && op2.lowerPrecThan(op1));
 
     final String expr = deriveExpression(op1, op1Symbol, op2, op2Symbol);
     final String inputString = String.format(PATTERN, expr);

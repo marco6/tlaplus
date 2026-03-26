@@ -48,7 +48,6 @@ public class PickStepConstruct implements TlaConstruct {
 
         // Simple bodies can stay on same line if they fit
         return Doc.group(
-                header.append(Doc.lineOrSpace().append(body).indent(indentSize))
-        );
+                header.append(Doc.lineOrSpace().append(body).indent(indentSize)));
     }
 }

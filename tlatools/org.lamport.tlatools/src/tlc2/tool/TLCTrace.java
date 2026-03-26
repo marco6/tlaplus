@@ -46,7 +46,7 @@ public class TLCTrace {
 
 	/**
 	 * @param fp
-	 *            A finger print of a state without a predecessor (init state)
+	 *           A finger print of a state without a predecessor (init state)
 	 * @return The new location (pointer) for the given finger print (state)
 	 * @throws IOException
 	 */
@@ -56,9 +56,9 @@ public class TLCTrace {
 
 	/**
 	 * @param predecessor
-	 *            The predecessor state
+	 *                    The predecessor state
 	 * @param fp
-	 *            A finger print
+	 *                    A finger print
 	 * @return The new location (pointer) for the given finger print (state)
 	 * @throws IOException
 	 */
@@ -68,9 +68,9 @@ public class TLCTrace {
 
 	/**
 	 * @param predecessorLoc
-	 *            The location of the state predecessor
+	 *                       The location of the state predecessor
 	 * @param fp
-	 *            A finger print
+	 *                       A finger print
 	 * @return The new location (pointer) for the given finger print (state)
 	 * @throws IOException
 	 */
@@ -134,12 +134,12 @@ public class TLCTrace {
 	 * @return 1 to the length of the longest behavior found so far.
 	 */
 	public int getLevel() throws IOException {
-	    // This assumption (lastPtr) only holds for the TLC in non-parallel mode.
+		// This assumption (lastPtr) only holds for the TLC in non-parallel mode.
 		// Generally the last line (logically a state) is not necessarily
 		// on the highest level of the state tree, which is only true if
 		// states are explored with strict breadth-first search.
 		//
-		// The (execution) trace is a forest of one to n trees, where each path 
+		// The (execution) trace is a forest of one to n trees, where each path
 		// in the forest represents the order in which states have been generated
 		// by the workers.
 		// The algorithm, with which the diameter is approximated from the trace,
@@ -151,29 +151,29 @@ public class TLCTrace {
 		// successors have been appended (yet, assuming there are any).
 		//
 		// Once the workers have terminated, TLC traverses the trace from a leaf record
-		// back to a root record. This height is what is reported as the diameter. 
+		// back to a root record. This height is what is reported as the diameter.
 		// The selection, from what leaf record TLC starts the traversal, is based on
 		// the last record inserted into the trace file. If this record is one with a
 		// low height (because its corresponding worker waited most of the time), the
-		// diameter will thus be underreport. If, on the other hand, the last record 
+		// diameter will thus be underreport. If, on the other hand, the last record
 		// happens to be one with a large height, the diameter will be overreported.
-		// 
-		// The selection of the leaf record is the source of the algorithm's 
+		//
+		// The selection of the leaf record is the source of the algorithm's
 		// non-determinism. With a single worker, the last record in the trace is
-		// always the same which always corresponds to the longest behavior found so 
+		// always the same which always corresponds to the longest behavior found so
 		// far (strict BFS). This invariant does not hold with multiple workers.
-        //
+		//
 		// Obviously, with multiple workers the approximation of the diameter will
 		// improve with the size of the state graph. Assuming a well-shaped state graph,
-		// we can argue that the approximation is good enough and document, that its 
+		// we can argue that the approximation is good enough and document, that its
 		// value can be anything from 1 to the longest behavior found so far.
 		return getLevel(this.lastPtr);
 	}
 
 	/**
 	 * @param startLoc
-	 *            The start location (pointer) from where the level (height) of
-	 *            the path in the execution tree should be calculated.
+	 *                 The start location (pointer) from where the level (height) of
+	 *                 the path in the execution tree should be calculated.
 	 * @return The level (height) of the path in the execution tree (the trace)
 	 *         starting at startLoc.
 	 * @throws IOException
@@ -184,7 +184,7 @@ public class TLCTrace {
 
 		// calculate level/depth based on start location
 		int level = 0;
-	for (long predecessorLoc = startLoc; predecessorLoc != 1; predecessorLoc = this
+		for (long predecessorLoc = startLoc; predecessorLoc != 1; predecessorLoc = this
 				.getPrev(predecessorLoc)) {
 			level++;
 		}
@@ -241,10 +241,10 @@ public class TLCTrace {
 
 	/**
 	 * @param loc
-	 *            The start location (pointer) from where the trace should be
-	 *            computed
+	 *                 The start location (pointer) from where the trace should be
+	 *                 computed
 	 * @param included
-	 *            true if the start location state should be included
+	 *                 true if the start location state should be included
 	 * @return An array of predecessor states
 	 * @throws IOException
 	 */
@@ -263,7 +263,7 @@ public class TLCTrace {
 			}
 			this.raf.seek(curLoc);
 		}
-		
+
 		return getTrace(fps);
 	}
 
@@ -289,7 +289,7 @@ public class TLCTrace {
 		// This is only necessary though, if TLCGlobals.enumFraction was < 1 during
 		// the generation of inits.
 		final Random snapshot = RandomEnumerableValues.reset();
-		
+
 		// The vector of fingerprints is now being followed forward from the
 		// initial state (which is the last state in the long vector), to the
 		// end state.
@@ -336,16 +336,16 @@ public class TLCTrace {
 	 * according to the spec. s2 is a next state of s1.
 	 * 
 	 * @param s1
-	 *            may not be null.
+	 *           may not be null.
 	 * @param s2
-	 *            may be null.
+	 *           may be null.
 	 * @throws IOException
 	 * @throws WorkerException
 	 */
 	public void printTrace(final TLCState s1, final TLCState s2) throws IOException, WorkerException {
 		printTrace(s1, s2, getTrace(s1.uid, false));
 	}
-	
+
 	protected final void printTrace(final TLCState s1, final TLCState s2, final TLCStateInfo[] prefix)
 			throws IOException, WorkerException {
 		if (s1.isInitial()) {
@@ -354,15 +354,15 @@ public class TLCTrace {
 			// use the two states s1 and s2 directly.
 			MP.printError(EC.TLC_BEHAVIOR_UP_TO_THIS_POINT);
 			if (s2 == null) {
-			    StatePrinter.printInvariantViolationStateTraceState(new TLCStateInfo(s1));
+				StatePrinter.printInvariantViolationStateTraceState(new TLCStateInfo(s1));
 			} else {
 				// Print initial state
 				StatePrinter.printInvariantViolationStateTraceState(
 						this.tool.evalAlias(new TLCStateInfo(s1), s2, prefix), s1, 1);
-				
+
 				// Create TLCStateInfo instance to include corresponding action in output.
 				TLCStateInfo state = this.tool.getState(s2, s1);
-				
+
 				// Print successor state.
 				StatePrinter.printInvariantViolationStateTraceState(
 						this.tool.evalAlias(state, s2, prefix), s1, 2, true);
@@ -371,7 +371,7 @@ public class TLCTrace {
 		}
 
 		MP.printError(EC.TLC_BEHAVIOR_UP_TO_THIS_POINT);
-		
+
 		// Print the prefix leading to s1:
 		TLCState lastState = null;
 		int idx = 0;
@@ -402,7 +402,7 @@ public class TLCTrace {
 			s1.setPredecessor(s0);
 			StatePrinter.printInvariantViolationStateTraceState(
 					this.tool.evalAlias(s0, s1, prefix), lastState, ++idx);
-			
+
 			sinfo = this.tool.getState(s1.fingerPrint(), s0.state);
 			if (sinfo == null) {
 				MP.printError(EC.TLC_FAILED_TO_RECOVER_INIT);
@@ -506,11 +506,14 @@ public class TLCTrace {
 
 	public interface Enumerator {
 		long nextPos() throws IOException;
+
 		long nextFP() throws IOException;
+
 		void close() throws IOException;
+
 		void reset(long i) throws IOException;
 	}
-	
+
 	public class TLCTraceEnumerator implements Enumerator {
 		long len;
 		BufferedRandomAccessFile enumRaf;
@@ -541,7 +544,7 @@ public class TLCTrace {
 			this.enumRaf.readLongNat(); /* drop */
 			return this.enumRaf.readLong();
 		}
-		
+
 		public final void close() throws IOException {
 			this.enumRaf.close();
 		}
@@ -558,7 +561,7 @@ public class TLCTrace {
 			for (int i = 0; i < stateTrace.size(); i++) {
 				v[i] = new RecordValue(stateTrace.elementAt(i));
 			}
-			
+
 			// Do not normalize TupleValue because normalization depends on the actual
 			// UniqueString#internTable.
 			new TupleValue(v).write(vos);

@@ -24,8 +24,10 @@ public class SimpleFilenameToStreamTest {
 	private void checkResolveStandardModule(FilenameToStream resolver, String path, boolean isModule) {
 		File file = resolver.resolve(path, isModule);
 		assertNotNull("resolve(" + path + ", " + isModule + ") should not be null", file);
-		assertTrue("resolve(" + path + ", " + isModule + ") = " + file.getAbsolutePath() + " does not exist!", file.exists());
-		assertTrue("resolve(" + path + ", " + isModule + ") = " + file + " should be a standard module but isn't!", resolver.isStandardModule(path));
+		assertTrue("resolve(" + path + ", " + isModule + ") = " + file.getAbsolutePath() + " does not exist!",
+				file.exists());
+		assertTrue("resolve(" + path + ", " + isModule + ") = " + file + " should be a standard module but isn't!",
+				resolver.isStandardModule(path));
 	}
 
 	/**
@@ -41,11 +43,16 @@ public class SimpleFilenameToStreamTest {
 			checkResolveStandardModule(sfts, name + ".tla", true);
 			checkResolveStandardModule(sfts, name + ".tla", false);
 
-			// NOTE 2023/11/1: Ideally this next check would be valid, but it so happens that nothing in the current
-			// implementation actually prevents the returned value from resolving to some arbitrary thing (like a
-			// subdirectory of the current working directory).  The problem is worse on case-insensitive filesystems
-			// like the MacOS default.  We should re-enable this check once the implementation is more robust.
-			// assertFalse("Resolution with isModule=false should fail", sfts.resolve(name, false).exists());
+			// NOTE 2023/11/1: Ideally this next check would be valid, but it so happens
+			// that nothing in the current
+			// implementation actually prevents the returned value from resolving to some
+			// arbitrary thing (like a
+			// subdirectory of the current working directory). The problem is worse on
+			// case-insensitive filesystems
+			// like the MacOS default. We should re-enable this check once the
+			// implementation is more robust.
+			// assertFalse("Resolution with isModule=false should fail", sfts.resolve(name,
+			// false).exists());
 		}
 	}
 
@@ -62,7 +69,8 @@ public class SimpleFilenameToStreamTest {
 			checkResolveStandardModule(sfts, name + ".tla", false);
 
 			// See NOTE 2023/11/1 above.
-			// assertFalse("Resolution with isModule=false should fail", sfts.resolve(name, false).exists());
+			// assertFalse("Resolution with isModule=false should fail", sfts.resolve(name,
+			// false).exists());
 		}
 	}
 
@@ -89,7 +97,7 @@ public class SimpleFilenameToStreamTest {
 	 * Test if we can resolve modules from {@link ToolIO#getUserDir()}
 	 */
 	@Test
-	public void testResolveFromUserDir() throws IOException  {
+	public void testResolveFromUserDir() throws IOException {
 		// Save the old value so we can restore it at the end of the test
 		String oldUserDir = ToolIO.getUserDir();
 
@@ -110,7 +118,8 @@ public class SimpleFilenameToStreamTest {
 
 			File f2 = new SimpleFilenameToStream().resolve("MyModule", true);
 			assertTrue("Resolver should find MyModule even though it is empty", f2.exists());
-			assertFalse("Module from userDir is not a standard module", new SimpleFilenameToStream().isStandardModule("MyModule"));
+			assertFalse("Module from userDir is not a standard module",
+					new SimpleFilenameToStream().isStandardModule("MyModule"));
 
 			ToolIO.setUserDir(d2.toString());
 			File f3 = new SimpleFilenameToStream().resolve("MyModule", true);
@@ -153,7 +162,7 @@ public class SimpleFilenameToStreamTest {
 	 * Test that the library path constructor argument behaves as expected
 	 */
 	@Test
-	public void testResolveWithCustomLibraryPath() throws IOException  {
+	public void testResolveWithCustomLibraryPath() throws IOException {
 		// Save the old value so we can restore it at the end of the test
 		String oldUserDir = ToolIO.getUserDir();
 
@@ -176,8 +185,10 @@ public class SimpleFilenameToStreamTest {
 
 			File f2 = resolver.resolve("MyModule", true);
 			assertTrue("Resolver should find modules in explicit library dir", f2.exists());
-			assertFalse("Modules in explicit library dir are not library modules", resolver.isStandardModule("MyModule"));
-			assertTrue("Integers is a standard module, even a custom library path", resolver.isStandardModule("Integers"));
+			assertFalse("Modules in explicit library dir are not library modules",
+					resolver.isStandardModule("MyModule"));
+			assertTrue("Integers is a standard module, even a custom library path",
+					resolver.isStandardModule("Integers"));
 
 			ToolIO.setUserDir(d2.toString());
 
@@ -202,7 +213,7 @@ public class SimpleFilenameToStreamTest {
 	 * Test that the resolver handles the TLA_LIBRARY system property as expected
 	 */
 	@Test
-	public void testTLALibrarySystemProperty() throws IOException  {
+	public void testTLALibrarySystemProperty() throws IOException {
 		// Save the old value so we can restore it at the end of the test
 		String oldTLALibrary = System.getProperty(SimpleFilenameToStream.TLA_LIBRARY);
 
@@ -219,7 +230,8 @@ public class SimpleFilenameToStreamTest {
 			System.setProperty(SimpleFilenameToStream.TLA_LIBRARY, d1.toString());
 			File f1 = resolver.resolve("Integers", true);
 			assertTrue("Resolver should still find Integers when library path is empty", f1.exists());
-			assertTrue("Integers is a standard module, even with TLA_LIBRARY set", resolver.isStandardModule("Integers"));
+			assertTrue("Integers is a standard module, even with TLA_LIBRARY set",
+					resolver.isStandardModule("Integers"));
 
 			Files.writeString(d1.resolve("MyModule.tla"), "", StandardCharsets.US_ASCII);
 
@@ -228,14 +240,17 @@ public class SimpleFilenameToStreamTest {
 			assertTrue("Resolver should find modules in TLA_LIBRARY", f2.exists());
 			assertFalse("Modules in TLA_LIBRARY are not library modules", resolver.isStandardModule("MyModule"));
 
-			// TODO: is this next check actually desirable?  Because of this choice:
-			//    - When TLC is invoked on a module like "MyModule.tla", it will also use the TLA_LIBRARY system
-			//      property.
-			//    - But, when TLC is invoked on a module like "some-dir/MyModule.tla", it will NOT use the TLA_LIBRARY
-			//      system property.
+			// TODO: is this next check actually desirable? Because of this choice:
+			// - When TLC is invoked on a module like "MyModule.tla", it will also use the
+			// TLA_LIBRARY system
+			// property.
+			// - But, when TLC is invoked on a module like "some-dir/MyModule.tla", it will
+			// NOT use the TLA_LIBRARY
+			// system property.
 			resolver = new SimpleFilenameToStream(d2.toString());
 			File f3 = resolver.resolve("MyModule", true);
-			assertFalse("Resolver should ignore TLA_LIBRARY system property if an explicit path was given", f3.exists());
+			assertFalse("Resolver should ignore TLA_LIBRARY system property if an explicit path was given",
+					f3.exists());
 		} finally {
 			if (oldTLALibrary != null) {
 				System.setProperty(SimpleFilenameToStream.TLA_LIBRARY, oldTLALibrary);
@@ -265,14 +280,15 @@ public class SimpleFilenameToStreamTest {
 			final String child = parentDirectory + "Fromage.tla";
 			final FilenameToStream.TLAFile file = new FilenameToStream.TLAFile(parentDirectory, child, null);
 			final int driveLetterCount = file.getAbsolutePath().split(driveLetter).length - 1;
-			
+
 			assertTrue("There should be 1 drive letter in the child's absolute path, but there are " + driveLetterCount,
-					   (1 == driveLetterCount));
+					(1 == driveLetterCount));
 		}
 	}
 
 	/**
-	 * Test whether the fix for <a href="https://github.com/tlaplus/tlaplus/issues/545">#545</a> still works
+	 * Test whether the fix for
+	 * <a href="https://github.com/tlaplus/tlaplus/issues/545">#545</a> still works
 	 */
 	@Test
 	public void testBizarreWorkingDirectorySearchBehavior() throws IOException {
@@ -283,8 +299,10 @@ public class SimpleFilenameToStreamTest {
 		try {
 			tmpdir = Files.createTempDirectory(null);
 
-			// NOTE: Java does not have chdir() (https://bugs.openjdk.org/browse/JDK-4045688), but
-			// we can fake it because SimpleFilenameToStream uses the user.dir system property.
+			// NOTE: Java does not have chdir()
+			// (https://bugs.openjdk.org/browse/JDK-4045688), but
+			// we can fake it because SimpleFilenameToStream uses the user.dir system
+			// property.
 			System.setProperty("user.dir", tmpdir.toString());
 
 			Files.writeString(tmpdir.resolve("Test.tla"), "", StandardCharsets.US_ASCII);
@@ -311,5 +329,5 @@ public class SimpleFilenameToStreamTest {
 			}
 		}
 	}
-	
+
 }

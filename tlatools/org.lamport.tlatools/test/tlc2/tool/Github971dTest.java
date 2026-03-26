@@ -43,7 +43,8 @@ import tlc2.value.impl.IntValue;
 public class Github971dTest extends ModelCheckerTestCase {
 
 	public Github971dTest() {
-		super("Github971", new String[] { "-lncheck", "final", "-config", "Github971d.cfg" }, EC.ExitStatus.VIOLATION_LIVENESS);
+		super("Github971", new String[] { "-lncheck", "final", "-config", "Github971d.cfg" },
+				EC.ExitStatus.VIOLATION_LIVENESS);
 	}
 
 	@Override
@@ -107,7 +108,7 @@ public class Github971dTest extends ModelCheckerTestCase {
 		try {
 			IStateQueue.Factory.sq = new IStateQueue() {
 				private final CountDownLatch signal = new CountDownLatch(3);
-				
+
 				private final IStateQueue inner = new MemStateQueue();
 
 				public void sEnqueue(TLCState state) {

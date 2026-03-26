@@ -22,7 +22,8 @@ public abstract class HeapBasedDiskFPSet extends DiskFPSet {
 	 * striped lock {@link DiskFPSet#rwLock} itself, which reduces the memory
 	 * available to the hash set.
 	 */
-	protected static final int LogLockCnt = Integer.getInteger(DiskFPSet.class.getName() + ".logLockCnt", (31 - Integer.numberOfLeadingZeros(TLCGlobals.getNumWorkers()) + 8));
+	protected static final int LogLockCnt = Integer.getInteger(DiskFPSet.class.getName() + ".logLockCnt",
+			(31 - Integer.numberOfLeadingZeros(TLCGlobals.getNumWorkers()) + 8));
 	/**
 	 * protects n memory buckets
 	 */
@@ -31,23 +32,23 @@ public abstract class HeapBasedDiskFPSet extends DiskFPSet {
 	 * Is (1 << LogLockCnt) and exposed here for subclasses
 	 */
 	protected final int lockCnt;
-	
+
 	protected final int lockMask;
 	/**
 	 * in-memory buffer of new entries
 	 */
 	protected long[][] tbl;
-	
+
 	/**
 	 * mask for computing hash function
 	 */
 	protected long mask;
-	
+
 	/**
 	 * The calculated capacity of tbl. Will always be a power of two.
 	 */
 	protected final int capacity;
-	
+
 	/**
 	 * 
 	 */
@@ -83,14 +84,14 @@ public abstract class HeapBasedDiskFPSet extends DiskFPSet {
 		if ((maxMemCnt - LogMaxLoad) <= 0) {
 			maxMemCnt = DefaultMaxTblCnt;
 		}
-		
+
 		// approximate next lower 2^n ~= maxMemCnt
 		logMaxMemCnt = (Long.SIZE - 1) - Long.numberOfLeadingZeros(maxMemCnt);
-		
+
 		// guard against underflow
 		// LL modified error message on 7 April 2012
 		Assert.check(logMaxMemCnt - LogMaxLoad >= 0, "Underflow when computing HeapBasedDiskFPSet");
-		
+
 		// Guard against a capacity overflow with large amounts (e.g. ~1TB) of
 		// dedicated memory. If cap overflows, the VMs maximum allowed array
 		// size is used.
@@ -101,10 +102,12 @@ public abstract class HeapBasedDiskFPSet extends DiskFPSet {
 		} else {
 			this.capacity = cap;
 		}
-		
-		// maxTblCnt mathematically has to be an upper limit for the in-memory storage 
-		// so that a disk flush occurs before an _evenly_ distributed fp distribution fills up 
-		// the collision buckets to a size that exceeds the VM limit (unevenly distributed 
+
+		// maxTblCnt mathematically has to be an upper limit for the in-memory storage
+		// so that a disk flush occurs before an _evenly_ distributed fp distribution
+		// fills up
+		// the collision buckets to a size that exceeds the VM limit (unevenly
+		// distributed
 		// fp distributions can still cause a OutOfMemoryError which this guard).
 		this.maxTblCnt = (1L << logMaxMemCnt); // maxTblCnt := 2^logMaxMemCnt
 
@@ -116,13 +119,15 @@ public abstract class HeapBasedDiskFPSet extends DiskFPSet {
 				"negative maxTblCnt");
 
 		this.mask = capacity - 1;
-		
+
 		this.lockMask = lockCnt - 1;
 
 		this.tbl = new long[capacity][];
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#sizeof()
 	 */
 	public long sizeof() {
@@ -140,15 +145,19 @@ public abstract class HeapBasedDiskFPSet extends DiskFPSet {
 		rwLock.releaseAllLocks();
 		return size;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#getLockCnt()
 	 */
 	public int getLockCnt() {
 		return this.rwLock.size();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#getTblCapacity()
 	 */
 	public long getTblCapacity() {
@@ -156,29 +165,33 @@ public abstract class HeapBasedDiskFPSet extends DiskFPSet {
 	}
 
 	/**
-	 * calculate hash value (just n least significat bits of fp) which is used as an index address
+	 * calculate hash value (just n least significat bits of fp) which is used as an
+	 * index address
+	 * 
 	 * @param fp
 	 * @return
 	 */
 	protected int getIndex(long fp) {
 		return (int) index(fp, this.mask);
-		
-	}	
-	
+
+	}
+
 	protected int getLockIndex(long fp) {
 		// In case of overflow, a NegativeArrayOffset will be thrown
 		// subsequently.
 		return (int) index(fp, this.lockMask);
 	}
-	
+
 	protected long index(long fp, long aMask) {
 		return fp & aMask;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#contains(long)
 	 * 
-     * 0 and {@link Long#MIN_VALUE} always return false
+	 * 0 and {@link Long#MIN_VALUE} always return false
 	 */
 	public final boolean contains(long fp) throws IOException {
 		fp = checkValid(fp);
@@ -197,7 +210,7 @@ public abstract class HeapBasedDiskFPSet extends DiskFPSet {
 		// next, look on disk
 		boolean diskHit = this.diskLookup(fp0);
 		// increment while still locked
-		if(diskHit) {
+		if (diskHit) {
 			diskHitCnt.increment();
 		}
 
@@ -206,7 +219,9 @@ public abstract class HeapBasedDiskFPSet extends DiskFPSet {
 		return diskHit;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#memLookup(long)
 	 */
 	boolean memLookup(long fp) {
@@ -225,34 +240,37 @@ public abstract class HeapBasedDiskFPSet extends DiskFPSet {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#put(long)
 	 * 
-     * 0 and {@link Long#MIN_VALUE} always return false
-     * 
-     * Locking is as follows:
-     * 
-     * Acquire mem read lock
-     * Acquire disk read lock
-     * Release mem read lock
-     * 
-     * Acquire mem read/write lock
-     * Release disk read lock // interleaved 
-     *  insert into mem
-     * Acquire disk write lock (might cause potential writer to wait() which releases mem read lock (monitor))
-     * 	flushToDisk
-     * Release disk write lock
-     * Release mem read lock
-     * 
-     * asserts:
-     * - Exclusive access to disk and memory for a writer
-     * 
+	 * 0 and {@link Long#MIN_VALUE} always return false
+	 * 
+	 * Locking is as follows:
+	 * 
+	 * Acquire mem read lock
+	 * Acquire disk read lock
+	 * Release mem read lock
+	 * 
+	 * Acquire mem read/write lock
+	 * Release disk read lock // interleaved
+	 * insert into mem
+	 * Acquire disk write lock (might cause potential writer to wait() which
+	 * releases mem read lock (monitor))
+	 * flushToDisk
+	 * Release disk write lock
+	 * Release mem read lock
+	 * 
+	 * asserts:
+	 * - Exclusive access to disk and memory for a writer
+	 * 
 	 */
 	public final boolean put(long fp) throws IOException {
 		fp = checkValid(fp);
 		// zeros the msb
 		long fp0 = fp & 0x7FFFFFFFFFFFFFFFL;
-		
+
 		final Lock readLock = rwLock.getAt(getLockIndex(fp0)).readLock();
 		readLock.lock();
 		// First, look in in-memory buffer
@@ -261,86 +279,88 @@ public abstract class HeapBasedDiskFPSet extends DiskFPSet {
 			this.memHitCnt.increment();
 			return true;
 		}
-		
-		// blocks => wait() if disk is being re-written 
+
+		// blocks => wait() if disk is being re-written
 		// (means the current thread returns rwLock monitor)
 		// Why not return monitor first and then acquire read lock?
-		// => prevent deadlock by acquiring threads in same order? 
-		
+		// => prevent deadlock by acquiring threads in same order?
+
 		// next, look on disk
 		boolean diskHit = this.diskLookup(fp0);
-		
+
 		// In event of disk hit, return
 		if (diskHit) {
 			readLock.unlock();
 			this.diskHitCnt.increment();
 			return true;
 		}
-		
+
 		readLock.unlock();
-		
+
 		// Another writer could write the same fingerprint here if it gets
 		// interleaved. This is no problem though, because memInsert again
 		// checks existence for fp to be inserted
-		
+
 		final Lock w = rwLock.getAt(getLockIndex(fp0)).writeLock();
 		w.lock();
-		
+
 		// if disk lookup failed, add to memory buffer
 		if (this.memInsert(fp0)) {
 			w.unlock();
 			this.memHitCnt.increment();
 			return true;
 		}
-		
-		// test if buffer is full && block until there are no more readers 
+
+		// test if buffer is full && block until there are no more readers
 		if (needsDiskFlush() && this.flusherChosen.compareAndSet(false, true)) {
-			
+
 			// statistics
 			growDiskMark++;
 			final long timestamp = System.currentTimeMillis();
 			final long insertions = getTblCnt();
-			
+
 			// acquire _all_ write locks
 			rwLock.acquireAllLocks();
-			
+
 			// flush memory entries to disk
 			flusher.flushTable();
-			
+
 			// release _all_ write locks
 			rwLock.releaseAllLocks();
-			
+
 			// reset forceFlush to false
 			forceFlush = false;
-			
+
 			// finish writing
 			this.flusherChosen.set(false);
 
 			long l = System.currentTimeMillis() - timestamp;
 			flushTime += l;
-			
+
 			LOGGER.log(Level.FINE, "Flushed disk {0} {1}. time, in {2} sec after {3} insertions.", new Object[] {
-					((DiskFPSetMXWrapper) diskFPSetMXWrapper).getObjectName(), getGrowDiskMark(), l, insertions});
+					((DiskFPSetMXWrapper) diskFPSetMXWrapper).getObjectName(), getGrowDiskMark(), l, insertions });
 		}
 		w.unlock();
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#memInsert(long)
 	 */
 	boolean memInsert(long fp) {
 		int index = getIndex(fp);
-		
-		// try finding an existing bucket 
+
+		// try finding an existing bucket
 		long[] bucket = this.tbl[index];
-		
+
 		// no existing bucket found, create new one
 		if (bucket == null) {
 			bucket = new long[InitialBucketCapacity];
 			bucket[0] = fp;
 			this.tbl[index] = bucket;
-			this.bucketsCapacity += InitialBucketCapacity; 
+			this.bucketsCapacity += InitialBucketCapacity;
 			this.tblLoad.increment();
 		} else {
 			// search for entry in existing bucket
@@ -383,14 +403,18 @@ public abstract class HeapBasedDiskFPSet extends DiskFPSet {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#acquireTblWriteLock()
 	 */
 	void acquireTblWriteLock() {
 		rwLock.acquireAllLocks();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#releaseTblWriteLock()
 	 */
 	void releaseTblWriteLock() {

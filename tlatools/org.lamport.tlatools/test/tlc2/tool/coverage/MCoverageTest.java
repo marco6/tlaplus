@@ -34,12 +34,12 @@ import tlc2.output.EC;
 
 public class MCoverageTest extends AbstractCoverageTest {
 
-    public MCoverageTest () {
-        super("M");
-    }
+	public MCoverageTest() {
+		super("M");
+	}
 
-    @Test
-    public void testSpec () {
+	@Test
+	public void testSpec() {
 		// ModelChecker has finished and generated the expected amount of states
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "1"));
@@ -49,7 +49,7 @@ public class MCoverageTest extends AbstractCoverageTest {
 		assertFalse(recorder.recorded(EC.GENERAL));
 
 		assertFalse(recorder.recorded(EC.TLC_COVERAGE_MISMATCH));
-		
+
 		assertFalse(recorder.recorded(EC.TLC_COVERAGE_MISMATCH));
 		assertCoverage("<Init line 16, col 1 to line 16, col 4 of module M>: 192:192\n"
 				+ "  line 17, col 17 to line 17, col 39 of module M: 1:24\n"
@@ -60,7 +60,7 @@ public class MCoverageTest extends AbstractCoverageTest {
 				+ "  |line 18, col 26 to line 18, col 30 of module M: 8\n"
 				+ "  line 19, col 6 to line 19, col 19 of module M: 64\n"
 				+ "  line 20, col 6 to line 20, col 21 of module M: 192\n"
-				+"<Next line 22, col 1 to line 22, col 4 of module M>: 0:36864\n"
+				+ "<Next line 22, col 1 to line 22, col 4 of module M>: 0:36864\n"
 				+ "  line 23, col 6 to line 23, col 40 of module M: 1536\n"
 				+ "  |line 23, col 18 to line 23, col 40 of module M: 192:4608\n"
 				+ "  ||line 23, col 19 to line 23, col 28 of module M: 192\n"
@@ -73,5 +73,5 @@ public class MCoverageTest extends AbstractCoverageTest {
 				+ "  |line 25, col 16 to line 25, col 20 of module M: 12288\n"
 				+ "  line 26, col 6 to line 26, col 22 of module M: 36864");
 
-    }
+	}
 }

@@ -32,7 +32,7 @@ public class Github817Test extends ModelCheckerTestCase {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertTrue(recorder.recorded(EC.TLC_SUCCESS));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "3", "3", "0"));
-		
+
 		assertZeroUncovered();
 	}
 

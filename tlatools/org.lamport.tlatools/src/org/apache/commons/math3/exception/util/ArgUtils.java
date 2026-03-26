@@ -28,14 +28,15 @@ public class ArgUtils {
     /**
      * Class contains only static methods.
      */
-    private ArgUtils() {}
+    private ArgUtils() {
+    }
 
     /**
      * Transform a multidimensional array into a one-dimensional list.
      *
      * @param array Array (possibly multidimensional).
      * @return a list of all the {@code Object} instances contained in
-     * {@code array}.
+     *         {@code array}.
      */
     public static Object[] flatten(Object[] array) {
         final List<Object> list = new ArrayList<Object>();

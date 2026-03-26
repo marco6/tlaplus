@@ -13,15 +13,15 @@ public class NextStateResult implements Serializable {
 	private final long statesComputed;
 	private final TLCStateVec[] nextStates;
 	private final LongVec[] nextFingerprints;
-	
-	public NextStateResult(TLCStateVec[] nextStates, LongVec[] nextFingerprints, 
+
+	public NextStateResult(TLCStateVec[] nextStates, LongVec[] nextFingerprints,
 			long computationTime, long statesComputed) {
 		this.nextStates = nextStates;
 		this.nextFingerprints = nextFingerprints;
 		this.computationTime = computationTime;
 		this.statesComputed = statesComputed;
 	}
-	
+
 	public long getStatesComputedDelta() {
 		return statesComputed - nextStates.length;
 	}

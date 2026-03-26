@@ -29,26 +29,28 @@ import java.util.HashSet;
 import java.util.Set;
 
 public interface SymbolMatcher {
-	
+
 	/**
 	 * @return true if the given {@link SymbolNode} matches this predicate.
 	 */
 	boolean matches(final SymbolNode aSymbol);
 
 	public static class NameAndTypeMatcher implements SymbolMatcher {
-	
+
 		private String prefix;
-		
-		//** Invoked by clients of ModuleNode#getSymbols **//
-		
+
+		// ** Invoked by clients of ModuleNode#getSymbols **//
+
 		public NameAndTypeMatcher setPrefix(final String aPrefix) {
 			this.prefix = aPrefix;
 			return this;
 		}
-		
-		//** Invoked by ModuleNode, overridden by clients **//
-		
-		/* (non-Javadoc)
+
+		// ** Invoked by ModuleNode, overridden by clients **//
+
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tla2sany.semantic.SymbolMatcher#matches(tla2sany.semantic.SymbolNode)
 		 */
 		@Override
@@ -66,30 +68,30 @@ public interface SymbolMatcher {
 			final String symbolName = aSymbol.getName().toString();
 			if (matchCaseSensitive() && !symbolName.startsWith(getPrefix())) {
 				return false;
-			} else if (!symbolName.toLowerCase().startsWith(getPrefix().toLowerCase())){
+			} else if (!symbolName.toLowerCase().startsWith(getPrefix().toLowerCase())) {
 				return false;
 			}
-			
+
 			return true;
 		}
-		
-		//** Invoked by matches, subclasses may override **//
-		
+
+		// ** Invoked by matches, subclasses may override **//
+
 		/**
 		 * @return A Set of SymbolNodes to match.
 		 */
 		protected Set<Class<? extends SymbolNode>> matchTypes() {
 			return new HashSet<>();
 		}
-		
+
 		protected boolean matchesAnyType() {
 			return matchTypes().isEmpty();
 		}
-		
+
 		protected boolean matchCaseSensitive() {
 			return false;
 		}
-	
+
 		protected String getPrefix() {
 			return prefix;
 		}

@@ -15,27 +15,29 @@ public abstract class Sx {
   public static SxNil nil = new SxNil();
 
   private static Hashtable atomTbl = new Hashtable();
-  private static int symCount = 0;  // Number of symbols returned by genSym().
-  
+  private static int symCount = 0; // Number of symbols returned by genSym().
+
   public static Sx cons(Sx a, Sx b) {
     return new SxPair(a, b);
   }
 
   public static Sx car(Sx a) {
     if (!(a instanceof SxPair)) {
-        throw new WrongInvocationException("Car must be applied to cons.");
+      throw new WrongInvocationException("Car must be applied to cons.");
     }
-    return ((SxPair)a).car;
+    return ((SxPair) a).car;
   }
 
   public static Sx cdr(Sx a) {
     if (!(a instanceof SxPair)) {
-        throw new WrongInvocationException("Cdr must be applied to cons.");
+      throw new WrongInvocationException("Cdr must be applied to cons.");
     }
-    return ((SxPair)a).cdr;
+    return ((SxPair) a).cdr;
   }
-    
-  public static Sx List(Sx a) { return cons(a, nil); }
+
+  public static Sx List(Sx a) {
+    return cons(a, nil);
+  }
 
   public static Sx List(Sx a, Sx b) {
     return cons(a, cons(b, nil));
@@ -50,7 +52,8 @@ public abstract class Sx {
   }
 
   public static Sx Append(Sx a, Sx b) {
-    if (a == nil) return b;
+    if (a == nil)
+      return b;
     return cons(car(a), Append(cdr(a), b));
   }
 
@@ -58,22 +61,21 @@ public abstract class Sx {
   public static SxAtom genSym() {
     return Atom("F__" + (symCount++));
   }
-  
+
   /* Returns true iff a is eq to an element of list p. */
   public static boolean memq(SxAtom a, Sx p) {
     while (p != nil) {
       if (a == car(p)) {
-	return true;
-      }
-      else {
-	p = cdr(p);
+        return true;
+      } else {
+        p = cdr(p);
       }
     }
     return false;
   }
-  
+
   public static SxAtom Atom(String st) {
-    SxAtom res = (SxAtom)atomTbl.get(st);
+    SxAtom res = (SxAtom) atomTbl.get(st);
     if (res == null) {
       res = new SxAtom(st);
       atomTbl.put(st, res);
@@ -81,35 +83,48 @@ public abstract class Sx {
     return res;
   }
 
-  public static Sx FromInt(int k) { return new SxInt(k); }
-  
+  public static Sx FromInt(int k) {
+    return new SxInt(k);
+  }
+
   public abstract void print(PrintWriter pw);
-  
+
   public static class SxAtom extends Sx {
     public String st;
-  
-    private SxAtom(String st) { this.st = st; }
 
-    public void print(PrintWriter pw) { pw.print(this.st); }
+    private SxAtom(String st) {
+      this.st = st;
+    }
+
+    public void print(PrintWriter pw) {
+      pw.print(this.st);
+    }
   }
 
   public static class SxInt extends Sx {
     public int val;
-  
-    public SxInt(int k) { this.val = k; }
 
-    public void print(PrintWriter pw) { pw.print(this.val); }
+    public SxInt(int k) {
+      this.val = k;
+    }
+
+    public void print(PrintWriter pw) {
+      pw.print(this.val);
+    }
   }
 
   public static class SxNil extends Sx {
-    private SxNil() { /*SKIP*/ }
+    private SxNil() {
+      /* SKIP */ }
 
-    public void print(PrintWriter pw) { pw.print("nil"); }
+    public void print(PrintWriter pw) {
+      pw.print("nil");
+    }
   }
-  
+
   public static class SxPair extends Sx {
     public Sx car, cdr;
-  
+
     public SxPair(Sx a, Sx b) {
       this.car = a;
       this.cdr = b;
@@ -120,11 +135,14 @@ public abstract class Sx {
       this.car.print(pw);
       Sx next = this.cdr;
       while (next instanceof SxPair) {
-	pw.print(" ");
-	((SxPair)next).car.print(pw);
-	next = ((SxPair)next).cdr;
+        pw.print(" ");
+        ((SxPair) next).car.print(pw);
+        next = ((SxPair) next).cdr;
       }
-      if (next != nil) { pw.print(" . "); next.print(pw); }
+      if (next != nil) {
+        pw.print(" . ");
+        next.print(pw);
+      }
       pw.print(")");
     }
   }

@@ -44,7 +44,7 @@ public class PrintTraceRaceTest extends ModelCheckerTestCase {
 	public PrintTraceRaceTest() {
 		super(TLAConstants.Files.MODEL_CHECK_FILE_BASENAME, "PrintTraceRace", ExitStatus.FAILURE_SAFETY_EVAL);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
@@ -52,27 +52,27 @@ public class PrintTraceRaceTest extends ModelCheckerTestCase {
 		assertFalse(recorder.recorded(EC.GENERAL));
 
 		assertTrue(recorder.recorded(EC.TLC_BEHAVIOR_UP_TO_THIS_POINT));
-		
+
 		final List<Object> records = recorder.getRecords(EC.TLC_STATE_PRINT2);
 
 		int i = 0; // State's position in records
 		Object[] objs = (Object[]) records.get(i++);
 		TLCStateInfo stateInfo = (TLCStateInfo) objs[0];
-		assertEquals("S = [q |-> <<>>, i |-> 1]", 
-				   stateInfo.toString().trim()); // trimmed to remove any newlines or whitespace
+		assertEquals("S = [q |-> <<>>, i |-> 1]",
+				stateInfo.toString().trim()); // trimmed to remove any newlines or whitespace
 		assertEquals(i, objs[1]);
-		
+
 		objs = (Object[]) records.get(i++);
 		stateInfo = (TLCStateInfo) objs[0];
-		assertEquals("S = [q |-> <<1>>, i |-> 2]", 
-				   stateInfo.toString().trim()); // trimmed to remove any newlines or whitespace
+		assertEquals("S = [q |-> <<1>>, i |-> 2]",
+				stateInfo.toString().trim()); // trimmed to remove any newlines or whitespace
 		assertEquals(i, objs[1]);
-		
+
 		assertEquals(2, objs.length);
 
 		assertUncovered("line 15, col 12 to line 15, col 28 of module PrintTraceRace: 0");
 	}
-	
+
 	protected int getNumberOfThreads() {
 		// This bug only shows up with multiple threads.
 		return 4;

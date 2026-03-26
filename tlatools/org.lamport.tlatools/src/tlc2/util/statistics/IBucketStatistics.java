@@ -9,8 +9,8 @@ public interface IBucketStatistics {
 
 	/**
 	 * @param amount
-	 *            Add a sample to the statistics. Allowed range is 0 <= sample <=
-	 *            Integer.MAX_VALUE
+	 *               Add a sample to the statistics. Allowed range is 0 <= sample <=
+	 *               Integer.MAX_VALUE
 	 */
 	void addSample(int amount);
 

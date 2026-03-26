@@ -45,7 +45,7 @@ public class UnchangedOpApplNodeWrapper extends OpApplNodeWrapper {
 	protected void print(int level, final Calculate fresh) {
 		final Set<Pair> collectedEvalCounts = new HashSet<>();
 		this.collectChildren(collectedEvalCounts, fresh);
-		collectedEvalCounts.remove(new Pair(0,0)); 
+		collectedEvalCounts.remove(new Pair(0, 0));
 		if (collectedEvalCounts.isEmpty()) {
 			printSelf(level++);
 			return;

@@ -82,12 +82,12 @@ public class SetOfRcrdValueTest {
 	@Test
 	public void testSimple() {
 		final UniqueString[] names = getNames(3);
-		
+
 		final Value[] values = new Value[3];
 		values[0] = new SetEnumValue(getValue(7, "a"), true);
 		values[1] = new IntervalValue(1, 2);
 		values[2] = new IntervalValue(1, 4);
-		
+
 		final SetOfRcdsValue setOfRcrdValue = new SetOfRcdsValue(names, values, true);
 
 		checkElements(names, values, setOfRcrdValue, (SubsetEnumerator) setOfRcrdValue.elements(setOfRcrdValue.size()));
@@ -106,7 +106,7 @@ public class SetOfRcrdValueTest {
 			}
 		}
 	}
-	
+
 	@Test
 	public void testRangeSubsetValue() {
 		final UniqueString[] names = getNames(4);
@@ -170,10 +170,11 @@ public class SetOfRcrdValueTest {
 
 	@Test
 	public void testRandomSubsetAstronomically() {
-		//	RandomSubset(10000, [a1 : {k : k \in 1..50}, a2 : {k : k \in 1..50}, a3 : {k : k \in 1..50},
-		//                       a4 : {k : k \in 1..50}, a5 : {k : k \in 1..50}, a6 : {k : k \in 1..50},
-		//                       a7 : {k : k \in 1..50}, a8 : {k : k \in 1..50}, a9 : {k : k \in 1..50},
-		//                      a10 : {k : k \in 1..50}])
+		// RandomSubset(10000, [a1 : {k : k \in 1..50}, a2 : {k : k \in 1..50}, a3 : {k
+		// : k \in 1..50},
+		// a4 : {k : k \in 1..50}, a5 : {k : k \in 1..50}, a6 : {k : k \in 1..50},
+		// a7 : {k : k \in 1..50}, a8 : {k : k \in 1..50}, a9 : {k : k \in 1..50},
+		// a10 : {k : k \in 1..50}])
 		final UniqueString[] names = getNames(10);
 		final SetOfRcdsValue setOfRcrdValue = new SetOfRcdsValue(names, getValue(50, names), true);
 

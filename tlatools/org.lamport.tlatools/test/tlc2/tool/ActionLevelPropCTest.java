@@ -46,7 +46,7 @@ public class ActionLevelPropCTest extends ModelCheckerTestCase {
 	@Test
 	public void testSpec() throws FileNotFoundException, IOException {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
-		
+
 		assertTrue(recorder.recorded(EC.TLC_CONFIG_PROPERTY_ACTION_LEVEL));
 	}
 

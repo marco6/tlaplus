@@ -6,9 +6,11 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * Searches the Java classpath using {@link ClassLoader#getResource(String)}.  It takes a /-separated prefix that is
- * prepended to the search, e.g. <code>"tla2sany/StandardModules"</code>.  Extra '/' characters at the end of the
- * prefix have no effect.  The search is not recursive.
+ * Searches the Java classpath using {@link ClassLoader#getResource(String)}. It
+ * takes a /-separated prefix that is
+ * prepended to the search, e.g. <code>"tla2sany/StandardModules"</code>. Extra
+ * '/' characters at the end of the
+ * prefix have no effect. The search is not recursive.
  */
 class ClasspathResourceLocator implements ResourceLocator {
 

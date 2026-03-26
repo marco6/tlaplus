@@ -31,17 +31,17 @@ import tlc2.tool.CommonTestCase;
 import util.TestPrintStream;
 import util.ToolIO;
 
-public class IllegalOperatorTest  {
+public class IllegalOperatorTest {
 
 	@Test
 	public void test() {
 		final TestPrintStream testPrintStream = new TestPrintStream();
 		ToolIO.out = testPrintStream;
 		ToolIO.err = testPrintStream;
-		
+
 		SANY.SANYmain(
 				new String[] { CommonTestCase.BASE_PATH + "IllegalOperatorTest" });
-		
+
 		testPrintStream.assertSubstring("*** Errors: 1\n");
 		testPrintStream.assertSubstring("line 3, col 8 to line 3, col 11 of module IllegalOperatorTest\n");
 		testPrintStream.assertSubstring("Argument number 1 to operator 'D' \n");

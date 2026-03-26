@@ -41,12 +41,15 @@ import tlc2.util.RandomGenerator;
 // See https://github.com/microsoft/coyote/compare/main...pdeligia/rl-fuzzing
 
 public class RLSimulationWorker extends SimulationWorker {
-	
+
 	// Alpha = Learning Rate
-	protected static final double ALPHA = Double.valueOf(System.getProperty(Simulator.class.getName() + ".rl.alpha", ".3d"));
+	protected static final double ALPHA = Double
+			.valueOf(System.getProperty(Simulator.class.getName() + ".rl.alpha", ".3d"));
 	// Gamma = Discount factor
-	protected static final double GAMMA = Double.valueOf(System.getProperty(Simulator.class.getName() + ".rl.gamma", ".7d"));
-	protected static final double REWARD = Double.valueOf(System.getProperty(Simulator.class.getName() + ".rl.reward", "-10d"));
+	protected static final double GAMMA = Double
+			.valueOf(System.getProperty(Simulator.class.getName() + ".rl.gamma", ".7d"));
+	protected static final double REWARD = Double
+			.valueOf(System.getProperty(Simulator.class.getName() + ".rl.reward", "-10d"));
 	protected static final boolean ENABLED_ONLY = Boolean.getBoolean(Simulator.class.getName() + ".rl.enabledOnly");
 
 	protected final Map<Action, Map<Long, Double>> q = new HashMap<>();
@@ -56,18 +59,19 @@ public class RLSimulationWorker extends SimulationWorker {
 		this(id, tool, resultQueue, seed, maxTraceDepth, maxTraceNum, null, checkDeadlock, traceFile, liveCheck,
 				new LongAdder(), new AtomicLong(), new AtomicLong());
 	}
-	
+
 	public RLSimulationWorker(int id, ITool tool, BlockingQueue<SimulationWorkerResult> resultQueue, long seed,
 			int maxTraceDepth, long maxTraceNum, String traceActions, boolean checkDeadlock, String traceFile,
 			ILiveCheck liveCheck, LongAdder numOfGenStates, AtomicLong numOfGenTraces, AtomicLong m2AndMean) {
-		super(id, tool, resultQueue, seed, maxTraceDepth, maxTraceNum, traceActions, checkDeadlock, traceFile, liveCheck,
+		super(id, tool, resultQueue, seed, maxTraceDepth, maxTraceNum, traceActions, checkDeadlock, traceFile,
+				liveCheck,
 				numOfGenStates, numOfGenTraces, m2AndMean);
-		
+
 		for (final Action a : tool.getActions()) {
 			q.put(a, new HashMap<>());
 		}
 	}
-	
+
 	protected double getReward(final TLCState s, final Action a, final TLCState t) {
 		// The reward is negative to force RL to find alternative solutions instead of
 		// finding the best (one) solution over again. For example, in a maze, RL would
@@ -75,21 +79,22 @@ public class RLSimulationWorker extends SimulationWorker {
 		// elsewhere.
 		return tool.evalReward(s, t, REWARD);
 	}
-	
+
 	private final double getMaxQ(final long fp) {
 		double max = -Double.MAX_VALUE;
 		for (Action a : q.keySet()) {
-			// Map#get instead of Map#getOrDefaults causes an NPE in max when the fp is unknown.
+			// Map#get instead of Map#getOrDefaults causes an NPE in max when the fp is
+			// unknown.
 			double d = this.q.get(a).getOrDefault(fp, -Double.MAX_VALUE);
 			max = Math.max(max, d);
 		}
 		return max;
 	}
-	
+
 	protected long getHash(TLCState state) {
 		return state.fingerPrint();
 	}
-	
+
 	@Override
 	protected int getNextActionAltIndex(final int index, final int p, final Action[] actions, final TLCState curState) {
 		if (!ENABLED_ONLY) {
@@ -98,31 +103,31 @@ public class RLSimulationWorker extends SimulationWorker {
 		}
 		return super.getNextActionAltIndex(index, p, actions, curState);
 	}
-	
+
 	@Override
 	protected final int getNextActionIndex(final RandomGenerator rng, final Action[] actions, final TLCState state) {
 		final long s = getHash(state);
-		
-		// TODO Experiment with initializing to other values. 
+
+		// TODO Experiment with initializing to other values.
 		this.q.values().forEach(m -> m.putIfAbsent(s, 0d));
-		
+
 		// Calculate the sum over all actions.
-		double denum = 0; 
+		double denum = 0;
 		double[] d = new double[actions.length];
 		for (int i = 0; i < d.length; i++) {
 			d[i] = Math.exp(this.q.get(actions[i]).get(s));
 			denum += d[i];
-		}		
-		
-// Apache commons-math with its Pair impl can replace the rest of this method. 
-// However, TLC does not come with commons-math.
-//		final List<Pair<Integer, Double>> arr = new ArrayList<>(d.length);
-//		for (int i = 0; i < d.length; i++) {
-//			arr.add(new Pair<>(i, d[i] / denum));
-//		}
-//		
-//		return new EnumeratedDistribution<>(arr).sample();
-		
+		}
+
+		// Apache commons-math with its Pair impl can replace the rest of this method.
+		// However, TLC does not come with commons-math.
+		// final List<Pair<Integer, Double>> arr = new ArrayList<>(d.length);
+		// for (int i = 0; i < d.length; i++) {
+		// arr.add(new Pair<>(i, d[i] / denum));
+		// }
+		//
+		// return new EnumeratedDistribution<>(arr).sample();
+
 		// Calculate the individual weight.
 		final ArrayList<Pair> m = new ArrayList<>(d.length);
 		for (int i = 0; i < d.length; i++) {
@@ -146,24 +151,24 @@ public class RLSimulationWorker extends SimulationWorker {
 		// Fallback for issues with double precision above.
 		return m.get(d.length - 1).value;
 	}
-	
+
 	@Override
 	protected boolean postTrace(TLCState s) {
 		final int level = s.getLevel();
 		for (int i = level - 1; i > 0; i--) {
 			final double maxQ = getMaxQ(getHash(s));
-			
+
 			final TLCState p = s.getPredecessor();
 			final long fp = getHash(p);
-			
+
 			final Action ai = s.getAction();
-			
+
 			final double qi = this.q.get(ai).get(fp);
 			final double r = getReward(p, ai, s);
 			final double q = ((1d - ALPHA) * qi) + (ALPHA * (r + (GAMMA * maxQ)));
-			
+
 			this.q.get(ai).put(fp, q);
-			
+
 			s = p;
 		}
 		return true;
@@ -184,7 +189,7 @@ public class RLSimulationWorker extends SimulationWorker {
 		}
 		return super.filterActions(actions, curState);
 	}
-	
+
 	private static class Pair implements Comparable<Pair> {
 		public final double key;
 		public final int value;

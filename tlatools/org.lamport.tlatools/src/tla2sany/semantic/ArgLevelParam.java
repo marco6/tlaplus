@@ -5,16 +5,16 @@ package tla2sany.semantic;
 
 class ArgLevelParam {
   /*************************************************************************
-  * ArgLevelParam objects are used only to implement the elements of the   *
-  * set of that name in the specification LevelSpec.tla of level           *
-  * checking.  If the ArgLevelParam object alp is in the HashSet of        *
-  * objects returned by getArgLevelParams for an expression, then the      *
-  * operator alp.op appears somewhere in the expression as a               *
-  * subexpression alp.op(...)  in which the alp.i-th argument's level      *
-  * depends on the parameter alp.param of the current context.             *
-  *************************************************************************/
+   * ArgLevelParam objects are used only to implement the elements of the *
+   * set of that name in the specification LevelSpec.tla of level *
+   * checking. If the ArgLevelParam object alp is in the HashSet of *
+   * objects returned by getArgLevelParams for an expression, then the *
+   * operator alp.op appears somewhere in the expression as a *
+   * subexpression alp.op(...) in which the alp.i-th argument's level *
+   * depends on the parameter alp.param of the current context. *
+   *************************************************************************/
   SymbolNode op;
-  int        i;
+  int i;
   SymbolNode param;
 
   /* Creates new ArgLevelParam */
@@ -27,8 +27,8 @@ class ArgLevelParam {
   public final boolean occur(SymbolNode[] symbols) {
     for (int i = 0; i < symbols.length; i++) {
       if (this.op == symbols[i] ||
-	  this.param == symbols[i]) {
-	return true;
+          this.param == symbols[i]) {
+        return true;
       }
     }
     return false;
@@ -36,10 +36,10 @@ class ArgLevelParam {
 
   public final boolean equals(Object obj) {
     if (obj instanceof ArgLevelParam) {
-      ArgLevelParam alp = (ArgLevelParam)obj;
+      ArgLevelParam alp = (ArgLevelParam) obj;
       return ((this.op == alp.op) &&
-	      (this.i == alp.i) &&
-	      (this.param == alp.param));
+          (this.i == alp.i) &&
+          (this.param == alp.param));
     }
     return false;
   }

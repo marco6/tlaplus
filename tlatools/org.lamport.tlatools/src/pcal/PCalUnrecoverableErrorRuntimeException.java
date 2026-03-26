@@ -5,14 +5,12 @@ package pcal;
  * 
  * @author Simon Zambrovski
  * @version $Id$
- * @deprecated TODO this should be re-factored and not used further 
+ * @deprecated TODO this should be re-factored and not used further
  */
 @Deprecated
-public class PCalUnrecoverableErrorRuntimeException extends RuntimeException
-{
+public class PCalUnrecoverableErrorRuntimeException extends RuntimeException {
 
-    public PCalUnrecoverableErrorRuntimeException(String message)
-    {
+    public PCalUnrecoverableErrorRuntimeException(String message) {
         super(message);
     }
 

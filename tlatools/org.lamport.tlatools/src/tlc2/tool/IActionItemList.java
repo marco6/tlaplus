@@ -47,6 +47,6 @@ public interface IActionItemList {
 	 * pred' # pred
 	 */
 	int CHANGED = -3;
-	
+
 	IActionItemList cons(SemanticNode exprOrOpArgNode, Context c, CostModel cm, int ailconst);
 }

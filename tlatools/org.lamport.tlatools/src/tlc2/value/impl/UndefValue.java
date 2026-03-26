@@ -15,29 +15,36 @@ public class UndefValue extends Value {
 
   public static final UndefValue ValUndef = new UndefValue();
 
-  public UndefValue() { /*SKIP*/ }
+  public UndefValue() {
+    /* SKIP */ }
 
   @Override
-  public byte getKind() { return UNDEFVALUE; }
+  public byte getKind() {
+    return UNDEFVALUE;
+  }
 
   @Override
   public final int compareTo(Object obj) {
     try {
       return (obj instanceof UndefValue) ? 0 : 1;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   public final boolean equals(Object obj) {
     try {
       return (obj instanceof UndefValue);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -45,12 +52,14 @@ public class UndefValue extends Value {
   public final boolean member(Value elem) {
     try {
       Assert.fail("Attempted to check if the value:\n" + Values.ppr(elem.toString()) +
-      "\nis an element " + Values.ppr(this.toString()), getSource());
-      return false;    // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          "\nis an element " + Values.ppr(this.toString()), getSource());
+      return false; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -58,12 +67,14 @@ public class UndefValue extends Value {
   public final boolean isFinite() {
     try {
       Assert.fail("Attempted to check if the value " + Values.ppr(this.toString()) +
-      " is a finite set.", getSource());
-      return false;    // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          " is a finite set.", getSource());
+      return false; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -72,13 +83,15 @@ public class UndefValue extends Value {
     try {
       if (ex.idx < ex.path.length) {
         Assert.fail("Attempted to apply EXCEPT construct to the value " +
-        Values.ppr(this.toString()) + ".", getSource());
+            Values.ppr(this.toString()) + ".", getSource());
       }
       return ex.value;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -87,13 +100,15 @@ public class UndefValue extends Value {
     try {
       if (exs.length != 0) {
         Assert.fail("Attempted to apply EXCEPT construct to the value " +
-        Values.ppr(this.toString()) + ".", getSource());
+            Values.ppr(this.toString()) + ".", getSource());
       }
       return this;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -101,41 +116,53 @@ public class UndefValue extends Value {
   public final int size() {
     try {
       Assert.fail("Attempted to compute the number of elements in the value " +
-      Values.ppr(this.toString()) + ".", getSource());
-      return 0;     // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          Values.ppr(this.toString()) + ".", getSource());
+      return 0; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   @Override
   public boolean mutates() {
-	  return false;
+    return false;
   }
 
   @Override
-  public final boolean isNormalized() { return true; }
+  public final boolean isNormalized() {
+    return true;
+  }
 
   @Override
-  public final Value normalize() { /*nop*/return this; }
+  public final Value normalize() {
+    /* nop */return this;
+  }
 
   @Override
-  public final boolean isDefined() { return false; }
+  public final boolean isDefined() {
+    return false;
+  }
 
   @Override
-  public final IValue deepCopy() { return this; }
+  public final IValue deepCopy() {
+    return this;
+  }
 
   /* The string representation. */
   @Override
   public final StringBuffer toString(StringBuffer sb, int offset, boolean swallow) {
     try {
       return sb.append("UNDEF");
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 

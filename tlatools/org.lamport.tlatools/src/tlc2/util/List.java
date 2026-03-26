@@ -5,7 +5,6 @@
 
 package tlc2.util;
 
-
 public class List {
   public class ConsCell {
     protected Object value;
@@ -16,13 +15,16 @@ public class List {
       this.next = next;
     }
   }
-  
+
   public static List Empty = new List();
   protected ConsCell first;
   protected ConsCell last;
 
-  /* Constructors.  */
-  public List() { this.first = null; this.last = null; }
+  /* Constructors. */
+  public List() {
+    this.first = null;
+    this.last = null;
+  }
 
   public List(Object value) {
     this.first = new ConsCell(value, null);
@@ -35,9 +37,11 @@ public class List {
   }
 
   /* This method returns true iff the list is empty. */
-  public final boolean isEmpty() { return (this.first == null); }
+  public final boolean isEmpty() {
+    return (this.first == null);
+  }
 
-  /* This method returns the length of the list.  */
+  /* This method returns the length of the list. */
   public final int length() {
     int len = 0;
     ConsCell work = this.first;
@@ -49,24 +53,26 @@ public class List {
   }
 
   /**
-   * This method adds (destructively) a new element in the front 
+   * This method adds (destructively) a new element in the front
    * of the list.
    */
   public final void push(Object value) {
     ConsCell cell = new ConsCell(value, this.first);
     this.first = cell;
-    if (this.last == null) this.last = cell;
+    if (this.last == null)
+      this.last = cell;
   }
 
   /**
    * This method removes (destructively) one element from the
-   * front of the list.  It returns the removed element.
+   * front of the list. It returns the removed element.
    */
   public final Object pop() {
     // Assert.check(this.first != null);
     Object result = this.first.value;
     this.first = this.first.next;
-    if (this.first == null) this.last = null;
+    if (this.first == null)
+      this.last = null;
     return result;
   }
 
@@ -116,8 +122,8 @@ public class List {
     boolean isMember = false;
     while (cell != null) {
       if (cell.value == value) {
-	isMember = true;
-	break;
+        isMember = true;
+        break;
       }
       cell = cell.next;
     }
@@ -130,7 +136,8 @@ public class List {
    */
   public final List append1(Object value) {
     ConsCell cell = this.first;
-    if (cell == null) return new List(value);
+    if (cell == null)
+      return new List(value);
 
     List newList = new List(cell.value);
     cell = cell.next;
@@ -149,7 +156,8 @@ public class List {
   /* This method returns a new list that appends two lists. */
   public final List append(List lst) {
     ConsCell cell = this.first;
-    if (cell == null) return new List(lst);
+    if (cell == null)
+      return new List(lst);
 
     List newList = new List(cell.value);
     cell = cell.next;
@@ -164,7 +172,7 @@ public class List {
       ConsCell newCell = new ConsCell(cell.value, null);
       newList.last.next = newCell;
       newList.last = newCell;
-      cell = cell.next;      
+      cell = cell.next;
     }
     return newList;
   }
@@ -177,8 +185,7 @@ public class List {
     if (this.first == null) {
       this.first = new ConsCell(value, null);
       this.last = this.first;
-    }
-    else {
+    } else {
       this.last.next = new ConsCell(value, null);
       this.last = this.last.next;
     }
@@ -192,8 +199,7 @@ public class List {
   public final List appendD(List lst) {
     if (this.first == null) {
       this.first = lst.first;
-    }
-    else {
+    } else {
       this.last.next = lst.first;
     }
     if (lst.first != null) {

@@ -40,55 +40,49 @@ import tlc2.value.impl.LazyValue;
 
 public abstract class Specs {
 
-	/** 
+	/**
 	 * The level of the expression according to level checking.
-	 * static method, does not change instance state 
+	 * static method, does not change instance state
 	 */
-	public static int getLevel(LevelNode expr, Context c)
-	{
-	    HashSet<SymbolNode> lpSet = expr.getLevelParams();
-	    if (lpSet.isEmpty())
-	        return expr.getLevel();
-	
-	    int level = expr.getLevel();
-	    Iterator<SymbolNode> iter = lpSet.iterator();
-	    while (iter.hasNext())
-	    {
-	        SymbolNode param = (SymbolNode) iter.next();
-	        Object res = c.lookup(param, true);
-	        if (res != null)
-	        {
-	            if (res instanceof LazyValue)
-	            {
-	                LazyValue lv = (LazyValue) res;
-	                int plevel = getLevel((LevelNode) lv.expr, lv.con);
-	                level = (plevel > level) ? plevel : level;
-	            } else if (res instanceof OpDefNode)
-	            {
-	                int plevel = getLevel((LevelNode) res, c);
-	                level = (plevel > level) ? plevel : level;
-	            }
-	        }
-	    }
-	    return level;
+	public static int getLevel(LevelNode expr, Context c) {
+		HashSet<SymbolNode> lpSet = expr.getLevelParams();
+		if (lpSet.isEmpty())
+			return expr.getLevel();
+
+		int level = expr.getLevel();
+		Iterator<SymbolNode> iter = lpSet.iterator();
+		while (iter.hasNext()) {
+			SymbolNode param = (SymbolNode) iter.next();
+			Object res = c.lookup(param, true);
+			if (res != null) {
+				if (res instanceof LazyValue) {
+					LazyValue lv = (LazyValue) res;
+					int plevel = getLevel((LevelNode) lv.expr, lv.con);
+					level = (plevel > level) ? plevel : level;
+				} else if (res instanceof OpDefNode) {
+					int plevel = getLevel((LevelNode) res, c);
+					level = (plevel > level) ? plevel : level;
+				}
+			}
+		}
+		return level;
 	}
 
 	/**
 	 * Static method, does not change instance state
+	 * 
 	 * @param expr
 	 * @param subs
 	 * @return
 	 */
-	public static final ExprNode addSubsts(ExprNode expr, List subs)
-	{
-	    ExprNode res = expr;
-	
-	    while (!subs.isEmpty())
-	    {
-	        SubstInNode sn = (SubstInNode) subs.car();
-	        res = new SubstInNode(sn, res, new Errors());
-	        subs = subs.cdr();
-	    }
-	    return res;
+	public static final ExprNode addSubsts(ExprNode expr, List subs) {
+		ExprNode res = expr;
+
+		while (!subs.isEmpty()) {
+			SubstInNode sn = (SubstInNode) subs.car();
+			res = new SubstInNode(sn, res, new Errors());
+			subs = subs.cdr();
+		}
+		return res;
 	}
 }

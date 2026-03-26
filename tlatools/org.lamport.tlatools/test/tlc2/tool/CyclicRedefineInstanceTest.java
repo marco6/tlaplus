@@ -40,7 +40,8 @@ import tlc2.tool.liveness.ModelCheckerTestCase;
 public class CyclicRedefineInstanceTest extends ModelCheckerTestCase {
 
 	public CyclicRedefineInstanceTest() {
-		super("CyclicRedefineInstance", new String[] { "-config", "CyclicRedefineInstance.cfg" }, EC.ExitStatus.VIOLATION_SAFETY);
+		super("CyclicRedefineInstance", new String[] { "-config", "CyclicRedefineInstance.cfg" },
+				EC.ExitStatus.VIOLATION_SAFETY);
 		System.setProperty("tlc2.tool.impl.SpecProcessor.allowCyclicRedefinitions", Boolean.TRUE.toString());
 	}
 
@@ -68,7 +69,7 @@ public class CyclicRedefineInstanceTest extends ModelCheckerTestCase {
 	public void testSpec() throws IOException {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "2"));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "3", "2", "0"));
 

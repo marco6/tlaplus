@@ -17,7 +17,9 @@ public class FaultyFPSet extends MemFPSet implements FPSetRMI {
 		super(new FPSetConfiguration());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.MemFPSet#put(long)
 	 */
 	public synchronized boolean put(long fp) {
@@ -28,7 +30,9 @@ public class FaultyFPSet extends MemFPSet implements FPSetRMI {
 		return super.put(fp);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.MemFPSet#contains(long)
 	 */
 	public synchronized boolean contains(long fp) {

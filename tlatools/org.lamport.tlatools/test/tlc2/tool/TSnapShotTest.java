@@ -41,9 +41,9 @@ public class TSnapShotTest extends ModelCheckerTestCase {
 	public TSnapShotTest() {
 		super(TLAConstants.Files.MODEL_CHECK_FILE_BASENAME, "TSnapShot", ExitStatus.FAILURE_SAFETY_EVAL);
 	}
-	
+
 	// See https://github.com/tlaplus/tlaplus/pull/588#issuecomment-821745313.
-	
+
 	@Test
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
@@ -52,7 +52,7 @@ public class TSnapShotTest extends ModelCheckerTestCase {
 
 		assertTrue(recorder.recorded(EC.TLC_BEHAVIOR_UP_TO_THIS_POINT));
 	}
-	
+
 	protected int getNumberOfThreads() {
 		// This bug only shows up with multiple threads.
 		return 4;

@@ -50,8 +50,9 @@ public class BTGraphNode extends BEGraphNode {
 		return (this.tindex & 0x40000000) > 0;
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
@@ -62,7 +63,9 @@ public class BTGraphNode extends BEGraphNode {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object obj) {

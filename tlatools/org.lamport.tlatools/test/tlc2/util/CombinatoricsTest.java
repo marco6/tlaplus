@@ -42,6 +42,7 @@ public class CombinatoricsTest {
 			}
 		}
 	}
+
 	@Test
 	public void testChooseBigChoose() {
 		for (int n = 0; n < Combinatorics.MAXCHOOSENUM + 1; n++) {
@@ -52,6 +53,7 @@ public class CombinatoricsTest {
 			}
 		}
 	}
+
 	@Test
 	public void testSlowChooseBigChoose() {
 		for (int n = Combinatorics.MAXCHOOSENUM + 1; n < Combinatorics.MAXCHOOSENUM << 2; n++) {
@@ -62,36 +64,42 @@ public class CombinatoricsTest {
 			}
 		}
 	}
+
 	@Test
 	public void testBigChoose50c1() {
 		final BigInteger bigChoose = Combinatorics.bigChoose(50, 1);
 		assertEquals(6, bigChoose.bitLength());
 		assertEquals(50L, bigChoose.longValueExact());
 	}
+
 	@Test
 	public void testBigChoose50c10() {
 		final BigInteger bigChoose = Combinatorics.bigChoose(50, 10);
 		assertEquals(34, bigChoose.bitLength());
 		assertEquals(10272278170L, bigChoose.longValueExact());
 	}
+
 	@Test
 	public void testBigChoose50c20() {
 		final BigInteger bigChoose = Combinatorics.bigChoose(50, 20);
 		assertEquals(46, bigChoose.bitLength());
 		assertEquals(47129212243960L, bigChoose.longValueExact());
 	}
+
 	@Test
 	public void testBigChoose50c30() {
 		final BigInteger bigChoose = Combinatorics.bigChoose(50, 30);
 		assertEquals(46, bigChoose.bitLength());
 		assertEquals(47129212243960L, bigChoose.longValueExact());
 	}
+
 	@Test
 	public void testBigChoose400c1() {
 		final BigInteger bigChoose = Combinatorics.bigChoose(400, 1);
 		assertEquals(9, bigChoose.bitLength());
 		assertEquals(400L, bigChoose.longValueExact());
 	}
+
 	@Test
 	public void testBigChoose400c50() {
 		final BigInteger bigChoose = Combinatorics.bigChoose(400, 50);
@@ -100,6 +108,7 @@ public class CombinatoricsTest {
 				"17035900270730601418919867558071677342938596450600561760371485120",
 				bigChoose.toString());
 	}
+
 	@Test
 	public void testBigChoose400c100() {
 		final BigInteger bigChoose = Combinatorics.bigChoose(400, 100);
@@ -108,6 +117,7 @@ public class CombinatoricsTest {
 				"2241854791554337561923210387201698554845411177476295990399942258896013007429693894018935107174320",
 				bigChoose.toString());
 	}
+
 	@Test
 	public void testBigChoose400c200() {
 		final BigInteger bigChoose = Combinatorics.bigChoose(400, 200);

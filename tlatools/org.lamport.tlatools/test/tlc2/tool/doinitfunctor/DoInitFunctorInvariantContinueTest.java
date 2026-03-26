@@ -38,9 +38,22 @@ import tlc2.output.EC;
 import tlc2.tool.liveness.ModelCheckerTestCase;
 
 public class DoInitFunctorInvariantContinueTest extends ModelCheckerTestCase {
-	
+
 	public DoInitFunctorInvariantContinueTest() {
-		super("DoInitFunctorInvariantContinue", "DoInitFunctor", new String[] {"-continue"}/*, ExitStatus.VIOLATION_SAFETY*/);  //TODO The exit status is incorrect because TLC shows "no error" regardless of the number of violations with "-continue"
+		super("DoInitFunctorInvariantContinue", "DoInitFunctor", new String[] { "-continue" }/*
+																								 * , ExitStatus.
+																								 * VIOLATION_SAFETY
+																								 */); // TODO The exit
+																										// status is
+																										// incorrect
+																										// because TLC
+																										// shows "no
+																										// error"
+																										// regardless of
+																										// the number of
+																										// violations
+																										// with
+																										// "-continue"
 	}
 
 	@Test
@@ -50,13 +63,14 @@ public class DoInitFunctorInvariantContinueTest extends ModelCheckerTestCase {
 		assertFalse(recorder.recorded(EC.GENERAL));
 
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_INVARIANT_VIOLATED_INITIAL, "Inv", "x = 1\n"));
-		// Test that TLC - with continuation enabled - continues after finding the first inv violation.
+		// Test that TLC - with continuation enabled - continues after finding the first
+		// inv violation.
 		final List<Object> records = recorder.getRecords(EC.TLC_INVARIANT_VIOLATED_INITIAL);
 		assertEquals(10, records.size());
 		for (int j = 0; j < records.size(); j++) {
 			final String[] violation = (String[]) records.get(j);
 			assertEquals("Inv", violation[0]);
-			assertEquals("x = " + (j+1) + "\n", violation[1]);
+			assertEquals("x = " + (j + 1) + "\n", violation[1]);
 		}
 
 		assertZeroUncovered();

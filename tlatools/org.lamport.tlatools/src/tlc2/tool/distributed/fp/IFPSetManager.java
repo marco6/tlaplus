@@ -26,7 +26,7 @@ public interface IFPSetManager extends Serializable {
 	 * @see FPSetRMI#checkInvariant()
 	 */
 	boolean checkInvariant();
-	
+
 	/**
 	 */
 	void checkpoint(String fname) throws InterruptedException, IOException;
@@ -76,7 +76,7 @@ public interface IFPSetManager extends Serializable {
 	 * the {@link FPSetRMI} responsible for the subset of the fingerprint space.
 	 * 
 	 * @param fp
-	 *            The fingerprint for which the index should be calculated.
+	 *           The fingerprint for which the index should be calculated.
 	 * @return The index of the {@link FPSet} that is assigned this subset of
 	 *         the fingerprint space.
 	 *         <p>
@@ -109,8 +109,9 @@ public interface IFPSetManager extends Serializable {
 	/**
 	 * @return The number of alive {@link FPSetRMI} instances backing this
 	 *         {@link IFPSetManager}. It results a value in the range [0,
-	 *         {@link IFPSetManager#numOfServers()}]<p>
-	 *         It does <b>not</b> re-count reassigned {@link FPSets}. 
+	 *         {@link IFPSetManager#numOfServers()}]
+	 *         <p>
+	 *         It does <b>not</b> re-count reassigned {@link FPSets}.
 	 * 
 	 * @see IFPSetManager#numOfServers()
 	 */

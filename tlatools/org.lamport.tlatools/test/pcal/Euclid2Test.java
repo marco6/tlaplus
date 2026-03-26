@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class Euclid2Test extends PCalModelCheckerTestCase {
 
 	public Euclid2Test() {
-		super("Euclid2", "pcal", new String[] {"-wf", "-termination"});
+		super("Euclid2", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test

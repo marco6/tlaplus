@@ -36,7 +36,8 @@ public class SilentSanyOutput implements SanyOutput {
   static final PrintStream NullOutputStream = new PrintStream(OutputStream.nullOutputStream());
 
   @Override
-  public void log(LogLevel level, String format, Object... args) { }
+  public void log(LogLevel level, String format, Object... args) {
+  }
 
   @Override
   public PrintStream getStream(LogLevel level) {

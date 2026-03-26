@@ -337,7 +337,7 @@ public class Explorer {
 		executeCommand();
 
 	} // end method
-	
+
 	public void dotSemanticGraph() {
 		final DotExplorerVisitor visitor = new DotExplorerVisitor(mt.getRootModule());
 		mt.getRootModule().walkGraph(visitor.getTable(), visitor);
@@ -403,7 +403,7 @@ public class Explorer {
 			inputTokens = new StringTokenizer("dot");
 			parseAndExecuteCommand();
 			System.exit(0);
-		} else  if (asList.contains("mt")) {
+		} else if (asList.contains("mt")) {
 			inputTokens = new StringTokenizer("mt");
 			parseAndExecuteCommand();
 			System.exit(0);
@@ -420,14 +420,14 @@ public class Explorer {
 			System.out.print("\n>>");
 			// Main command interpreter loop
 			while (getLine()) {
-				
+
 				inputTokens = new StringTokenizer(input.toString());
-				
+
 				parseAndExecuteCommand();
-				
+
 				// Print next user prompt
 				System.out.print("\n>>");
-				
+
 			} // end while
 		}
 

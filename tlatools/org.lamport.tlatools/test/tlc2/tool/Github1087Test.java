@@ -51,7 +51,7 @@ public class Github1087Test extends ModelCheckerTestCase {
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "2", "1", "0"));
 
 		// Assert it has found the temporal violation and also a counter example
@@ -63,13 +63,13 @@ public class Github1087Test extends ModelCheckerTestCase {
 		expectedTrace.add("x = 1");
 		expectedTrace.add("x = -1");
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace);
-		
+
 		// Check that POSTCONDITION wrote the number of generated states to a TLCSet
 		// register.
 		final List<IValue> allValue = TLCGlobals.mainChecker.getAllValue(42);
 		assertTrue(!allValue.isEmpty());
 		assertEquals(IntValue.gen(2), allValue.get(0));
-		
+
 		// Assert POSTCONDITION.
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_FALSE));
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_EVALUATION_ERROR));

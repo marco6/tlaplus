@@ -18,56 +18,64 @@ import tlc2.value.Values;
 import util.Assert;
 
 public class BoolValue extends Value implements IBoolValue {
-  public boolean val;   // the boolean
+  public boolean val; // the boolean
   public static final BoolValue ValFalse = new BoolValue(false);
   /* Value constants. */
-  public static final BoolValue ValTrue  = new BoolValue(true);
+  public static final BoolValue ValTrue = new BoolValue(true);
 
   /* Constructor */
-  public BoolValue(boolean b) { this.val = b; }
+  public BoolValue(boolean b) {
+    this.val = b;
+  }
 
   @Override
   public final boolean getVal() {
-	  return val;
+    return val;
   }
-  
+
   @Override
-  public final byte getKind() { return BOOLVALUE; }
+  public final byte getKind() {
+    return BOOLVALUE;
+  }
 
   @Override
   public final int compareTo(Object obj) {
     try {
       if (obj instanceof BoolValue) {
         int x = this.val ? 1 : 0;
-        int y = ((BoolValue)obj).val ? 1 : 0;
+        int y = ((BoolValue) obj).val ? 1 : 0;
         return x - y;
       }
       if (!(obj instanceof ModelValue)) {
         Assert.fail("Attempted to compare boolean " + Values.ppr(this.toString()) +
-        " with non-boolean:\n" + Values.ppr(obj.toString()), getSource());
+            " with non-boolean:\n" + Values.ppr(obj.toString()), getSource());
       }
       return ((ModelValue) obj).modelValueCompareTo(this);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   public final boolean equals(Object obj) {
     try {
       if (obj instanceof BoolValue) {
-        return this.val == ((BoolValue)obj).val;
+        return this.val == ((BoolValue) obj).val;
       }
       if (!(obj instanceof ModelValue)) {
         Assert.fail("Attempted to compare equality of boolean " + Values.ppr(this.toString()) +
-        " with non-boolean:\n" + Values.ppr(obj.toString()), getSource());
+            " with non-boolean:\n" + Values.ppr(obj.toString()), getSource());
       }
-      return ((ModelValue) obj).modelValueEquals(this) ;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+      return ((ModelValue) obj).modelValueEquals(this);
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -75,12 +83,14 @@ public class BoolValue extends Value implements IBoolValue {
   public final boolean member(Value elem) {
     try {
       Assert.fail("Attempted to check if the value:\n" + Values.ppr(elem.toString()) +
-      "\nis an element of the boolean " + Values.ppr(this.toString()), getSource());
-      return false;   // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          "\nis an element of the boolean " + Values.ppr(this.toString()), getSource());
+      return false; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -88,12 +98,14 @@ public class BoolValue extends Value implements IBoolValue {
   public final boolean isFinite() {
     try {
       Assert.fail("Attempted to check if the boolean " + Values.ppr(this.toString()) +
-      " is a finite set.", getSource());
-      return false;   // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          " is a finite set.", getSource());
+      return false; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -102,13 +114,15 @@ public class BoolValue extends Value implements IBoolValue {
     try {
       if (ex.idx < ex.path.length) {
         Assert.fail("Attempted to apply EXCEPT construct to the boolean " +
-        Values.ppr(this.toString()) + ".", getSource());
+            Values.ppr(this.toString()) + ".", getSource());
       }
       return ex.value;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -117,13 +131,15 @@ public class BoolValue extends Value implements IBoolValue {
     try {
       if (exs.length != 0) {
         Assert.fail("Attempted to apply EXCEPT construct to the boolean " +
-        Values.ppr(this.toString()) + ".", getSource());
+            Values.ppr(this.toString()) + ".", getSource());
       }
       return this;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -131,69 +147,85 @@ public class BoolValue extends Value implements IBoolValue {
   public final int size() {
     try {
       Assert.fail("Attempted to compute the number of elements in the boolean " +
-      Values.ppr(this.toString()) + ".", getSource());
-      return 0;   // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          Values.ppr(this.toString()) + ".", getSource());
+      return 0; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   @Override
   public boolean mutates() {
-	  return false;
+    return false;
   }
 
   @Override
-  public final boolean isNormalized() { return true; }
+  public final boolean isNormalized() {
+    return true;
+  }
 
   @Override
-  public final Value normalize() { /*nop*/ return this; }
+  public final Value normalize() {
+    /* nop */ return this;
+  }
 
   @Override
-  public final boolean isDefined() { return true; }
+  public final boolean isDefined() {
+    return true;
+  }
 
   @Override
-  public final IValue deepCopy() { return this; }
+  public final IValue deepCopy() {
+    return this;
+  }
 
-	@Override
-	public void write(IValueOutputStream vos) throws IOException {
-		vos.writeByte(BOOLVALUE);
-		vos.writeBoolean(val);
-	}
+  @Override
+  public void write(IValueOutputStream vos) throws IOException {
+    vos.writeByte(BOOLVALUE);
+    vos.writeBoolean(val);
+  }
 
   /* The fingerprint method */
   @Override
   public final long fingerPrint(long fp) {
     try {
-      fp = FP64.Extend(fp, BOOLVALUE) ;
-      fp = FP64.Extend(fp, (this.val) ? 't' : 'f') ;
+      fp = FP64.Extend(fp, BOOLVALUE);
+      fp = FP64.Extend(fp, (this.val) ? 't' : 'f');
       return fp;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   @Override
-  public final IValue permute(IMVPerm perm) { return this; }
+  public final IValue permute(IMVPerm perm) {
+    return this;
+  }
 
   /* The string representation */
   public final StringBuffer toString(StringBuffer sb, int offset) {
-	return toString(sb, offset, true);
-}
+    return toString(sb, offset, true);
+  }
 
-/* The string representation */
+  /* The string representation */
   @Override
   public final StringBuffer toString(StringBuffer sb, int offset, boolean swallow) {
     try {
       return sb.append((this.val) ? "TRUE" : "FALSE");
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 

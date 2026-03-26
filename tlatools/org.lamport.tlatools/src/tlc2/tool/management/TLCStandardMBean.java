@@ -31,7 +31,7 @@ public abstract class TLCStandardMBean extends StandardMBean {
 	public String getVersion() {
 		return TLCGlobals.Version.get();
 	}
-	
+
 	public String getRevision() {
 		if (TLCGlobals.Version.revision() == null) {
 			return "N/A";
@@ -40,7 +40,8 @@ public abstract class TLCStandardMBean extends StandardMBean {
 	}
 
 	/**
-	 * Registers a new MBean with the platform's MBean server after which this MBean will be visible in JMX.
+	 * Registers a new MBean with the platform's MBean server after which this MBean
+	 * will be visible in JMX.
 	 * 
 	 * 
 	 * @param objectName The name under which to register this mbean
@@ -48,9 +49,9 @@ public abstract class TLCStandardMBean extends StandardMBean {
 	 * 
 	 * @see MBeanServer#registerMBean(Object, ObjectName)
 	 */
-	protected boolean registerMBean(final String objectName){
+	protected boolean registerMBean(final String objectName) {
 		// register monitoring mx bean
-		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer(); 
+		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
 		try {
 			mxbeanName = new ObjectName(objectName);
 			mbs.registerMBean(this, mxbeanName);
@@ -91,7 +92,7 @@ public abstract class TLCStandardMBean extends StandardMBean {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * @return A null bean that makes NPE checks obsolete
 	 */
@@ -104,14 +105,16 @@ public abstract class TLCStandardMBean extends StandardMBean {
 		}
 		return nullTLCStandardMBean;
 	}
-	
+
 	private static class NullTLCStandardMBean extends TLCStandardMBean implements DynamicMBean {
 
 		public NullTLCStandardMBean() throws NotCompliantMBeanException {
 			super(DynamicMBean.class);
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.tool.management.TLCStandardMBean#registerMBean(java.lang.String)
 		 */
 		@Override
@@ -119,7 +122,9 @@ public abstract class TLCStandardMBean extends StandardMBean {
 			return true;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.tool.management.TLCStandardMBean#unregister()
 		 */
 		@Override

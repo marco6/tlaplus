@@ -37,7 +37,7 @@ public class ConstantContextTLCCacheTest extends ModelCheckerTestCase {
 	public ConstantContextTLCCacheTest() {
 		super("ConstantContextTLCCache");
 	}
-	
+
 	@Test
 	public void test() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));

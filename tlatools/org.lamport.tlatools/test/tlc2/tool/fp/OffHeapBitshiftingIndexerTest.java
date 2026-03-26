@@ -66,30 +66,30 @@ public class OffHeapBitshiftingIndexerTest {
 		// Correctly wraps around when end of array is reached twice
 		Assert.assertEquals(0, indexer.getIdx(maxFP, (int) positions + 1));
 	}
-	
+
 	@Test
 	public void testBitshiftOvershoot() {
 		final int fpBits = 1;
 		final long positions = 536870912L;
-		
+
 		final Indexer indexer = new OffHeapDiskFPSet.BitshiftingIndexer(positions, fpBits);
 		Assert.assertEquals(0, indexer.getIdx(9223371952792813846L, 5));
 	}
-	
+
 	private void doTest(final int fpBits, final long positions, final int logPos, final Indexer indexer) {
 		Assert.assertTrue(Double.compare(Math.pow(2, logPos - fpBits), positions) == 0);
-		
+
 		Assert.assertEquals(fpBits, Long.numberOfLeadingZeros((positions << (Long.SIZE - logPos)) - 1));
-		
+
 		for (long l = 0; l < positions; l++) {
 			final long fp = l << (Long.SIZE - logPos);
 			Assert.assertEquals(l, indexer.getIdx(fp));
-			final long fpNext = ((l+1L) << (Long.SIZE - logPos)) - 1;
+			final long fpNext = ((l + 1L) << (Long.SIZE - logPos)) - 1;
 			Assert.assertEquals(l, indexer.getIdx(fpNext));
 		}
 		Assert.assertEquals(0, indexer.getIdx(positions << (Long.SIZE - logPos)));
 	}
-	
+
 	@Test
 	public void testNoOverflowErrorBitShifting() {
 		try {

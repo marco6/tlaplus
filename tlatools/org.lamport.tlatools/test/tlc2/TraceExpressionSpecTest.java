@@ -41,7 +41,8 @@ public abstract class TraceExpressionSpecTest extends ModelCheckerTestCase {
 		this(specName, "TESpecTest", configName, mode, exitStatus);
 	}
 
-	public TraceExpressionSpecTest(final String specName, final String path, final String configName, String mode, int exitStatus) {
+	public TraceExpressionSpecTest(final String specName, final String path, final String configName, String mode,
+			int exitStatus) {
 		super(specName, path,
 				new String[] { "-noGenerateSpecTEBin", "-config", configName, mode },
 				exitStatus);
@@ -65,7 +66,7 @@ public abstract class TraceExpressionSpecTest extends ModelCheckerTestCase {
 	protected boolean noGenerateSpec() {
 		return false;
 	}
-	
+
 	@Override
 	protected String getTESpecOutDir() {
 		return getMetaDir();
@@ -80,7 +81,8 @@ public abstract class TraceExpressionSpecTest extends ModelCheckerTestCase {
 	public void testSpec() throws Exception {
 		final Date timestamp = new Date(tlc.getStartTime());
 		final String traceSpecName = TraceExplorationSpec.deriveTESpecModuleName(spec, timestamp);
-		doTest(new FastTool(traceSpecName, traceSpecName + ".tla", tlc.getResolver()), TraceExplorationSpec.teModuleId(timestamp));
+		doTest(new FastTool(traceSpecName, traceSpecName + ".tla", tlc.getResolver()),
+				TraceExplorationSpec.teModuleId(timestamp));
 	}
 
 	protected abstract void doTest(Tool tool, final String id) throws Exception;

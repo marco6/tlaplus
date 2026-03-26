@@ -53,8 +53,9 @@ public class Github1134aTest extends ModelCheckerTestCase {
 	@Test
 	public void testSpec() throws IOException {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
-		assertTrue(recorder.recordedWithStringValues(EC.TLC_PROPERTY_VIOLATED_INITIAL, "Init", "State = <<\"INIT\", \"INIT\">>\n"));
-		
+		assertTrue(recorder.recordedWithStringValues(EC.TLC_PROPERTY_VIOLATED_INITIAL, "Init",
+				"State = <<\"INIT\", \"INIT\">>\n"));
+
 		assertZeroUncovered();
 	}
 

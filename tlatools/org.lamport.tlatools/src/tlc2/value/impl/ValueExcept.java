@@ -17,9 +17,15 @@ import tla2sany.semantic.FormalParamNode;
  * structures.
  */
 public class ValueExcept {
-  /** The subscript arguments of the EXCEPT clause, e.g. {@code [a, b]} for {@code ![a][b]}. */
+  /**
+   * The subscript arguments of the EXCEPT clause, e.g. {@code [a, b]} for
+   * {@code ![a][b]}.
+   */
   public Value[] path;
-  /** The replacement value, i.e. the right-hand side of the {@code = v} in the EXCEPT clause. */
+  /**
+   * The replacement value, i.e. the right-hand side of the {@code = v} in the
+   * EXCEPT clause.
+   */
   public Value value;
   /**
    * Current position in {@link #path}. Advanced by {@code Value.takeExcept}
@@ -28,7 +34,7 @@ public class ValueExcept {
    */
   public int idx;
 
-  public ValueExcept(Value [] lhs, Value  rhs) {
+  public ValueExcept(Value[] lhs, Value rhs) {
     this.path = lhs;
     this.value = rhs;
     this.idx = 0;
@@ -50,27 +56,30 @@ public class ValueExcept {
   }
 
   public final ValueExcept checkArg(FcnLambdaValue fcn) {
-    Value  argv = this.path[idx];
+    Value argv = this.path[idx];
     if (fcn.getParams().length() == 1) {
-      if (!fcn.getParams().domains[0].member(argv)) return null;
-    }
-    else {
-      TupleValue tval = (TupleValue)argv;
-      Value [] argList = tval.elems;
+      if (!fcn.getParams().domains[0].member(argv))
+        return null;
+    } else {
+      TupleValue tval = (TupleValue) argv;
+      Value[] argList = tval.elems;
       FormalParamNode[][] formals = fcn.getParams().formals;
-      Value [] domains = fcn.getParams().domains;
+      Value[] domains = fcn.getParams().domains;
       int argn = 0;
       for (int i = 0; i < fcn.getParams().formals.length; i++) {
         FormalParamNode[] formal = formals[i];
         for (int j = 0; j < formal.length; j++) {
-          if (!domains[i].member(argList[argn++])) return null;
+          if (!domains[i].member(argList[argn++]))
+            return null;
         }
       }
     }
     return this;
   }
 
-  public final Value  current() { return this.path[this.idx]; }
+  public final Value current() {
+    return this.path[this.idx];
+  }
 
   public final boolean isLast() {
     return this.idx == (this.path.length - 1);
@@ -86,5 +95,5 @@ public class ValueExcept {
     sb.append(this.value);
     return sb.toString();
   }
-  
+
 }

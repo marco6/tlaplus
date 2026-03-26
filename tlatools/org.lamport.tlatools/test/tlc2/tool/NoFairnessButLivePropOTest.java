@@ -51,7 +51,7 @@ public class NoFairnessButLivePropOTest extends ModelCheckerTestCase {
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "2"));
 
 		// INIT/NEXT with <>[](b = TRUE): non-empty PEM (AEState from negation []<>),
-		// so TLC_CONFIG_NO_SPEC_BUT_PROPERTY fires.  Mirrors MCRealTimeHourClock.tla.
+		// so TLC_CONFIG_NO_SPEC_BUT_PROPERTY fires. Mirrors MCRealTimeHourClock.tla.
 		assertFalse(recorder.recorded(EC.TLC_CONFIG_NO_FAIRNESS_BUT_LIVE_PROPERTY));
 		assertTrue(recorder.recorded(EC.TLC_CONFIG_NO_SPEC_BUT_PROPERTY));
 

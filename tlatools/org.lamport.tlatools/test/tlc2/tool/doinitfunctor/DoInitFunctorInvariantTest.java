@@ -37,7 +37,7 @@ import tlc2.output.EC.ExitStatus;
 import tlc2.tool.liveness.ModelCheckerTestCase;
 
 public class DoInitFunctorInvariantTest extends ModelCheckerTestCase {
-	
+
 	public DoInitFunctorInvariantTest() {
 		super("DoInitFunctorInvariant", "DoInitFunctor", ExitStatus.VIOLATION_SAFETY);
 	}
@@ -48,7 +48,8 @@ public class DoInitFunctorInvariantTest extends ModelCheckerTestCase {
 		assertFalse(recorder.recorded(EC.TLC_STATS));
 		assertFalse(recorder.recorded(EC.GENERAL));
 
-		// Test that TLC - with continuation disabled - stops after finding the first inv violation/finds exactly one violation.
+		// Test that TLC - with continuation disabled - stops after finding the first
+		// inv violation/finds exactly one violation.
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_INVARIANT_VIOLATED_INITIAL, "NotNine", "x = 9\n"));
 		assertEquals(1, recorder.getRecords(EC.TLC_INVARIANT_VIOLATED_INITIAL).size());
 	}

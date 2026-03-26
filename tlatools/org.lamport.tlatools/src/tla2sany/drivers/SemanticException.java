@@ -30,7 +30,7 @@ public class SemanticException extends Exception {
    * @return Details about the error that caused this exception.
    */
   public ErrorDetails getDetails() {
-    return ((AbortException)this.getCause()).getDetails();
+    return ((AbortException) this.getCause()).getDetails();
   }
 
   /**
@@ -41,6 +41,6 @@ public class SemanticException extends Exception {
    * @return Error log to which error causing this exception was reported.
    */
   public Errors getSourceErrorLog() {
-    return ((AbortException)this.getCause()).getSourceErrorLog();
+    return ((AbortException) this.getCause()).getSourceErrorLog();
   }
 }

@@ -50,27 +50,27 @@ import static tla2sany.parser.TLAplusParserConstants.*;
  * start treating it as actual TLA+ tokens. There are currently six possible
  * tokenizer states:
  *
- *  - {@link TLAplusParserConstants#DEFAULT} is the initial tokenizer state.
- *    It treats all text as a free-form pre-module comment until finding the
- *    token sequence ---- MODULE, at which point it transitions to the
- *    {@link TLAplusParserConstants#SPEC} state.
+ * - {@link TLAplusParserConstants#DEFAULT} is the initial tokenizer state.
+ * It treats all text as a free-form pre-module comment until finding the
+ * token sequence ---- MODULE, at which point it transitions to the
+ * {@link TLAplusParserConstants#SPEC} state.
  *
- *  - {@link TLAplusParserConstants#PRAGMA} is entered upon encountering a
- *    "--->" token in the pre-module text, and then tokenizes a list of
- *    numbers or identifiers. This seems unused and will likely be removed:
- *    https://github.com/tlaplus/tlaplus/issues/1227
+ * - {@link TLAplusParserConstants#PRAGMA} is entered upon encountering a
+ * "--->" token in the pre-module text, and then tokenizes a list of
+ * numbers or identifiers. This seems unused and will likely be removed:
+ * https://github.com/tlaplus/tlaplus/issues/1227
  *
- *  - {@link TLAplusParserConstants#SPEC} is the core TLA+ tokenization state
- *    that is active when tokenizing a module.
+ * - {@link TLAplusParserConstants#SPEC} is the core TLA+ tokenization state
+ * that is active when tokenizing a module.
  *
- *  - {@link TLAplusParserConstants#IN_COMMENT} is the state active when
- *    tokenizing TLA+ block comments.
+ * - {@link TLAplusParserConstants#IN_COMMENT} is the state active when
+ * tokenizing TLA+ block comments.
  *
- *  - {@link TLAplusParserConstants#EMBEDDED} is the state entered into when
- *    tokenizing a nested TLA+ block comment.
+ * - {@link TLAplusParserConstants#EMBEDDED} is the state entered into when
+ * tokenizing a nested TLA+ block comment.
  *
- *  - {@link TLAplusParserConstants#IN_EOL_COMMENT} is the state entered upon
- *    tokenizing TLA+ single-line comments.
+ * - {@link TLAplusParserConstants#IN_EOL_COMMENT} is the state entered upon
+ * tokenizing TLA+ single-line comments.
  *
  * {@link TLAplusParserTokenManager#jjnewLexState} encodes state transitions;
  * the array is indexed with {@link TLAplusParserTokenManager#jjmatchedKind},
@@ -78,16 +78,16 @@ import static tla2sany.parser.TLAplusParserConstants.*;
  * arithmetic. Almost all of the state transitions are -1, meaning undefined,
  * except for the following:
  *
- * | Index | State'         |
+ * | Index | State' |
  * |-------|----------------|
- * | 2     | PRAGMA         |
- * | 3     | SPEC           |
- * | 21    | SPEC           |
- * | 27    | IN_COMMENT     |
- * | 28    | IN_EOL_COMMENT |
- * | 29    | EMBEDDED       |
- * | 30    | SPEC           |
- * | 33    | SPEC           |
+ * | 2 | PRAGMA |
+ * | 3 | SPEC |
+ * | 21 | SPEC |
+ * | 27 | IN_COMMENT |
+ * | 28 | IN_EOL_COMMENT |
+ * | 29 | EMBEDDED |
+ * | 30 | SPEC |
+ * | 33 | SPEC |
  *
  * Since the transition table is auto-generated, these could change over time
  * arbitrarily. However, this snapshot is useful for gleaning understanding
@@ -227,8 +227,7 @@ public class TokenizerTests {
         int startState,
         int expectedEndState,
         SimpleCharStream input,
-        List<Integer> expectedTokenKinds
-      ) {
+        List<Integer> expectedTokenKinds) {
       this.testName = testName;
       this.startState = startState;
       this.expectedEndState = expectedEndState;
@@ -250,15 +249,17 @@ public class TokenizerTests {
   @Parameters(name = "{index}: {0}")
   public static Case[] getCases() {
     return new Case[] {
-        new Case("Empty module", DEFAULT,         SPEC,   units(), specTokens()),
-        new Case("Constant",     DEFAULT,         SPEC,   units("CONSTANT x"), specTokens(CONSTANT, IDENTIFIER)),
-        new Case("Constants",    DEFAULT,         SPEC,   units("CONSTANTS x, y"), specTokens(CONSTANT, IDENTIFIER, COMMA, IDENTIFIER)),
-        new Case("Simple opdef", DEFAULT,         SPEC,   units("op == 0"), specTokens(IDENTIFIER, DEF, NUMBER_LITERAL)),
-        new Case("Pragma mode",  DEFAULT,         PRAGMA, input("--->"), List.of(BEGIN_PRAGMA, EOF)),
-        new Case("Pragma input", DEFAULT,         PRAGMA, input("---> id1 1 id2 2 id3 3"), List.of(BEGIN_PRAGMA, IDENTIFIER, NUMBER, IDENTIFIER, NUMBER, IDENTIFIER, NUMBER, EOF)),
-        new Case("Pragma/spec",  DEFAULT,         SPEC,   input("---> 2 ---- MODULE"), List.of(BEGIN_PRAGMA, NUMBER, _BM2, EOF)),
-        new Case("EOL comment",  IN_EOL_COMMENT,  SPEC,   input("\n"), List.of(EOF)),
-        new Case("Block comment",IN_COMMENT,      SPEC,   input("*)"), List.of(EOF)),
+        new Case("Empty module", DEFAULT, SPEC, units(), specTokens()),
+        new Case("Constant", DEFAULT, SPEC, units("CONSTANT x"), specTokens(CONSTANT, IDENTIFIER)),
+        new Case("Constants", DEFAULT, SPEC, units("CONSTANTS x, y"),
+            specTokens(CONSTANT, IDENTIFIER, COMMA, IDENTIFIER)),
+        new Case("Simple opdef", DEFAULT, SPEC, units("op == 0"), specTokens(IDENTIFIER, DEF, NUMBER_LITERAL)),
+        new Case("Pragma mode", DEFAULT, PRAGMA, input("--->"), List.of(BEGIN_PRAGMA, EOF)),
+        new Case("Pragma input", DEFAULT, PRAGMA, input("---> id1 1 id2 2 id3 3"),
+            List.of(BEGIN_PRAGMA, IDENTIFIER, NUMBER, IDENTIFIER, NUMBER, IDENTIFIER, NUMBER, EOF)),
+        new Case("Pragma/spec", DEFAULT, SPEC, input("---> 2 ---- MODULE"), List.of(BEGIN_PRAGMA, NUMBER, _BM2, EOF)),
+        new Case("EOL comment", IN_EOL_COMMENT, SPEC, input("\n"), List.of(EOF)),
+        new Case("Block comment", IN_COMMENT, SPEC, input("*)"), List.of(EOF)),
     };
   }
 

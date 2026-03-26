@@ -10,7 +10,7 @@ import java.io.IOException;
 public abstract class ObjectStack {
   /* A stack of objects. */
 
-  protected int len = 0;            // the queue length
+  protected int len = 0; // the queue length
 
   /* Enqueues the state. It is not thread-safe. */
   public final void push(Object state) {
@@ -23,7 +23,8 @@ public abstract class ObjectStack {
    * queue is empty. It is not thread-safe.
    */
   public final Object pop() {
-    if (this.len == 0) return null;
+    if (this.len == 0)
+      return null;
     Object state = this.dequeueInner();
     this.len--;
     return state;
@@ -43,14 +44,14 @@ public abstract class ObjectStack {
     this.len += states.length;
   }
 
-  /* Return the first element in the queue.  Wait if empty. */
+  /* Return the first element in the queue. Wait if empty. */
   public final synchronized Object spop() {
     Object state = this.dequeueInner();
     this.len--;
     return state;
   }
 
-  /* Return (up to) the first cnt elements in the queue. Wait if empty. */  
+  /* Return (up to) the first cnt elements in the queue. Wait if empty. */
   public final synchronized Object[] spop(int cnt) {
     Object states[] = new Object[cnt];
     int idx;
@@ -58,8 +59,9 @@ public abstract class ObjectStack {
       states[idx] = this.dequeueInner();
       this.len--;
     }
-    if (idx == cnt) return states;
-      
+    if (idx == cnt)
+      return states;
+
     Object res[] = new Object[idx];
     for (int i = 0; i < idx; i++) {
       res[i] = states[i];
@@ -68,7 +70,9 @@ public abstract class ObjectStack {
   }
 
   /* This method returns the size of the state queue. */
-  public final int size() { return this.len; }
+  public final int size() {
+    return this.len;
+  }
 
   /* This method must be implemented in the subclass. */
   abstract void enqueueInner(Object state);
@@ -78,6 +82,8 @@ public abstract class ObjectStack {
 
   /* Checkpoint. */
   public abstract void beginChkpt() throws IOException;
+
   public abstract void commitChkpt() throws IOException;
+
   public abstract void recover() throws IOException;
 }

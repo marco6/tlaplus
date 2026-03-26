@@ -41,13 +41,13 @@ import util.Assert;
  */
 @SuppressWarnings({ "serial" })
 public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implements FPSetStatistic {
-	
+
 	private static class OffHeapSynchronizer {
-		
+
 		private final Set<OffHeapDiskFPSet> sets = new HashSet<OffHeapDiskFPSet>();
-		
+
 		private final AtomicBoolean flusherChosen = new AtomicBoolean();
-		
+
 		// This barrier gets run after one thread signals the need to suspend
 		// put and contains operations to evict to secondary. Signaling is done
 		// via the flusherChoosen AtomicBoolean. All threads (numThreads) will
@@ -69,53 +69,52 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 				// Release exclusive access. It has to be done by the runnable
 				// before workers waiting on the barrier wake up again.
 				Assert.check(flusherChosen.compareAndSet(true, false), EC.GENERAL);
-				
+
 				return super.onAdvance(phase, registeredParties);
 			}
 		};
-		
+
 		private OffHeapSynchronizer() {
 			// Don't want any copies.
 		}
-		
+
 		public final void add(final OffHeapDiskFPSet aSet) {
 			this.sets.add(aSet);
 		}
-		
+
 		public final void incWorkers(final int numWorkers) {
 			final int parties = phaser.getRegisteredParties();
 			if (parties < numWorkers) {
 				phaser.bulkRegister(numWorkers - parties);
 			}
 		}
-		
+
 		public final boolean evictPending() {
 			return flusherChosen.get();
 		}
-		
+
 		public final void evict() {
 			flusherChosen.compareAndSet(false, true);
 		}
-		
+
 		public final void awaitEviction() {
 			phaser.arriveAndAwaitAdvance();
 		}
-		
+
 		public AtomicBoolean getFlusherChosen() {
 			return flusherChosen;
 		}
 	}
 
 	// We require a singleton here, because if TLC is run with multiple instances
-	// of FPSets - the default - workers will call evict and awaitEvict on 
+	// of FPSets - the default - workers will call evict and awaitEvict on
 	// all FPSet instances. Thus, an individual synchronization internal to each
 	// FPSet would never see the complete set of waiting workers. TLC would thus
 	// deadlock. This is why SYNC is a singleton and shared by all FPSet instances.
 	private static final OffHeapSynchronizer SYNC = new OffHeapSynchronizer();
-	
+
 	private static final int PROBE_LIMIT = Integer.getInteger(OffHeapDiskFPSet.class.getName() + ".probeLimit", 1024);
 	static final long EMPTY = 0L;
-	
 
 	/**
 	 * @see LongArray#isSupported()
@@ -125,7 +124,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 	}
 
 	private final transient LongArray array;
-	
+
 	/**
 	 * The indexer maps a fingerprint to a in-memory bucket.
 	 */
@@ -135,12 +134,12 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 
 	protected OffHeapDiskFPSet(final FPSetConfiguration fpSetConfig) throws RemoteException {
 		super(fpSetConfig);
-		
+
 		final long positions = fpSetConfig.getMemoryInFingerprintCnt();
-		
+
 		// Determine base address which varies depending on machine architecture.
 		this.array = new LongArray(positions);
-		
+
 		// If Hamming weight is 1, the logical index address can be calculated
 		// significantly faster by bit-shifting. However, with large memory
 		// sizes, only supporting increments of 2^n sizes would waste memory
@@ -156,17 +155,19 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 			// non 2^n buckets cannot use a bit shifting indexer
 			this.indexer = new InfinitePrecisionIndexer(positions, fpSetConfig.getFpBits());
 		}
-		
+
 		// Use the non-concurrent flusher as the default. Will be replaced by
 		// the CyclicBarrier-Runnable later. Just set to prevent NPEs when
 		// eviction/flush is called before init.
 		this.flusher = new OffHeapMSBFlusher(array);
-		
+
 		this.flusherChosen = SYNC.getFlusherChosen();
 		SYNC.add(this);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#init(int, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -174,12 +175,14 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 			throws IOException {
 		super.init(numThreads, aMetadir, filename);
 		this.numThreads = numThreads;
-		
+
 		array.zeroMemory(numThreads);
 		return this;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#incWorkers(int)
 	 */
 	public void incWorkers(int numWorkers) {
@@ -193,22 +196,22 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 		final long timestamp = System.currentTimeMillis();
 		final long insertions = tblCnt.longValue();
 		final double lf = tblCnt.doubleValue() / (double) maxTblCnt;
-		
+
 		LOGGER.log(Level.FINE,
 				"Started eviction of disk {0} the {1}. time at {2} after {3} insertions, load factor {4} and reprobe of {5}.",
 				new Object[] { ((DiskFPSetMXWrapper) diskFPSetMXWrapper).getObjectName(), getGrowDiskMark(),
 						timestamp, insertions, lf, PROBE_LIMIT });
-		
+
 		// Check that the table adheres to our invariant. Otherwise, we
 		// can't hope to successfully evict it.
 		assert checkInput(array, indexer, PROBE_LIMIT) : "Table violates invariants prior to eviction: "
 				+ array.toString();
-		
+
 		// Only pay the price of creating threads when array is
 		// sufficiently large and the array size is large enough to
 		// partition it for multiple threads.
 		flusher = getFlusher(numThreads, insertions);
-		
+
 		try {
 			flusher.flushTable(); // Evict()
 		} catch (IOException e) {
@@ -241,7 +244,9 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#sizeof()
 	 */
 	public long sizeof() {
@@ -251,31 +256,35 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 		return size;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#needsDiskFlush()
 	 */
 	@Override
 	protected final boolean needsDiskFlush() {
 		return loadFactorExceeds(1d) || forceFlush;
 	}
-	
+
 	/**
 	 * This limits the (primary) in-memory hash table to grow beyond the given
 	 * limit.
 	 * 
 	 * @param limit
-	 *            A limit in the domain [0, 1] which restricts the hash table
-	 *            from growing past it.
+	 *              A limit in the domain [0, 1] which restricts the hash table
+	 *              from growing past it.
 	 * @return true iff the current hash table load exceeds the given limit
 	 */
 	private final boolean loadFactorExceeds(final double limit) {
 		final double d = (this.tblCnt.doubleValue()) / (double) this.maxTblCnt;
 		return d >= limit;
 	}
-    
+
 	private static final int FOUND = -1;
-    
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#memLookup(long)
 	 */
 	final boolean memLookup(final long fp0) {
@@ -300,7 +309,9 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 		return free;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#memInsert(long)
 	 */
 	final boolean memInsert(final long fp0) throws IOException {
@@ -326,14 +337,13 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 					continue;
 				}
 			}
-			
+
 			// Expected is the fingerprint to be inserted.
 			if ((expected & FLUSHED_MASK) == fp0) {
 				return true;
 			}
 		}
 
-		
 		// We failed to insert into primary. Consequently, lets try and make
 		// some room by signaling all threads to wait for eviction.
 		forceFlush();
@@ -343,11 +353,13 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 		// flusherChosen back to false after barrier.awaits returns because it
 		// leaves a window during which other threads read the old true value of
 		// flusherChosen a second time and immediately wait again.
-		
+
 		return put(fp0);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#put(long)
 	 */
 	public final boolean put(final long fp) throws IOException {
@@ -367,88 +379,104 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 				this.memHitCnt.increment();
 				return true;
 			}
-			
+
 			// Lookup on disk
 			if (this.diskLookup(fp0)) {
 				this.diskHitCnt.increment();
 				return true;
 			}
 		}
-		
+
 		// Lastly, try to insert into memory.
 		return memInsert0(fp0, start);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#contains(long)
 	 */
 	public final boolean contains(final long fp) throws IOException {
 		// maintains happen-before with regards to successful put
-		
+
 		if (checkEvictPending()) {
 			return contains(fp);
 		}
 
 		// zeros the msb
 		final long fp0 = fp & FLUSHED_MASK;
-		
+
 		// Lookup in primary
 		if (memLookup(fp0)) {
 			return true;
 		}
-		
+
 		// Lookup on secondary/disk
 		if (this.diskLookup(fp0)) {
 			diskHitCnt.increment();
 			return true;
 		}
-		
+
 		return false;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#forceFlush()
 	 */
 	public void forceFlush() {
 		SYNC.evict();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#acquireTblWriteLock()
 	 */
 	void acquireTblWriteLock() {
 		// no-op for now
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#releaseTblWriteLock()
 	 */
 	void releaseTblWriteLock() {
 		// no-op for now
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#getTblCapacity()
 	 */
 	public long getTblCapacity() {
 		return maxTblCnt;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#getTblLoad()
 	 */
 	public long getTblLoad() {
 		return getTblCnt();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#getOverallCapacity()
 	 */
 	public long getOverallCapacity() {
 		return array.size();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#getBucketCapacity()
 	 */
 	public long getBucketCapacity() {
@@ -456,8 +484,10 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 		// addressing.
 		return PROBE_LIMIT;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#checkFPs()
 	 */
 	@Override
@@ -478,27 +508,28 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 		// => O(n log n)
 		// Scalability is achieved by partitioning the array for 1) and 2),
 		// which is possible due to the bounded disorder in array.
-		
+
 		// One can think of two shortcuts to approximate of the closest pair:
 		// a) Track the minimum distance during the 1) step in prepareTable. A possible
 		// implementation can pass something similar to a BinaryOpeartor to the
 		// LongComparator. Due to the bounded disorder, this generally works except for
 		// the corner case where the closest pair are two fingerprints in two
 		// non-adjacent partitions, i.e. [,,,fp23],[],...,[],[,,fp42,,,]. This is
-		// frequently the case for very sparsely populated arrays. 
+		// frequently the case for very sparsely populated arrays.
 		// b) For low load factors (thus low collision rates) simply skip step 1) and do
 		// not sort the array at all. A zero collision rate implies that the array
-		// is sorted (except for first PROBE_LIMIT slots) if fingerprints wrapped around.
+		// is sorted (except for first PROBE_LIMIT slots) if fingerprints wrapped
+		// around.
 		// c) Select just 1..N partitions out of the set of all array partitions
 		// for which the closest pair gets calculated. This is a more extreme variant
 		// of the current approximation which skips fingerprints on disk.
-		
+
 		// 1) Sort all fingerprints, either with a sequential or concurrent
 		// flusher depending on the size of the array.
 		final int numThreads = TLCGlobals.getNumWorkers();
 		this.flusher = getFlusher(numThreads, getTblCnt());
 		this.flusher.prepareTable();
-		
+
 		// 2) A task finds the pair with the minimum distance in an ordered
 		// subrange of array. Each task is assigned an id. This id determines
 		// which subrange of array (partition) it searches.
@@ -514,9 +545,9 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 					// Partitions overlap in case the two fingerprints with
 					// minimum distance are in two adjacent partitions.
 					final long end = (isLast ? array.size() - 1L : start + length) + 1L;
-					
+
 					long distance = Long.MAX_VALUE;
-					
+
 					// Reuse Iterator implementation which already handles the
 					// various cases related to the cyclic table layout. Pass it
 					// getTblCnt to make sure next does not keep going forever
@@ -545,7 +576,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 				}
 			});
 		}
-		
+
 		// Start as many tasks as we have workers. Afterwards, collect the
 		// minimum distance out of the set of results provided by the workers.
 		final ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
@@ -571,15 +602,15 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 		} finally {
 			executorService.shutdown();
 		}
-		
-		
+
 		// Dynamic variant to maintain closest pair:
 		// The dynamic (during insertions and not on static data) variant of the closest
 		// pair problem also provides an approximation of the actual closest pair. It
 		// can be maintained with little overhead in runtime and space and returned in
 		// constant time O(1). Contrary to the current implementation, it does not skip
 		// fingerprints on disk but observes all fingerprints.
-		// For that, we observe the minimum distance OD of the fingerprint to be inserted
+		// For that, we observe the minimum distance OD of the fingerprint to be
+		// inserted
 		// and all fingerprints it collides with in the method memInsert0. Before
 		// returning from memInsert0, the global minimum distance GD gets updated to the
 		// observed distance OD iff OD < GD (for scalability reasons we want to use a
@@ -587,7 +618,8 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 		// This provides a sufficient approximation iff the collision rate is
 		// sufficiently high. Under a low collision rate, the number of comparisons in
 		// memInsert0 will be low. But even under a high collision rate, the
-		// approximation GD does not necessarily converge with the real minimum distance:
+		// approximation GD does not necessarily converge with the real minimum
+		// distance:
 		// Let f1 differs from f2 in just the lowest significant bit (LSB) and let f1 <
 		// f2. Depending on the size of the array, it is possible that f1 and f2 are
 		// indexed to two adjacent positions. If both positions for f1 and f2 are empty
@@ -598,7 +630,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 		// collision probability, which will also be very small.
 	}
 
-	//**************************** Indexer ****************************//
+	// **************************** Indexer ****************************//
 
 	public interface Indexer {
 		long getIdx(final long fp);
@@ -632,12 +664,12 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 			this.positions = BigDecimal.valueOf(positions);
 			this.factor = BigDecimal.valueOf(positions).divide(BigDecimal.valueOf(maxFingerprint));
 		}
-	
+
 		@Override
 		public long getIdx(final long fp) {
 			return getIdx(fp, 0);
 		}
-		
+
 		@Override
 		public long getIdx(final long fp, final int probe) {
 			final BigDecimal scaled = BigDecimal.valueOf(fp).multiply(factor).add(BigDecimal.valueOf(probe))
@@ -654,7 +686,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 		}
 
 		private final long positions;
-	    private final int shift;
+		private final int shift;
 		private final BigInteger multiplier;
 
 		public InfinitePrecisionMult1024Indexer(final long positions, final int fpBits) {
@@ -730,7 +762,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 			assert gcd.bitCount() == 1;
 
 			this.multiplier = bPos.divide(gcd).longValueExact();
-			
+
 			final BigInteger rMax = max.divide(gcd);
 			assert rMax.bitCount() == 1;
 			this.shift = rMax.getLowestSetBit();
@@ -763,11 +795,10 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 		public BitshiftingIndexer(final long positions, final int fpBits) {
 			assert positions >= 0 && fpBits > 0 && fpBits < 64;
 			this.positions = positions;
-			
+
 			this.prefixMask = 0xFFFFFFFFFFFFFFFFL >>> fpBits;
 			assert prefixMask > positions : "fingerprint equals index if positions exceeds fingerprint space.";
 
-			
 			long n = (0xFFFFFFFFFFFFFFFFL >>> fpBits) - (positions - 1);
 			int moveBy = 0;
 			while (n >= positions) {
@@ -776,35 +807,35 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 			}
 			this.rShift = moveBy;
 		}
-		
+
 		@Override
 		public long getIdx(final long fp) {
 			return (fp & prefixMask) >>> rShift;
 		}
-		
+
 		@Override
 		public long getIdx(final long fp, int probe) {
 			// Have to mod positions because probe might cause us to overshoot.
-			return (((fp & prefixMask) >>> rShift) + probe) % positions; 
+			return (((fp & prefixMask) >>> rShift) + probe) % positions;
 		}
 	}
 
-	//**************************** Flusher ****************************//
-	
+	// **************************** Flusher ****************************//
+
 	private LongComparator getLongComparator() {
 		return new LongComparator() {
 			@Override
 			public int compare(long fpA, long posA, long fpB, long posB) {
-				
+
 				// Elements not in Nat \ {0} remain at their current
 				// position.
 				if (fpA <= EMPTY || fpB <= EMPTY) {
 					return 0;
 				}
-				
+
 				final boolean wrappedA = indexer.getIdx(fpA) > posA;
 				final boolean wrappedB = indexer.getIdx(fpB) > posB;
-				
+
 				if (wrappedA == wrappedB && posA > posB) {
 					return fpA < fpB ? -1 : 1;
 				} else if (wrappedA ^ wrappedB) {
@@ -847,7 +878,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 		}
 		return occupied;
 	}
-	
+
 	private long getNextLower(long idx) {
 		// Reverse to the next non-evicted/empty fp that belongs to this partition.
 		long fp = array.get(idx);
@@ -856,7 +887,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 		}
 		return fp;
 	}
-	
+
 	/**
 	 * The number of fingerprints stored on disk smaller than fp.
 	 */
@@ -864,7 +895,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 		if (this.index == null) {
 			return 0L;
 		}
-		
+
 		final int indexLength = this.index.length;
 		int loPage = 0;
 		int hiPage = indexLength - 1;
@@ -878,7 +909,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 			return this.braf[id].length() / FPSet.LongSize;
 		}
 		// See DiskFPSet#diskLookup for comments.
-		
+
 		// Lookup the corresponding disk page in index.
 		final double dfp = (double) fp;
 		while (loPage < hiPage - 1) {
@@ -904,7 +935,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 		// no page is in between loPage and hiPage at this point
 		Assert.check(hiPage == loPage + 1, EC.SYSTEM_INDEX_ERROR);
 		assert this.index[loPage] < fp && fp < this.index[hiPage];
-		
+
 		// Read the disk page and try to find the given fingerprint or the next
 		// smaller one. Calculate its offset in file.
 		long midEntry = -1L;
@@ -927,7 +958,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 				break;
 			}
 		}
-		
+
 		assert isHigher(midEntry, fp, raf);
 		return midEntry;
 	}
@@ -943,16 +974,16 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 	}
 
 	public class ConcurrentOffHeapMSBFlusher extends OffHeapMSBFlusher {
-		
+
 		private final int numThreads;
 		private final ExecutorService executorService;
-		private final int r; 
+		private final int r;
 		private final long insertions;
 		/**
 		 * The length of a single partition.
 		 */
 		private final long length;
-		private List<Result> offsets; 
+		private List<Result> offsets;
 
 		public ConcurrentOffHeapMSBFlusher(final LongArray array, final int r, final int numThreads,
 				final long insertions) {
@@ -964,8 +995,10 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 			this.length = (long) Math.floor(a.size() / (double) numThreads);
 			this.executorService = Executors.newFixedThreadPool(numThreads);
 		}
-		
-		/* (non-Javadoc)
+
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.tool.fp.DiskFPSet.Flusher#prepareTable()
 		 */
 		@Override
@@ -982,26 +1015,26 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 						final boolean isLast = id == numThreads - 1;
 						final long start = id * length;
 						final long end = isLast ? a.size() - 1L : start + length;
-						
+
 						// Sort partition p_n. We have exclusive access.
 						LongArrays.sort(a, isFirst ? 0L : start + 1L, end, getLongComparator());
 						assert checkSorted(a, indexer, r, isFirst ? 0L : start + 1L, end) == -1L : String.format(
 								"Array %s not fully sorted at index %s and reprobe %s in range [%s,%s].", a.toString(),
 								checkSorted(array, indexer, r, start, end), r, start, end);
-						
+
 						// Wait for the other threads sorting p_n+1 to be done
 						// before we stitch together p_n and p_n+1.
 						phase.await();
 
 						// Sort the range between partition p_n and
 						// p_n+1 bounded by reprobe.
-						LongArrays.sort(a, end - r+1L, end + r+1L, getLongComparator());
-						
+						LongArrays.sort(a, end - r + 1L, end + r + 1L, getLongComparator());
+
 						// Wait for table to be fully sorted before we calculate
 						// the offsets. Offsets can only be correctly calculated
 						// on a sorted table.
 						phase.await();
-						
+
 						// Count the occupied positions for this
 						// partition. Occupied positions are those which
 						// get evicted (written to disk).
@@ -1011,12 +1044,12 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 						final long limit = isLast ? a.size() + r : end;
 						final long occupied = getTableOffset(a, r, indexer, start, limit);
 						assert occupied <= limit - start;
-						
+
 						if (index == null) {
 							// No index, no need to calculate a disk offset.
 							return new Result(occupied, 0L);
 						}
-						
+
 						// Determine number of elements in the old/current file.
 						if (isFirst && isLast) {
 							return new Result(occupied, fileCnt);
@@ -1043,12 +1076,13 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 			assert checkSorted(a, indexer, r) == -1L : String.format(
 					"Array %s not fully sorted at index %s and reprobe %s.", a.toString(),
 					checkSorted(array, indexer, r), r);
-			
+
 			LOGGER.log(Level.FINE, "Sorted in-memory table with {0} workers and reprobe {1} in {2} ms.",
 					new Object[] { numThreads, r, System.currentTimeMillis() - now });
 		}
-		
-		private List<Result> futuresToResults(List<Future<Result>> futures) throws InterruptedException, ExecutionException {
+
+		private List<Result> futuresToResults(List<Future<Result>> futures)
+				throws InterruptedException, ExecutionException {
 			final List<Result> res = new ArrayList<Result>(futures.size());
 			for (Future<Result> future : futures) {
 				res.add(future.get());
@@ -1057,7 +1091,8 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 		}
 
 		@Override
-		protected void mergeNewEntries(final BufferedRandomAccessFile[] inRAFs, final BufferedRandomAccessFile outRAF, final Iterator ignored) throws IOException {
+		protected void mergeNewEntries(final BufferedRandomAccessFile[] inRAFs, final BufferedRandomAccessFile outRAF,
+				final Iterator ignored) throws IOException {
 			final long now = System.currentTimeMillis();
 			assert offsets.stream().mapToLong(new ToLongFunction<Result>() {
 				public long applyAsLong(Result result) {
@@ -1084,7 +1119,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 			final BufferedRandomAccessFile[] tmpRAFs = new BufferedRandomAccessFile[numThreads];
 			for (int i = 0; i < numThreads; i++) {
 				final int id = i;
-				
+
 				// Create a new RAF instance. The outRAF instance is
 				// otherwise shared by multiple writers leading to race
 				// conditions and inconsistent fingerprint set files.
@@ -1099,7 +1134,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 				// iterator is supposed to return.
 				final Iterator itr = new Iterator(a, result.getTable(), id * length, indexer,
 						id == 0 ? Iterator.WRAP.ALLOWED : Iterator.WRAP.FORBIDDEN);
-				
+
 				final BufferedRandomAccessFile inRAF = inRAFs[id];
 				assert (result.getInOffset() + result.getDisk()) * FPSet.LongSize <= inRAF.length();
 				inRAF.seekAndMark(result.getInOffset() * FPSet.LongSize);
@@ -1109,12 +1144,13 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 				// last thread which reads until EOF. Pass 0 when
 				// nothing can be read from disk.
 				final long diskReads = id == numThreads - 1 ? fileCnt - result.getInOffset() : result.getDisk();
-				
+
 				tasks.add(new Callable<Void>() {
 					public Void call() throws Exception {
 						ConcurrentOffHeapMSBFlusher.super.mergeNewEntries(inRAF, tmpRAFs[id], itr, diskReads);
-						assert tmpRAFs[id].getFilePointer() == (result.getOutOffset() + result.getTotal()) * FPSet.LongSize : id
-								+ " writer did not write expected amount of fingerprints to disk.";
+						assert tmpRAFs[id].getFilePointer() == (result.getOutOffset() + result.getTotal())
+								* FPSet.LongSize : id
+										+ " writer did not write expected amount of fingerprints to disk.";
 						return null;
 					}
 				});
@@ -1131,7 +1167,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 			} finally {
 				executorService.shutdown();
 			}
-			
+
 			// Finally close the out rafs after all tasks have finished. On
 			// Linux, closing an instance of the tmpRAFs appears to be racy when
 			// other tasks still execute.
@@ -1139,13 +1175,15 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 				tmpRAFs[i].close();
 			}
 
-			// We wrote some data to the underlying file through different file descriptors (the tmpRAF objects).  To
-			// read that data back, we need to ensure that outRAF is not holding on to any cached bytes.
+			// We wrote some data to the underlying file through different file descriptors
+			// (the tmpRAF objects). To
+			// read that data back, we need to ensure that outRAF is not holding on to any
+			// cached bytes.
 			outRAF.invalidateBufferedData();
 
 			assert checkRAFs(inRAFs);
 			assert checkTable(a) : "Missed element during eviction.";
-			
+
 			LOGGER.log(Level.FINE, "Wrote table to disk with {0} workers in {1} ms.",
 					new Object[] { numThreads, (System.currentTimeMillis() - now) });
 		}
@@ -1155,53 +1193,62 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 			private final long occupiedDisk;
 			private long outOffset;
 			private long inOffset;
-			
+
 			public Result(long occupiedTable, long occupiedDisk) {
 				this.occupiedTable = occupiedTable;
 				this.occupiedDisk = occupiedDisk;
 			}
+
 			public long getDisk() {
 				return occupiedDisk;
 			}
+
 			public long getTable() {
 				return occupiedTable;
 			}
+
 			public long getTotal() {
 				return occupiedDisk + occupiedTable;
 			}
+
 			public void setOutOffSet(long offset) {
 				this.outOffset = offset;
 			}
+
 			public void setInOffset(long offset) {
 				this.inOffset = offset;
 			}
+
 			public long getInOffset() {
 				return this.inOffset;
 			}
+
 			public long getOutOffset() {
 				return this.outOffset;
 			}
 		}
 	}
-	
+
 	public class OffHeapMSBFlusher extends Flusher {
-		
+
 		protected final LongArray a;
 
 		public OffHeapMSBFlusher(LongArray array) {
 			a = array;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.tool.fp.DiskFPSet.Flusher#prepareTable()
 		 */
 		@Override
 		protected void prepareTable() {
 			super.prepareTable();
 			final int r = PROBE_LIMIT;
-			
+
 			assert checkInput(array, indexer, r) : "Table violates invariants prior to eviction";
-			
+
 			// Sort with a single thread.
 			LongArrays.sort(a, 0, a.size() - 1L + r, getLongComparator());
 
@@ -1210,11 +1257,15 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 					checkSorted(array, indexer, r), r);
 		}
 
-		/* (non-Javadoc)
-		 * @see tlc2.tool.fp.MSBDiskFPSet#mergeNewEntries(java.io.RandomAccessFile, java.io.RandomAccessFile)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see tlc2.tool.fp.MSBDiskFPSet#mergeNewEntries(java.io.RandomAccessFile,
+		 * java.io.RandomAccessFile)
 		 */
 		@Override
-		protected void mergeNewEntries(BufferedRandomAccessFile[] inRAFs, BufferedRandomAccessFile outRAF) throws IOException {
+		protected void mergeNewEntries(BufferedRandomAccessFile[] inRAFs, BufferedRandomAccessFile outRAF)
+				throws IOException {
 			final long buffLen = tblCnt.sum();
 			final Iterator itr = new Iterator(array, buffLen, indexer);
 
@@ -1226,7 +1277,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 			writeIndex(index, outRAF, length);
 			assert checkIndex(index) : "Broken disk index.";
 			assert checkIndex(index, outRAF, length) : "Misaligned disk index.";
-			
+
 			// maintain object invariants
 			fileCnt += buffLen;
 		}
@@ -1238,11 +1289,12 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 		}
 
 		/*
-		 * See PlusCal spec OpenAddressing.ConcurrentFlusher.tla which has been checked for Nat == 0..6.
+		 * See PlusCal spec OpenAddressing.ConcurrentFlusher.tla which has been checked
+		 * for Nat == 0..6.
 		 */
 		protected void mergeNewEntries(BufferedRandomAccessFile inRAF, RandomAccessFile outRAF, final Iterator itr,
 				long diskReads) throws IOException {
-			
+
 			// Disk might be empty.
 			long value = 0L;
 			if (diskReads > 0) {
@@ -1250,10 +1302,10 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 			} else {
 				assert fileCnt == 0L;
 			}
-			
+
 			long tableReads = itr.elements;
 			long fp = itr.markNext();
-			
+
 			do {
 				if (value == fp) {
 					// A data corruption (either in memory or on disk) or a bug in the fingerprint
@@ -1263,7 +1315,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 					// TLC ends up checking the same state multiple times due to the duplicate
 					// fingerprints.
 					MP.printWarning(EC.TLC_FP_VALUE_ALREADY_ON_DISK, String.valueOf(value));
-					
+
 					// Contrary to the two if blocks below, this writes to disk once but decrements
 					// both counters.
 					tableReads--;
@@ -1271,7 +1323,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 
 					outRAF.writeLong(fp);
 					diskWriteCnt.increment();
-		            
+
 					if (tableReads > 0) {
 						final long nextFP = itr.markNext();
 						assert nextFP > fp : nextFP + " > " + fp + " from table at pos " + itr.pos + " "
@@ -1285,22 +1337,22 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 					}
 				}
 				assert fp > EMPTY : "Wrote an invalid fingerprint to disk.";
-				
+
 				// From memory/table
-		        if (tableReads > 0 && (fp < value || diskReads == 0)) {
+				if (tableReads > 0 && (fp < value || diskReads == 0)) {
 					outRAF.writeLong(fp);
 					tableReads--;
 					diskWriteCnt.increment();
 					// Read next value if any.
-		            if (tableReads > 0) {
+					if (tableReads > 0) {
 						final long nextFP = itr.markNext();
 						assert nextFP > fp : nextFP + " > " + fp + " from table at pos " + itr.pos + " "
 								+ a.toString(itr.pos - 10L, itr.pos + 10L);
 						fp = nextFP;
-		            }
-		         }
-		         
-		         // From file/disk
+					}
+				}
+
+				// From file/disk
 				if (diskReads > 0 && (value < fp || tableReads == 0)) {
 					outRAF.writeLong(value);
 					diskReads--;
@@ -1314,14 +1366,16 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 				}
 
 			} while (diskReads > 0 || tableReads > 0);
-			
+
 			// both sets used up completely
 			Assert.check(diskReads == 0L && tableReads == 0L, EC.GENERAL);
 			assert !itr.hasNext();
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#calculateIndexLen(long)
 	 */
 	@Override
@@ -1344,7 +1398,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 			index[i] = value;
 		}
 	}
-	
+
 	/**
 	 * A non-thread safe Iterator whose next method returns the next largest
 	 * element.
@@ -1362,7 +1416,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 
 		private long pos = 0;
 		private long elementsRead = 0L;
-		
+
 		public Iterator(final LongArray array, final long elements, final Indexer indexer) {
 			this(array, elements, 0L, indexer, WRAP.ALLOWED);
 		}
@@ -1391,19 +1445,19 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 		 * @return the next element in the iteration that is not EMPTY nor
 		 *         marked evicted.
 		 * @exception NoSuchElementException
-		 *                iteration has no more elements.
+		 *                                   iteration has no more elements.
 		 */
 		public long next() {
 			return next0(false, Long.MAX_VALUE);
 		}
-		
+
 		long next(long maxPos) {
 			if (pos >= maxPos) {
 				return EMPTY;
 			}
 			return next0(false, maxPos);
 		}
-		
+
 		/**
 		 * Returns the next element in the iteration that is not EMPTY nor
 		 * marked evicted and marks it to be evicted.
@@ -1414,7 +1468,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 		 * @return the next element in the iteration that is not EMPTY nor
 		 *         marked evicted.
 		 * @exception NoSuchElementException
-		 *                iteration has no more elements.
+		 *                                   iteration has no more elements.
 		 */
 		public long markNext() {
 			return next0(true, Long.MAX_VALUE);
@@ -1442,7 +1496,9 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 				}
 				pos = pos + 1L;
 				// mark elem in array as being evicted.
-				if (mark) {array.set(position, elem | MARK_FLUSHED);}
+				if (mark) {
+					array.set(position, elem | MARK_FLUSHED);
+				}
 				elementsRead = elementsRead + 1L;
 				return elem;
 			} while (hasNext() && pos < maxPos);
@@ -1451,14 +1507,14 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 			}
 			throw new NoSuchElementException();
 		}
-		
-	    /**
-	     * Returns <tt>true</tt> if the iteration has more elements. (In other
-	     * words, returns <tt>true</tt> if <tt>next</tt> would return an element
-	     * rather than throwing an exception.)
-	     *
-	     * @return <tt>true</tt> if the iterator has more elements.
-	     */
+
+		/**
+		 * Returns <tt>true</tt> if the iteration has more elements. (In other
+		 * words, returns <tt>true</tt> if <tt>next</tt> would return an element
+		 * rather than throwing an exception.)
+		 *
+		 * @return <tt>true</tt> if the iterator has more elements.
+		 */
 		public boolean hasNext() {
 			return elementsRead < elements;
 		}
@@ -1470,7 +1526,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 			super(ie);
 		}
 	}
-	
+
 	// ***************** assertion helpers *******************//
 
 	private static boolean checkInput(final LongArray array, final Indexer indexer, final int reprobe) {
@@ -1504,7 +1560,8 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 	}
 
 	/**
-	 * @return -1L iff array is sorted, index/position of the element that violates otherwise in the range [start, end].
+	 * @return -1L iff array is sorted, index/position of the element that violates
+	 *         otherwise in the range [start, end].
 	 */
 	private static long checkSorted(final LongArray array, final Indexer indexer, int reprobe, long start, long end) {
 		if (reprobe >= array.size()) {
@@ -1542,7 +1599,8 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 	}
 
 	/**
-	 * @return -1L iff array is sorted, index/position of the element that violates otherwise.
+	 * @return -1L iff array is sorted, index/position of the element that violates
+	 *         otherwise.
 	 */
 	private static long checkSorted(final LongArray array, final Indexer indexer, final int reprobe) {
 		return checkSorted(array, indexer, reprobe, 0, array.size() - 1L + reprobe);
@@ -1558,7 +1616,7 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 		}
 		return true;
 	}
-	
+
 	private static boolean checkTable(LongArray array) {
 		for (long i = 0L; i < array.size(); i++) {
 			long elem = array.get(i);
@@ -1576,10 +1634,11 @@ public final class OffHeapDiskFPSet extends NonCheckpointableDiskFPSet implement
 				return false;
 			}
 		}
-	    return true;
-    } 
-	
-	private static boolean checkIndex(final long[] idx, final RandomAccessFile raf, final long length) throws IOException {
+		return true;
+	}
+
+	private static boolean checkIndex(final long[] idx, final RandomAccessFile raf, final long length)
+			throws IOException {
 		for (long i = 0L; i < idx.length; i++) {
 			final long pos = Math.min(i * NumEntriesPerPage, length);
 			raf.seek(pos * LongSize);

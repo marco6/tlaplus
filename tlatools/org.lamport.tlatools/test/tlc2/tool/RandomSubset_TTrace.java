@@ -43,7 +43,7 @@ public abstract class RandomSubset_TTrace extends TTraceModelCheckerTestCase {
 	private final int x;
 	private final int y;
 
-	public RandomSubset_TTrace(Class<?> clazz, final int x, final int y) {		
+	public RandomSubset_TTrace(Class<?> clazz, final int x, final int y) {
 		super(clazz, ExitStatus.VIOLATION_SAFETY);
 		this.x = x;
 		this.y = y;
@@ -53,7 +53,7 @@ public abstract class RandomSubset_TTrace extends TTraceModelCheckerTestCase {
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_INIT_GENERATED1, "1"));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "2", "2", "0"));
 		assertEquals(2, recorder.getRecordAsInt(EC.TLC_SEARCH_DEPTH));

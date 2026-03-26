@@ -40,10 +40,12 @@ import tlc2.tool.liveness.ModelCheckerTestCase;
 public class Github757Test extends ModelCheckerTestCase {
 
 	public Github757Test() {
-		super("Github757", new String[] { "-config", "Github757.tla", "-dumpTrace", "json", "states" + File.separator + "Github757.json" },
+		super("Github757",
+				new String[] { "-config", "Github757.tla", "-dumpTrace", "json",
+						"states" + File.separator + "Github757.json" },
 				EC.ExitStatus.VIOLATION_SAFETY);
 	}
-	
+
 	@Override
 	protected boolean noGenerateSpec() {
 		return true;

@@ -14,22 +14,18 @@ import tlc2.value.impl.UserObj;
 import tlc2.value.impl.UserValue;
 import tlc2.value.impl.Value;
 
-public class Strings extends UserObj
-{
-	public static final long serialVersionUID = 20160822L;
+public class Strings extends UserObj {
+    public static final long serialVersionUID = 20160822L;
 
     private static Value SetString = new UserValue(new Strings());
 
-    public static Value STRING()
-    {
+    public static Value STRING() {
         return SetString;
     }
 
     @Override
-    public final int compareTo(Value val)
-    {
-        if ((val instanceof UserValue) && (((UserValue) val).userObj instanceof Strings))
-        {
+    public final int compareTo(Value val) {
+        if ((val instanceof UserValue) && (((UserValue) val).userObj instanceof Strings)) {
             return 0;
         }
         if (val instanceof ModelValue)
@@ -38,8 +34,7 @@ public class Strings extends UserObj
     }
 
     @Override
-    public final boolean member(Value val)
-    {
+    public final boolean member(Value val) {
         if (val instanceof StringValue)
             return true;
         if (val instanceof ModelValue)
@@ -48,14 +43,12 @@ public class Strings extends UserObj
     }
 
     @Override
-    public final boolean isFinite()
-    {
+    public final boolean isFinite() {
         return false;
     }
 
     @Override
-    public final StringBuffer toString(StringBuffer sb, int offset, boolean swallow)
-    {
+    public final StringBuffer toString(StringBuffer sb, int offset, boolean swallow) {
         return sb.append("STRING");
     }
 }

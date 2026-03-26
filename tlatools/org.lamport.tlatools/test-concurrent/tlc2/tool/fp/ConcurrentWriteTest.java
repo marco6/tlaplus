@@ -22,29 +22,29 @@ public class ConcurrentWriteTest {
 	@Test
 	public void test() throws IOException {
 		final File tempFile = File.createTempFile("ConcurrentWriteTest_test", ".bin");
-		
+
 		RandomAccessFile tmpRAF0 = new BufferedRandomAccessFile(tempFile, "rw");
 		tmpRAF0.setLength(4000L * Long.BYTES);
-		for(long i = 0L; i < 1000; i++) {
+		for (long i = 0L; i < 1000; i++) {
 			tmpRAF0.writeLong(i);
 		}
-		
-		for(long i = 1000L; i < 2000; i++) {
+
+		for (long i = 1000L; i < 2000; i++) {
 			tmpRAF0.writeLong(i);
 		}
-		
-		for(long i = 2000L; i < 3000; i++) {
+
+		for (long i = 2000L; i < 3000; i++) {
 			tmpRAF0.writeLong(i);
 		}
-		
-		for(long i = 3000L; i < 4000; i++) {
+
+		for (long i = 3000L; i < 4000; i++) {
 			tmpRAF0.writeLong(i);
 		}
-		
+
 		tmpRAF0.close();
-		
+
 		final RandomAccessFile tmpRAF = new BufferedRandomAccessFile(tempFile, "r");
-		for(long i = 0L; i < 4000; i++) {
+		for (long i = 0L; i < 4000; i++) {
 			assertEquals(i, tmpRAF.readLong());
 		}
 		tmpRAF.close();
@@ -55,13 +55,13 @@ public class ConcurrentWriteTest {
 		final File tempFile = File.createTempFile("ConcurrentWriteTest_test1", ".bin");
 		final long limit = 4000000L;
 		final long partition = limit / 4L;
-		
+
 		final RandomAccessFile tmpRAF0 = new BufferedRandomAccessFile(tempFile, "rw");
 		tmpRAF0.setLength(limit * Long.BYTES);
-		for(long i = 0L; i < partition; i++) {
+		for (long i = 0L; i < partition; i++) {
 			tmpRAF0.writeLong(i);
 		}
-		
+
 		final RandomAccessFile tmpRAF1 = new BufferedRandomAccessFile(tempFile, "rw");
 		tmpRAF1.setLength(limit * Long.BYTES);
 		tmpRAF1.seek(partition * Long.BYTES);
@@ -82,25 +82,25 @@ public class ConcurrentWriteTest {
 		for (long i = (3L * partition); i < (4L * partition); i++) {
 			tmpRAF3.writeLong(i);
 		}
-		
+
 		tmpRAF0.close();
 		tmpRAF1.close();
 		tmpRAF2.close();
 		tmpRAF3.close();
-		
+
 		final RandomAccessFile tmpRAF = new BufferedRandomAccessFile(tempFile, "r");
-		for(long i = 0L; i < limit; i++) {
+		for (long i = 0L; i < limit; i++) {
 			assertEquals(i, tmpRAF.readLong());
 		}
 		tmpRAF.close();
 	}
-	
+
 	@Test
 	public void test2() throws IOException {
 		final File tempFile = File.createTempFile("ConcurrentWriteTest_test2", ".bin");
 		final long limit = 4000000L;
 		final long partition = limit / 4L;
-		
+
 		final RandomAccessFile tmpRAF0 = new BufferedRandomAccessFile(tempFile, "rw");
 		tmpRAF0.setLength(limit * Long.BYTES);
 
@@ -116,34 +116,34 @@ public class ConcurrentWriteTest {
 		tmpRAF3.setLength(limit * Long.BYTES);
 		tmpRAF3.seek((3L * partition) * Long.BYTES);
 
-		for(long i = 0L; i < (1L * partition); i++) {
+		for (long i = 0L; i < (1L * partition); i++) {
 			tmpRAF0.writeLong(i);
 		}
-		
-		for(long i = (1L * partition); i < (2L * partition); i++) {
+
+		for (long i = (1L * partition); i < (2L * partition); i++) {
 			tmpRAF1.writeLong(i);
 		}
-		
-		for(long i = (2L * partition); i < (3L * partition); i++) {
+
+		for (long i = (2L * partition); i < (3L * partition); i++) {
 			tmpRAF2.writeLong(i);
 		}
-		
-		for(long i = (3L * partition); i < (4L * partition); i++) {
+
+		for (long i = (3L * partition); i < (4L * partition); i++) {
 			tmpRAF3.writeLong(i);
 		}
-		
+
 		tmpRAF0.close();
 		tmpRAF1.close();
 		tmpRAF2.close();
 		tmpRAF3.close();
-		
+
 		final RandomAccessFile tmpRAF = new BufferedRandomAccessFile(tempFile, "r");
-		for(long i = 0L; i < limit; i++) {
+		for (long i = 0L; i < limit; i++) {
 			assertEquals(i, tmpRAF.readLong());
 		}
 		tmpRAF.close();
 	}
-	
+
 	@Test
 	public void test3() throws IOException, InterruptedException {
 		final File tempFile = File.createTempFile("ConcurrentWriteTest_test3", ".bin");
@@ -169,13 +169,13 @@ public class ConcurrentWriteTest {
 				}
 			});
 		}
-		
+
 		final ExecutorService executorService = Executors.newFixedThreadPool((int) writers);
 		executorService.invokeAll(tasks);
 		executorService.shutdown();
 
 		final RandomAccessFile tmpRAF = new BufferedRandomAccessFile(tempFile, "r");
-		for(long i = 0L; i < limit; i++) {
+		for (long i = 0L; i < limit; i++) {
 			assertEquals(i, tmpRAF.readLong());
 		}
 		tmpRAF.close();
@@ -197,12 +197,12 @@ public class ConcurrentWriteTest {
 			tasks.add(new Callable<Void>() {
 				public Void call() throws Exception {
 					long position = id * partition * Long.BYTES;
-					final ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES/* * 1024*/);
-					for (long j = (id * partition); j < ((id + 1) * partition); j++/*j+=1024L*/) {
-//						for (int i = 0; i < buffer.capacity(); i++) {
-							buffer.putLong(j/* + i*/);
-							buffer.flip();
-//						}
+					final ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES/* * 1024 */);
+					for (long j = (id * partition); j < ((id + 1) * partition); j++/* j+=1024L */) {
+						// for (int i = 0; i < buffer.capacity(); i++) {
+						buffer.putLong(j/* + i */);
+						buffer.flip();
+						// }
 						channel.write(buffer, position + (j * Long.BYTES));
 						buffer.clear();
 					}
@@ -210,16 +210,17 @@ public class ConcurrentWriteTest {
 					return null;
 				}
 			});
-		};
-		
+		}
+		;
+
 		final ExecutorService executorService = Executors.newFixedThreadPool((int) writers);
 		executorService.invokeAll(tasks);
 		executorService.shutdown();
-		
-		tmpRAF.close();	
+
+		tmpRAF.close();
 
 		final BufferedRandomAccessFile checkRaf = new BufferedRandomAccessFile(tempFile, "r");
-		for(long i = 0L; i < limit; i++) {
+		for (long i = 0L; i < limit; i++) {
 			assertEquals(i, checkRaf.readLong());
 		}
 		checkRaf.close();

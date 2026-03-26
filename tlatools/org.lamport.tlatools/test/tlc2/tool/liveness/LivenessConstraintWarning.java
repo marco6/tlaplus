@@ -36,10 +36,11 @@ public class LivenessConstraintWarning extends ModelCheckerTestCase {
 		super("LivenessConstraintWarning");
 	}
 
-    // See:
-	// tlc2.tool.AbstractChecker.AbstractChecker(ITool, String, IStateWriter, boolean, String, long)
+	// See:
+	// tlc2.tool.AbstractChecker.AbstractChecker(ITool, String, IStateWriter,
+	// boolean, String, long)
 	// org.lamport.tla.toolbox.tool.tlc.ui.editor.page.advanced.AdvancedModelPage.validatePage(boolean)
-//	@Test
+	// @Test
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertTrue(recorder.recorded(EC.TLC_FEATURE_LIVENESS_CONSTRAINTS));

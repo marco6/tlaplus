@@ -19,21 +19,21 @@ import util.Assert;
 public class StatePoolReader extends Thread {
 
   public StatePoolReader(int bufSize) {
-	  this(bufSize, null);
+    this(bufSize, null);
   }
 
   public StatePoolReader(int bufSize, File file) {
-	  super("TLCStatePoolReader");
+    super("TLCStatePoolReader");
     this.buf = new TLCState[bufSize];
     this.poolFile = file;
     this.isFull = false;
     this.canRead = false;
   }
-  
+
   private TLCState[] buf;
-  private File poolFile;      // the file to be read
-  private boolean isFull;     // true iff the buf is filled
-  private boolean canRead;    // true iff the file can be read
+  private File poolFile; // the file to be read
+  private boolean isFull; // true iff the buf is filled
+  private boolean canRead; // true iff the file can be read
   private boolean finished = false;
 
   public final synchronized void wakeup() {
@@ -47,43 +47,41 @@ public class StatePoolReader extends Thread {
     this.canRead = canRead;
     this.notify();
   }
-  
+
   /*
    * In the most common case, this method expects to see the buffer is
    * full, it returns its buffer and notifies this reader to read the
    * content of the file.
    */
   public final synchronized TLCState[] doWork(TLCState[] deqBuf, File file)
-  throws IOException, ClassNotFoundException {
+      throws IOException, ClassNotFoundException {
     if (this.isFull) {
       assert this.poolFile == null : EC.SYSTEM_FILE_NULL;
       TLCState[] res = this.buf;
       this.buf = deqBuf;
       this.poolFile = file;
-      this.isFull = false;      // <file, false>
+      this.isFull = false; // <file, false>
       this.canRead = true;
       this.notify();
       return res;
-    }
-    else if (this.poolFile != null) {
+    } else if (this.poolFile != null) {
       ValueInputStream vis = new ValueInputStream(this.poolFile);
       for (int i = 0; i < deqBuf.length; i++) {
-	deqBuf[i] = TLCState.Empty.createEmpty();
-	deqBuf[i].read(vis);
+        deqBuf[i] = TLCState.Empty.createEmpty();
+        deqBuf[i].read(vis);
       }
       vis.close();
-      this.poolFile = file;     // <file, false>
+      this.poolFile = file; // <file, false>
       this.canRead = true;
       this.notify();
       return deqBuf;
-    }
-    else {
+    } else {
       ValueInputStream vis = new ValueInputStream(file);
       for (int i = 0; i < deqBuf.length; i++) {
-	deqBuf[i] = TLCState.Empty.createEmpty();
-	deqBuf[i].read(vis);
+        deqBuf[i] = TLCState.Empty.createEmpty();
+        deqBuf[i].read(vis);
       }
-      vis.close();              // <null, false>
+      vis.close(); // <null, false>
       return deqBuf;
     }
   }
@@ -92,26 +90,25 @@ public class StatePoolReader extends Thread {
    * Returns the cached buffer if filled. Otherwise, returns null.
    */
   public final synchronized TLCState[] getCache(TLCState[] deqBuf, File file)
-  throws IOException, ClassNotFoundException {
+      throws IOException, ClassNotFoundException {
     if (this.isFull) {
       assert this.poolFile == null : EC.SYSTEM_FILE_NULL;
       TLCState[] res = this.buf;
       this.buf = deqBuf;
       this.poolFile = file;
-      this.isFull = false;      // <file, false>
+      this.isFull = false; // <file, false>
       this.canRead = false;
       return res;
-    }
-    else if (this.poolFile != null && this.canRead) {
+    } else if (this.poolFile != null && this.canRead) {
       // this should seldom occur.
       ValueInputStream vis = new ValueInputStream(this.poolFile);
       for (int i = 0; i < deqBuf.length; i++) {
-	deqBuf[i] = TLCState.Empty.createEmpty();
-	deqBuf[i].read(vis);
+        deqBuf[i] = TLCState.Empty.createEmpty();
+        deqBuf[i].read(vis);
       }
       vis.close();
       // this.poolFile.delete();
-      this.poolFile = file;    // <file, false>
+      this.poolFile = file; // <file, false>
       this.canRead = false;
       return deqBuf;
     }
@@ -119,7 +116,7 @@ public class StatePoolReader extends Thread {
   }
 
   public final synchronized void beginChkpt(ObjectOutputStream oos)
-  throws IOException {
+      throws IOException {
     boolean hasFile = this.poolFile != null;
     oos.writeBoolean(hasFile);
     oos.writeBoolean(this.canRead);
@@ -129,7 +126,7 @@ public class StatePoolReader extends Thread {
     }
     if (this.isFull) {
       for (int i = 0; i < this.buf.length; i++) {
-	oos.writeObject(this.buf[i]);
+        oos.writeObject(this.buf[i]);
       }
     }
   }
@@ -141,57 +138,53 @@ public class StatePoolReader extends Thread {
     this.isFull = ois.readBoolean();
     try {
       if (hasFile) {
-	this.poolFile = (File)ois.readObject();
+        this.poolFile = (File) ois.readObject();
       }
       if (this.isFull) {
-	for (int i = 0; i < this.buf.length; i++) {
-	  this.buf[i] = (TLCState)ois.readObject();
-	}
+        for (int i = 0; i < this.buf.length; i++) {
+          this.buf[i] = (TLCState) ois.readObject();
+        }
       }
-    }
-    catch (ClassNotFoundException e) 
-    {
+    } catch (ClassNotFoundException e) {
       Assert.fail(EC.SYSTEM_CHECKPOINT_RECOVERY_CORRUPT, e);
     }
   }
-  
+
   /**
    * Read the contents of "poolFile" into "buf". The objects in the
    * file are read using Java's object serialization facilities.
    */
   public void run() {
     try {
-      synchronized(this) {
-	while (true) {
-	  while (this.poolFile == null || this.isFull || !this.canRead) {
-	    this.wait();
-	    if(this.finished ) {
-	    	return;
-	    }
-	  }
-	  ValueInputStream vis = new ValueInputStream(this.poolFile);
-	  for (int i = 0; i < this.buf.length; i++) {
-	    this.buf[i] = TLCState.Empty.createEmpty();
-	    this.buf[i].read(vis);
-	  }
-	  vis.close();
-	  this.poolFile = null;
-	  this.isFull = true;       // <null, true>
-	}
+      synchronized (this) {
+        while (true) {
+          while (this.poolFile == null || this.isFull || !this.canRead) {
+            this.wait();
+            if (this.finished) {
+              return;
+            }
+          }
+          ValueInputStream vis = new ValueInputStream(this.poolFile);
+          for (int i = 0; i < this.buf.length; i++) {
+            this.buf[i] = TLCState.Empty.createEmpty();
+            this.buf[i].read(vis);
+          }
+          vis.close();
+          this.poolFile = null;
+          this.isFull = true; // <null, true>
+        }
       }
-    }
-    catch (Exception e) 
-    {
+    } catch (Exception e) {
       final String[] cause = this.poolFile == null ? new String[] { e.getMessage() }
-		: new String[] { e.getMessage(), this.poolFile.getName() };
+          : new String[] { e.getMessage(), this.poolFile.getName() };
       // Assert.printStack(e);
       MP.printError(EC.SYSTEM_ERROR_READING_POOL, cause, e);
       System.exit(1);
     }
   }
-  
+
   public void setFinished() {
-	  finished = true;
+    finished = true;
   }
-  
+
 }

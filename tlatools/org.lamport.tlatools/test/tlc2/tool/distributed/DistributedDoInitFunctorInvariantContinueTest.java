@@ -35,9 +35,9 @@ import tlc2.output.EC;
 import tlc2.tool.liveness.ModelCheckerTestCase;
 
 public class DistributedDoInitFunctorInvariantContinueTest extends ModelCheckerTestCase {
-	
+
 	public DistributedDoInitFunctorInvariantContinueTest() {
-		super("DoInitFunctorInvariant", "DoInitFunctor", new String[] {"-continue"});
+		super("DoInitFunctorInvariant", "DoInitFunctor", new String[] { "-continue" });
 	}
 
 	@Test
@@ -48,6 +48,6 @@ public class DistributedDoInitFunctorInvariantContinueTest extends ModelCheckerT
 
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_INVARIANT_VIOLATED_INITIAL, "NotNine", "x = 9\n"));
 
-	assertZeroUncovered();
+		assertZeroUncovered();
 	}
 }

@@ -46,10 +46,11 @@ public class UserModuleOverrideTest extends ModelCheckerTestCase {
 	public UserModuleOverrideTest() {
 		super("UserModuleOverride");
 	}
-	
+
 	@Test
 	public void testSpec() {
-		final List<String[]> mismatches = recorder.getRecordAsStringArray(EC.TLC_MODULE_VALUE_JAVA_METHOD_OVERRIDE_MISMATCH);
+		final List<String[]> mismatches = recorder
+				.getRecordAsStringArray(EC.TLC_MODULE_VALUE_JAVA_METHOD_OVERRIDE_MISMATCH);
 		assertEquals(2, mismatches.size());
 		Collections.sort(mismatches, new Comparator<String[]>() {
 			@Override
@@ -57,13 +58,15 @@ public class UserModuleOverrideTest extends ModelCheckerTestCase {
 				return o1[0].compareTo(o2[0]);
 			}
 		});
-		
+
 		// arity mismatch
 		String[] strs = mismatches.get(0);
 		assertEquals("Get2", strs[0]);
 		assertTrue(strs[1].endsWith("UserModuleOverride.class")); // This contains a system dependent path.
-		assertEquals("<Java Method: public static tlc2.value.impl.Value UserModuleOverride.Get2(tlc2.value.impl.Value)>", strs[2]);
-		
+		assertEquals(
+				"<Java Method: public static tlc2.value.impl.Value UserModuleOverride.Get2(tlc2.value.impl.Value)>",
+				strs[2]);
+
 		// name mismatch (no such operator)
 		strs = mismatches.get(1);
 		assertEquals("Get3", strs[0]);

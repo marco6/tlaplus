@@ -84,7 +84,7 @@ public class Errors {
       if (!(o instanceof ErrorDetails)) {
         return false;
       }
-      final ErrorDetails other = (ErrorDetails)o;
+      final ErrorDetails other = (ErrorDetails) o;
       return this.code.equals(other.code)
           && this.location.equals(other.location)
           && this.format.equals(other.format)
@@ -105,8 +105,7 @@ public class Errors {
    */
   public List<ErrorDetails> getMessagesOfLevel(ErrorLevel level) {
     return this.messages.stream().filter(
-        msg -> msg.getCode().getSeverityLevel().equals(level)
-      ).collect(Collectors.toList());
+        msg -> msg.getCode().getSeverityLevel().equals(level)).collect(Collectors.toList());
   }
 
   /**
@@ -142,9 +141,9 @@ public class Errors {
    * same message to the log multiple times. Returns {@link AbortException}
    * which can optionally be thrown by the caller, if error is fatal.
    *
-   * @param code The standardized error code associated with the message.
-   * @param loc A spec location associated with the message.
-   * @param format A message into which parameters are interpolated.
+   * @param code       The standardized error code associated with the message.
+   * @param loc        A spec location associated with the message.
+   * @param format     A message into which parameters are interpolated.
    * @param parameters A list of standardized values attached to the error.
    * @return An exception which can optionally be thrown by the caller.
    */
@@ -190,7 +189,7 @@ public class Errors {
     return this.messages.size();
   }
 
-  public final String toString()  {
+  public final String toString() {
     StringBuffer ret = new StringBuffer("");
 
     final List<ErrorDetails> errors = this.getErrorDetails();

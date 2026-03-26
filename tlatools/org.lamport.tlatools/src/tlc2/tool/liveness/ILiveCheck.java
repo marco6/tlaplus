@@ -48,22 +48,28 @@ public interface ILiveCheck {
 	 * called after the successors of s0 are computed.
 	 */
 	void addNextState(ITool tool, TLCState s0, long fp0, SetOfStates nextStates) throws IOException;
-	
+
 	/**
-	 * true iff a call to {@link ILiveCheck#check(ITool, boolean)} would indeed result in liveness checking.
+	 * true iff a call to {@link ILiveCheck#check(ITool, boolean)} would indeed
+	 * result in liveness checking.
 	 */
 	boolean doLiveCheck();
-	
+
 	/**
-	 * Check liveness properties for the current (potentially partial) state graph. Returns
+	 * Check liveness properties for the current (potentially partial) state graph.
+	 * Returns
 	 * true iff it finds no errors.
-	 * @param forceCheck
-	 *            Always checks liveness if true, otherwise heuristics about the
-	 *            partial graph are taken into account if it is worthwhile to
-	 *            check liveness.
 	 * 
-	 * @return <code>EC.NO_ERROR</code> iff it finds no errors or if liveness has not been checked
-	 *         on the partial graph because it was deemed worthless. Otherwise an EC.
+	 * @param forceCheck
+	 *                   Always checks liveness if true, otherwise heuristics about
+	 *                   the
+	 *                   partial graph are taken into account if it is worthwhile to
+	 *                   check liveness.
+	 * 
+	 * @return <code>EC.NO_ERROR</code> iff it finds no errors or if liveness has
+	 *         not been checked
+	 *         on the partial graph because it was deemed worthless. Otherwise an
+	 *         EC.
 	 */
 	int check(ITool tool, boolean forceCheck) throws Exception;
 
@@ -71,13 +77,13 @@ public interface ILiveCheck {
 	 * No states can be added with add*State once finalCheck has been called.
 	 * 
 	 * @see ILiveCheck#check()
-   * @return an error code, or <code>EC.NO_ERROR</code> on success
+	 * @return an error code, or <code>EC.NO_ERROR</code> on success
 	 * @throws Exception
 	 */
 	int finalCheck(ITool tool) throws Exception;
 
 	/* simulation mode */
-	
+
 	/**
 	 * This method is the mutual exclusive counterpart to addInitState and
 	 * addNextState. Where the two each take a single state and its successors,
@@ -85,21 +91,24 @@ public interface ILiveCheck {
 	 * is seen as the init state whereas the remaining states in the sequence belong
 	 * to the behavior started by the init state.
 	 * <p>
-	 * checkTrace behaves similar to adding the sequence's first state with addInitState
+	 * checkTrace behaves similar to adding the sequence's first state with
+	 * addInitState
 	 * and the others with addNextState. However, checkTrace is meant to be used
 	 * in simulation mode (see Simulator) only. Don't call check or finalCheck, it
 	 * is done as part of checkTrace.
 	 * <p>
-	 * checkTrace can be called multiple times until ILiveCheck has been closed (see close()).
+	 * checkTrace can be called multiple times until ILiveCheck has been closed (see
+	 * close()).
+	 * 
 	 * @param trace
 	 * 
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
 	void checkTrace(ITool tool, final Supplier<StateVec> trace) throws IOException, InterruptedException;
-	
+
 	/* auxiliary methods */
-	
+
 	String getMetaDir();
 
 	IBucketStatistics getOutDegreeStatistics();
@@ -117,10 +126,14 @@ public interface ILiveCheck {
 	void commitChkpt() throws IOException;
 
 	/**
-	 * Flush any in-memory buffered data to the disk.  This is a no-op for implementations that are entirely in-memory.
+	 * Flush any in-memory buffered data to the disk. This is a no-op for
+	 * implementations that are entirely in-memory.
 	 *
-	 * <p>This method has essentially no visible effect, since any disk files are private to this object and flushing
-	 * writes should not affect reads from those files.  However, there are some tests that call this method to make
+	 * <p>
+	 * This method has essentially no visible effect, since any disk files are
+	 * private to this object and flushing
+	 * writes should not affect reads from those files. However, there are some
+	 * tests that call this method to make
 	 * assertions about the data being written to disk.
 	 *
 	 * @throws IOException if an I/O error occurs

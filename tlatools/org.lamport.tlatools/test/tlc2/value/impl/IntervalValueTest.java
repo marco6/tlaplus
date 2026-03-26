@@ -39,29 +39,30 @@ public class IntervalValueTest {
 		}
 		fail();
 	}
-	
+
 	@Test
 	public void sizeOverflow() {
 		assertEquals(Integer.MAX_VALUE, new IntervalValue(1, Integer.MAX_VALUE).size());
 		assertEquals(Integer.MAX_VALUE, new IntervalValue(Integer.MIN_VALUE, -2).size());
-		
+
 		try {
 			assertEquals(0, new IntervalValue(-989_822_976, 1_157_660_672).size());
 		} catch (TLCRuntimeException e) {
-			assertTrue(e.getMessage().contains("Size of interval value exceeds the maximum representable size (32bits)"));
+			assertTrue(
+					e.getMessage().contains("Size of interval value exceeds the maximum representable size (32bits)"));
 			return;
 		}
 		fail();
 	}
-	
+
 	@Test
 	public void compareToOverflow1() {
 		final IntervalValue iv = new IntervalValue(Integer.MAX_VALUE - 1, Integer.MAX_VALUE);
 		assertEquals(2, iv.size());
-		
+
 		final IntervalValue iv2 = new IntervalValue(Integer.MIN_VALUE + 1, Integer.MIN_VALUE + 2);
 		assertEquals(2, iv2.size());
-		
+
 		assertEquals(1, iv.compareTo(iv2));
 	}
 
@@ -93,7 +94,8 @@ public class IntervalValueTest {
 		try {
 			iv.size();
 		} catch (TLCRuntimeException e) {
-			assertTrue(e.getMessage().contains("Size of interval value exceeds the maximum representable size (32bits)"));
+			assertTrue(
+					e.getMessage().contains("Size of interval value exceeds the maximum representable size (32bits)"));
 			return;
 		}
 		fail();
@@ -105,9 +107,9 @@ public class IntervalValueTest {
 		assertEquals(1, iv1.size());
 		final IntervalValue iv2 = new IntervalValue(Integer.MIN_VALUE, Integer.MIN_VALUE);
 		assertEquals(1, iv2.size());
-		final IntervalValue iv3 = new IntervalValue(Integer.MAX_VALUE-10, Integer.MAX_VALUE);
+		final IntervalValue iv3 = new IntervalValue(Integer.MAX_VALUE - 10, Integer.MAX_VALUE);
 		assertEquals(11, iv3.size());
-		final IntervalValue iv4 = new IntervalValue(Integer.MIN_VALUE, Integer.MIN_VALUE+10);
+		final IntervalValue iv4 = new IntervalValue(Integer.MIN_VALUE, Integer.MIN_VALUE + 10);
 		assertEquals(11, iv4.size());
 	}
 

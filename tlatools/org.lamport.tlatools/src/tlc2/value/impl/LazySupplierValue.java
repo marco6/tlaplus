@@ -45,7 +45,8 @@ public class LazySupplierValue extends LazyValue {
 
 	@Override
 	public Value getValue(Tool tool, TLCState s0, TLCState s1, int control) {
-		// TODO: is it OK to ignore the args here?  What are the semantics of this particular value?
+		// TODO: is it OK to ignore the args here? What are the semantics of this
+		// particular value?
 		return (Value) s.get();
 	}
 }

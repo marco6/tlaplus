@@ -49,24 +49,24 @@ public class CodePlexBug08EWD840FL1Test extends ModelCheckerTestCase {
 	public CodePlexBug08EWD840FL1Test() {
 		super("EWD840MC1", "CodePlexBug08", ExitStatus.VIOLATION_LIVENESS);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		// ModelChecker has finished and generated the expected amount of states
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "15986", "1566", "0"));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		// Assert it has found the temporal violation and also a counter example
 		assertTrue(recorder.recorded(EC.TLC_TEMPORAL_PROPERTY_VIOLATED));
 		assertTrue(recorder.recorded(EC.TLC_COUNTER_EXAMPLE));
-		
+
 		assertNodeAndPtrSizes(7560068L, 279616L);
-		
+
 		// Error trace is asserted in the post condition.
 
 		assertZeroUncovered();
-		
+
 		// Assert the error trace
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
 		final List<String> expectedTrace = new ArrayList<String>(10);
@@ -154,7 +154,7 @@ public class CodePlexBug08EWD840FL1Test extends ModelCheckerTestCase {
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace, expectedActions);
 
 		assertBackToState(1, "<PassToken(1) line 47, col 3 to line 52, col 43 of module EWD840>");
-		
+
 		// Check that POSTCONDITION wrote the number of generated states to a TLCSet
 		// register.
 		final List<IValue> allValue = TLCGlobals.mainChecker.getAllValue(42);

@@ -65,7 +65,7 @@ public class UndeclaredRecursionTest extends ModelCheckerTestCase {
 	public void testSpec() throws IOException {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "0"));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "0", "0", "0"));
 	}

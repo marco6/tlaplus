@@ -46,15 +46,15 @@ public class DebugTLCVariable extends Variable implements tlc2.value.impl.TLCVar
 	private String vscodeVariableMenuContext;
 
 	private transient Value tlcValue;
-	
+
 	public DebugTLCVariable(UniqueString lhs) {
 		this.setName(lhs.toString());
 	}
-	
+
 	public DebugTLCVariable(String lhs) {
 		this.setName(lhs);
 	}
-	
+
 	public DebugTLCVariable(Value value) {
 		this.setName(value.toString());
 	}
@@ -82,8 +82,9 @@ public class DebugTLCVariable extends Variable implements tlc2.value.impl.TLCVar
 	public TLCVariable newInstance(final String name, Value v, Random rnd) {
 		DebugTLCVariable variable = new DebugTLCVariable(name);
 		variable.setInstance(v);
-		if (v instanceof Enumerable || v instanceof FcnRcdValue || v instanceof RecordValue || v instanceof TupleValue) {
-			variable.setVariablesReference(rnd.nextInt(Integer.MAX_VALUE-1)+ 1);
+		if (v instanceof Enumerable || v instanceof FcnRcdValue || v instanceof RecordValue
+				|| v instanceof TupleValue) {
+			variable.setVariablesReference(rnd.nextInt(Integer.MAX_VALUE - 1) + 1);
 		}
 		return v.toTLCVariable(variable, rnd);
 	}
@@ -92,7 +93,7 @@ public class DebugTLCVariable extends Variable implements tlc2.value.impl.TLCVar
 	public TLCVariable newInstance(Value value, Random rnd) {
 		return newInstance(value.toString(), value, rnd);
 	}
-	
+
 	@Override
 	public Value getTLCValue() {
 		return tlcValue;

@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.LongAdder;
 import java.util.function.BooleanSupplier;
 
 public abstract class CounterStatistic {
-	
+
 	public static CounterStatistic getInstance(final BooleanSupplier s) {
 		if (s.getAsBoolean()) {
 			return new LongAdderCounterStatistic();
@@ -37,9 +37,9 @@ public abstract class CounterStatistic {
 			return new NoopCounterStatistic();
 		}
 	}
-	
+
 	public abstract void increment();
-	
+
 	public abstract void add(final long evalCount);
 
 	public abstract long getCount();
@@ -49,23 +49,23 @@ public abstract class CounterStatistic {
 	}
 
 	private static class NoopCounterStatistic extends CounterStatistic {
-		
+
 		@Override
 		public final long getCount() {
 			return 0;
 		}
-		
+
 		@Override
 		public final void increment() {
 			// noop
 		}
-		
+
 		@Override
 		public void add(long evalCount) {
 			// noop
 		}
 	}
-	
+
 	private static class LongAdderCounterStatistic extends CounterStatistic {
 
 		private final LongAdder adder = new LongAdder();

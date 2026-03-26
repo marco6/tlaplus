@@ -8,12 +8,12 @@ import tlc2.tool.TLCState;
 import tlc2.tool.Worker;
 
 public interface IStateQueue {
-	
+
 	static class Factory {
 		// TESTING ONLY!
 		public static IStateQueue sq = null;
 	}
-	
+
 	public static String getStateQueueName() {
 		return System.getProperty(IStateQueue.class.getName(), "DiskStateQueue");
 	}
@@ -22,12 +22,12 @@ public interface IStateQueue {
 		if (Factory.sq != null) {
 			return Factory.sq;
 		}
-		
+
 		if (Boolean.getBoolean(ModelChecker.class.getName() + ".BAQueue")) {
-			//legacy support for .BAQueue property.
+			// legacy support for .BAQueue property.
 			return new DiskByteArrayQueue(metaDir);
 		}
-		
+
 		final String name = System.getProperty(IStateQueue.class.getName());
 		if ("MemStateQueue".equals(name)) {
 			return new MemStateQueue(metaDir);
@@ -54,11 +54,12 @@ public interface IStateQueue {
 
 	/* Enqueues a list of states. Wake up any waiting thread. */
 	public abstract void sEnqueue(final TLCState states[]);
+
 	public abstract void sEnqueue(final StateVec stateVec);
-	
+
 	/* Return the first element in the queue. Wait if empty. */
 	public abstract TLCState sDequeue();
-	
+
 	/**
 	 * Returns the first element in the queue. Wait if empty. Does not remove the
 	 * element. Can be null and blocks other consumers (sEnqueue and sDequeue).
@@ -73,7 +74,7 @@ public interface IStateQueue {
 	 * @return null iff no states are available && all work is done @see
 	 *         {@link #isAvail()}, states otherwise
 	 * @throws RuntimeException
-	 *             if cnt <= 0
+	 *                          if cnt <= 0
 	 */
 	public abstract TLCState[] sDequeue(int cnt);
 

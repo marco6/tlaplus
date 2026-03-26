@@ -44,11 +44,11 @@ import tlc2.tool.AbstractChecker;
  * possible counterexample.
  */
 public class LoopTestForcedPartial_TTraceTest extends TTraceModelCheckerTestCase {
-	
+
 	static {
 		AbstractChecker.LIVENESS_TESTING_IMPLEMENTATION = true;
 	}
-	
+
 	public LoopTestForcedPartial_TTraceTest() {
 		super(LoopTestForcedPartial.class, "Loop", ExitStatus.VIOLATION_LIVENESS);
 	}
@@ -57,7 +57,7 @@ public class LoopTestForcedPartial_TTraceTest extends TTraceModelCheckerTestCase
 	public void testSpec() {
 		// ModelChecker has finished and generated the expected amount of states
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
-        assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "1", "1", "0"));
+		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "1", "1", "0"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_INIT_GENERATED1, "1"));
 		assertFalse(recorder.recorded(EC.GENERAL));
 
@@ -70,7 +70,7 @@ public class LoopTestForcedPartial_TTraceTest extends TTraceModelCheckerTestCase
 		final List<String> expectedTrace = new ArrayList<String>(4);
 		expectedTrace.add("x = 0");
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace);
-		
+
 		// Stuttering after the init state.
 		assertStuttering(2);
 	}

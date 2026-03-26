@@ -29,94 +29,106 @@ import util.WrongInvocationException;
 
 public class MethodValue extends OpValue {
 
-	public static Value get(final Method md) {
-		// Call from e.g. STRING (see tlc2.module.Strings.STRING()), which has no operator
-		// definition.
-		return get(md, 0);
-	}
-	
-	public static Value get(final Method md, int minLevel) {
-		final MethodValue mv = new MethodValue(md, minLevel);
-		// Eagerly evaluate the constant operator if possible (zero arity) to only
-		// evaluate once at startup and not during state exploration.
-		final int acnt = md.getParameterTypes().length;
-    	final boolean isConstant = (acnt == 0) && Modifier.isFinal(md.getModifiers());
-    	return isConstant ? mv.eval(Tool.EmptyArgs, EvalControl.Clear) : mv;
-	}
-	
+  public static Value get(final Method md) {
+    // Call from e.g. STRING (see tlc2.module.Strings.STRING()), which has no
+    // operator
+    // definition.
+    return get(md, 0);
+  }
+
+  public static Value get(final Method md, int minLevel) {
+    final MethodValue mv = new MethodValue(md, minLevel);
+    // Eagerly evaluate the constant operator if possible (zero arity) to only
+    // evaluate once at startup and not during state exploration.
+    final int acnt = md.getParameterTypes().length;
+    final boolean isConstant = (acnt == 0) && Modifier.isFinal(md.getModifiers());
+    return isConstant ? mv.eval(Tool.EmptyArgs, EvalControl.Clear) : mv;
+  }
+
   private final MethodHandle mh;
   private final Method md;
   private final int minLevel;
 
   /* Constructor */
-	private MethodValue(final Method md, final int minLevel) {
-		this.md = md;
-		this.minLevel = minLevel;
-		try {
-			final int parameterCount = this.md.getParameterCount();
-			if (parameterCount > 0) {
-				// With more than one argument, we want to setup the method handle to use a
-				// spreader which essentially converts the Value[] into something that is
-				// accepted by the method handle. Without a spreader, passing a Value[] to
-				// MethodHandle#invoke does not work. Instead one has to use MethodHandle#invokeWithArguments.
-				// MethodHandle#invokeWithArguments internally creates a spreader on the fly
-				// which turns out to be costly (for the spec MongoRepl of the performance
-				// tests it resulted in a 20% performance drop).
-				this.mh = MethodHandles.publicLookup().unreflect(md).asSpreader(IValue[].class, parameterCount);
-			} else {
-				this.mh = MethodHandles.publicLookup().unreflect(md); 
-			}
-		} catch (IllegalAccessException e) {
-			throw new TLCRuntimeException(EC.TLC_MODULE_VALUE_JAVA_METHOD_OVERRIDE, MP.getMessage(
-					EC.TLC_MODULE_VALUE_JAVA_METHOD_OVERRIDE, new String[] { md.toString(), e.getMessage() }));
-		}
-	}
+  private MethodValue(final Method md, final int minLevel) {
+    this.md = md;
+    this.minLevel = minLevel;
+    try {
+      final int parameterCount = this.md.getParameterCount();
+      if (parameterCount > 0) {
+        // With more than one argument, we want to setup the method handle to use a
+        // spreader which essentially converts the Value[] into something that is
+        // accepted by the method handle. Without a spreader, passing a Value[] to
+        // MethodHandle#invoke does not work. Instead one has to use
+        // MethodHandle#invokeWithArguments.
+        // MethodHandle#invokeWithArguments internally creates a spreader on the fly
+        // which turns out to be costly (for the spec MongoRepl of the performance
+        // tests it resulted in a 20% performance drop).
+        this.mh = MethodHandles.publicLookup().unreflect(md).asSpreader(IValue[].class, parameterCount);
+      } else {
+        this.mh = MethodHandles.publicLookup().unreflect(md);
+      }
+    } catch (IllegalAccessException e) {
+      throw new TLCRuntimeException(EC.TLC_MODULE_VALUE_JAVA_METHOD_OVERRIDE, MP.getMessage(
+          EC.TLC_MODULE_VALUE_JAVA_METHOD_OVERRIDE, new String[] { md.toString(), e.getMessage() }));
+    }
+  }
 
   @Override
-  public final byte getKind() { return METHODVALUE; }
+  public final byte getKind() {
+    return METHODVALUE;
+  }
 
   @Override
   public final IValue initialize() {
-	  this.deepNormalize();
-	  // Do not call fingerprint as a MethodValue has no fingerprint.
-	  return this;
+    this.deepNormalize();
+    // Do not call fingerprint as a MethodValue has no fingerprint.
+    return this;
   }
-  
+
   @Override
   public final int compareTo(Object obj) {
     try {
       Assert.fail("Attempted to compare operator " + this.toString() +
-      " with value:\n" + obj == null ? "null" : Values.ppr(obj.toString()), getSource());
-      return 0;       // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          " with value:\n" + obj == null ? "null" : Values.ppr(obj.toString()), getSource());
+      return 0; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   public final boolean equals(Object obj) {
     try {
       Assert.fail("Attempted to check equality of operator " + this.toString() +
-      " with value:\n" + obj == null ? "null" : Values.ppr(obj.toString()), getSource());
-      return false;   // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          " with value:\n" + obj == null ? "null" : Values.ppr(obj.toString()), getSource());
+      return false; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   @Override
   public final boolean member(Value elem) {
     try {
-      Assert.fail("Attempted to check if the value:\n" + elem == null ? "null" : Values.ppr(elem.toString()) +
-      "\nis an element of operator " + this.toString(), getSource());
-      return false;   // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+      Assert.fail("Attempted to check if the value:\n" + elem == null ? "null"
+          : Values.ppr(elem.toString()) +
+              "\nis an element of operator " + this.toString(),
+          getSource());
+      return false; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -124,12 +136,14 @@ public class MethodValue extends OpValue {
   public final boolean isFinite() {
     try {
       Assert.fail("Attempted to check if the operator " + this.toString() +
-      " is a finite set.", getSource());
-      return false;   // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          " is a finite set.", getSource());
+      return false; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -137,42 +151,42 @@ public class MethodValue extends OpValue {
   public final Value eval(Value[] args, int control) {
     try {
       Value res = null;
-      try
-      {
-    	  if (args.length == 0) {
-    		  res = (Value) this.mh.invokeExact();
-    	  } else {
-    		  res = (Value) this.mh.invoke(args);
-    	  }
-      } catch (Throwable e)
-      {
-          if (e instanceof InvocationTargetException)
-          {
-              Throwable targetException = ((InvocationTargetException)e).getTargetException();
-              throw new EvalException(EC.TLC_MODULE_VALUE_JAVA_METHOD_OVERRIDE, new String[]{this.md.toString(), targetException.getMessage()});
-          } else if (e instanceof NullPointerException) {
-              throw new EvalException(EC.TLC_MODULE_VALUE_JAVA_METHOD_OVERRIDE, new String[]{this.md.toString(), e.getMessage()});
-          } else if (e instanceof EvalException) {
-        	  // Do not wrap an EvalException below.
-        	  throw (EvalException) e;
-          } else
-          {
-              String message = e.getMessage();
-              if (message == null) {
-				  // Try to pass some information along (i.e. the full stack-trace) in cases where
-				  // message is null.
-		          final StringWriter sw = new StringWriter();
-            	  e.printStackTrace(new PrintWriter(sw));
-            	  message = sw.toString();
-              }
-			Assert.fail(EC.TLC_MODULE_VALUE_JAVA_METHOD_OVERRIDE, new String[]{this.md.toString(), message});
+      try {
+        if (args.length == 0) {
+          res = (Value) this.mh.invokeExact();
+        } else {
+          res = (Value) this.mh.invoke(args);
+        }
+      } catch (Throwable e) {
+        if (e instanceof InvocationTargetException) {
+          Throwable targetException = ((InvocationTargetException) e).getTargetException();
+          throw new EvalException(EC.TLC_MODULE_VALUE_JAVA_METHOD_OVERRIDE,
+              new String[] { this.md.toString(), targetException.getMessage() });
+        } else if (e instanceof NullPointerException) {
+          throw new EvalException(EC.TLC_MODULE_VALUE_JAVA_METHOD_OVERRIDE,
+              new String[] { this.md.toString(), e.getMessage() });
+        } else if (e instanceof EvalException) {
+          // Do not wrap an EvalException below.
+          throw (EvalException) e;
+        } else {
+          String message = e.getMessage();
+          if (message == null) {
+            // Try to pass some information along (i.e. the full stack-trace) in cases where
+            // message is null.
+            final StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            message = sw.toString();
           }
+          Assert.fail(EC.TLC_MODULE_VALUE_JAVA_METHOD_OVERRIDE, new String[] { this.md.toString(), message });
+        }
       }
       return res;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -180,12 +194,14 @@ public class MethodValue extends OpValue {
   public final Value takeExcept(ValueExcept ex) {
     try {
       Assert.fail("Attempted to appy EXCEPT construct to the operator " +
-      this.toString() + ".", getSource());
-      return null;   // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          this.toString() + ".", getSource());
+      return null; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -193,12 +209,14 @@ public class MethodValue extends OpValue {
   public final Value takeExcept(ValueExcept[] exs) {
     try {
       Assert.fail("Attempted to apply EXCEPT construct to the operator " +
-      this.toString() + ".", getSource());
-      return null;   // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          this.toString() + ".", getSource());
+      return null; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -206,12 +224,14 @@ public class MethodValue extends OpValue {
   public final int size() {
     try {
       Assert.fail("Attempted to compute the number of elements in the operator " +
-      this.toString() + ".", getSource());
-      return 0;   // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          this.toString() + ".", getSource());
+      return 0; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -220,10 +240,12 @@ public class MethodValue extends OpValue {
   public final boolean isNormalized() {
     try {
       throw new WrongInvocationException("It is a TLC bug: Attempted to normalize an operator.");
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -231,32 +253,40 @@ public class MethodValue extends OpValue {
   public final Value normalize() {
     try {
       throw new WrongInvocationException("It is a TLC bug: Attempted to normalize an operator.");
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   @Override
-  public final boolean isDefined() { return true; }
+  public final boolean isDefined() {
+    return true;
+  }
 
   @Override
-  public final IValue deepCopy() { return this; }
+  public final IValue deepCopy() {
+    return this;
+  }
 
-  /* String representation of the value.  */
+  /* String representation of the value. */
   @Override
   public final StringBuffer toString(StringBuffer sb, int offset, boolean ignored) {
     try {
       return sb.append("<Java Method: " + this.md + ">");
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
-  
+
   public final int getMinLevel() {
-	  return minLevel;
+    return minLevel;
   }
 }

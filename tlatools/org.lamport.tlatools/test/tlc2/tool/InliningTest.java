@@ -55,24 +55,25 @@ public class InliningTest extends ModelCheckerTestCase {
 	/*
 	 * The high-level idea is that we record the JVM's CompilerInlining while the
 	 * JVM executes the test case. Afterwards, we check that a bunch of methods that
-	 * are annotated with a marker have been correctly inlined.  For this to work,
+	 * are annotated with a marker have been correctly inlined. For this to work,
 	 * the test has to run long enough for the JVM to warm up.
-	 * Thanks to https://twitter.com/ErikGahlin/status/1207018011674185728 for showing
+	 * Thanks to https://twitter.com/ErikGahlin/status/1207018011674185728 for
+	 * showing
 	 * how to use the JFR API.
 	 */
-	
-	private final Recording r = new Recording(); 
+
+	private final Recording r = new Recording();
 
 	public InliningTest() {
 		super("InlineMC", "CodePlexBug08", ExitStatus.SUCCESS);
 	}
-	
+
 	@Override
 	protected void beforeSetUp() {
-		r.enable("jdk.CompilerInlining"); 
-		r.start(); 
+		r.enable("jdk.CompilerInlining");
+		r.start();
 	}
-	
+
 	// testSpec runs after model-checking.
 	@Test
 	public void testSpec() throws IOException {
@@ -80,12 +81,12 @@ public class InliningTest extends ModelCheckerTestCase {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
 		assertZeroUncovered();
-		
+
 		// stop recording and read the jfr from from disk. Close the recording
 		// afterwards.
 		r.stop();
 		Path p = Paths.get("test.jfr"); // test.jfr is the default file name.
-		r.dump(p); 
+		r.dump(p);
 		final List<RecordedEvent> recordedEvents = RecordingFile.readAllEvents(p);
 		r.close();
 
@@ -98,10 +99,10 @@ public class InliningTest extends ModelCheckerTestCase {
 				.filter(ro -> ro.getString("type").startsWith("tlc2/tool/impl/Tool")
 						|| ro.getString("type").startsWith("tlc2/tool/impl/FastTool"))
 				.collect(Collectors.toSet());
-		
+
 		// Make sure the test ran long enough for compilation to detect methods as hot.
 		assertFalse(notInlined.isEmpty());
-		
+
 		// For now we only care that methods in Tool get correctly inlined
 		// because its methods are guaranteed to be on the hot path.
 		Method[] dm = Tool.class.getDeclaredMethods();

@@ -66,7 +66,7 @@ public class CyclicRedefineOpTest extends ModelCheckerTestCase {
 	public void testSpec() throws IOException {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "2"));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "13", "2", "0"));
 	}

@@ -45,7 +45,7 @@ public final class FormatConfig {
         setConstructSetting("EXTENDS", "maxModulesPerLine", 8);
         setConstructSetting("EXTENDS", "breakStrategy", ListFormatStrategy.SMART_BREAK);
 
-        // VARIABLES-specific settings  
+        // VARIABLES-specific settings
         setConstructSetting("VARIABLES", "breakStrategy", ListFormatStrategy.SMART_BREAK);
 
         // OPERATOR-specific settings
@@ -68,7 +68,8 @@ public final class FormatConfig {
      * Get a construct-specific setting.
      *
      * @param constructName Name of the construct (e.g., "EXTENDS", "VARIABLES")
-     * @param settingName   Name of the setting (e.g., "breakStrategy", "maxModulesPerLine")
+     * @param settingName   Name of the setting (e.g., "breakStrategy",
+     *                      "maxModulesPerLine")
      * @param defaultValue  Default value to return if setting is not found
      * @param <T>           Type of the setting value
      * @return The setting value or default value if not found
@@ -106,8 +107,10 @@ public final class FormatConfig {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
 
         FormatConfig that = (FormatConfig) obj;
         return lineWidth == that.lineWidth &&

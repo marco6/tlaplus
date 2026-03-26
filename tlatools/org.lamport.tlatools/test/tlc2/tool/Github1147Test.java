@@ -46,7 +46,7 @@ import tlc2.output.EC.ExitStatus;
 import tlc2.tool.liveness.ModelCheckerTestCase;
 
 public class Github1147Test extends ModelCheckerTestCase {
-	
+
 	private static final Path dumpFilePath = Paths.get(System.getProperty("java.io.tmpdir"), "Github1147.dot");
 
 	public Github1147Test() {
@@ -60,14 +60,15 @@ public class Github1147Test extends ModelCheckerTestCase {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "51", "50", "47"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "3"));
-		
+
 		// Assert POSTCONDITION.
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_FALSE));
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_EVALUATION_ERROR));
 
 		assertTrue(Files.exists(Github1147Test.dumpFilePath));
-		
-		// If the file exist, simply compare it to a correct and manually checked version.
+
+		// If the file exist, simply compare it to a correct and manually checked
+		// version.
 		try (final InputStream expected = getClass().getResourceAsStream("Github1147.dot");
 				final FileInputStream actual = new FileInputStream(Github1147Test.dumpFilePath.toFile());) {
 			BufferedReader expectedReader = new BufferedReader(new InputStreamReader(expected));
@@ -82,7 +83,7 @@ public class Github1147Test extends ModelCheckerTestCase {
 		}
 
 		assertZeroUncovered();
-		
+
 	}
 
 	@Override

@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class NoParamsTest extends PCalModelCheckerTestCase {
 
 	public NoParamsTest() {
-		super("NoParams", "pcal", new String[] {"-wf", "-termination"});
+		super("NoParams", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test
@@ -51,30 +51,38 @@ public class NoParamsTest extends PCalModelCheckerTestCase {
 	}
 }
 /*
-C:\lamport\tla\pluscal>java -mx1000m -cp "c:/lamport/tla/newtools/tla2-inria-workspace/tla2-inria/tlatools/class" tlc2.TLC -cleanup NoParams.tla         
-TLC2 Version 2.05 of 18 May 2012
-Running in Model-Checking mode.
-Parsing file NoParams.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\Sequences.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\Naturals.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\TLC.tla
-Semantic processing of module Naturals
-Semantic processing of module Sequences
-Semantic processing of module TLC
-Semantic processing of module NoParams
-Starting... (2012-08-10 17:38:23)
-Implied-temporal checking--satisfiability problem has 1 branches.
-Computing initial states...
-Finished computing initial states: 1 distinct state generated.
-2  TRUE
-2  TRUE
-Checking temporal properties for the complete state space...
-Model checking completed. No error has been found.
-  Estimates of the probability that TLC did not check all reachable states
-  because two distinct states had the same fingerprint:
-  calculated (optimistic):  val = 3.3E-19
-  based on the actual fingerprints:  val = 1.7E-18
-7 states generated, 6 distinct states found, 0 states left on queue.
-The depth of the complete state graph search is 6.
-Finished. (2012-08-10 17:38:23)
-*/
+ * C:\lamport\tla\pluscal>java -mx1000m -cp
+ * "c:/lamport/tla/newtools/tla2-inria-workspace/tla2-inria/tlatools/class"
+ * tlc2.TLC -cleanup NoParams.tla
+ * TLC2 Version 2.05 of 18 May 2012
+ * Running in Model-Checking mode.
+ * Parsing file NoParams.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\Sequences.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\Naturals.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\TLC.tla
+ * Semantic processing of module Naturals
+ * Semantic processing of module Sequences
+ * Semantic processing of module TLC
+ * Semantic processing of module NoParams
+ * Starting... (2012-08-10 17:38:23)
+ * Implied-temporal checking--satisfiability problem has 1 branches.
+ * Computing initial states...
+ * Finished computing initial states: 1 distinct state generated.
+ * 2 TRUE
+ * 2 TRUE
+ * Checking temporal properties for the complete state space...
+ * Model checking completed. No error has been found.
+ * Estimates of the probability that TLC did not check all reachable states
+ * because two distinct states had the same fingerprint:
+ * calculated (optimistic): val = 3.3E-19
+ * based on the actual fingerprints: val = 1.7E-18
+ * 7 states generated, 6 distinct states found, 0 states left on queue.
+ * The depth of the complete state graph search is 6.
+ * Finished. (2012-08-10 17:38:23)
+ */

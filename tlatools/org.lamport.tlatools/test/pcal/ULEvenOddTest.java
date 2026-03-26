@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class ULEvenOddTest extends PCalModelCheckerTestCase {
 
 	public ULEvenOddTest() {
-		super("ULEvenOdd", "pcal", new String[] {"-wf", "-termination"});
+		super("ULEvenOdd", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test

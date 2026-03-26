@@ -35,7 +35,6 @@ public class MaybeBoundConstruct implements TlaConstruct {
         return Doc.group(
                 context
                         .buildChild(z[0])
-                        .appendSpace(context.buildChild(z[1]).indent(indentSize))
-        );
+                        .appendSpace(context.buildChild(z[1]).indent(indentSize)));
     }
 }

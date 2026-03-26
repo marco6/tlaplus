@@ -12,7 +12,9 @@ public final class MemIntStack extends MemBasedSet implements IntStack {
 		super(MIN_CAPACITY);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.IntStack#pushInt(int)
 	 */
 	public final synchronized void pushInt(int x) {
@@ -25,7 +27,9 @@ public final class MemIntStack extends MemBasedSet implements IntStack {
 		this.size++;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.IntStack#pushLong(long)
 	 */
 	public final synchronized void pushLong(long x) {
@@ -33,7 +37,9 @@ public final class MemIntStack extends MemBasedSet implements IntStack {
 		this.pushInt((int) (x >>> 32));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.IntStack#popInt()
 	 */
 	public final synchronized int popInt() {
@@ -48,7 +54,9 @@ public final class MemIntStack extends MemBasedSet implements IntStack {
 		return this.elems[pos];
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.IntStack#popLong()
 	 */
 	public final synchronized long popLong() {
@@ -69,7 +77,9 @@ public final class MemIntStack extends MemBasedSet implements IntStack {
 		return (high << 32) | (low & 0xFFFFFFFFL);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.IntStack#reset()
 	 */
 	public final void reset() {

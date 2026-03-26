@@ -11,7 +11,6 @@ public class UserModuleOverride {
         return BoolValue.ValFalse;
     }
 
-
     public static Value Get3() {
         return BoolValue.ValFalse;
     }

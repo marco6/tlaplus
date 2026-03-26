@@ -80,7 +80,8 @@ public class Simulator {
 	public Simulator(String specFile, String configFile, String traceFile, boolean deadlock, int traceDepth,
 			long traceNum, RandomGenerator rng, long seed, FilenameToStream resolver,
 			int numWorkers) throws IOException {
-		this(new FastTool(extracted(specFile), configFile, resolver, Tool.Mode.Simulation, new HashMap<>()), "", traceFile, deadlock,
+		this(new FastTool(extracted(specFile), configFile, resolver, Tool.Mode.Simulation, new HashMap<>()), "",
+				traceFile, deadlock,
 				traceDepth, traceNum, null, rng, seed, resolver, numWorkers);
 	}
 
@@ -90,8 +91,8 @@ public class Simulator {
 	}
 
 	public Simulator(ITool tool, String metadir, String traceFile, boolean deadlock, int traceDepth,
-				long traceNum, String traceActions, RandomGenerator rng, long seed, FilenameToStream resolver,
-				int numWorkers) throws IOException {
+			long traceNum, String traceActions, RandomGenerator rng, long seed, FilenameToStream resolver,
+			int numWorkers) throws IOException {
 		this.tool = tool;
 
 		this.checkDeadlock = deadlock && tool.getModelConfig().getCheckDeadlock();
@@ -117,7 +118,8 @@ public class Simulator {
 		this.numWorkers = numWorkers;
 		this.workers = new ArrayList<>(numWorkers);
 		for (int i = 0; i < this.numWorkers; i++) {
-			// Minimize thread contention by not sharing (real) ILiveCheck instances among workers.
+			// Minimize thread contention by not sharing (real) ILiveCheck instances among
+			// workers.
 			if (this.checkLiveness) {
 				if (EXPERIMENTAL_LIVENESS_SIMULATION) {
 					final String tmpDir = Files.createTempDirectory(String.format("tlc-simulator-%s-", i)).toString();
@@ -126,7 +128,7 @@ public class Simulator {
 					liveCheck = new LiveCheck1(tool.noDebug(), errorFound, i != 0);
 				}
 			}
-			
+
 			final ITool t = i == 0 ? tool : tool.noDebug();
 			if (tool.isDebugger()) {
 				this.workers.add(new ExplorationWorker(i, t, this.workerResultQueue, this.rng.nextLong(),
@@ -146,17 +148,17 @@ public class Simulator {
 						liveCheck, this.numOfGenStates, this.numOfGenTraces, this.welfordM2AndMean));
 			}
 		}
-	
+
 		// Eagerly create the config value in case the next-state relation involves
 		// TLCGet("config"). In this case, we would end up locking the
 		// UniqueString#InternTable for every lookup. See AbstractChecker too.
 		this.config = createConfig();
-		
+
 		if (TLCGlobals.isCoverageEnabled() || TLCGlobals.Coverage.isEnabled()) {
-        	CostModelCreator.create(this.tool);
-        }
-		
-		//TODO Eventually derive Simulator from AbstractChecker.
+			CostModelCreator.create(this.tool);
+		}
+
+		// TODO Eventually derive Simulator from AbstractChecker.
 		AbstractChecker.scheduleTermination(new TimerTask() {
 			@Override
 			public void run() {
@@ -195,33 +197,33 @@ public class Simulator {
 
 	// Each simulation worker pushes their results onto this shared queue.
 	protected final BlockingQueue<SimulationWorkerResult> workerResultQueue = new LinkedBlockingQueue<>();
-	
-    /**
-     * Timestamp of when simulation started.
-     */
+
+	/**
+	 * Timestamp of when simulation started.
+	 */
 	private final long startTime = System.currentTimeMillis();
-	
+
 	protected final List<SimulationWorker> workers;
-		 
-	 /**
+
+	/**
 	 * Returns whether a given error code is considered "continuable". That is, if
 	 * any worker returns this error, should we consider continuing to run the
 	 * simulator. These errors are considered "fatal" since they most likely
 	 * indicate an error in the way the spec is written.
 	 */
 	protected boolean isNonContinuableError(int ec) {
-		return ec == EC.TLC_INVARIANT_EVALUATION_FAILED || 
-			   ec == EC.TLC_ACTION_PROPERTY_EVALUATION_FAILED ||
-			   ec == EC.TLC_STATE_NOT_COMPLETELY_SPECIFIED_NEXT;
+		return ec == EC.TLC_INVARIANT_EVALUATION_FAILED ||
+				ec == EC.TLC_ACTION_PROPERTY_EVALUATION_FAILED ||
+				ec == EC.TLC_STATE_NOT_COMPLETELY_SPECIFIED_NEXT;
 	}
-	
+
 	/**
 	 * Shut down all of the given workers and make sure they have stopped.
 	 */
 	private void shutdownAndJoinWorkers(final List<SimulationWorker> workers) throws InterruptedException {
 		// Do not wait indefinitely for other workers to terminate gracefully. Instead,
 		// forcefully terminate them if they do not shut down within 10 seconds.
-		// 
+		//
 		// For example, if a worker prints a counterexample and then calls
 		// `shutdownAndJoinWorkers` to stop the other workers, TLC should not
 		// wait too long. This prevents delays when workers take an extended time to
@@ -240,18 +242,19 @@ public class Simulator {
 	/*
 	 * This method does random simulation on a TLA+ spec.
 	 * 
-	 * It runs until an error is encountered or we have generated the maximum number of traces.
+	 * It runs until an error is encountered or we have generated the maximum number
+	 * of traces.
 	 * 
-   * @return an error code, or <code>EC.NO_ERROR</code> on success
+	 * @return an error code, or <code>EC.NO_ERROR</code> on success
 	 */
 	public int simulate() throws Exception {
 		final int res = this.tool.checkAssumptions();
 		if (res != EC.NO_ERROR) {
 			return res;
 		}
-		
+
 		TLCState curState = null;
-		//TODO: Refactor to check validity and inModel via IStateFunctor.
+		// TODO: Refactor to check validity and inModel via IStateFunctor.
 		final StateVec initStates;
 
 		//
@@ -266,7 +269,7 @@ public class Simulator {
 			// This counter should always be initialized at zero.
 			assert (this.numOfGenStates.longValue() == 0);
 			this.numOfGenStates.add(inits.size());
-			
+
 			MP.printMessage(EC.TLC_COMPUTING_INIT_PROGRESS, this.numOfGenStates.toString());
 
 			// Check all initial states for validity.
@@ -277,7 +280,8 @@ public class Simulator {
 						if (!this.tool.isValid(this.invariants[j], curState)) {
 							// We get here because of invariant violation.
 							int err = MP.printError(EC.TLC_INVARIANT_VIOLATED_INITIAL,
-									new String[] { this.tool.getInvNames()[j], tool.evalAlias(curState, curState).toString() });
+									new String[] { this.tool.getInvNames()[j],
+											tool.evalAlias(curState, curState).toString() });
 							tool.checkPostConditionWithCounterExample(new CounterExample(curState));
 							return err;
 						}
@@ -285,7 +289,7 @@ public class Simulator {
 				} else {
 					return MP.printError(EC.TLC_STATE_NOT_COMPLETELY_SPECIFIED_INITIAL, curState.toString());
 				}
-				
+
 				if (tool.isInModel(curState)) {
 					initStates.addElement(curState);
 				}
@@ -334,13 +338,14 @@ public class Simulator {
 		// Start simulating.
 		//
 		this.aril = rng.getAril();
-		
+
 		final SimulationWorkerResult result = simulate(initStates);
 		int errorCode = result.isError() ? result.error().errorCode : EC.NO_ERROR;
-		
+
 		// see tlc2.tool.Worker.doPostCheckAssumption()
 		if (result.isError() && result.error().hasTrace()) {
-			errorCode = Math.max(this.tool.checkPostConditionWithCounterExample(result.error().getCounterExample()), errorCode);
+			errorCode = Math.max(this.tool.checkPostConditionWithCounterExample(result.error().getCounterExample()),
+					errorCode);
 		} else {
 			errorCode = Math.max(this.tool.checkPostCondition(), errorCode);
 		}
@@ -373,7 +378,7 @@ public class Simulator {
 		}
 
 		SimulationWorkerResult result;
-		
+
 		// Continuously consume results from all worker threads.
 		while (true) {
 			result = workerResultQueue.take();
@@ -384,7 +389,7 @@ public class Simulator {
 				break;
 			} else if (result.isError()) {
 				SimulationWorkerError error = result.error();
-				
+
 				// We assume that if a worker threw an unexpected exception, there is a bug
 				// somewhere, so we print out the exception and terminate. In the case of a
 				// liveness error, which is reported as an exception, we also terminate.
@@ -393,9 +398,9 @@ public class Simulator {
 						// In case of a liveness error, there is no need to print out
 						// the behavior since the liveness checker should take care of that itself.
 						this.printSummary();
-						error.errorCode = ((LiveException)error.exception).errorCode;
+						error.errorCode = ((LiveException) error.exception).errorCode;
 					} else if (error.exception instanceof TLCRuntimeException) {
-						final TLCRuntimeException exception = (TLCRuntimeException)error.exception;
+						final TLCRuntimeException exception = (TLCRuntimeException) error.exception;
 						printBehavior(exception, error.stateTrace);
 						error.errorCode = exception.errorCode;
 					} else {
@@ -405,17 +410,18 @@ public class Simulator {
 					}
 					break;
 				}
-				
+
 				// Print the trace for all other errors.
 				printBehavior(error);
-				
+
 				// For certain, "fatal" errors, we shut down all workers and terminate,
-				// regardless of the "continue" parameter, since these errors likely indicate a bug in the spec.
+				// regardless of the "continue" parameter, since these errors likely indicate a
+				// bug in the spec.
 				if (isNonContinuableError(error.errorCode)) {
 					error.errorCode = error.errorCode;
 					break;
 				}
-				
+
 				// If the 'continue' option is false, then we always terminate on the
 				// first error, shutting down all workers. Otherwise, we continue receiving
 				// results from the worker threads.
@@ -424,8 +430,7 @@ public class Simulator {
 					break;
 				}
 
-				if (error.errorCode == EC.NO_ERROR)
-				{
+				if (error.errorCode == EC.NO_ERROR) {
 					error.errorCode = EC.GENERAL;
 				}
 			}
@@ -434,12 +439,12 @@ public class Simulator {
 			// continue waiting for results, so we should terminate.
 			else {
 				runningWorkers.remove(result.workerId());
-				if(runningWorkers.isEmpty()) {
+				if (runningWorkers.isEmpty()) {
 					break;
 				}
 			}
 		}
-		
+
 		// Shut down all workers.
 		this.shutdownAndJoinWorkers(workers);
 		return result;
@@ -463,14 +468,15 @@ public class Simulator {
 		printBehavior(stateTrace);
 		this.printSummary();
 	}
-	
+
 	private final void printBehavior(final StateVec stateTrace) {
 		if (this.traceDepth == Integer.MAX_VALUE) {
 			MP.printMessage(EC.TLC_ERROR_STATE);
 			StatePrinter.printStandaloneErrorState(stateTrace.last());
 		} else {
 			MP.printError(EC.TLC_BEHAVIOR_UP_TO_THIS_POINT);
-			// MAK 09/24/2019: For space reasons, TLCState does not store the state's action.
+			// MAK 09/24/2019: For space reasons, TLCState does not store the state's
+			// action.
 			// This is why the loop below creates TLCStateInfo instances out of the pair cur
 			// -> last to print the action's name as part of the error trace. This is
 			// especially useful for Error-Trace Explorer in the Toolbox.
@@ -485,9 +491,12 @@ public class Simulator {
 					// Contrary to BFS/ModelChecker, simulation remembers the action (its id) during
 					// trace exploration to print the error-trace without re-evaluating the
 					// next-state relation for lastStates -> cusState (tool.getState(curState,
-					// lastState)) to determine the action.  This would fail for specs whose next-state
-					// relation is probabilistic (ie. TLC!RandomElement or Randomization.tla). In other
-					// words, tool.getState(curState,lastState) would return for some pairs of states.
+					// lastState)) to determine the action. This would fail for specs whose
+					// next-state
+					// relation is probabilistic (ie. TLC!RandomElement or Randomization.tla). In
+					// other
+					// words, tool.getState(curState,lastState) would return for some pairs of
+					// states.
 					sinfo = new TLCStateInfo(curState);
 				} else {
 					sinfo = new TLCStateInfo(curState);
@@ -496,7 +505,7 @@ public class Simulator {
 					lastState = curState;
 					continue;
 				}
-				
+
 				// MAK 09/25/2019: It is possible for
 				// tlc2.tool.SimulationWorker.simulateRandomTrace() to produce traces with
 				// *non-terminal* stuttering steps, i.e. it might produce traces such
@@ -511,13 +520,15 @@ public class Simulator {
 				// better readable - trace with only infinite stuttering at the end. This
 				// takes mostly care of the confusing Toolbox behavior where a trace with
 				// finite stuttering is silently reduced by breadth-first-search when trace
-				// expressions are evaluated (see https://github.com/tlaplus/tlaplus/issues/400#issuecomment-650418597).
+				// expressions are evaluated (see
+				// https://github.com/tlaplus/tlaplus/issues/400#issuecomment-650418597).
 				if (TLCGlobals.printDiffsOnly && curState.fingerPrint() == lastState.fingerPrint()) {
 					omitted++;
 				} else {
 					// print the state's actual level and not a monotonically increasing state
 					// number => Numbering will have gaps with difftrace.
-					StatePrinter.printInvariantViolationStateTraceState(tool.evalAlias(sinfo, sucState), lastState, curState.getLevel(), i + 1 == stateTrace.size());
+					StatePrinter.printInvariantViolationStateTraceState(tool.evalAlias(sinfo, sucState), lastState,
+							curState.getLevel(), i + 1 == stateTrace.size());
 				}
 				lastState = curState;
 			}
@@ -546,12 +557,12 @@ public class Simulator {
 	public List<IValue> getAllValues(int idx) {
 		return workers.stream().map(w -> w.getLocalValue(idx)).collect(Collectors.toList());
 	}
-	
+
 	public final Value getAllValues() {
 		final IValue[] localValues = workers.get(0).getLocalValues();
-		
+
 		final Map<Value, Value> m = new HashMap<>(localValues.length);
-		
+
 		for (int i = 0; i < localValues.length; i++) {
 			final IValue iValue = localValues[i];
 			if (iValue != null) {
@@ -564,7 +575,6 @@ public class Simulator {
 		}
 		return new FcnRcdValue(m);
 	}
-
 
 	/**
 	 * Prints the summary
@@ -597,14 +607,14 @@ public class Simulator {
 	 */
 	public final void reportCoverage() {
 		if (TLCGlobals.isCoverageEnabled()) {
-            CostModelCreator.report(this.tool, this.startTime);
+			CostModelCreator.report(this.tool, this.startTime);
 		}
 	}
 
 	public final ITool getTool() {
-	    return this.tool;	
+		return this.tool;
 	}
-	
+
 	/**
 	 * Reports progress information
 	 */
@@ -627,12 +637,13 @@ public class Simulator {
 					final long m2AndMean = welfordM2AndMean.get();
 					final long mean = m2AndMean & 0x00000000FFFFFFFFL; // could be int.
 					final long m2 = m2AndMean >>> 32;
-					MP.printMessage(EC.TLC_PROGRESS_SIMU, 
+					MP.printMessage(EC.TLC_PROGRESS_SIMU,
 							String.valueOf(numOfGenStates.longValue()),
 							String.valueOf(genTrace),
 							String.valueOf(mean),
-							String.valueOf(Math.round(m2 / (genTrace + 1d))), // Var(X),  +1 to prevent div-by-zero.
-							String.valueOf(Math.round(Math.sqrt(m2 / (genTrace + 1d))))); // SD, +1 to prevent div-by-zero.
+							String.valueOf(Math.round(m2 / (genTrace + 1d))), // Var(X), +1 to prevent div-by-zero.
+							String.valueOf(Math.round(Math.sqrt(m2 / (genTrace + 1d))))); // SD, +1 to prevent
+																							// div-by-zero.
 					if (count > 1) {
 						count--;
 					} else {
@@ -667,13 +678,13 @@ public class Simulator {
 			writeActionFlowGraphFull();
 		}
 	}
-	
-	private void writeActionFlowGraphFull() throws IOException {		
+
+	private void writeActionFlowGraphFull() throws IOException {
 		// The number of actions is expected to be low (dozens commons and hundreds are
 		// rare). This is why the code below isn't optimized for performance.
 		final Vect<Action> initAndNext = tool.getSpecActions();
 		final int len = initAndNext.size();
-		
+
 		// Clusters of actions that have the same context:
 		// CONSTANT Proc
 		// ...
@@ -683,11 +694,11 @@ public class Simulator {
 		for (int i = 0; i < len; i++) {
 			final String con = initAndNext.elementAt(i).con.toString();
 			if (!clusters.containsKey(con)) {
-				clusters.put(con, new HashSet<>());	
+				clusters.put(con, new HashSet<>());
 			}
 			clusters.get(con).add(i);
 		}
-		
+
 		// Write clusters to dot file (override previous file).
 		final DotActionWriter dotActionWriter = new DotActionWriter(
 				Simulator.this.tool.getRootName() + "_actions.dot", "");
@@ -695,14 +706,14 @@ public class Simulator {
 			// key is a unique set of chars accepted/valid as a graphviz cluster id.
 			final String key = Integer.toString(Math.abs(cluster.getKey().hashCode()));
 			dotActionWriter.writeSubGraphStart(key, cluster.getKey().toString());
-			
+
 			final Set<Integer> ids = cluster.getValue();
 			for (Integer id : ids) {
 				dotActionWriter.write(initAndNext.elementAt(id), id);
 			}
 			dotActionWriter.writeSubGraphEnd();
-		}					
-		
+		}
+
 		// Element-wise sum the statistics from all workers.
 		long[][] aggregateActionStats = new long[len][len];
 		final List<SimulationWorker> workers = Simulator.this.workers;
@@ -714,7 +725,7 @@ public class Simulator {
 				}
 			}
 		}
-		
+
 		// Create a map from id to action name.
 		final Map<Integer, Action> idToActionName = new HashMap<>();
 		for (int i = 0; i < initAndNext.size(); i++) {
@@ -729,17 +740,17 @@ public class Simulator {
 				if (l > 0L) {
 					// LogLog l (to keep the graph readable) and round to two decimal places (to not
 					// write a gazillion decimal places truncated by graphviz anyway).
-					final double loglogWeight = Math.log10(Math.log10(l+1)); // +1 to prevent negative inf.
+					final double loglogWeight = Math.log10(Math.log10(l + 1)); // +1 to prevent negative inf.
 					dotActionWriter.write(i, j,
 							BigDecimal.valueOf(loglogWeight).setScale(2, RoundingMode.HALF_UP)
-							.doubleValue());
+									.doubleValue());
 				} else if (!idToActionName.get(j).isInitPredicate()) {
 					// Only draw an unseen arc if the sink is not an initial prediate.
 					dotActionWriter.write(i, j);
 				}
 			}
 		}
-		
+
 		// Close dot file.
 		dotActionWriter.close();
 	}
@@ -749,7 +760,7 @@ public class Simulator {
 		// rare). This is why the code below isn't optimized for performance.
 		final Vect<Action> initAndNext = tool.getSpecActions();
 		final int len = initAndNext.size();
-		
+
 		// Element-wise sum the statistics from all workers.
 		long[][] aggregateActionStats = new long[len][len];
 		final List<SimulationWorker> workers = Simulator.this.workers;
@@ -761,13 +772,13 @@ public class Simulator {
 				}
 			}
 		}
-		
+
 		// Create mappings from distinct ids to action ids and name.
 		final Map<Integer, Action> idToAction = new HashMap<>();
 		final Map<Location, Integer> actionToId = new HashMap<>();
 		for (int i = 0; i < initAndNext.size(); i++) {
 			final Action action = initAndNext.elementAt(i);
-			
+
 			if (!actionToId.containsKey(action.getDefinition())) {
 				int id = idToAction.size();
 				idToAction.put(id, action);
@@ -779,14 +790,14 @@ public class Simulator {
 			final Action action = initAndNext.elementAt(i);
 			actionsToDistinctActions.put(action.getId(), actionToId.get(action.getDefinition()));
 		}
-		
+
 		// Override previous basic file.
 		final DotActionWriter dotActionWriter = new DotActionWriter(
 				Simulator.this.tool.getRootName() + "_actions.dot", "");
 
 		// Identify actions in the dot file.
 		idToAction.forEach((id, a) -> dotActionWriter.write(a, id));
-		
+
 		// Having the aggregated action stats, reduce it to account for only
 		// the distinct action names.
 		long[][] reducedAggregateActionStats = new long[idToAction.size()][idToAction.size()];
@@ -816,7 +827,7 @@ public class Simulator {
 				}
 			}
 		}
-		
+
 		// Close dot file.
 		dotActionWriter.close();
 	}
@@ -830,7 +841,7 @@ public class Simulator {
 			return workers.get(0).getTrace(s);
 		}
 	}
-	
+
 	public final StateVec getUncompressedTrace(final TLCState s) {
 		if (Thread.currentThread() instanceof SimulationWorker) {
 			final SimulationWorker w = (SimulationWorker) Thread.currentThread();
@@ -840,7 +851,7 @@ public class Simulator {
 			return workers.get(0).getUncompressedTrace(s);
 		}
 	}
-	
+
 	public void stop() {
 		for (SimulationWorker worker : workers) {
 			worker.setStopped();
@@ -867,17 +878,17 @@ public class Simulator {
 			return w.statistics;
 		} else {
 			return workers.get(0).statistics;
-		}	
+		}
 	}
-	
+
 	public final Value getStatistics(final TLCState s) {
 		final UniqueString[] n = new UniqueString[11];
 		final Value[] v = new Value[n.length];
-		
+
 		final long genTrace = numOfGenTraces.longValue();
 		n[0] = TLCGetSet.TRACES;
 		v[0] = IntValue.narrowToIntValue(genTrace);
-		
+
 		n[1] = TLCGetSet.DURATION;
 		v[1] = IntValue.narrowToIntValue((System.currentTimeMillis() - startTime) / 1000L);
 
@@ -892,16 +903,16 @@ public class Simulator {
 
 		n[5] = TLCGetSet.DISTINCT;
 		v[5] = getWorkerStatistics().getDistinctStates();
-		
+
 		n[6] = TLCGetSet.DISTINCT_VALUES;
 		v[6] = getWorkerStatistics().getDistinctValues();
-		
+
 		n[7] = TLCGetSet.RETRIES;
 		v[7] = getWorkerStatistics().getNextRetries();
-		
+
 		n[8] = TLCGetSet.SPEC_ACTIONS;
 		v[8] = getWorkerStatistics().getActions();
-		
+
 		final long m2AndMean = welfordM2AndMean.get();
 		final long mean = m2AndMean & 0x00000000FFFFFFFFL; // could be int.
 		n[9] = TLCGetSet.LEVEL_MEAN;
@@ -909,7 +920,7 @@ public class Simulator {
 
 		final long m2 = m2AndMean >>> 32;
 		n[10] = TLCGetSet.LEVEL_VARIANCE;
-		v[10] = IntValue.narrowToIntValue(Math.round(m2 / (genTrace + 1d)));// Var(X),  +1 to prevent div-by-zero.
+		v[10] = IntValue.narrowToIntValue(Math.round(m2 / (genTrace + 1d)));// Var(X), +1 to prevent div-by-zero.
 
 		return new RecordValue(n, v, false);
 	}
@@ -921,7 +932,7 @@ public class Simulator {
 	private final Value createConfig() {
 		final UniqueString[] n = new UniqueString[9];
 		final Value[] v = new Value[n.length];
-		
+
 		n[0] = TLCGetSet.MODE;
 		v[0] = Tool.isProbabilistic() ? new StringValue("generate") : new StringValue("simulate");
 
@@ -948,10 +959,10 @@ public class Simulator {
 
 		n[8] = TLCGetSet.SCHED;
 		v[8] = new StringValue(getScheduler());
-		
+
 		return new RecordValue(n, v, false);
 	}
-	
+
 	private static String getScheduler() {
 		if (Boolean.getBoolean(Simulator.class.getName() + ".rl")) {
 			return "rl";

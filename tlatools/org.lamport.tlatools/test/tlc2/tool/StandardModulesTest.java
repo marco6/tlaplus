@@ -41,7 +41,8 @@ public class StandardModulesTest extends ModelCheckerTestCase {
 
 	@Test
 	public void testSpec() {
-		// Check that all standard modules parse (StandardModules.tla extends all of them).
+		// Check that all standard modules parse (StandardModules.tla extends all of
+		// them).
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "0", "0", "0"));

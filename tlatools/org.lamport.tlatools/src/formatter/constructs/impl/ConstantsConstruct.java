@@ -76,7 +76,8 @@ public class ConstantsConstruct extends AbstractDeclarationListConstruct {
         }
     }
 
-    private Doc formatCommaFirstWithComments(Doc prefix, List<TreeNode> constantNodes, Map<Integer, String[]> commaComments) {
+    private Doc formatCommaFirstWithComments(Doc prefix, List<TreeNode> constantNodes,
+            Map<Integer, String[]> commaComments) {
         Doc result = prefix;
         String indent = "    ";
         String commaPrefix = ",   ";

@@ -19,7 +19,7 @@ public class EvalControlTest {
 		assertTrue(EvalControl.isEnabled(control));
 		assertFalse(EvalControl.isKeepLazy(control));
 		assertFalse(EvalControl.isPrimed(control));
-		
+
 		control = EvalControl.setKeepLazy(control);
 		assertTrue(EvalControl.isEnabled(control));
 		assertTrue(EvalControl.isKeepLazy(control));
@@ -34,9 +34,9 @@ public class EvalControlTest {
 	@Test
 	public void testIfEnabled() {
 		int control = EvalControl.Clear;
-		
+
 		assertFalse(EvalControl.isPrimed(EvalControl.setPrimedIfEnabled(control)));
-		
+
 		control = EvalControl.setEnabled(control);
 		assertTrue(EvalControl.isEnabled(control));
 		assertTrue(EvalControl.isPrimed(EvalControl.setPrimedIfEnabled(control)));

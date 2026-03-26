@@ -43,19 +43,19 @@ public class CheckpointOnViolationTest extends ModelCheckerTestCase {
 
 	@Test
 	public void testSpec() {
-		// ModelChecker has finished and generated the expected amount of states. 
+		// ModelChecker has finished and generated the expected amount of states.
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "252", "54", "11"));
-		
+
 		// Check the violation
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
 		assertEquals(7, recorder.getRecords(EC.TLC_STATE_PRINT2).size());
-		
+
 		// Check that a checkpoint has been taken.
 		assertTrue(recorder.recorded(EC.TLC_CHECKPOINT_START));
 		assertTrue(recorder.recorded(EC.TLC_CHECKPOINT_END));
-		
+
 		assertZeroUncovered();
 	}
 

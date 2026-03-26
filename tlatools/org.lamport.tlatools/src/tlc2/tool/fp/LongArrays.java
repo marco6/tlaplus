@@ -14,7 +14,7 @@ public class LongArrays {
 			return;
 		}
 
-		//+++++++ Insertions sort +++++++//
+		// +++++++ Insertions sort +++++++//
 		for (long i = left, j = i; i < right; j = ++i) {
 			final long lo = (i + 1) % size;
 			final long ai = a.get(lo);
@@ -27,14 +27,14 @@ public class LongArrays {
 			a.set((j + 1) % size, ai);
 		}
 	}
-	
+
 	public static class LongComparator {
 		public int compare(long lo, long loPos, long hi, long hiPos) {
 			// The default comparator ignores the positions.
 			return Long.compare(lo, hi);
 		}
 	}
-	
+
 	public static void sort(final LongArray a, final long left, final long right) {
 		sort(a, left, right, new LongComparator());
 	}
@@ -42,7 +42,7 @@ public class LongArrays {
 	public static void sort(final LongArray a) {
 		sort(a, 0, a.size() - 1L, new LongComparator());
 	}
-	
+
 	/**
 	 * DOES NOT HANDLE LONG ARRAYS LARGER THAN INTEGER.MAX_VALUE
 	 */

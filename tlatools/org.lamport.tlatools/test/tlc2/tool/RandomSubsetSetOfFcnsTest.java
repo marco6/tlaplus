@@ -43,39 +43,46 @@ public class RandomSubsetSetOfFcnsTest extends ModelCheckerTestCase {
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_INIT_GENERATED1, "1000"));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "2000", "1000", "0"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "1"));
-//
-//		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
-//		
-//		final List<Object> actual = recorder.getRecords(EC.TLC_STATE_PRINT2);
-//		assertEquals(2, actual.size());
-//		
-//		final TLCStateInfo first = (TLCStateInfo) ((Object[]) actual.get(0))[0];
-//		assertTrue(((String) first.info).startsWith("<Initial predicate>"));
-//		final Map<UniqueString, Value> firstState = first.state.getVals();
-//		assertEquals(3, firstState.size());
-//		
-//		// Check x and y values are within defined ranges.
-//		final IntValue firstX = (IntValue) firstState.get(UniqueString.uniqueStringOf("x"));
-//		assertTrue(1 <= firstX.val && firstX.val <= 100000000);
-//		final IntValue firstY = (IntValue) firstState.get(UniqueString.uniqueStringOf("y"));
-//		assertTrue(100000000 <= firstY.val && firstX.val <= 100000010);
-//
-//		// Check z is true
-//		assertEquals(BoolValue.ValTrue, (BoolValue) firstState.get(UniqueString.uniqueStringOf("z")));
-//		
-//		final TLCStateInfo second = (TLCStateInfo) ((Object[]) actual.get(1))[0];
-//		assertTrue(((String) second.info).startsWith("<Next line 10, col 9 to line 11, col 21 of module RandomSubset>"));
-//		final Map<UniqueString, Value> secondState = second.state.getVals();
-//		assertEquals(3, secondState.size());
-//		// UNCHANGED x,y
-//		assertEquals(firstX.val, ((IntValue) secondState.get(UniqueString.uniqueStringOf("x"))).val);
-//		assertEquals(firstY.val, ((IntValue) secondState.get(UniqueString.uniqueStringOf("y"))).val);
-//		// Check z is false
-//		assertEquals(BoolValue.ValFalse, (BoolValue) secondState.get(UniqueString.uniqueStringOf("z")));
+		//
+		// assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
+		//
+		// final List<Object> actual = recorder.getRecords(EC.TLC_STATE_PRINT2);
+		// assertEquals(2, actual.size());
+		//
+		// final TLCStateInfo first = (TLCStateInfo) ((Object[]) actual.get(0))[0];
+		// assertTrue(((String) first.info).startsWith("<Initial predicate>"));
+		// final Map<UniqueString, Value> firstState = first.state.getVals();
+		// assertEquals(3, firstState.size());
+		//
+		// // Check x and y values are within defined ranges.
+		// final IntValue firstX = (IntValue)
+		// firstState.get(UniqueString.uniqueStringOf("x"));
+		// assertTrue(1 <= firstX.val && firstX.val <= 100000000);
+		// final IntValue firstY = (IntValue)
+		// firstState.get(UniqueString.uniqueStringOf("y"));
+		// assertTrue(100000000 <= firstY.val && firstX.val <= 100000010);
+		//
+		// // Check z is true
+		// assertEquals(BoolValue.ValTrue, (BoolValue)
+		// firstState.get(UniqueString.uniqueStringOf("z")));
+		//
+		// final TLCStateInfo second = (TLCStateInfo) ((Object[]) actual.get(1))[0];
+		// assertTrue(((String) second.info).startsWith("<Next line 10, col 9 to line
+		// 11, col 21 of module RandomSubset>"));
+		// final Map<UniqueString, Value> secondState = second.state.getVals();
+		// assertEquals(3, secondState.size());
+		// // UNCHANGED x,y
+		// assertEquals(firstX.val, ((IntValue)
+		// secondState.get(UniqueString.uniqueStringOf("x"))).val);
+		// assertEquals(firstY.val, ((IntValue)
+		// secondState.get(UniqueString.uniqueStringOf("y"))).val);
+		// // Check z is false
+		// assertEquals(BoolValue.ValFalse, (BoolValue)
+		// secondState.get(UniqueString.uniqueStringOf("z")));
 
 		assertZeroUncovered();
 	}

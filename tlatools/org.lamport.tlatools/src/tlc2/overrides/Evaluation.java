@@ -39,7 +39,7 @@ import java.lang.annotation.Target;
 public @interface Evaluation {
 
 	/**
-	 * @return The identifier of a TLA+ state or action predicate. 
+	 * @return The identifier of a TLA+ state or action predicate.
 	 */
 	String definition();
 
@@ -53,7 +53,7 @@ public @interface Evaluation {
 	 *         represents the EvaluatingValue in the semantic graph. Unless
 	 *         the actual level checking in Spec.getLevelBound assigns a
 	 *         greater value, the OpDefNode is a constant-level expression if
-	 *         0 causing it to be eagerly evaluated in 
+	 *         0 causing it to be eagerly evaluated in
 	 *         SpecProcessor.processConstantDefns.
 	 * @see tla2sany.semantic.LevelNode.getLevel()
 	 * @see tlc2.tool.impl.Spec.getLevelBound(SemanticNode, Context)
@@ -61,7 +61,7 @@ public @interface Evaluation {
 	 * @see tlc2.tool.impl.SpecProcessor.processConstantDefns()
 	 */
 	int minLevel() default 0;
-	
+
 	/**
 	 * @return true if a warning should be printed when a EV cannot be mapped to the
 	 *         given TLA+ definition in module.
@@ -71,13 +71,15 @@ public @interface Evaluation {
 	boolean warn() default true;
 
 	/**
-	 * @return true if no message should be printed when this EV is successfully loaded.
+	 * @return true if no message should be printed when this EV is successfully
+	 *         loaded.
 	 */
 	boolean silent() default false;
-	
+
 	/**
-	 * Should there be more than one Evaluation for an operator, the Evaluation with a
-	 * lower priority will be evaluated first.  If two or more Evaluations have the
+	 * Should there be more than one Evaluation for an operator, the Evaluation with
+	 * a
+	 * lower priority will be evaluated first. If two or more Evaluations have the
 	 * same priority, the order in which they are evaluated is non-deterministic.
 	 */
 	int priority() default 100;

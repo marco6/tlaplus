@@ -6,12 +6,10 @@ import pcal.AST;
  * @author Simon Zambrovski
  * @version $Id$
  */
-public class UnrecoverablePositionedException extends UnrecoverableException
-{
+public class UnrecoverablePositionedException extends UnrecoverableException {
     private AST position;
-    
-    public UnrecoverablePositionedException(String message)
-    {
+
+    public UnrecoverablePositionedException(String message) {
         super(message);
     }
 
@@ -19,17 +17,15 @@ public class UnrecoverablePositionedException extends UnrecoverableException
      * @param message
      * @param position
      */
-    public UnrecoverablePositionedException(String message, AST position)
-    {
+    public UnrecoverablePositionedException(String message, AST position) {
         super(message);
         this.position = position;
     }
-    
+
     /**
      * @return the elementAt
      */
-    public AST getPosition()
-    {
+    public AST getPosition() {
         return position;
     }
 

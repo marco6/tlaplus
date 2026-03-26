@@ -114,14 +114,15 @@ public class TraceExpressionSpecDeadlockTest extends TraceExpressionSpecTest {
 
 		assertNotNull(tool.getModelConfig().getAlias());
 
-		//TODO: We want the spec to deadlock and not violate an artificial invariant.
-//		assertTrue(tool.getModelConfig().getCheckDeadlock());
-		
+		// TODO: We want the spec to deadlock and not violate an artificial invariant.
+		// assertTrue(tool.getModelConfig().getCheckDeadlock());
+
 		// Assert that all three sub-modules exist
 		final ExternalModuleTable moduleTbl = specProcessor.getModuleTbl();
 		assertNotNull(moduleTbl.getModuleNode(UniqueString.of(TE_SPEC_TEST)));
 		assertNotNull(moduleTbl.getModuleNode(
 				UniqueString.of(TE_SPEC_TEST + "_" + TLAConstants.TraceExplore.EXPLORATION_MODULE_NAME)));
-		assertNotNull(moduleTbl.getModuleNode(UniqueString.of(TE_SPEC_TEST + "_" + TLAConstants.TraceExplore.SPEC_TETRACE_NAME)));
+		assertNotNull(moduleTbl
+				.getModuleNode(UniqueString.of(TE_SPEC_TEST + "_" + TLAConstants.TraceExplore.SPEC_TETRACE_NAME)));
 	}
 }

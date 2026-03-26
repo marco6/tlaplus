@@ -52,8 +52,8 @@ public class SyntaxCorpusRunner {
 	 */
 	public static Function<CorpusTest, Boolean> runSpecificTests(String... testNames) {
 		return test -> Arrays
-			.stream(testNames)
-			.anyMatch(name -> test.name.equalsIgnoreCase(name));
+				.stream(testNames)
+				.anyMatch(name -> test.name.equalsIgnoreCase(name));
 	}
 
 	/**
@@ -66,8 +66,8 @@ public class SyntaxCorpusRunner {
 	 */
 	public static Function<CorpusTest, Boolean> skipSpecificTests(String... testNames) {
 		return test -> !Arrays
-			.stream(testNames)
-			.anyMatch(name -> test.name.equalsIgnoreCase(name));
+				.stream(testNames)
+				.anyMatch(name -> test.name.equalsIgnoreCase(name));
 	}
 
 	/**
@@ -89,26 +89,25 @@ public class SyntaxCorpusRunner {
 	 */
 	public static Function<CorpusTest, Boolean> expectFailures(String... failingTestNames) {
 		return test -> Arrays
-			.stream(failingTestNames)
-			.anyMatch(name -> test.name.equalsIgnoreCase(name));
+				.stream(failingTestNames)
+				.anyMatch(name -> test.name.equalsIgnoreCase(name));
 	}
 
 	/**
 	 * Subjects the given parser to the given syntax test, filtering both the
 	 * test execution and its result according to some predicates.
 	 *
-	 * @param corpusTest The test to run.
-	 * @param parser The parser test target.
-	 * @param shouldRun Predicate determining whether to run a test.
+	 * @param corpusTest    The test to run.
+	 * @param parser        The parser test target.
+	 * @param shouldRun     Predicate determining whether to run a test.
 	 * @param expectFailure Predicate identifying known-failing tests.
 	 * @throws ParseException If AST normalization process failed.
 	 */
 	public static void run(
-		CorpusTest corpusTest,
-		IParserTestTarget parser,
-		Function<CorpusTest, Boolean> shouldRun,
-		Function<CorpusTest, Boolean> expectFailure
-	) throws ParseException {
+			CorpusTest corpusTest,
+			IParserTestTarget parser,
+			Function<CorpusTest, Boolean> shouldRun,
+			Function<CorpusTest, Boolean> expectFailure) throws ParseException {
 		Assume.assumeTrue(shouldRun.apply(corpusTest));
 		Assume.assumeFalse(corpusTest.attributes.contains(CorpusTest.Attribute.SKIP));
 

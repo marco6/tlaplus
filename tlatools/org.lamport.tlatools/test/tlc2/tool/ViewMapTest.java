@@ -47,7 +47,6 @@ public class ViewMapTest extends ModelCheckerTestCase {
 		super("ViewMap", new String[] { "-view" }, ExitStatus.VIOLATION_SAFETY);
 	}
 
-
 	@Test
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
@@ -55,7 +54,7 @@ public class ViewMapTest extends ModelCheckerTestCase {
 		assertFalse(recorder.recorded(EC.TLC_BUG));
 
 		assertTrue(recorder.recorded(EC.TLC_BEHAVIOR_UP_TO_THIS_POINT));
-		
+
 		final List<String> expectedTrace = new ArrayList<String>(8);
 		expectedTrace.add("/\\ buffer = <<>>\n/\\ waitset = {}");
 		expectedTrace.add("/\\ buffer = <<>>\n/\\ waitset = {c1}");
@@ -80,7 +79,7 @@ public class ViewMapTest extends ModelCheckerTestCase {
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace, expectedActions);
 
 		assertUncovered("line 91, col 60 to line 91, col 73 of module ViewMap: 0");
-		
+
 		// Assert POSTCONDITION.
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_FALSE));
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_EVALUATION_ERROR));

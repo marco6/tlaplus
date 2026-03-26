@@ -28,7 +28,6 @@ public class OtherArmConstruct implements TlaConstruct {
         var arrow = context.buildChild(z[1]);
         var value = context.buildChild(z[2]);
         return Doc.group(
-                other.append(arrow).appendLineOrSpace(value)
-        ).indent(other.toString().length() + 1);
+                other.append(arrow).appendLineOrSpace(value)).indent(other.toString().length() + 1);
     }
 }

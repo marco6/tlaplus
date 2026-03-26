@@ -37,17 +37,17 @@ public class Test214 extends SuiteETestCase {
 	public Test214() {
 		super(ExitStatus.ERROR_SPEC_PARSE);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		assertFalse(recorder.recorded(EC.GENERAL));
-		assertSubstring("Semantic errors:\n" + 
-				"\n" + 
+		assertSubstring("Semantic errors:\n" +
+				"\n" +
 				"*** Errors: 1\n");
 		assertSubstring(
-				"line 10, col 11 to line 10, col 14 of module test214\n" + 
-				"\n" + 
-				"The only expression allowed as a fact in a HIDE is \n" + 
-				"the name of a theorem, assumption, or step.\n");
+				"line 10, col 11 to line 10, col 14 of module test214\n" +
+						"\n" +
+						"The only expression allowed as a fact in a HIDE is \n" +
+						"the name of a theorem, assumption, or step.\n");
 	}
 }

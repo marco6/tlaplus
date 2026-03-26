@@ -25,7 +25,7 @@ public class AbortException extends Exception {
    * Details about the error that caused this exception.
    */
   private final ErrorDetails details;
-  
+
   /**
    * The error log to which the error was initially reported;
    */
@@ -34,7 +34,7 @@ public class AbortException extends Exception {
   /**
    * Constructs a new instance of the {@link AbortException} class.
    *
-   * @param details Details about the error that caused this exception.
+   * @param details        Details about the error that caused this exception.
    * @param sourceErrorLog Error log to which the error was reported.
    */
   public AbortException(ErrorDetails details, Errors sourceErrorLog) {
@@ -51,7 +51,7 @@ public class AbortException extends Exception {
   public ErrorDetails getDetails() {
     return this.details;
   }
-  
+
   /**
    * Get error log to which the error causing this exception was initially
    * reported. The log will possibly contain other errors and warnings in

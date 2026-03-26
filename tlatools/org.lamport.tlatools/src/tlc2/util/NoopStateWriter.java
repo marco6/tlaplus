@@ -33,71 +33,100 @@ import tlc2.tool.TLCState;
 
 public final class NoopStateWriter implements IStateWriter {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.StateWriter#writeState(tlc2.tool.TLCState)
 	 */
 	public final void writeState(final TLCState state) {
 		// noop
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.util.StateWriter#writeState(tlc2.tool.TLCState, tlc2.tool.TLCState, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.util.StateWriter#writeState(tlc2.tool.TLCState, tlc2.tool.TLCState,
+	 * boolean)
 	 */
 	public final void writeState(final TLCState state, final TLCState successor, final short stateFlags) {
 		// noop
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.util.IStateWriter#writeState(tlc2.tool.TLCState, tlc2.tool.TLCState, boolean, tlc2.util.IStateWriter.Visualization)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.util.IStateWriter#writeState(tlc2.tool.TLCState,
+	 * tlc2.tool.TLCState, boolean, tlc2.util.IStateWriter.Visualization)
 	 */
 	public void writeState(TLCState state, TLCState successor, short stateFlags, Visualization visualization) {
 		// noop
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.IStateWriter#close()
 	 */
 	public final void close() {
 		// noop
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.util.IStateWriter#writeState(tlc2.tool.TLCState, tlc2.tool.TLCState, tlc2.util.BitVector, int, int, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.util.IStateWriter#writeState(tlc2.tool.TLCState,
+	 * tlc2.tool.TLCState, tlc2.util.BitVector, int, int, boolean)
 	 */
-	public void writeState(TLCState state, TLCState successor, BitVector actionChecks, int from, int to, short stateFlags) {
+	public void writeState(TLCState state, TLCState successor, BitVector actionChecks, int from, int to,
+			short stateFlags) {
 		// noop
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.util.IStateWriter#writeState(tlc2.tool.TLCState, tlc2.tool.TLCState, tlc2.util.BitVector, int, int, boolean, tlc2.util.IStateWriter.Visualization)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.util.IStateWriter#writeState(tlc2.tool.TLCState,
+	 * tlc2.tool.TLCState, tlc2.util.BitVector, int, int, boolean,
+	 * tlc2.util.IStateWriter.Visualization)
 	 */
-	public void writeState(TLCState state, TLCState successor, BitVector actionChecks, int from, int to, short stateFlags,
+	public void writeState(TLCState state, TLCState successor, BitVector actionChecks, int from, int to,
+			short stateFlags,
 			Visualization visualization) {
 		// noop
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.util.IStateWriter#writeState(tlc2.tool.TLCState, tlc2.tool.TLCState, boolean, tlc2.tool.Action)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.util.IStateWriter#writeState(tlc2.tool.TLCState,
+	 * tlc2.tool.TLCState, boolean, tlc2.tool.Action)
 	 */
 	public void writeState(TLCState state, TLCState successor, short stateFlags, Action action) {
 		// noop
 	}
-	
-	/* (non-Javadoc)
-	 * @see tlc2.util.IStateWriter#writeState(tlc2.tool.TLCState, tlc2.tool.TLCState, boolean, tlc2.tool.Action)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.util.IStateWriter#writeState(tlc2.tool.TLCState,
+	 * tlc2.tool.TLCState, boolean, tlc2.tool.Action)
 	 */
 	public void writeState(TLCState state, TLCState successor, short stateFlags, Action action, SemanticNode pred) {
 		// noop
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.IStateWriter#isNoop()
 	 */
 	public boolean isNoop() {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.IStateWriter#isDot()
 	 */
 	@Override
@@ -105,22 +134,28 @@ public final class NoopStateWriter implements IStateWriter {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.IStateWriter#isConstrained()
 	 */
 	@Override
 	public boolean isConstrained() {
 		return false;
 	}
-		
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.IStateWriter#getDumpFileName()
 	 */
 	public String getDumpFileName() {
 		return "";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.IStateWriter#snapshot()
 	 */
 	@Override

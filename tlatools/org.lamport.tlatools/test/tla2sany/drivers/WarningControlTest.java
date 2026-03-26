@@ -43,7 +43,8 @@ import util.ToolIO;
  * flags and corresponding {@link SanySettings} API fields, as part of GitHub
  * issue #1186.
  *
- * <p>The fixture spec {@code W4802_Pre_Test.tla} triggers warning 4802
+ * <p>
+ * The fixture spec {@code W4802_Pre_Test.tla} triggers warning 4802
  * ({@link ErrorCode#RECORD_CONSTRUCTOR_FIELD_NAME_CLASH}) reliably: it defines
  * {@code Foo == TRUE} and then constructs {@code [Foo |-> 42]}, where the field
  * name {@code Foo} clashes with the existing definition.
@@ -51,7 +52,7 @@ import util.ToolIO;
 public class WarningControlTest extends SANYTest {
 
   private static final String TEST_SPEC_DIR = CommonTestCase.BASE_DIR + File.separator +
-      "test" + File.separator + "tla2sany" + File.separator + "semantic" + File.separator + 
+      "test" + File.separator + "tla2sany" + File.separator + "semantic" + File.separator +
       "error_corpus" + File.separator;
   private static final String TEST_SPEC_PATH = TEST_SPEC_DIR + "W4802_Pre_Test.tla";
 
@@ -72,7 +73,7 @@ public class WarningControlTest extends SANYTest {
     Assert.assertTrue("Expected field-name-clash warning in output",
         out.getMessages().stream()
             .anyMatch(m -> m.getLevel() == LogLevel.WARNING
-                        && m.getText().contains("Foo")));
+                && m.getText().contains("Foo")));
   }
 
   /**
@@ -104,7 +105,7 @@ public class WarningControlTest extends SANYTest {
     final RecordedSanyOutput out = new RecordedSanyOutput(LogLevel.WARNING);
     final SpecObj spec = new SpecObj(TEST_SPEC_PATH, new SimpleFilenameToStream(TEST_SPEC_DIR));
     final SanySettings settings = new SanySettings(
-        true,         // doStrictErrorCodes
+        true, // doStrictErrorCodes
         true, true, true, true,
         Set.of(),
         Set.of(CODE_4802));
@@ -114,7 +115,7 @@ public class WarningControlTest extends SANYTest {
     Assert.assertTrue("Expected 'Warning treated as error' message at ERROR level",
         out.getMessages().stream()
             .anyMatch(m -> m.getLevel() == LogLevel.ERROR
-                        && m.getText().contains("Warning treated as error")));
+                && m.getText().contains("Warning treated as error")));
   }
 
   // ── CLI tests: SANYmain0() ────────────────────────────────────────────────
@@ -128,7 +129,7 @@ public class WarningControlTest extends SANYTest {
     final TestPrintStream out = new TestPrintStream();
     ToolIO.out = out;
     ToolIO.err = out;
-    SANY.SANYmain0(new String[]{"-suppressMessages", "4802", "-error-codes", TEST_SPEC_PATH});
+    SANY.SANYmain0(new String[] { "-suppressMessages", "4802", "-error-codes", TEST_SPEC_PATH });
     out.assertNoSubstring("field name");
   }
 
@@ -143,7 +144,7 @@ public class WarningControlTest extends SANYTest {
     ToolIO.out = out;
     ToolIO.err = out;
     try {
-      SANY.SANYmain0(new String[]{"-messagesAsErrors", "4802", "-error-codes", TEST_SPEC_PATH});
+      SANY.SANYmain0(new String[] { "-messagesAsErrors", "4802", "-error-codes", TEST_SPEC_PATH });
       Assert.fail("Expected SANYExitException for elevated warning");
     } catch (SANYExitException e) {
       Assert.assertEquals(
@@ -162,7 +163,7 @@ public class WarningControlTest extends SANYTest {
     final TestPrintStream out = new TestPrintStream();
     ToolIO.out = out;
     ToolIO.err = out;
-    SANY.SANYmain0(new String[]{"-suppressMessages", "4800,4802", "-error-codes", TEST_SPEC_PATH});
+    SANY.SANYmain0(new String[] { "-suppressMessages", "4800,4802", "-error-codes", TEST_SPEC_PATH });
     out.assertNoSubstring("field name");
   }
 
@@ -176,7 +177,7 @@ public class WarningControlTest extends SANYTest {
     ToolIO.out = out;
     ToolIO.err = out;
     try {
-      SANY.SANYmain0(new String[]{"-suppressMessages", "9999", TEST_SPEC_PATH});
+      SANY.SANYmain0(new String[] { "-suppressMessages", "9999", TEST_SPEC_PATH });
       Assert.fail("Expected SANYExitException for unknown code");
     } catch (SANYExitException e) {
       Assert.assertEquals(SanyExitCode.ERROR, e.getEnumeratedExitCode());
@@ -194,7 +195,7 @@ public class WarningControlTest extends SANYTest {
     ToolIO.out = out;
     ToolIO.err = out;
     try {
-      SANY.SANYmain0(new String[]{"-messagesAsErrors", "9999", TEST_SPEC_PATH});
+      SANY.SANYmain0(new String[] { "-messagesAsErrors", "9999", TEST_SPEC_PATH });
       Assert.fail("Expected SANYExitException for unknown code");
     } catch (SANYExitException e) {
       Assert.assertEquals(SanyExitCode.ERROR, e.getEnumeratedExitCode());
@@ -208,7 +209,7 @@ public class WarningControlTest extends SANYTest {
   @Test
   public void testCLISuppressMessagesMissingArgument() {
     try {
-      SANY.SANYmain0(new String[]{"-suppressMessages"});
+      SANY.SANYmain0(new String[] { "-suppressMessages" });
       Assert.fail("Expected SANYExitException when argument is missing");
     } catch (SANYExitException e) {
       Assert.assertEquals(SanyExitCode.ERROR, e.getEnumeratedExitCode());
@@ -221,7 +222,7 @@ public class WarningControlTest extends SANYTest {
   @Test
   public void testCLIMessagesAsErrorsMissingArgument() {
     try {
-      SANY.SANYmain0(new String[]{"-messagesAsErrors"});
+      SANY.SANYmain0(new String[] { "-messagesAsErrors" });
       Assert.fail("Expected SANYExitException when argument is missing");
     } catch (SANYExitException e) {
       Assert.assertEquals(SanyExitCode.ERROR, e.getEnumeratedExitCode());
@@ -238,7 +239,7 @@ public class WarningControlTest extends SANYTest {
     ToolIO.out = out;
     ToolIO.err = out;
     try {
-      SANY.SANYmain0(new String[]{"-suppressMessages", "4800", "-messagesAsErrors", "4800", TEST_SPEC_PATH});
+      SANY.SANYmain0(new String[] { "-suppressMessages", "4800", "-messagesAsErrors", "4800", TEST_SPEC_PATH });
       Assert.fail("Expected SANYExitException for overlap");
     } catch (SANYExitException e) {
       Assert.assertEquals(SanyExitCode.ERROR, e.getEnumeratedExitCode());
@@ -257,7 +258,7 @@ public class WarningControlTest extends SANYTest {
     ToolIO.out = out;
     ToolIO.err = out;
     try {
-      SANY.SANYmain0(new String[]{"-suppressMessages", "4200", TEST_SPEC_PATH});
+      SANY.SANYmain0(new String[] { "-suppressMessages", "4200", TEST_SPEC_PATH });
       Assert.fail("Expected SANYExitException for non-suppressable code");
     } catch (SANYExitException e) {
       Assert.assertEquals(SanyExitCode.ERROR, e.getEnumeratedExitCode());

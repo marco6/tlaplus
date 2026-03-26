@@ -63,7 +63,7 @@ public abstract class CommonTestCase {
 	public CommonTestCase() {
 		this(new TestMPRecorder());
 	}
-	
+
 	public CommonTestCase(final TestMPRecorder testMPRecorder) {
 		recorder = testMPRecorder;
 	}
@@ -71,8 +71,9 @@ public abstract class CommonTestCase {
 	protected boolean isExtendedTLCState() {
 		return TLCState.Empty instanceof TLCStateMutExt;
 	}
-	
-	protected void assertState(final List<Object> actual, final int ordinal, final String expectedState, final String expectedAction) {
+
+	protected void assertState(final List<Object> actual, final int ordinal, final String expectedState,
+			final String expectedAction) {
 		assertTrue(actual.size() >= ordinal);
 		final Object[] objs = (Object[]) actual.get(ordinal - 1);
 
@@ -89,9 +90,9 @@ public abstract class CommonTestCase {
 	 * Asserts that the actual trace and the expected error trace are equal.
 	 * 
 	 * @param actual
-	 *            The actual trace as recorded by {@link MPRecorder}.
+	 *                      The actual trace as recorded by {@link MPRecorder}.
 	 * @param expectedTrace
-	 *            The expected trace.
+	 *                      The expected trace.
 	 */
 	protected void assertTraceWith(final List<Object> actual, final List<String> expectedTrace) {
 		assertEquals(expectedTrace.size(), actual.size());
@@ -104,20 +105,23 @@ public abstract class CommonTestCase {
 				assertEquals("<Initial predicate>", info);
 			} else {
 				// ... all others are reachable via an action.
-				//TODO: Assert actual action names.
+				// TODO: Assert actual action names.
 				assertNotEquals("<Initial predicate>", info);
 				assertFalse(info.startsWith("<Action"));
 			}
-			assertEquals(expectedTrace.get(i), 
-					   stateInfo.toString().trim()); // trimmed to remove any newlines or whitespace
-			assertEquals(i+1, objs[1]);
+			assertEquals(expectedTrace.get(i),
+					stateInfo.toString().trim()); // trimmed to remove any newlines or whitespace
+			assertEquals(i + 1, objs[1]);
 		}
 	}
-	
+
 	/**
-	 * @see assertTraceWith above except that this method also asserts matching names for the initial predicate and the sub-actions of the next-state relation.
+	 * @see assertTraceWith above except that this method also asserts matching
+	 *      names for the initial predicate and the sub-actions of the next-state
+	 *      relation.
 	 */
-	protected void assertTraceWith(final List<Object> actual, final List<String> expectedTrace, final List<String> expectedActions) {
+	protected void assertTraceWith(final List<Object> actual, final List<String> expectedTrace,
+			final List<String> expectedActions) {
 		assertEquals(expectedTrace.size(), actual.size());
 		for (int i = 0; i < expectedTrace.size(); i++) {
 			final Object[] objs = (Object[]) actual.get(i);
@@ -134,7 +138,7 @@ public abstract class CommonTestCase {
 	 * Asserts that the error trace ends in stuttering at the given number.
 	 * 
 	 * @param stateNum
-	 *            The number of the stuttering state
+	 *                 The number of the stuttering state
 	 */
 	protected void assertStuttering(int stateNum) {
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT3));
@@ -171,7 +175,7 @@ public abstract class CommonTestCase {
 	 * Asserts that the error trace loops back to the state with the given
 	 * number.
 	 * 
-	 * @param i The loop back state number.
+	 * @param i      The loop back state number.
 	 * @param action The action label associated with the loop back marker
 	 */
 	protected void assertBackToState(int stateNum, final String action) {
@@ -209,7 +213,8 @@ public abstract class CommonTestCase {
 	 * @param ptrsSize
 	 */
 	protected void assertNodeAndPtrSizes(final long nodesSize, final long ptrsSize) {
-		// Make sure the liveness checker has flushed all its data to disk to ensure that
+		// Make sure the liveness checker has flushed all its data to disk to ensure
+		// that
 		// the nodes_0 and ptrs_0 files really include everything written so far.
 		try {
 			TLCGlobals.mainChecker.liveCheck.flushWritesToDiskFiles();
@@ -219,17 +224,18 @@ public abstract class CommonTestCase {
 
 		final String metadir = TLCGlobals.mainChecker.metadir;
 		assertNotNull(metadir);
-		
+
 		final File nodes = new File(metadir + File.separator + "nodes_0");
 		assertTrue(nodes.exists());
 		assertEquals(nodesSize, nodes.length());
-	
-		final File ptrs =  new File(metadir + File.separator + "ptrs_0");
+
+		final File ptrs = new File(metadir + File.separator + "ptrs_0");
 		assertTrue(ptrs.exists());
 		assertEquals(ptrsSize, ptrs.length());
 	}
 
-	// Checks if all uncovered (zero) lines are found and no more (don't care if the invocation and costs match).
+	// Checks if all uncovered (zero) lines are found and no more (don't care if the
+	// invocation and costs match).
 	protected void assertUncovered(final String expectedUncovered) {
 		final List<Coverage> expected = Arrays.asList(expectedUncovered.trim().split("\n")).stream()
 				.map(o -> new Coverage(o.split(":"))).collect(Collectors.toList());
@@ -238,35 +244,35 @@ public abstract class CommonTestCase {
 		final Set<Coverage> actualZeroCoverage = recorder.getZeroCoverage().stream().collect(Collectors.toSet());
 		assertEquals(expectedZero, actualZeroCoverage);
 	}
-	
+
 	protected void assertZeroUncovered() {
 		assertTrue(recorder.getZeroCoverage().isEmpty());
 	}
 
 	// Assert that no TE spec was generated.
 	protected void assertNoTESpec() {
-		assertFalse("A TE spec was generated, but it shouldn't", 
-			recorder.recorded(EC.TLC_TE_SPEC_GENERATION_COMPLETE));
+		assertFalse("A TE spec was generated, but it shouldn't",
+				recorder.recorded(EC.TLC_TE_SPEC_GENERATION_COMPLETE));
 	}
-	
+
 	protected void assertCoverage(final String expectedCoverage) {
 		// Lines can be reported multiple times if invoked from different actions!!!
-		
+
 		final List<Coverage> expected = Arrays.asList(expectedCoverage.split("\n")).stream()
 				.map(o -> new Coverage(o.split(":"))).collect(Collectors.toList());
-		
+
 		// Step A:
 		// Validation of coverage results is split into two steps. Step A checks if all
-		// uncovered (zero) lines are found, step B checks if non-zero lines exist.		
+		// uncovered (zero) lines are found, step B checks if non-zero lines exist.
 		final Set<Coverage> expectedZero = expected.stream().filter(Coverage::isZero)
 				.filter(Coverage::isCoverage).collect(Collectors.toSet());
 		final Set<Coverage> actualZeroCoverage = recorder.getZeroCoverage().stream().collect(Collectors.toSet());
 		assertEquals(expectedZero, actualZeroCoverage);
-		
+
 		// Step B1 (coverage):
 		final List<Coverage> actualNonZeroCoverage = recorder.getNonZeroCoverage();
-		final List<Coverage> expectedNonZeroCoverage = expected.stream().filter(Coverage::isCoverage).
-				filter(c -> !c.isCost()).collect(Collectors.toList());
+		final List<Coverage> expectedNonZeroCoverage = expected.stream().filter(Coverage::isCoverage)
+				.filter(c -> !c.isCost()).collect(Collectors.toList());
 		expectedNonZeroCoverage.removeAll(actualZeroCoverage);
 		for (int i = 0; i < actualNonZeroCoverage.size(); i++) {
 			final Coverage a = actualNonZeroCoverage.get(i);
@@ -274,7 +280,7 @@ public abstract class CommonTestCase {
 			assertEquals(e, a);
 		}
 		assertTrue(expectedNonZeroCoverage.size() == actualNonZeroCoverage.size());
-		
+
 		// Step B2 (coverage with cost):
 		final List<Coverage> actualCostCoverage = recorder.getCostCoverage();
 		final List<Coverage> expectedCostCoverage = expected.stream().filter(Coverage::isCoverage)
@@ -285,10 +291,11 @@ public abstract class CommonTestCase {
 			assertEquals(e, a);
 		}
 		assertTrue(expectedCostCoverage.size() == actualCostCoverage.size());
-		
+
 		// Step C (actions):
 		final List<Coverage> actualActions = recorder.getActionCoverage();
-		final List<Coverage> expectedActions = expected.stream().filter(Coverage::isAction).collect(Collectors.toList());
+		final List<Coverage> expectedActions = expected.stream().filter(Coverage::isAction)
+				.collect(Collectors.toList());
 		for (int i = 0; i < actualActions.size(); i++) {
 			final Coverage a = actualActions.get(i);
 			final Coverage e = expectedActions.get(i);

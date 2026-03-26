@@ -7,18 +7,21 @@ public interface Cache {
 	 * effect if not.
 	 * 
 	 * @param fingerprint
-	 *            fingerprint to be tested
+	 *                    fingerprint to be tested
 	 * @return true iff given fingerprint is in cache
 	 */
 	boolean hit(long fingerprint);
+
 	/**
 	 * @return Ratio of cache hits and misses
 	 */
 	double getHitRatio();
+
 	/**
 	 * @return A pretty printed version of {@link Cache#getHitRatio()}
 	 */
 	String getHitRatioAsString();
+
 	/**
 	 * @return Absolute value for cache hits
 	 */

@@ -41,7 +41,7 @@ import tlc2.output.EC.ExitStatus;
  * System LOOP as described by Manna & Pneuli on page 423ff
  */
 public class LoopTest extends ModelCheckerTestCase {
-	
+
 	public LoopTest() {
 		super("SystemLoop", "Loop", ExitStatus.VIOLATION_LIVENESS);
 	}
@@ -57,7 +57,7 @@ public class LoopTest extends ModelCheckerTestCase {
 		// Assert it has found the temporal violation and also a counter example
 		assertTrue(recorder.recorded(EC.TLC_TEMPORAL_PROPERTY_VIOLATED));
 		assertTrue(recorder.recorded(EC.TLC_COUNTER_EXAMPLE));
-		
+
 		assertNodeAndPtrSizes(136L, 64L);
 
 		// Assert the error trace
@@ -67,12 +67,12 @@ public class LoopTest extends ModelCheckerTestCase {
 		expectedTrace.add("x = 1");
 		expectedTrace.add("x = 2");
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace);
-		
+
 		// Without any fairness defined, state 4 is stuttering instead of moving
 		// on to state x=3.
 		assertStuttering(4);
-		
-		//TODO This error trace is not the shortest one. The shortest one would
+
+		// TODO This error trace is not the shortest one. The shortest one would
 		// be stuttering after the initial state x=0 and not after x=2 with x=3
 		// as the last successor in the behavior. However, the SCC search
 		// implemented in LiveWorker#checkSccs checks the path end to start and

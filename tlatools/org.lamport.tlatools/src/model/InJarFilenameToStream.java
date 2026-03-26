@@ -22,13 +22,14 @@ public class InJarFilenameToStream extends SimpleFilenameToStream implements
 	@Override
 	public TLAFile resolve(String name, boolean isModule) {
 		InputStream is = InJarFilenameToStream.class.getResourceAsStream(prefix + name);
-		if(is != null) {
+		if (is != null) {
 			try {
-				TLAFile sourceFile = new TLAFile(tmpDir.resolve(name), InJarFilenameToStream.class.getResource(prefix + name), false, this);
+				TLAFile sourceFile = new TLAFile(tmpDir.resolve(name),
+						InJarFilenameToStream.class.getResource(prefix + name), false, this);
 				sourceFile.deleteOnExit();
-				
+
 				FileOutputStream fos = new FileOutputStream(sourceFile);
-				
+
 				byte buf[] = new byte[1024];
 				int len;
 				while ((len = is.read(buf)) > 0) {

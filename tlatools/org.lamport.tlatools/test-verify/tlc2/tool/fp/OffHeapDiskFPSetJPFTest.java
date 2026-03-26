@@ -60,11 +60,11 @@ public class OffHeapDiskFPSetJPFTest extends TestJPF {
 			assert fpSet.checkInvariant() : "FPSet violates its invariant: " + Arrays.toString(fpSet.array.array);
 		}
 	}
-	
+
 	private static class DummyOffHeapDiskFPSet {
 
 		private static final int EMPTY = 0;
-		
+
 		private final OffHeapDiskFPSet.Indexer indexer;
 		private final DummyLongArray array;
 		// AtomicInteger should be LongAdder but JPF fails with what seems to be an
@@ -97,12 +97,12 @@ public class OffHeapDiskFPSetJPFTest extends TestJPF {
 			}
 			return false;
 		}
-		
+
 		// Heap-variant of LongArray with synchronized instead of CAS. JPF does
 		// not seem to support sun.misc.Unsafe.
 		private static class DummyLongArray {
 			private final long[] array;
-			
+
 			public DummyLongArray(int positions) {
 				this.array = new long[positions];
 			}
@@ -120,8 +120,8 @@ public class OffHeapDiskFPSetJPFTest extends TestJPF {
 			}
 		}
 
-		//**** Assertion Helper ****//
-		
+		// **** Assertion Helper ****//
+
 		public synchronized boolean checkInvariant() {
 			// No duplicates.
 			int cnt = 0;

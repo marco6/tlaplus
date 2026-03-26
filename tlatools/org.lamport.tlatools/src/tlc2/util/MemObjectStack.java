@@ -22,15 +22,15 @@ public final class MemObjectStack extends ObjectStack {
   private final static int InitialSize = 4096;
   private final static int GrowthFactor = 2;
 
-  /* Fields  */
+  /* Fields */
   private Object[] states;
   private String filename;
-    
+
   public MemObjectStack(String metadir, String name) {
     this.states = new Object[InitialSize];
-    this.filename = metadir +  FileUtil.separator + name;
+    this.filename = metadir + FileUtil.separator + name;
   }
-    
+
   final void enqueueInner(Object state) {
     if (this.len == this.states.length) {
       // grow the array
@@ -41,7 +41,7 @@ public final class MemObjectStack extends ObjectStack {
     }
     this.states[this.len] = state;
   }
-    
+
   final Object dequeueInner() {
     int head = this.len - 1;
     Object res = this.states[head];
@@ -52,14 +52,14 @@ public final class MemObjectStack extends ObjectStack {
   // Checkpoint.
   public final void beginChkpt() throws IOException {
     String tmpfile = this.filename + ".tmp";
-    
+
     ObjectOutputStream oos = FileUtil.newOBFOS(tmpfile);
     oos.writeInt(this.len);
     for (int i = 0; i < this.len; i++) {
       oos.writeObject(this.states[i++]);
     }
     oos.close();
-    
+
   }
 
   public final void commitChkpt() throws IOException {
@@ -71,20 +71,18 @@ public final class MemObjectStack extends ObjectStack {
       throw new IOException("MemObjectStack.commitChkpt: cannot delete " + oldChkpt);
     }
   }
-  
+
   public final void recover() throws IOException {
     String chkptfile = this.filename + ".chkpt";
     ObjectInputStream ois = FileUtil.newOBFIS(chkptfile);
     this.len = ois.readInt();
     try {
       for (int i = 0; i < this.len; i++) {
-	this.states[i] = ois.readObject();
+        this.states[i] = ois.readObject();
       }
-    }
-    catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException e) {
       Assert.fail(EC.SYSTEM_CHECKPOINT_RECOVERY_CORRUPT, e.getMessage());
-    }
-    finally {
+    } finally {
       ois.close();
     }
   }

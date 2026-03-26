@@ -49,33 +49,33 @@ import tlc2.util.FlightRecorderProfiler;
 @State(Scope.Group)
 @BenchmarkMode(Mode.Throughput)
 public class DiskQueueBenachmark {
-	
-	@Param({"1", "2", "4", "8", "16", "32", "64"})
-	public int vars;
 
-	@Param({"DiskByteArrayQueue", "DiskStateQueue"})
-	public String impl;
-	
-	private IStateQueue dsq;
+    @Param({ "1", "2", "4", "8", "16", "32", "64" })
+    public int vars;
 
-	private TLCState state;
-	
+    @Param({ "DiskByteArrayQueue", "DiskStateQueue" })
+    public String impl;
+
+    private IStateQueue dsq;
+
+    private TLCState state;
+
     @Setup
     public void up() throws IOException {
-		if (impl.equals("DiskByteArrayQueue")) {
-			this.dsq = new DiskByteArrayQueue();
-		} else {
-			this.dsq = new DiskStateQueue();
-		}
+        if (impl.equals("DiskByteArrayQueue")) {
+            this.dsq = new DiskByteArrayQueue();
+        } else {
+            this.dsq = new DiskStateQueue();
+        }
 
-		this.state = TLCStates.createDummyState(vars);
+        this.state = TLCStates.createDummyState(vars);
     }
-    
+
     @TearDown
     public void down() throws IOException {
-    	this.dsq.delete();
+        this.dsq.delete();
     }
-    
+
     @Benchmark
     @Group("g02")
     @GroupThreads(1)
@@ -87,10 +87,9 @@ public class DiskQueueBenachmark {
     @Group("g02")
     @GroupThreads(1)
     public void producer1() {
-    	this.dsq.sEnqueue(this.state);
+        this.dsq.sEnqueue(this.state);
     }
-    
-    
+
     @Benchmark
     @Group("g04")
     @GroupThreads(2)
@@ -102,10 +101,9 @@ public class DiskQueueBenachmark {
     @Group("g04")
     @GroupThreads(2)
     public void producer2() {
-    	this.dsq.sEnqueue(this.state);
+        this.dsq.sEnqueue(this.state);
     }
 
-    
     @Benchmark
     @Group("g08")
     @GroupThreads(4)
@@ -117,10 +115,9 @@ public class DiskQueueBenachmark {
     @Group("g08")
     @GroupThreads(4)
     public void producer4() {
-    	this.dsq.sEnqueue(this.state);
+        this.dsq.sEnqueue(this.state);
     }
 
-    
     @Benchmark
     @Group("g16")
     @GroupThreads(8)
@@ -132,9 +129,9 @@ public class DiskQueueBenachmark {
     @Group("g16")
     @GroupThreads(8)
     public void producer8() {
-    	this.dsq.sEnqueue(this.state);
+        this.dsq.sEnqueue(this.state);
     }
-    
+
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
                 .include(DiskQueueBenachmark.class.getSimpleName())

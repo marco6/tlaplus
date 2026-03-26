@@ -43,7 +43,8 @@ public class Debug05SimTest extends TLCDebuggerTestCase {
 	private static final String RM = "Debug05";
 
 	public Debug05SimTest() {
-		super(RM, FOLDER, new String[] { "-config", "Debug05.tla", "-simulate", "num=1", "-depth", "25" }, EC.ExitStatus.SUCCESS);
+		super(RM, FOLDER, new String[] { "-config", "Debug05.tla", "-simulate", "num=1", "-depth", "25" },
+				EC.ExitStatus.SUCCESS);
 	}
 
 	@Override
@@ -53,41 +54,41 @@ public class Debug05SimTest extends TLCDebuggerTestCase {
 
 	@Override
 	protected FilenameToStream getResolver() {
-		return new SimpleFilenameToStream(new String[] {BASE_DIR});
+		return new SimpleFilenameToStream(new String[] { BASE_DIR });
 	}
 
 	@Test
 	public void testSpec() throws Exception {
 		StackFrame[] stackFrames = debugger.stackTrace();
-		
+
 		EvaluateArguments ea = new EvaluateArguments();
 		ea.setFrameId(stackFrames[0].getId());
 		ea.setContext(EvaluateArgumentsContext.REPL);
-		
+
 		// Evaluate expressions that require Java module overrides.
-		
+
 		// An expression involving a module without any dependencies.
 		ea.setExpression("LET N == INSTANCE Naturals IN N!+(1, 2)");
 		assertEquals("3", debugger.evaluate(ea).get().getResult());
-		
+
 		// An expression involving a module with one dependency.
 		ea.setExpression("LET S == INSTANCE Sequences IN S!Len(<<1,2,3>>)");
 		assertEquals("3", debugger.evaluate(ea).get().getResult());
 
 		ea.setExpression("LET N == INSTANCE Integers IN N!+(1, 2)");
 		assertEquals("3", debugger.evaluate(ea).get().getResult());
-		
+
 		// An expression involving a module with multiple dependencies.
 		ea.setExpression("LET T == INSTANCE TLC IN T!RandomElement({1})");
 		assertEquals("1", debugger.evaluate(ea).get().getResult());
-		
+
 		ea.setExpression("LET B == INSTANCE Bags IN B!SetToBag({\"a\", \"a\", \"b\"})");
 		String result = debugger.evaluate(ea).get().getResult();
 		assertTrue(result.equals("[b |-> 1, a |-> 1]") || result.equals("[a |-> 1, b |-> 1]"));
-		
+
 		ea.setExpression("LET J == INSTANCE Json IN J!ToJson({1,2,3})");
 		assertEquals("[1,2,3]", debugger.evaluate(ea).get().getResult());
-		
+
 		// 88888888888888888888888888888888888888888888888888888 //
 
 		debugger.setSpecBreakpoint();
@@ -110,7 +111,7 @@ public class Debug05SimTest extends TLCDebuggerTestCase {
 			assertEquals("TRUE", debugger.evaluate(ea).get().getResult());
 
 			// 88888888888888888888888888888888888888888888888888888 //
-			
+
 			traceFile = "Debug05SimTest.bin";
 			ea.setExpression("LET J == INSTANCE _TLCTrace WITH _TLCTraceFile <- \"" + traceFile
 					+ "\", _TLCTraceInputFile <- \"" + traceFile + "\" IN J!_TLCTrace");
@@ -118,7 +119,7 @@ public class Debug05SimTest extends TLCDebuggerTestCase {
 
 			// 88888888888888888888888888888888888888888888888888888 //
 		}
-		
+
 		debugger.unsetBreakpoints();
 		debugger.continue_();
 	}

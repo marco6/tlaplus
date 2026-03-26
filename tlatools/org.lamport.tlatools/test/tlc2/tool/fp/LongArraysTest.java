@@ -18,17 +18,17 @@ import tlc2.tool.fp.LongArrays.LongComparator;
 import tlc2.tool.fp.OffHeapDiskFPSet.Indexer;
 
 public class LongArraysTest {
-	
+
 	@Before
 	public void setup() {
 		Assume.assumeTrue(LongArray.isSupported());
 	}
-	
+
 	@Test
 	public void testEmpty1() {
 		doTest(new ArrayList<Long>(0), 1L, 0, new OffHeapDiskFPSet.InfinitePrecisionIndexer(0, 1));
 	}
-	
+
 	@Test
 	public void testEmpty2() {
 		final List<Long> expected = new ArrayList<Long>();
@@ -39,7 +39,7 @@ public class LongArraysTest {
 
 		doTest(expected, 1L, 2, new OffHeapDiskFPSet.InfinitePrecisionIndexer(expected.size(), 1));
 	}
-	
+
 	@Test
 	public void testBasic1() {
 		final List<Long> expected = new ArrayList<Long>();
@@ -51,7 +51,7 @@ public class LongArraysTest {
 		expected.add(3L);
 		final LongArray array = new LongArray(expected);
 		LongArrays.sort(array);
-		
+
 		// This amounts to a regular/basic insertion sort because there are no
 		// sentinels in the array. doTest fails for this array, because the
 		// indices calculated by the indexer are invalid.
@@ -106,10 +106,10 @@ public class LongArraysTest {
 		expected.add(8771524479740786626L);
 		expected.add(8986659781390119011L);
 		expected.add(9136953010061430590L);
-		expected.add(9195197379878056627L);		
+		expected.add(9195197379878056627L);
 		final LongArray array = new LongArray(expected);
 		LongArrays.sort(array);
-		
+
 		// This amounts to a regular/basic insertion sort because there are no
 		// sentinels in the array. doTest fails for this array, because the
 		// indices calculated by the indexer are invalid.
@@ -130,16 +130,16 @@ public class LongArraysTest {
 
 		doTest(expected, 1L, 3, new OffHeapDiskFPSet.InfinitePrecisionIndexer(expected.size(), 1));
 	}
-	
-	private void doTest(final  List<Long>  expected, final long partitions, final int reprobe, final Indexer indexer) {
+
+	private void doTest(final List<Long> expected, final long partitions, final int reprobe, final Indexer indexer) {
 		final LongArray array = new LongArray(expected);
 		final LongComparator comparator = getComparator(indexer);
 		final long length = expected.size() / partitions;
-		
+
 		// Sort each disjunct partition.
 		for (long i = 0; i < partitions; i++) {
 			final long start = i * length;
-			final long end = i + 1L == partitions ? array.size() - 1L: start + length;
+			final long end = i + 1L == partitions ? array.size() - 1L : start + length;
 			LongArrays.sort(array, start, end, comparator);
 		}
 		// Stitch the disjunct partitions together. Only need if more than one
@@ -149,12 +149,12 @@ public class LongArraysTest {
 			final long end = getEnd(partitions, array, length, i);
 			LongArrays.sort(array, end - reprobe, end + reprobe, comparator);
 		}
-		
+
 		verify(expected, reprobe, indexer, array);
 	}
 
 	private long getEnd(final long partitions, final LongArray array, final long length, long idx) {
-		return idx + 1L == partitions ? array.size() - 1L: (idx + 1L) * length;
+		return idx + 1L == partitions ? array.size() - 1L : (idx + 1L) * length;
 	}
 
 	private static LongComparator getComparator(final Indexer indexer) {
@@ -165,10 +165,10 @@ public class LongArraysTest {
 				if (fpA <= EMPTY || fpB <= EMPTY) {
 					return 0;
 				}
-				
+
 				final boolean wrappedA = indexer.getIdx(fpA) > posA;
 				final boolean wrappedB = indexer.getIdx(fpB) > posB;
-				
+
 				if (wrappedA == wrappedB && posA > posB) {
 					return fpA < fpB ? -1 : 1;
 				} else if ((wrappedA ^ wrappedB)) {
@@ -212,7 +212,7 @@ public class LongArraysTest {
 				fail(String.format("long %s not found.", l));
 			}
 		}
-		
+
 		// Verify elements stayed within their lookup range.
 		for (int pos = 0; pos < array.size(); pos++) {
 			final long l = array.get(pos);
@@ -223,7 +223,7 @@ public class LongArraysTest {
 			assertTrue(String.format("%s, pos: %s, idx: %s, r: %s (was at: %s)", l, pos, idx, reprobe,
 					expected.indexOf(l)), isInRange(idx, reprobe, pos, array.size()));
 		}
-		
+
 		// Verify that non-sentinels are sorted is ascending order. Take
 		// care of wrapped elements too. A) First find the first non-sentinel,
 		// non-wrapped element.
@@ -268,7 +268,7 @@ public class LongArraysTest {
 		// D) Verify we saw all expected elements.
 		assertEquals(expected.size() - sentinel, seen.size());
 	}
-	
+
 	@Test
 	public void testIsInRange() {
 		assertTrue(isInRange(0, 0, 0, 4));
@@ -284,7 +284,7 @@ public class LongArraysTest {
 		assertFalse(isInRange(0, 2, 3, 4));
 		assertTrue(isInRange(0, 3, 3, 4));
 		assertFalse(isInRange(0, 3, 4, 4));
-		
+
 		assertTrue(isInRange(3, 0, 3, 4));
 		assertTrue(isInRange(3, 1, 0, 4));
 		assertTrue(isInRange(3, 2, 1, 4));

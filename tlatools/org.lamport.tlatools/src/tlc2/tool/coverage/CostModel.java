@@ -81,12 +81,12 @@ public interface CostModel {
 			// no-op
 			return this;
 		}
-		
+
 		@Override
 		public final String toString() {
 			return "DO_NOT_RECORD";
 		}
-		
+
 		@Override
 		public boolean hasValues() {
 			return false;
@@ -108,11 +108,11 @@ public interface CostModel {
 	CostModel incInvocations(final long value);
 
 	CostModel incSecondary();
-	
+
 	CostModel incSecondary(final long value);
-	
+
 	long getPrimary();
-	
+
 	long getSecondary();
 
 	boolean hasValues();
@@ -120,9 +120,9 @@ public interface CostModel {
 	CostModel report();
 
 	CostModel get(final SemanticNode sn);
-	
+
 	CostModel getAndIncrement(final SemanticNode eon);
-	
+
 	CostModel getRoot();
 
 	CostModel getChild();

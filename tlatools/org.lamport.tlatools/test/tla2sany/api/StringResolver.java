@@ -51,16 +51,16 @@ public class StringResolver implements Resolver {
       return this.innerResolver.resolve(moduleName);
     }
     return new ModuleSourceCode(
-      stringModule.getBytes(StandardCharsets.UTF_8),
-      ModuleOrigin.IN_MEMORY_STRING,
-      null);
+        stringModule.getBytes(StandardCharsets.UTF_8),
+        ModuleOrigin.IN_MEMORY_STRING,
+        null);
   }
 
   /**
    * Initialize a new instance of the {@link StringResolver} class, for only
    * a single module.
    *
-   * @param moduleName The name of the module.
+   * @param moduleName     The name of the module.
    * @param moduleContents The contents of the module.
    */
   public StringResolver(String moduleName, String moduleContents) {

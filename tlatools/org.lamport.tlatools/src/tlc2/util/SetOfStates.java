@@ -80,7 +80,7 @@ public final class SetOfStates {
 		this.count = 0;
 		this.states = new TLCState[length];
 	}
-	
+
 	private final void grow(final ITool tool) {
 		final TLCState[] old = states;
 		this.count = 0;
@@ -120,13 +120,14 @@ public final class SetOfStates {
 	public final boolean put(final TLCState aState) {
 		return put(aState.fingerPrint(), aState);
 	}
-	
+
 	public final boolean put(final long fingerprint, final TLCState aState, final ITool tool) {
 		if (count >= thresh) {
 			this.grow(tool);
 		}
 		return put0(fingerprint, aState);
 	}
+
 	public final boolean put(final long fingerprint, final TLCState aState) {
 		if (count >= thresh) {
 			this.grow();
@@ -152,14 +153,14 @@ public final class SetOfStates {
 			try {
 				// If this equals check is removed, the following tests will fail:
 				// - pcal.FischerTest
-			    // - tlc2.tool.SetOfStatesTest
-			    // - tlc2.tool.liveness.BidirectionalTransitions1BxTest
-			    // - tlc2.tool.liveness.BidirectionalTransitions1ByTest
-			    // - tlc2.tool.liveness.BidirectionalTransitions1Test
-			    // - tlc2.tool.liveness.CodePlexBug08EWD840FL1Test
-			    // - tlc2.tool.liveness.CodePlexBug08EWD840FL2Test
-			    // - tlc2.tool.liveness.CodePlexBug08EWD840FL3Test
-			    // - tlc2.TLCTest
+				// - tlc2.tool.SetOfStatesTest
+				// - tlc2.tool.liveness.BidirectionalTransitions1BxTest
+				// - tlc2.tool.liveness.BidirectionalTransitions1ByTest
+				// - tlc2.tool.liveness.BidirectionalTransitions1Test
+				// - tlc2.tool.liveness.CodePlexBug08EWD840FL1Test
+				// - tlc2.tool.liveness.CodePlexBug08EWD840FL2Test
+				// - tlc2.tool.liveness.CodePlexBug08EWD840FL3Test
+				// - tlc2.TLCTest
 				if (aState.equals(ent)) {
 					return true;
 				}
@@ -167,37 +168,37 @@ public final class SetOfStates {
 				// Attempted to... appears in Value#equals and Value#compareTo.
 				assert e.getMessage() != null && (e.getMessage().startsWith("Attempted to check equality of")
 						|| e.getMessage().startsWith("Attempted to compare equality of"));
-				// MAK 03/22/2021: 
+				// MAK 03/22/2021:
 				// The equals check above was added in 2.08 of 21 December 2015. It
 				// has the (unintended) side-effect that it prevents users from
 				// "mixing types" in the behavior part of the spec (this is rare)
 				// when checking liveness properties:
-				//   
-				//   ...
-				//   Next ==
-				//     \/ x' \in 1..100
-				//     \/ x' = TRUE
-				//     \/ x' = "abc"
 				//
-				//   Prop ==
-				//     <>[]TRUE \* Actual property doesn't matter.
+				// ...
+				// Next ==
+				// \/ x' \in 1..100
+				// \/ x' = TRUE
+				// \/ x' = "abc"
+				//
+				// Prop ==
+				// <>[]TRUE \* Actual property doesn't matter.
 				//
 				// Instead, it can causes a hard-to-debug exception (iff there are
 				// enough successor states to cause collisions above):
 				//
-				//   Error: TLC threw an unexpected exception.
-				//   This was probably caused by an error in the spec or model.
-				//   See the User Output or TLC Console for clues to what happened.
-				//   The exception was a java.lang.RuntimeException
-				//   : Attempted to check equality of string "" with non-string:
-				//   FALSE
+				// Error: TLC threw an unexpected exception.
+				// This was probably caused by an error in the spec or model.
+				// See the User Output or TLC Console for clues to what happened.
+				// The exception was a java.lang.RuntimeException
+				// : Attempted to check equality of string "" with non-string:
+				// FALSE
 				//
 				// The exception e indicates that the two states could not be compared
-				// (equals) because value "types" are incompatible.  For example,
+				// (equals) because value "types" are incompatible. For example,
 				// the value of variable x in ent is a BoolValue while it is StringValue
 				// in aState. The exception e is useless to find the source location
 				// because both TLCStates are fully generated and the source locations
-				// are gone. 
+				// are gone.
 				// It is unfortunate that TLC does type checking as a side-effect in its
 				// Object#equals (and compareTo) method, which e.g. gets called when
 				// TLCState instances or values are added to a java.util.Set.
@@ -212,15 +213,17 @@ public final class SetOfStates {
 	public final int capacity() {
 		return this.length;
 	}
-	
+
 	/**
 	 * @return The number of {@link TLCState}s in this set. [](capacity > size)
 	 */
 	public final int size() {
 		return this.count;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
@@ -239,19 +242,20 @@ public final class SetOfStates {
 		buf.append("}");
 		return buf.toString();
 	}
-	
+
 	public java.util.Set<TLCState> getSubSet(final Action a) {
 		final HashSet<TLCState> subset = new HashSet<>(size());
-		
+
 		for (int i = 0; i < size(); i++) {
 			final TLCState next = next();
 			// Deliberately use identify checking here! TLC maintains N instances of action
 			// A, one for each N passed to A:
-			//  
-			//  A(n) == ...
-			//  Next == \E n \in 1..N: A(n)
 			//
-			// Below, we want the TLCStates corresponding to A *and* a particular n! Equality
+			// A(n) == ...
+			// Next == \E n \in 1..N: A(n)
+			//
+			// Below, we want the TLCStates corresponding to A *and* a particular n!
+			// Equality
 			// (equals) might not reflect this.
 			if (a == next.getAction()) {
 				subset.add(next);
@@ -259,17 +263,17 @@ public final class SetOfStates {
 		}
 		// Always clean-up after ourself!
 		resetNext();
-		
+
 		return subset;
 	}
-	
+
 	/*
 	 * Iterate (avoids creating an iterator object at the price of the mandatory
 	 * resetNext() method).
 	 */
 
 	private int iteratorIndex = 0;
-	
+
 	public final TLCState next() {
 		TLCState next = null;
 		while ((next = this.states[iteratorIndex++]) == null) {
@@ -281,7 +285,7 @@ public final class SetOfStates {
 	public void resetNext() {
 		iteratorIndex = 0;
 	}
-	
+
 	public Set<TLCState> toSet() {
 		final HashSet<TLCState> set = new HashSet<>(size());
 		for (int i = 0; i < size(); i++) {

@@ -46,7 +46,7 @@ public class BitVectorTest {
 		// unset
 		// unset
 		bitVector.set(7);
-		
+
 		assertEquals("[10011011]", bitVector.toString());
 	}
 
@@ -61,7 +61,7 @@ public class BitVectorTest {
 		// unset
 		// unset
 		bitVector.set(7);
-		
+
 		assertEquals("[001]", bitVector.toString(4, 3));
 	}
 }

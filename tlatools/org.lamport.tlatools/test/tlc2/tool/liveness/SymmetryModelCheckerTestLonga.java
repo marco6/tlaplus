@@ -42,7 +42,7 @@ public class SymmetryModelCheckerTestLonga extends ModelCheckerTestCase {
 	public SymmetryModelCheckerTestLonga() {
 		super("LongMCa", "symmetry");
 	}
-	
+
 	@Test
 	@Ignore("Ignored for as long as symmetry is incorrectly handled by TLC with liveness checking.")
 	public void testSpec() {
@@ -53,7 +53,7 @@ public class SymmetryModelCheckerTestLonga extends ModelCheckerTestCase {
 		// Assert it has found the temporal violation and also a counter example
 		assertTrue(recorder.recorded(EC.TLC_TEMPORAL_PROPERTY_VIOLATED));
 		assertTrue(recorder.recorded(EC.TLC_COUNTER_EXAMPLE));
-		
+
 		assertNodeAndPtrSizes(180L, 80L);
 
 		// Assert the error trace
@@ -70,7 +70,7 @@ public class SymmetryModelCheckerTestLonga extends ModelCheckerTestCase {
 		expectedTrace.add("/\\ x = b\n/\\ y = 3");
 		expectedTrace.add("/\\ x = b\n/\\ y = 4");
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace);
-		
+
 		assertBackToState(1, "<Action line 25, col 12 to line 27, col 27 of module SymmetryLivenessLong>");
 	}
 }

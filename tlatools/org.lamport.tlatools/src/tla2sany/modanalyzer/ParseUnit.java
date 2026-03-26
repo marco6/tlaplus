@@ -45,36 +45,40 @@ import util.ToolIO;
 
 /**
  * This class represents a parse unit, i.e. a file containing a
- *  single top-level TLA+ module and its inner modules.
+ * single top-level TLA+ module and its inner modules.
  */
 public class ParseUnit {
 
-  private SpecObj            spec;                   
-    // Back-reference to the SpecObj that this ParseUnit is part of
-  private NamedInputStream   nis        = null;      
-    // nis contains the file name, top-level module name, and 
-    //   source File object for a module
+  private SpecObj spec;
+  // Back-reference to the SpecObj that this ParseUnit is part of
+  private NamedInputStream nis = null;
+  // nis contains the file name, top-level module name, and
+  // source File object for a module
 
-  public NamedInputStream   getNis() {return this.nis; } ;
-    /***********************************************************************
-    * Added by LL on 12 May 2008 because the gui might want to get hold    *
-    * of it here.                                                          *
-    ***********************************************************************/
-    
-  private ParseTree          parseTree  = null;      
-    // Parse tree for the contents of "nis"; ParseTree is an 
-    // interface.  This is how one gets at the root of the 
-    // parse tree for a ParseUnit
-  private long               parseStamp = 0;         
-    // time stamp of the source file last parsed.
-  private ModulePointer      rootModule = null;      
-    // The ModulePointer for the top level module of this ParseUnit 
-  private String             rootModuleName;         
-    // The String name of the ParseUnit, and also of its root module
+  public NamedInputStream getNis() {
+    return this.nis;
+  };
+
+  /***********************************************************************
+   * Added by LL on 12 May 2008 because the gui might want to get hold *
+   * of it here. *
+   ***********************************************************************/
+
+  private ParseTree parseTree = null;
+  // Parse tree for the contents of "nis"; ParseTree is an
+  // interface. This is how one gets at the root of the
+  // parse tree for a ParseUnit
+  private long parseStamp = 0;
+  // time stamp of the source file last parsed.
+  private ModulePointer rootModule = null;
+  // The ModulePointer for the top level module of this ParseUnit
+  private String rootModuleName;
+  // The String name of the ParseUnit, and also of its root module
   private ParseUnitRelatives parseUnitRelatives = new ParseUnitRelatives();
-    // The ParseUnits this one is related to by EXTENTION and INSTANCE
+
+  // The ParseUnits this one is related to by EXTENTION and INSTANCE
   // Constructor
-  public ParseUnit( SpecObj spec, NamedInputStream source ) {
+  public ParseUnit(SpecObj spec, NamedInputStream source) {
     this.spec = spec;
     this.nis = source;
     rootModuleName = (source != null ? nis.getModuleName() : null);
@@ -85,57 +89,85 @@ public class ParseUnit {
     return "[ ParseUnit: " + rootModuleName + " ]";
   }
 
-  /** 
-   *  Returns true the source file for the nis still exists (i.e. has
-   *  not been deleted) and if the parseStamp of THIS ParseUnit is
-   *  more recent than the modification time of the source file.
+  /**
+   * Returns true the source file for the nis still exists (i.e. has
+   * not been deleted) and if the parseStamp of THIS ParseUnit is
+   * more recent than the modification time of the source file.
    */
   public final boolean isLoaded() {
-    return (nis != null &&  
-	    nis.sourceFile().exists() &&
-	    parseStamp > nis.sourceFile().lastModified());
+    return (nis != null &&
+        nis.sourceFile().exists() &&
+        parseStamp > nis.sourceFile().lastModified());
   }
 
   public boolean isLibraryModule() {
-	  if (nis == null || !(nis.sourceFile() instanceof TLAFile)) {
-		  return false;
-	  }
-	  return ((TLAFile) nis.sourceFile()).isLibraryModule();
+    if (nis == null || !(nis.sourceFile() instanceof TLAFile)) {
+      return false;
+    }
+    return ((TLAFile) nis.sourceFile()).isLibraryModule();
   }
 
   // Get-methods
-  public final String        getName()        { return rootModuleName; } 
+  public final String getName() {
+    return rootModuleName;
+  }
 
-  public final SpecObj       getSpec()        { return spec; }
+  public final SpecObj getSpec() {
+    return spec;
+  }
 
-  public final String        getFileName()    { return (nis != null ? nis.getFileName() : null); } 
+  public final String getFileName() {
+    return (nis != null ? nis.getFileName() : null);
+  }
 
-  public final TreeNode      getParseTree()   { return (parseTree != null ? parseTree.rootNode() : null); }
+  public final TreeNode getParseTree() {
+    return (parseTree != null ? parseTree.rootNode() : null);
+  }
 
-  public final ModulePointer getRootModule()  { return rootModule; }
+  public final ModulePointer getRootModule() {
+    return rootModule;
+  }
 
-  final        Vector<ParseUnit> getExtendees()   { return parseUnitRelatives.extendees; }
+  final Vector<ParseUnit> getExtendees() {
+    return parseUnitRelatives.extendees;
+  }
 
-  final        Vector<ParseUnit> getExtendedBy()  { return parseUnitRelatives.extendedBy; }
+  final Vector<ParseUnit> getExtendedBy() {
+    return parseUnitRelatives.extendedBy;
+  }
 
-  final        Vector<ParseUnit> getInstancees()  { return parseUnitRelatives.instancees; }
-             
-  final        Vector<ParseUnit> getInstancedBy() { return parseUnitRelatives.instancedBy; }
+  final Vector<ParseUnit> getInstancees() {
+    return parseUnitRelatives.instancees;
+  }
+
+  final Vector<ParseUnit> getInstancedBy() {
+    return parseUnitRelatives.instancedBy;
+  }
 
   // Add-methods
-  final        void          addExtendee(ParseUnit pu)    { parseUnitRelatives.extendees.addElement(pu); }
+  final void addExtendee(ParseUnit pu) {
+    parseUnitRelatives.extendees.addElement(pu);
+  }
 
-  final        void          addExtendedBy(ParseUnit pu)  { parseUnitRelatives.extendedBy.addElement(pu); }
+  final void addExtendedBy(ParseUnit pu) {
+    parseUnitRelatives.extendedBy.addElement(pu);
+  }
 
-  final        void          addInstancee(ParseUnit pu)   { parseUnitRelatives.instancees.addElement(pu); }
+  final void addInstancee(ParseUnit pu) {
+    parseUnitRelatives.instancees.addElement(pu);
+  }
 
-  final        void          addInstancedBy(ParseUnit pu) { parseUnitRelatives.instancedBy.addElement(pu); }
+  final void addInstancedBy(ParseUnit pu) {
+    parseUnitRelatives.instancedBy.addElement(pu);
+  }
 
   final ModuleRelatives getRelatives(ModulePointer module) {
     return module.getRelatives();
   }
 
-  final ParseUnitRelatives getRelatives() { return parseUnitRelatives; }
+  final ParseUnitRelatives getRelatives() {
+    return parseUnitRelatives;
+  }
 
   final ModuleContext getContext(ModuleRelatives relatives) {
     return relatives.context;
@@ -150,53 +182,51 @@ public class ParseUnit {
   }
 
   final Vector<ModulePointer> getPeers(ModulePointer module) {
-    if ( module.getRelatives().outerModule != null ) {
+    if (module.getRelatives().outerModule != null) {
       return module.getRelatives().outerModule.getRelatives().directInnerModules;
     }
     return null;
   }
 
   private final void writeParseTreeToFile(boolean file, Errors errors, SanyOutput out) throws AbortException {
-      // Construct the name with a .jcg extension (Jean-Charles Gregoire)
-      PrintWriter pw;
-      if (file) 
-      {
-          String sinkName = nis.getModuleName() + ".jcg";
-          File compiled = this.spec.getResolver().resolve(sinkName, false);
-          
-          // SZ 23.02.2009: name resolver used          
-          // File compiled =  new File( sinkName );
+    // Construct the name with a .jcg extension (Jean-Charles Gregoire)
+    PrintWriter pw;
+    if (file) {
+      String sinkName = nis.getModuleName() + ".jcg";
+      File compiled = this.spec.getResolver().resolve(sinkName, false);
 
-          // if that file already exists, we are about to overwrite it, so delete it first
-          // SZ 23.02.2009: this could lead to problems under windows 
-          if ( compiled.exists() )
-          {
-              compiled.delete();
+      // SZ 23.02.2009: name resolver used
+      // File compiled = new File( sinkName );
 
-          } 
-          
-          // SZ 23.02.2009: FileUtil method used
-          //           try {
-          // FileOutputStream output = new FileOutputStream( compiled );
+      // if that file already exists, we are about to overwrite it, so delete it first
+      // SZ 23.02.2009: this could lead to problems under windows
+      if (compiled.exists()) {
+        compiled.delete();
 
-          // Go ahead and write the tree out
-          pw = new PrintWriter(FileUtil.newFOS(compiled)); 
-          
-          // This is different from parseTree.SyntaxTreeNode.printST()
-          SyntaxTreePrinter.print( parseTree, pw );
-          pw.flush(); 
-          pw.close();
-
-          // SZ 23.02.2009:
-          // FileUtil method used
-          // } catch ( IOException e ) {
-          // errors.addAbort("Error: Failed to open output file " + sinkName +
-          //        "\n" + e.getMessage());        }
-      } else {
-          pw = new PrintWriter(out.getStream(LogLevel.DEBUG));
-          SyntaxTreePrinter.print( parseTree, pw );
-          pw.flush();
       }
+
+      // SZ 23.02.2009: FileUtil method used
+      // try {
+      // FileOutputStream output = new FileOutputStream( compiled );
+
+      // Go ahead and write the tree out
+      pw = new PrintWriter(FileUtil.newFOS(compiled));
+
+      // This is different from parseTree.SyntaxTreeNode.printST()
+      SyntaxTreePrinter.print(parseTree, pw);
+      pw.flush();
+      pw.close();
+
+      // SZ 23.02.2009:
+      // FileUtil method used
+      // } catch ( IOException e ) {
+      // errors.addAbort("Error: Failed to open output file " + sinkName +
+      // "\n" + e.getMessage()); }
+    } else {
+      pw = new PrintWriter(out.getStream(LogLevel.DEBUG));
+      SyntaxTreePrinter.print(parseTree, pw);
+      pw.flush();
+    }
   }
 
   private final void verifyEquivalenceOfFileAndModuleNames(Errors errors) throws AbortException {
@@ -204,10 +234,10 @@ public class ParseUnit {
     String fName = getFileName();
 
     // Remove all of the pathname up to the final "/"
-    fName = fName.substring(fName.lastIndexOf(System.getProperty("file.separator"))+1);
+    fName = fName.substring(fName.lastIndexOf(System.getProperty("file.separator")) + 1);
 
     // Remove any extension from file name
-    fName = fName.substring(0,fName.lastIndexOf("."));
+    fName = fName.substring(0, fName.lastIndexOf("."));
 
     // mName = name of top-level module declared in the file
     String mName = getParseTree().heirs()[0].heirs()[1].getImage();
@@ -215,170 +245,163 @@ public class ParseUnit {
     // Make sure the module named in the file matches the name of the file, at least
     // with a case-independent test.
     //
-    // Change made by LL on 16 Jan 2014.  Added requirement that module name 
-    // exactly matches file name.  Done because a mismatch provoked a bug in
+    // Change made by LL on 16 Jan 2014. Added requirement that module name
+    // exactly matches file name. Done because a mismatch provoked a bug in
     // the code calling TLAPS, and it was easier to add this requirement
-    // than to fix that bug.  (See documentation of 
-    // toolbox.util.AdapterFactory.locationToRegion.)  
+    // than to fix that bug. (See documentation of
+    // toolbox.util.AdapterFactory.locationToRegion.)
     if (!mName.equals(fName)) {
-    //  was:    if (!mName.equalsIgnoreCase(fName)) {
+      // was: if (!mName.equalsIgnoreCase(fName)) {
       throw errors.addError(
           ErrorCode.MODULE_NAME_DIFFERENT_FROM_FILE_NAME,
           Location.nullLoc,
           "File name '" + fName + "' does not match the name '" +
-          mName + "' of the top level module it contains."
-      );
+              mName + "' of the top level module it contains.");
     }
   }
 
-    /**
-     * This method parses the source in THIS.nis, if it has not been
-     * parsed already; It then proceeds to analyze the resulting parse
-     * tree to see what other external modules must be found and parsed.
-     * Finally, it writes result to a file if required by a command line
-     * switch.
-     * We receive `rootParseUnit` so we are able to find the file location for a 
-     * module part of a monolith spec. 
-     */
-    public final void parseFile(Errors errors, boolean firstCall, String name, ParseUnit rootParseUnit, SanyOutput out) throws AbortException
-    {
-        // Has it already been parsed since last modified? If yes, then no need to parse again
-        if (parseStamp > nis.sourceFile().lastModified())
-            return;
+  /**
+   * This method parses the source in THIS.nis, if it has not been
+   * parsed already; It then proceeds to analyze the resulting parse
+   * tree to see what other external modules must be found and parsed.
+   * Finally, it writes result to a file if required by a command line
+   * switch.
+   * We receive `rootParseUnit` so we are able to find the file location for a
+   * module part of a monolith spec.
+   */
+  public final void parseFile(Errors errors, boolean firstCall, String name, ParseUnit rootParseUnit, SanyOutput out)
+      throws AbortException {
+    // Has it already been parsed since last modified? If yes, then no need to parse
+    // again
+    if (parseStamp > nis.sourceFile().lastModified())
+      return;
 
-        // Does the file exist? If not abort cleanly. Of course the file could be deleted
-        // during the next few lines, and execution would also abort, but not so cleanly.
-        // We ignore that possibility.
-        if (!nis.sourceFile().exists())
-        {
-            throw errors.addError(
-                ErrorCode.INTERNAL_ERROR,
-                Location.nullLoc,
-                "Error: source file '" + nis.getName() + "' has apparently been deleted."
-            );
-        }
-
-        // Print user feedback
-		// MAK 01/2018: Always print the absolute path. Useful if e.g. users symlink
-		// common TLA files and want to verify that symlinking worked.
-        Path absoluteResolvedPath;
-		try {
-			absoluteResolvedPath = nis.getAbsoluteResolvedPath();
-		} catch (IOException e1) {
-			// Fall back to to relative path if resolving the path to an absolute one fails.
-			// Chance of failure should be fairly low because existence is checked above.
-			absoluteResolvedPath = nis.sourceFile().toPath();
-		}
-        /***********************************************************************
-        * The following statement modified by LL on 13 Mar 08 to produce       *
-        * more useful output for the GUI.                                      *
-        ***********************************************************************/
-        if (ToolIO.getMode() == ToolIO.SYSTEM) {
-            // If `resolver.getLibraryPath` returns `null` or the file is not an instance of TLAFile
-            // (and as we didn't have errors in previous steps, the module
-            // really exists somewhere), then we assume that this file is part of a monolith file.
-            String originalFilePath = "";
-            // If we are a instance of a TLAFile then try to get some library path.
-            if (nis.sourceFile() instanceof TLAFile && ((TLAFile) (nis.sourceFile())).hasLibraryPath()) {
-                final URI libraryPath = ((TLAFile) (nis.sourceFile())).getLibraryPath();
-                if (!absoluteResolvedPath.toUri().getPath().equals(libraryPath.getPath())) {
-                	originalFilePath = " (" + libraryPath + ")";                
-                }
-            } else if (rootParseUnit != null && rootParseUnit.getNis() != null) {
-                // We try to get the monolith file path.
-                File rootSourceFile = rootParseUnit.getNis().sourceFile();
-                if (rootSourceFile != null) {
-                    try {
-                        MonolithSpecExtractor.module(rootSourceFile, name);
-                        originalFilePath = " (" + rootSourceFile.getAbsolutePath() + ")";
-                    } catch (IOException e) {
-                        // This should never happen.
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            out.log(LogLevel.INFO, "Parsing file %s%s", absoluteResolvedPath, originalFilePath);
-        } else {
-            out.log(LogLevel.INFO, "Parsing module %s in file %s", nis.getModuleName(), absoluteResolvedPath);
-        }
-
-        boolean parseSuccess; 
-        try 
-        {
-            // create parser object
-            parseTree = new tla2sany.parser.TLAplusParser(out, nis);
-
-            // Here is the one true REAL call to the parseTree.parse() for a file;
-            // The root node of the parse tree is left in parseTree.
-            parseSuccess = parseTree.parse();
-
-            // set the parse time stamp
-            parseStamp = System.currentTimeMillis();
-        } finally 
-        {
-            try
-            {
-                // SZ Aug 6, 2009: close the stream and release the OS resources
-                // this is Ok, since the repeated call of the parse method will
-                // return due to the fact, that the parse time stamp is newer 
-                // then the file time stamp
-                nis.close();
-            } catch (IOException e)
-            {
-                // eventually it is a good place to inform the user that the resources are
-                // not released 
-            }
-        }
-        
-        if (!parseSuccess)
-        { // if parsing the contents of "nis" failed...
-            // create the abort and throw the exception
-            throw errors.addError(
-                ErrorCode.INTERNAL_ERROR,
-                Location.moduleLocation(nis.getModuleName()),
-                "Could not parse module " + nis.getModuleName() + " from file " + nis.getName()
-            );
-        }
-            
-        final TreeNode rootNode = parseTree.rootNode();
-    	rootNode.setLevel(0);
-    	rootNode.setParent();
-
-        // if the is the very first time parseFile() is called
-        if (firstCall)
-        {
-            // We don't know the name of the specification until this moment!
-            spec.setName(getParseTree().heirs()[0].heirs()[1].getImage());
-        }
-
-        rootModule = new ModulePointer(spec, this, getParseTree());
-
-        // Determine which modules extend or include which others
-        determineModuleRelationships(rootModule, /* parent */null);
-
-        // Make sure file contains module of the same name
-        verifyEquivalenceOfFileAndModuleNames(errors);
-
-        // Use system property to decide whether to "print" the parse tree to a file
-        if (System.getProperty("TLA-Print", "off").equals("file"))
-        {
-            writeParseTreeToFile(true, errors, out);
-        } else if (System.getProperty("TLA-Print", "off").equals("on"))
-        {
-            writeParseTreeToFile(false, errors, out);
-        }
+    // Does the file exist? If not abort cleanly. Of course the file could be
+    // deleted
+    // during the next few lines, and execution would also abort, but not so
+    // cleanly.
+    // We ignore that possibility.
+    if (!nis.sourceFile().exists()) {
+      throw errors.addError(
+          ErrorCode.INTERNAL_ERROR,
+          Location.nullLoc,
+          "Error: source file '" + nis.getName() + "' has apparently been deleted.");
     }
+
+    // Print user feedback
+    // MAK 01/2018: Always print the absolute path. Useful if e.g. users symlink
+    // common TLA files and want to verify that symlinking worked.
+    Path absoluteResolvedPath;
+    try {
+      absoluteResolvedPath = nis.getAbsoluteResolvedPath();
+    } catch (IOException e1) {
+      // Fall back to to relative path if resolving the path to an absolute one fails.
+      // Chance of failure should be fairly low because existence is checked above.
+      absoluteResolvedPath = nis.sourceFile().toPath();
+    }
+    /***********************************************************************
+     * The following statement modified by LL on 13 Mar 08 to produce *
+     * more useful output for the GUI. *
+     ***********************************************************************/
+    if (ToolIO.getMode() == ToolIO.SYSTEM) {
+      // If `resolver.getLibraryPath` returns `null` or the file is not an instance of
+      // TLAFile
+      // (and as we didn't have errors in previous steps, the module
+      // really exists somewhere), then we assume that this file is part of a monolith
+      // file.
+      String originalFilePath = "";
+      // If we are a instance of a TLAFile then try to get some library path.
+      if (nis.sourceFile() instanceof TLAFile && ((TLAFile) (nis.sourceFile())).hasLibraryPath()) {
+        final URI libraryPath = ((TLAFile) (nis.sourceFile())).getLibraryPath();
+        if (!absoluteResolvedPath.toUri().getPath().equals(libraryPath.getPath())) {
+          originalFilePath = " (" + libraryPath + ")";
+        }
+      } else if (rootParseUnit != null && rootParseUnit.getNis() != null) {
+        // We try to get the monolith file path.
+        File rootSourceFile = rootParseUnit.getNis().sourceFile();
+        if (rootSourceFile != null) {
+          try {
+            MonolithSpecExtractor.module(rootSourceFile, name);
+            originalFilePath = " (" + rootSourceFile.getAbsolutePath() + ")";
+          } catch (IOException e) {
+            // This should never happen.
+            e.printStackTrace();
+          }
+        }
+      }
+
+      out.log(LogLevel.INFO, "Parsing file %s%s", absoluteResolvedPath, originalFilePath);
+    } else {
+      out.log(LogLevel.INFO, "Parsing module %s in file %s", nis.getModuleName(), absoluteResolvedPath);
+    }
+
+    boolean parseSuccess;
+    try {
+      // create parser object
+      parseTree = new tla2sany.parser.TLAplusParser(out, nis);
+
+      // Here is the one true REAL call to the parseTree.parse() for a file;
+      // The root node of the parse tree is left in parseTree.
+      parseSuccess = parseTree.parse();
+
+      // set the parse time stamp
+      parseStamp = System.currentTimeMillis();
+    } finally {
+      try {
+        // SZ Aug 6, 2009: close the stream and release the OS resources
+        // this is Ok, since the repeated call of the parse method will
+        // return due to the fact, that the parse time stamp is newer
+        // then the file time stamp
+        nis.close();
+      } catch (IOException e) {
+        // eventually it is a good place to inform the user that the resources are
+        // not released
+      }
+    }
+
+    if (!parseSuccess) { // if parsing the contents of "nis" failed...
+                         // create the abort and throw the exception
+      throw errors.addError(
+          ErrorCode.INTERNAL_ERROR,
+          Location.moduleLocation(nis.getModuleName()),
+          "Could not parse module " + nis.getModuleName() + " from file " + nis.getName());
+    }
+
+    final TreeNode rootNode = parseTree.rootNode();
+    rootNode.setLevel(0);
+    rootNode.setParent();
+
+    // if the is the very first time parseFile() is called
+    if (firstCall) {
+      // We don't know the name of the specification until this moment!
+      spec.setName(getParseTree().heirs()[0].heirs()[1].getImage());
+    }
+
+    rootModule = new ModulePointer(spec, this, getParseTree());
+
+    // Determine which modules extend or include which others
+    determineModuleRelationships(rootModule, /* parent */null);
+
+    // Make sure file contains module of the same name
+    verifyEquivalenceOfFileAndModuleNames(errors);
+
+    // Use system property to decide whether to "print" the parse tree to a file
+    if (System.getProperty("TLA-Print", "off").equals("file")) {
+      writeParseTreeToFile(true, errors, out);
+    } else if (System.getProperty("TLA-Print", "off").equals("on")) {
+      writeParseTreeToFile(false, errors, out);
+    }
+  }
 
   private void handleExtensions(ModulePointer currentModule, ModulePointer otherModule) {
     /*
-    // Debugging
-    System.err.println("Entering HandleExtensions for (" + 
-                       currentModule.getName() + ", " + 
-                       ( otherModule.getName() != null ? otherModule.getName() : "null" ) + 
-                       ")");
-    System.err.println(currentModule.getContext().toString());
-    */
+     * // Debugging
+     * System.err.println("Entering HandleExtensions for (" +
+     * currentModule.getName() + ", " +
+     * ( otherModule.getName() != null ? otherModule.getName() : "null" ) +
+     * ")");
+     * System.err.println(currentModule.getContext().toString());
+     */
 
     if (otherModule == null) {
       // System.err.println("Leaving handleExtensions because otherModule == null");
@@ -386,40 +409,41 @@ public class ParseUnit {
     }
 
     ModuleContext currentContext = getContext(currentModule);
-    final Vector<String> extendeeNames  = otherModule.getNamesOfModulesExtended();
+    final Vector<String> extendeeNames = otherModule.getNamesOfModulesExtended();
 
     // For all modules extended by otherModule
     for (int i = 0; i < extendeeNames.size(); i++) {
-      String        extendeeName = extendeeNames.elementAt(i);
+      String extendeeName = extendeeNames.elementAt(i);
       ModulePointer extendeeResolvant = currentContext.resolve(extendeeName);
 
       // if extendeeName is resolved in currentContext, then
       // incorporate all of its inner modules into currentContext And
       // recursively add to currentContext all of the inner modules in
       // modules extended by resolvant
-      if ( extendeeResolvant != null ) {
+      if (extendeeResolvant != null) {
         Vector<ModulePointer> directInnerModules = extendeeResolvant.getDirectInnerModules();
         for (int j = 0; j < directInnerModules.size(); j++) {
           ModulePointer upperInnerMod = directInnerModules.elementAt(j);
           currentContext.bindIfNotBound(upperInnerMod.getName(), upperInnerMod);
-          handleExtensions(currentModule,extendeeResolvant); // recursive call
-	}
+          handleExtensions(currentModule, extendeeResolvant); // recursive call
+        }
       }
     }
 
     /*
-    // Debugging
-    if ( currentModule.getName().equals("BB") ) {
-      System.err.println("Leaving HandleExtensions for " + currentModule.getName() + "; context is:");
-      System.err.println(currentModule.getContext().toString());
-    }
-    */
+     * // Debugging
+     * if ( currentModule.getName().equals("BB") ) {
+     * System.err.println("Leaving HandleExtensions for " + currentModule.getName()
+     * + "; context is:");
+     * System.err.println(currentModule.getContext().toString());
+     * }
+     */
   }
 
   /**
    * Calculates the bindings (context) for module names known at the
    * location where currentModule is defined, and bound to modules
-   * defined within this ParseUnit.  Does NOT include currentModule
+   * defined within this ParseUnit. Does NOT include currentModule
    * itself, but DOES include peers defined earlier in the parent
    * module, and peers of the parent defined earlier than the parent,
    * and peers of the grandparent defined earlier than the
@@ -431,19 +455,20 @@ public class ParseUnit {
    * module, but peer modules defined later are not.
    */
   private void calculateContextWithinParseUnit(ModulePointer currentModule) {
-    // System.err.println("Context before adding parents: " + currentModule.getContext());
+    // System.err.println("Context before adding parents: " +
+    // currentModule.getContext());
     ModuleContext currentContext = getContext(currentModule);
 
     // A module's context includes that of parent, grandparent,
     // etc. at point where it is defined
-    if ( getParent(currentModule) != null) {
+    if (getParent(currentModule) != null) {
       currentContext.union(getParent(currentModule).getContext());
     }
 
     // A module's context also contains the names of direct inner
     // modules of ancestors defined before this one
     ModulePointer ancestorModule = currentModule;
-    while ( getParent(ancestorModule) != null ) {
+    while (getParent(ancestorModule) != null) {
       // A module's context includes that of parent, grandparent,
       // etc. at point where it is defined
       currentContext.union(getParent(ancestorModule).getContext());
@@ -458,52 +483,54 @@ public class ParseUnit {
     } // end while
 
     // A module's context also includes inner modules of modules
-    // extended by currentModule's parent, etc.  directly or
+    // extended by currentModule's parent, etc. directly or
     // indirectly, are in this module's context.
-    handleExtensions(currentModule, currentModule );
+    handleExtensions(currentModule, currentModule);
 
-    // System.err.println("Context after handling extentions: \n" + getContext(currentModule));
+    // System.err.println("Context after handling extentions: \n" +
+    // getContext(currentModule));
   }
 
   // Analyzes various sets of modules related to the module at
-  // "currentNode" (which must be an "N_Module" node).  The second
+  // "currentNode" (which must be an "N_Module" node). The second
   // argument is the ModulePointer for the immediate outer module for
   // currentNode (or null if none).
   //
   // For the module "currentModule" do the following:
-  //   1) Create a ModuleRelatives object associated with it 
-  //   2) Fill in the outerModule field for currentNode
-  //   3) Calculate the module context as known within this ParseUnit
-  //   4) Fill its directlyExtendedModules Vector with the String names
-  //      of all of the modules it extends
-  //   5) Fill its directlyInstantiatedModules Vector with the String
-  //      names of all modules it instances
-  //   6) Fill in its directInnerModules Vector with references to the
-  //      module name TreeNodes of all direct inner modules it defines
-  //   7) For all direct inner modules defined, call
-  //      determineModuleRelationships recursively
+  // 1) Create a ModuleRelatives object associated with it
+  // 2) Fill in the outerModule field for currentNode
+  // 3) Calculate the module context as known within this ParseUnit
+  // 4) Fill its directlyExtendedModules Vector with the String names
+  // of all of the modules it extends
+  // 5) Fill its directlyInstantiatedModules Vector with the String
+  // names of all modules it instances
+  // 6) Fill in its directInnerModules Vector with references to the
+  // module name TreeNodes of all direct inner modules it defines
+  // 7) For all direct inner modules defined, call
+  // determineModuleRelationships recursively
 
   /*************************************************************************
-  * First of all, I have no idea why the parser maintains separate lists   *
-  * of directlyExtendedModules and directlyInstantiatedModules, since      *
-  * they are just used to determine the names of imported modules that     *
-  * have to be parsed and may cause dependency cycles.  I also don't       *
-  * understand why this method walks the parse tree to find the            *
-  * directlyInstantiatedModules.  The names of imported modules are        *
-  * gathered in the parsing phase and are available in                     *
-  * parseTree.dependencies().  (It would be easy to modify tla+.jj and     *
-  * the ParseTree interface to list the instantiated modules separately.)  *
-  *************************************************************************/
+   * First of all, I have no idea why the parser maintains separate lists *
+   * of directlyExtendedModules and directlyInstantiatedModules, since *
+   * they are just used to determine the names of imported modules that *
+   * have to be parsed and may cause dependency cycles. I also don't *
+   * understand why this method walks the parse tree to find the *
+   * directlyInstantiatedModules. The names of imported modules are *
+   * gathered in the parsing phase and are available in *
+   * parseTree.dependencies(). (It would be easy to modify tla+.jj and *
+   * the ParseTree interface to list the instantiated modules separately.) *
+   *************************************************************************/
   void determineModuleRelationships(ModulePointer currentModule, ModulePointer parent) {
     /***
-    System.err.println("< Entering determineModuleRelationships for currentModule " +
-		       currentModule.getName() + ", with parent " +
-		       (parent != null ? parent.getName() : "null"));  
-     for (int i = 0; i < parseTree.dependencies().length; i++) {
-     System.err.println(" Dependency: " + parseTree.dependencies()[i]) ;
-       } ;
-
-    ***/
+     * System.err.println("< Entering determineModuleRelationships for currentModule
+     * " +
+     * currentModule.getName() + ", with parent " +
+     * (parent != null ? parent.getName() : "null"));
+     * for (int i = 0; i < parseTree.dependencies().length; i++) {
+     * System.err.println(" Dependency: " + parseTree.dependencies()[i]) ;
+     * } ;
+     * 
+     ***/
 
     // Allocate ModuleRelatives object for the "current" module
     ModuleRelatives currentRelatives = new ModuleRelatives(this, currentModule);
@@ -516,7 +543,7 @@ public class ParseUnit {
 
     // Find the N_Extends node of the currentModule
     TreeNode extendNode = currentModule.getExtendsDecl();
-    
+
     // Loop through the EXTENDS decl for the odd nodes, which are the
     // names of the modules being extended, and add an entry in the
     // directlyExtendsModules vector for each module mentioned
@@ -539,151 +566,161 @@ public class ParseUnit {
       TreeNode def = body.heirs()[i];
 
       if (def.getImage().equals("N_Module")) {
-	// We encounter an new (inner) module
+        // We encounter an new (inner) module
         // Pick off name of inner module
-        ModulePointer innerModule = new ModulePointer(spec, this,def);
+        ModulePointer innerModule = new ModulePointer(spec, this, def);
 
         // Indicate that the inner module is inner to the current module
-        currentRelatives.directInnerModules.addElement( innerModule );
+        currentRelatives.directInnerModules.addElement(innerModule);
 
         // Recursive call to determine module relationships for the inner module
-        determineModuleRelationships(innerModule, currentModule); 
+        determineModuleRelationships(innerModule, currentModule);
       }
-/************************ code removed by LL on 6 Aug 2007
-
-      else if (def.getImage().equals("N_Instance")) {
-	// We encounter an INSTANCE decl
-        TreeNode[] instanceHeirs = def.heirs();
-        int nonLocalInstanceNodeIX = 0;
-
-        // The modifier "LOCAL" may or may not appear in the syntax
-        // tree; if so, offset by 1.
-        if (instanceHeirs[0].getImage().equals("LOCAL")) {
-          nonLocalInstanceNodeIX = 1;
-	}
-
-        // Find the name of the module being instantiated
-        String instanceModuleName = instanceHeirs[nonLocalInstanceNodeIX].heirs()[1].getImage();
-
-        // Append it to the Vector of instantiated modules
-        currentRelatives.directlyInstantiatedModuleNames.addElement(instanceModuleName);
-      }
-      else if ( def.getImage().equals("N_ModuleDefinition") ) {
-	// We encounter a module definition (i.e. D(x,y) == INSTANCE Modname WITH ...)
-	// that counts as an instance also
-        TreeNode[] instanceHeirs = def.heirs();
-        int nonLocalInstanceNodeIX = 2;
-
-        // The modifier "LOCAL" may or may not appear in the syntax
-        // tree; if so, offset by 1.
-        if (instanceHeirs[0].getImage().equals("LOCAL")) {
-          nonLocalInstanceNodeIX = 3;
-	}
-
-        // Find the name of the module being instantiated
-        String instanceModuleName = instanceHeirs[nonLocalInstanceNodeIX].heirs()[1].getImage();
-
-        // Append it to the Vector of instantiated modules
-        currentRelatives.directlyInstantiatedModuleNames.addElement(instanceModuleName);
-      }
-// BUG:  The following doesn't work
-//
-//   INSTANCE Test2 WITH B <- LET f == INSTANCE Test1 IN TRUE
-//
-// because getInstanceInLet is not being executed on the LET 
-// expresssion inside the WITH, so Test1 isn't being
-// found.
-
-// XXXXXX we need to look for INSTANCEs inside proofs of theoremss.
+      /************************
+       * code removed by LL on 6 Aug 2007
+       * 
+       * else if (def.getImage().equals("N_Instance")) {
+       * // We encounter an INSTANCE decl
+       * TreeNode[] instanceHeirs = def.heirs();
+       * int nonLocalInstanceNodeIX = 0;
+       * 
+       * // The modifier "LOCAL" may or may not appear in the syntax
+       * // tree; if so, offset by 1.
+       * if (instanceHeirs[0].getImage().equals("LOCAL")) {
+       * nonLocalInstanceNodeIX = 1;
+       * }
+       * 
+       * // Find the name of the module being instantiated
+       * String instanceModuleName =
+       * instanceHeirs[nonLocalInstanceNodeIX].heirs()[1].getImage();
+       * 
+       * // Append it to the Vector of instantiated modules
+       * currentRelatives.directlyInstantiatedModuleNames.addElement(instanceModuleName);
+       * }
+       * else if ( def.getImage().equals("N_ModuleDefinition") ) {
+       * // We encounter a module definition (i.e. D(x,y) == INSTANCE Modname WITH
+       * ...)
+       * // that counts as an instance also
+       * TreeNode[] instanceHeirs = def.heirs();
+       * int nonLocalInstanceNodeIX = 2;
+       * 
+       * // The modifier "LOCAL" may or may not appear in the syntax
+       * // tree; if so, offset by 1.
+       * if (instanceHeirs[0].getImage().equals("LOCAL")) {
+       * nonLocalInstanceNodeIX = 3;
+       * }
+       * 
+       * // Find the name of the module being instantiated
+       * String instanceModuleName =
+       * instanceHeirs[nonLocalInstanceNodeIX].heirs()[1].getImage();
+       * 
+       * // Append it to the Vector of instantiated modules
+       * currentRelatives.directlyInstantiatedModuleNames.addElement(instanceModuleName);
+       * }
+       * // BUG: The following doesn't work
+       * //
+       * // INSTANCE Test2 WITH B <- LET f == INSTANCE Test1 IN TRUE
+       * //
+       * // because getInstanceInLet is not being executed on the LET
+       * // expresssion inside the WITH, so Test1 isn't being
+       * // found.
+       * 
+       * // XXXXXX we need to look for INSTANCEs inside proofs of theoremss.
+       * else {
+       * // We also need to look for INSTANCE in Let constructs
+       * this.getInstanceInLet(def, currentRelatives);
+       * }
+       ************ end code eliminated by LL on 6 Aug 2007
+       ******/
       else {
-	// We also need to look for INSTANCE in Let constructs
-	this.getInstanceInLet(def, currentRelatives);
+        this.getInstances(def, currentRelatives);
       }
-************ end code eliminated by LL on 6 Aug 2007 ******/
-      else { this.getInstances(def, currentRelatives); } ;
+      ;
     } // end for
 
     /***
-    System.err.println("  Leaving determineModuleRelationships for currentModule " +
-		       currentModule.getName() +  ", with parent " +
-		       (parent != null ? parent.getName() : "null") + "\n>");
-    System.err.println("ModuleRelationships =" +  spec.getModuleRelationships());
-    ***/
+     * System.err.println(" Leaving determineModuleRelationships for currentModule "
+     * +
+     * currentModule.getName() + ", with parent " +
+     * (parent != null ? parent.getName() : "null") + "\n>");
+     * System.err.println("ModuleRelationships =" + spec.getModuleRelationships());
+     ***/
   }
 
   /*************************************************************************
-  * If we want to allow plain INSTANCEs inside a LET, this method must be  *
-  * modified accordingly.                                                  *
-  * @deprecated not used (no local references)
-  *************************************************************************/
+   * If we want to allow plain INSTANCEs inside a LET, this method must be *
+   * modified accordingly. *
+   * 
+   * @deprecated not used (no local references)
+   *************************************************************************/
   @Deprecated
   private void getInstanceInLet(TreeNode treeNode, ModuleRelatives currentRelatives) {
-    TreeNode[] children = treeNode.heirs();  
+    TreeNode[] children = treeNode.heirs();
 
     if (treeNode.getImage().equals("N_LetIn")) {
       TreeNode[] syntaxTreeNode = children[1].heirs();
 
       for (int i = 0; i < syntaxTreeNode.length; i++) {
-	TreeNode def = syntaxTreeNode[i];
-	if (def.getImage().equals("N_ModuleDefinition")) {
-	  // We encounter a module definition (i.e. D(x,y) == INSTANCE Modname WITH ...)
-	  // that counts as an instance also
-	  TreeNode[] instanceHeirs = def.heirs();
-	  int nonLocalInstanceNodeIX = 2;
+        TreeNode def = syntaxTreeNode[i];
+        if (def.getImage().equals("N_ModuleDefinition")) {
+          // We encounter a module definition (i.e. D(x,y) == INSTANCE Modname WITH ...)
+          // that counts as an instance also
+          TreeNode[] instanceHeirs = def.heirs();
+          int nonLocalInstanceNodeIX = 2;
 
-	  // Find the name of the module being instantiated
-	  String instanceModuleName = instanceHeirs[nonLocalInstanceNodeIX].heirs()[1].getImage();
+          // Find the name of the module being instantiated
+          String instanceModuleName = instanceHeirs[nonLocalInstanceNodeIX].heirs()[1].getImage();
 
-	  // Append it to the Vector of instantiated modules
-	  currentRelatives.directlyInstantiatedModuleNames.addElement(instanceModuleName);
-	} // if (def.getImage().equals("N_ModuleDefinition"))
-	else {
-	  TreeNode[] defChildren = def.heirs();
-	  for (int j = 0; j < defChildren.length; j++) {
-	    this.getInstanceInLet(defChildren[j], currentRelatives);
-	  }
-	}
+          // Append it to the Vector of instantiated modules
+          currentRelatives.directlyInstantiatedModuleNames.addElement(instanceModuleName);
+        } // if (def.getImage().equals("N_ModuleDefinition"))
+        else {
+          TreeNode[] defChildren = def.heirs();
+          for (int j = 0; j < defChildren.length; j++) {
+            this.getInstanceInLet(defChildren[j], currentRelatives);
+          }
+        }
       }
     } // if (treeNode.getImage().equals("N_LetIn"))
     else {
       for (int i = 0; i < children.length; i++) {
-	this.getInstanceInLet(children[i], currentRelatives);
+        this.getInstanceInLet(children[i], currentRelatives);
       }
     }
-  } // getInstanceInLet 
+  } // getInstanceInLet
 
-
-  private void getInstances(TreeNode treeNode, 
-                            ModuleRelatives currentRelatives) {
+  private void getInstances(TreeNode treeNode,
+      ModuleRelatives currentRelatives) {
     /***********************************************************************
-    * This is a very simple-minded method that walks the syntactic parse   *
-    * tree at node treeNode and hunts for N_NonLocalInstance nodes and,    *
-    * for each one it finds, adds the module name to the                   *
-    * directlyInstantiatedModuleNames vector of currentRelatives.  There   *
-    * is much that could be done to avoid walking down dead-end branches.  *
-    * However, most of the nodes in real specs are expression nodes, and   *
-    * they have to be searched to find the INSTANCEs inside LET/INs.  So,  *
-    * I don't think that optimizing the search would save much time.       *
-    ***********************************************************************/
-    TreeNode[] children = treeNode.heirs();  
+     * This is a very simple-minded method that walks the syntactic parse *
+     * tree at node treeNode and hunts for N_NonLocalInstance nodes and, *
+     * for each one it finds, adds the module name to the *
+     * directlyInstantiatedModuleNames vector of currentRelatives. There *
+     * is much that could be done to avoid walking down dead-end branches. *
+     * However, most of the nodes in real specs are expression nodes, and *
+     * they have to be searched to find the INSTANCEs inside LET/INs. So, *
+     * I don't think that optimizing the search would save much time. *
+     ***********************************************************************/
+    TreeNode[] children = treeNode.heirs();
 
-    int i = 0 ;
+    int i = 0;
     if (treeNode.getImage().equals("N_NonLocalInstance")) {
       /*********************************************************************
-      * Note: We need to scan the children of a NonLocalInstance node      *
-      * because a substitution in the WITH could contain a LET with an     *
-      * INSTANCE.                                                          *
-      *********************************************************************/
+       * Note: We need to scan the children of a NonLocalInstance node *
+       * because a substitution in the WITH could contain a LET with an *
+       * INSTANCE. *
+       *********************************************************************/
       currentRelatives.directlyInstantiatedModuleNames.addElement(
-         children[1].getImage() );
-         // System.err.println("Found Instance: " + children[1].getImage()) ;
-      i = 2 ;
-     }; 
+          children[1].getImage());
+      // System.err.println("Found Instance: " + children[1].getImage()) ;
+      i = 2;
+    }
+    ;
 
-    for (int j = i ; j < children.length ; j++) {
-      getInstances(children[j], currentRelatives) ;
-     } ;      
+    for (int j = i; j < children.length; j++) {
+      getInstances(children[j], currentRelatives);
+    }
+    ;
   } // getInstances
 
 }
-

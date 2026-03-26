@@ -35,9 +35,9 @@ import tlc2.output.EC;
 public class BidirectionalTransitions2Test extends ModelCheckerTestCase {
 
 	public BidirectionalTransitions2Test() {
-		super("BidirectionalTransitions", new String[] {"-config", "BidirectionalTransitions2.cfg"});
+		super("BidirectionalTransitions", new String[] { "-config", "BidirectionalTransitions2.cfg" });
 	}
-	
+
 	@Test
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
@@ -45,6 +45,6 @@ public class BidirectionalTransitions2Test extends ModelCheckerTestCase {
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "9", "4", "0"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "3"));
 
-	assertZeroUncovered();
+		assertZeroUncovered();
 	}
 }

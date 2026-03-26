@@ -63,8 +63,7 @@ public class RecordedSanyOutput implements SanyOutput {
     }
 
     public String getText() {
-      return
-          (null == this.stream
+      return (null == this.stream
           ? String.format(this.format, this.args)
           : this.stream.toString()) + '\n';
     }
@@ -76,9 +75,9 @@ public class RecordedSanyOutput implements SanyOutput {
   }
 
   private final List<Message> messages = new ArrayList<>();
-  
+
   private final LogLevel logLevel;
-  
+
   public RecordedSanyOutput(LogLevel logLevel) {
     this.logLevel = logLevel;
   }

@@ -4,7 +4,7 @@ package tlc2.tool;
 public class StatefulRuntimeException extends RuntimeException {
 
 	private boolean isKnown = false;
-	
+
 	public StatefulRuntimeException() {
 		super();
 	}

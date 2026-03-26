@@ -49,12 +49,12 @@ public abstract class PCalModelCheckerTestCase extends ModelCheckerTestCase {
 	public PCalModelCheckerTestCase(final String spec, final String path) {
 		this(spec, path, EC.ExitStatus.SUCCESS);
 	}
-	
+
 	public PCalModelCheckerTestCase(final String spec, final String path, final String[] extraPcalArgs) {
 		this(spec, path, EC.ExitStatus.SUCCESS);
 		this.pcalArgs.addAll(Arrays.asList(extraPcalArgs));
 	}
-	
+
 	public PCalModelCheckerTestCase(final String spec, final String path, final int exitStatus) {
 		super(spec, path, exitStatus);
 		this.pcalArgs.add("-unixEOL");
@@ -66,18 +66,18 @@ public abstract class PCalModelCheckerTestCase extends ModelCheckerTestCase {
 		// Make tool capture the output written to ToolIO.out. Otherwise,
 		// ToolIO#getAllMessages returns an empty array.
 		ToolIO.setMode(ToolIO.TOOL);
-		
+
 		// Reset ToolIO for each test case. Otherwise, a test case sees the output of
 		// the previous tests.
 		ToolIO.reset();
-		
+
 		this.pcalArgs.add(CommonTestCase.BASE_PATH + File.separator + path + File.separator + spec
 				+ TLAConstants.Files.TLA_EXTENSION);
-		
+
 		// Run PCal translator
 		assertEquals(0, trans.runMe(pcalArgs.toArray(new String[pcalArgs.size()])));
 		assertNotNull(PcalParams.tlaPcalMapping); // successfully translated PCal to TLA+
-		
+
 		final String[] messages = ToolIO.getAllMessages();
 		assertTrue(Arrays.toString(messages), messages.length == 4 || messages.length == 5);
 

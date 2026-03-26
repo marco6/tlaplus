@@ -50,13 +50,14 @@ public class AssertExpressionStack extends ModelCheckerTestCase {
 		assertTrue(recorder.recorded(EC.TLC_BEHAVIOR_UP_TO_THIS_POINT));
 
 		assertNoTESpec();
-		
+
 		final List<String> expectedTrace = new ArrayList<String>(2);
 		expectedTrace.add("x = 0");
 		expectedTrace.add("x = 1");
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace);
-		
-		// Assert a proper nested expression has been recorded which represents the call stack.
+
+		// Assert a proper nested expression has been recorded which represents the call
+		// stack.
 		assertFalse(recorder.recordedWithStringValue(EC.TLC_NESTED_EXPRESSION, "    The error call stack is empty.\n"));
 	}
 }

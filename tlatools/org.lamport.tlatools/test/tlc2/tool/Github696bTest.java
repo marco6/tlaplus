@@ -42,12 +42,12 @@ public class Github696bTest extends ModelCheckerTestCase {
 	@Test
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
-		
+
 		assertTrue(recorder.recordedWithStringValues(EC.GENERAL,
 				"TLC threw an unexpected exception.\n"
-				+ "This was probably caused by an error in the spec or model.\n"
-				+ "See the User Output or TLC Console for clues to what happened.\n"
-				+ "The exception was a java.lang.RuntimeException\n"
-				+ ": Attempted to compare the differently-typed model values B_a and A_a"));
+						+ "This was probably caused by an error in the spec or model.\n"
+						+ "See the User Output or TLC Console for clues to what happened.\n"
+						+ "The exception was a java.lang.RuntimeException\n"
+						+ ": Attempted to compare the differently-typed model values B_a and A_a"));
 	}
 }

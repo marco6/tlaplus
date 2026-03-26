@@ -41,7 +41,6 @@ public class BoundedQuantConstruct implements TlaConstruct {
         return Doc.group(
                 exists.appendSpace(content)
                         .append(Doc.text(":"))
-                        .appendLineOrSpace(context.buildChild(z[z.length - 1])).indent(indentSize)
-        );
+                        .appendLineOrSpace(context.buildChild(z[z.length - 1])).indent(indentSize));
     }
 }

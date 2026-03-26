@@ -39,7 +39,7 @@ import tlc2.tool.liveness.ModelCheckerTestCase;
 public class TLCExtTraceAliasTest extends ModelCheckerTestCase {
 
 	public TLCExtTraceAliasTest() {
-		super("TLCExtTrace", new String[] {"-config", "TLCExtTraceAlias.cfg"}, EC.ExitStatus.VIOLATION_SAFETY);
+		super("TLCExtTrace", new String[] { "-config", "TLCExtTraceAlias.cfg" }, EC.ExitStatus.VIOLATION_SAFETY);
 	}
 
 	@Test
@@ -48,9 +48,9 @@ public class TLCExtTraceAliasTest extends ModelCheckerTestCase {
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "7"));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "7", "7", "0"));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
-		
+
 		// Assert the correct trace.
 		final List<String> expectedTrace = new ArrayList<String>(7);
 		expectedTrace.add("/\\ x = 1\n/\\ t = <<[x |-> 1]>>");
@@ -59,7 +59,8 @@ public class TLCExtTraceAliasTest extends ModelCheckerTestCase {
 		expectedTrace.add("/\\ x = 4\n/\\ t = <<[x |-> 1], [x |-> 2], [x |-> 3], [x |-> 4]>>");
 		expectedTrace.add("/\\ x = 5\n/\\ t = <<[x |-> 1], [x |-> 2], [x |-> 3], [x |-> 4], [x |-> 5]>>");
 		expectedTrace.add("/\\ x = 6\n/\\ t = <<[x |-> 1], [x |-> 2], [x |-> 3], [x |-> 4], [x |-> 5], [x |-> 6]>>");
-		expectedTrace.add("/\\ x = 7\n/\\ t = <<[x |-> 1], [x |-> 2], [x |-> 3], [x |-> 4], [x |-> 5], [x |-> 6], [x |-> 7]>>");
+		expectedTrace.add(
+				"/\\ x = 7\n/\\ t = <<[x |-> 1], [x |-> 2], [x |-> 3], [x |-> 4], [x |-> 5], [x |-> 6], [x |-> 7]>>");
 
 		final List<String> expectedActions = new ArrayList<>(7);
 		expectedActions.add("<Initial predicate line 14, col 9 to line 14, col 13 of module TLCExtTrace>");

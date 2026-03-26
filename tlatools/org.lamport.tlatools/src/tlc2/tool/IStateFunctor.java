@@ -38,7 +38,7 @@ import tlc2.util.SetOfStates;
 public interface IStateFunctor extends INotInModelFunctor {
 
 	Object addElement(TLCState state);
-	
+
 	/**
 	 * Contrary to {@link INextStateFunctor#addElement(TLCState)} and
 	 * {@link INextStateFunctor#addElement(TLCState, Action, TLCState)}, replaces
@@ -53,7 +53,7 @@ public interface IStateFunctor extends INotInModelFunctor {
 	default boolean hasStates() {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	default SetOfStates getStates() {
 		return new SetOfStates(0);
 	}

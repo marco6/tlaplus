@@ -48,10 +48,9 @@ public class SANYFrontend implements Frontend {
 
   @Override
   public ExternalModuleTable parse(
-    String rootModuleName,
-    Resolver resolver,
-    Errors log
-  ) throws TokenMgrError, ParseException, AbortException {
+      String rootModuleName,
+      Resolver resolver,
+      Errors log) throws TokenMgrError, ParseException, AbortException {
     final ModuleSyntaxTree syntaxRoot = this.processSyntax(rootModuleName, resolver);
     final DependencyTable dependenciesRoot = resolveDependencies(syntaxRoot, resolver, log);
     final ExternalModuleTable modules = processSemantics(dependenciesRoot, log);
@@ -69,9 +68,8 @@ public class SANYFrontend implements Frontend {
 
   @Override
   public ModuleSyntaxTree processSyntax(
-    String moduleName,
-    Resolver resolver
-  ) throws TokenMgrError, ParseException {
+      String moduleName,
+      Resolver resolver) throws TokenMgrError, ParseException {
     final ModuleSourceCode source = resolver.resolve(moduleName);
     final TLAplusParser parser = new TLAplusParser(new SilentSanyOutput(), source.text);
     return new ModuleSyntaxTree(source, parser.CompilationUnit());
@@ -79,10 +77,9 @@ public class SANYFrontend implements Frontend {
 
   @Override
   public DependencyTable resolveDependencies(
-    final ModuleSyntaxTree root,
-    final Resolver resolver,
-    final Errors log
-  ) throws TokenMgrError, ParseException, AbortException {
+      final ModuleSyntaxTree root,
+      final Resolver resolver,
+      final Errors log) throws TokenMgrError, ParseException, AbortException {
     final DependencyTable dependencyTable = new DependencyTable(root);
     final List<String> incompleteModules = new ArrayList<String>();
     incompleteModules.add(root.getModuleName());
@@ -95,22 +92,21 @@ public class SANYFrontend implements Frontend {
    * parses them to the syntax level, checking for circular dependencies.
    * Updates the dependency table in-place.
    *
-   * @param moduleName Module name for which to resolve dependencies.
-   * @param dependencyTable A table of dependencies parsed to syntax level.
-   * @param resolver Utility to resolve module names into source code.
-   * @param log A log for non-fatal semantic errors.
+   * @param moduleName        Module name for which to resolve dependencies.
+   * @param dependencyTable   A table of dependencies parsed to syntax level.
+   * @param resolver          Utility to resolve module names into source code.
+   * @param log               A log for non-fatal semantic errors.
    * @param incompleteModules Modules with dependencies not fully resolved.
-   * @throws TokenMgrError on lexing error of a dependency.
+   * @throws TokenMgrError  on lexing error of a dependency.
    * @throws ParseException on syntax parsing error of a dependency.
    * @throws AbortException on detection of circular dependencies.
    */
   private void resolveDependencies(
-    String moduleName,
-    DependencyTable dependencyTable,
-    Resolver resolver,
-    Errors log,
-    List<String> incompleteModules
-  ) throws TokenMgrError, ParseException, AbortException {
+      String moduleName,
+      DependencyTable dependencyTable,
+      Resolver resolver,
+      Errors log,
+      List<String> incompleteModules) throws TokenMgrError, ParseException, AbortException {
     final ModuleSyntaxTree module = dependencyTable.modules.get(moduleName);
     final List<String> dependencies = module.getDependencies();
     dependencyTable.dependencies.put(module.getModuleName(), dependencies);
@@ -118,10 +114,9 @@ public class SANYFrontend implements Frontend {
       if (incompleteModules.contains(dependencyName)) {
         // TODO: reconstruct dependency chain for error message
         throw log.addMessage(
-          ErrorCode.MODULE_DEPENDENCIES_ARE_CIRCULAR,
-          Location.nullLoc,
-          "Circular dependency detected"
-        );
+            ErrorCode.MODULE_DEPENDENCIES_ARE_CIRCULAR,
+            Location.nullLoc,
+            "Circular dependency detected");
       }
       if (!dependencyTable.modules.containsKey(dependencyName)) {
         final ModuleSyntaxTree dependency = this.processSyntax(dependencyName, resolver);
@@ -135,9 +130,8 @@ public class SANYFrontend implements Frontend {
 
   @Override
   public ExternalModuleTable processSemantics(
-    DependencyTable dependencyTable,
-    Errors log
-  ) throws AbortException {
+      DependencyTable dependencyTable,
+      Errors log) throws AbortException {
     // This line is an annoying incantation resetting static global state
     // that will hopefully be made unnecessary in the future.
     Context.reInit();
@@ -151,19 +145,18 @@ public class SANYFrontend implements Frontend {
    * Fills out the {@link ExternalModuleTable} with semantic parse trees of
    * all dependencies of the given module, recursively.
    *
-   * @param moduleName The module to perform semantic analysis on.
+   * @param moduleName      The module to perform semantic analysis on.
    * @param dependencyTable A table of dependencies parsed to syntax level.
-   * @param log A log for non-fatal semantic errors.
-   * @param mt A table of dependencies parsed to semantic level.
+   * @param log             A log for non-fatal semantic errors.
+   * @param mt              A table of dependencies parsed to semantic level.
    * @return The given module name parsed to semantic level.
    * @throws AbortException on fatal semantic-checking errors.
    */
   private ModuleNode processSemantics(
-    String moduleName,
-    DependencyTable dependencyTable,
-    Errors log,
-    ExternalModuleTable mt
-  ) throws AbortException {
+      String moduleName,
+      DependencyTable dependencyTable,
+      Errors log,
+      ExternalModuleTable mt) throws AbortException {
     for (final String dependencyName : dependencyTable.dependencies.get(moduleName)) {
       if (null == mt.getModuleNode(dependencyName)) {
         processSemantics(dependencyName, dependencyTable, log, mt);

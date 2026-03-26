@@ -64,7 +64,7 @@ import util.ToolIO;
 import util.UniqueString;
 
 public abstract class TLCDebuggerExpression {
-	
+
 	private TLCDebuggerExpression() {
 		// no instantiation.
 	}
@@ -75,14 +75,14 @@ public abstract class TLCDebuggerExpression {
 	 *
 	 * @param processor     Processes expression within the model context.
 	 * @param semanticRoot  The root of the spec's semantic parse tree.
-	 * @param conditionExpr The unparsed  expression.
+	 * @param conditionExpr The unparsed expression.
 	 * @return An expression, or null if parsing failed.
-	 * @throws ParseException if syntax parsing fails.
+	 * @throws ParseException    if syntax parsing fails.
 	 * @throws SemanticException if semantic analysis or level-checking fails.
-	 * @throws AbortException if dependency resolution fails.
+	 * @throws AbortException    if dependency resolution fails.
 	 */
 	public static OpDefNode process(final SpecProcessor processor, final ModuleNode semanticRoot,
-			final String conditionExpr) 
+			final String conditionExpr)
 			throws ParseException, SemanticException, AbortException {
 		return process(processor, semanticRoot, Location.nullLoc, conditionExpr);
 	}
@@ -94,19 +94,19 @@ public abstract class TLCDebuggerExpression {
 	 * @param processor     Processes expression within the model context.
 	 * @param semanticRoot  The root of the spec's semantic parse tree.
 	 * @param location      The breakpoint location.
-	 * @param conditionExpr The unparsed  expression.
+	 * @param conditionExpr The unparsed expression.
 	 * @return An expression, or null if parsing failed.
-	 * @throws ParseException if syntax parsing fails.
+	 * @throws ParseException    if syntax parsing fails.
 	 * @throws SemanticException if semantic analysis or level-checking fails.
-	 * @throws AbortException if dependency resolution fails.
+	 * @throws AbortException    if dependency resolution fails.
 	 */
 	public static OpDefNode process(final SpecProcessor processor, final ModuleNode semanticRoot,
-			final Location location, final String conditionExpr) 
+			final Location location, final String conditionExpr)
 			throws ParseException, SemanticException, AbortException {
 		if (null == conditionExpr || conditionExpr.isBlank()) {
 			return null;
 		}
-		
+
 		// Check if we have already parsed this expression before, or if it refers to an
 		// existing operator.
 		OpDefNode bpOp = semanticRoot.getOpDef(conditionExpr);
@@ -129,15 +129,15 @@ public abstract class TLCDebuggerExpression {
 		 * snippet. The user places a breakpoint on the line containing `IN` and wants
 		 * to evaluate the debug expression `foo(2)`:
 		 * 
-		 *        ---- MODULE M ----
-		 *        
-		 *        VARIABLE v
-		 *        
-		 *        SomeAction(p, Op(_,_)) ==
-		 *           LET foo(idx) == v[idx]
-		 *           IN foo(1) + Op(6,7) ...
-		 *           
-		 *        ====
+		 * ---- MODULE M ----
+		 * 
+		 * VARIABLE v
+		 * 
+		 * SomeAction(p, Op(_,_)) ==
+		 * LET foo(idx) == v[idx]
+		 * IN foo(1) + Op(6,7) ...
+		 * 
+		 * ====
 		 * 
 		 * If we handled LET definitions in the same way as all other identifiers, we
 		 * would turn foo into a parameter of the generated debug expression. However,
@@ -145,13 +145,13 @@ public abstract class TLCDebuggerExpression {
 		 * to the OpDefNode of the `foo(idx)` definition. This approach is error-prone
 		 * and brittle.
 		 * 
-		 *        ---- MODULE D ----
-		 *        EXTENDS M
-		 *        
-		 *        __DebugExpr(foo(_)) ==
-		 *            foo(2)
-		 *        
-		 *        ====
+		 * ---- MODULE D ----
+		 * EXTENDS M
+		 * 
+		 * __DebugExpr(foo(_)) ==
+		 * foo(2)
+		 * 
+		 * ====
 		 * 
 		 * Instead, we take a different approach. We generate a *stub definition* for
 		 * the foo(idx) function directly in module **D**. This stub allows the
@@ -163,21 +163,21 @@ public abstract class TLCDebuggerExpression {
 		 * To avoid polluting the global scope or introducing naming conflicts, the stub
 		 * definition is declared LOCAL to module D. Its body is simply TRUE, which
 		 * makes the definition syntactically valid. The body itself is never evaluated.
-		 * Interestingly, using a new LET definition instead of a LOCAL definition does 
+		 * Interestingly, using a new LET definition instead of a LOCAL definition does
 		 * not work, presumably due to limitations in ModuleNode#substituteFor.
 		 * 
-		 *        ---- MODULE D ----
-		 *        EXTENDS M
-		 *        
-		 *        LOCAL foo(idx) == TRUE
-		 *        
-		 *        __DebugExpr ==
-		 *           foo(2)
-		 *           
-		 *        ====
-		 */ 
+		 * ---- MODULE D ----
+		 * EXTENDS M
+		 * 
+		 * LOCAL foo(idx) == TRUE
+		 * 
+		 * __DebugExpr ==
+		 * foo(2)
+		 * 
+		 * ====
+		 */
 		final List<SemanticNode> scope = semanticRoot.pathTo(location, false);
-		
+
 		// LET definitions for scoped identifiers.
 		final Set<OpDefNode> letDefs = scope.stream().filter(LetInNode.class::isInstance).map(LetInNode.class::cast)
 				.flatMap(node -> Arrays.stream(node.getLets())).collect(Collectors.toSet());
@@ -201,16 +201,16 @@ public abstract class TLCDebuggerExpression {
 		 * Variables and constants require no special handling, since they are global
 		 * and module D extends module M.
 		 * 
-		 *       ---- MODULE D ----
-		 *       EXTENDS M
-		 *       
-		 *       LOCAL foo(idx) == TRUE
-		 *       
-		 *       __DebugExpr(p, Op(_,_)) == 
-		 *           foo(2)
-		 *     
-		 *       ====
-		 */		
+		 * ---- MODULE D ----
+		 * EXTENDS M
+		 * 
+		 * LOCAL foo(idx) == TRUE
+		 * 
+		 * __DebugExpr(p, Op(_,_)) ==
+		 * foo(2)
+		 * 
+		 * ====
+		 */
 		final Set<SymbolNode> identifiers = getScopedSymbols(semanticRoot, scope);
 		final Set<UniqueString> letNames = letDefs.stream().map(OpDefNode::getName).collect(Collectors.toSet());
 		identifiers.removeIf(id -> letNames.contains(id.getName()));
@@ -222,8 +222,8 @@ public abstract class TLCDebuggerExpression {
 		final String bpModName = semanticRoot.generateUnusedName("__DebuggerModule__%s");
 		final String bpOpName = semanticRoot.generateUnusedName("__DebuggerExpr__%s");
 		final String params = paramNames.size() > 0 ? "(" + String.join(", ", paramNames) + ")" : "";
-		final String bpOpDef = bpOpName + params;		
-		
+		final String bpOpDef = bpOpName + params;
+
 		final String wrapper = "---- MODULE %s ----\nEXTENDS %s\n%s\n%s == %s\n====";
 		String wrappedConditionExpr = String.format(wrapper, bpModName, rootModName, letExpr, bpOpDef, conditionExpr);
 		byte[] wrappedConditionExprBytes = wrappedConditionExpr.getBytes(StandardCharsets.UTF_8);
@@ -233,7 +233,7 @@ public abstract class TLCDebuggerExpression {
 		if (!syntaxParseSuccess || null == syntaxRoot) {
 			throw new ParseException("Syntax error while parsing breakpoint expression \"" + conditionExpr + "\"");
 		}
-		
+
 		final Errors semanticLog = new Errors();
 		final ExternalModuleTable emt = processor.getModuleTbl();
 		// Resolve dependencies not already resolved.
@@ -255,7 +255,7 @@ public abstract class TLCDebuggerExpression {
 			throw new SemanticException(levelCheckingErrors.addMessage(ErrorCode.GENERAL, location,
 					"Level-checking error while parsing breakpoint expression \"%s\"", conditionExpr));
 		}
-		
+
 		bpOp = bpModule.getOpDef(bpOpName);
 		if (null == bpOp) {
 			throw new SemanticException(
@@ -271,7 +271,7 @@ public abstract class TLCDebuggerExpression {
 		}
 
 		processor.processConstantsDynamicExtendee(bpModule);
-		
+
 		processor.processModuleOverrides(bpModule, emt);
 
 		// See above for explanation. This can only be done after the module has been
@@ -279,12 +279,13 @@ public abstract class TLCDebuggerExpression {
 		for (OpDefNode def : letDefs) {
 			bpModule.substituteFor(def, bpModule.getOpDef(def.getName()));
 		}
-		
+
 		return bpOp;
 	}
-	
+
 	private static ExternalModuleTable resolveDependencies(final SpecProcessor processor, final ExternalModuleTable emt,
-			final List<String> dependencies, final Errors log) throws AbortException, ParseException, SemanticException {
+			final List<String> dependencies, final Errors log)
+			throws AbortException, ParseException, SemanticException {
 		for (String moduleName : dependencies) {
 			try (final InputStream moduleSource = new FileInputStream(
 					ToolIO.getDefaultResolver().resolve(moduleName + TLAConstants.Files.TLA_EXTENSION, false))) {
@@ -293,10 +294,11 @@ public abstract class TLCDebuggerExpression {
 				boolean syntaxParseSuccess = parser.parse();
 				SyntaxTreeNode syntaxRoot = parser.ParseTree;
 				if (!syntaxParseSuccess || null == syntaxRoot) {
-					throw new ParseException("Syntax error while parsing breakpoint expression's dependency \"" + moduleName + "\"");
+					throw new ParseException(
+							"Syntax error while parsing breakpoint expression's dependency \"" + moduleName + "\"");
 				}
 
-		        // Transitively resolve dependencies.
+				// Transitively resolve dependencies.
 				for (String dep : parser.dependencies()) {
 					if (emt.getModuleNode(dep) == null) {
 						resolveDependencies(processor, emt, List.of(dep), log);
@@ -326,8 +328,8 @@ public abstract class TLCDebuggerExpression {
 	 *
 	 * VARIABLE i
 	 * op(j) ==
-	 *   \A k \in S :
-	 *     F(i, j, k) (* want to add breakpoint here)
+	 * \A k \in S :
+	 * F(i, j, k) (* want to add breakpoint here)
 	 *
 	 * It would be nice for the user to just be able to type an expression
 	 * like "i + j >= k"; however, there then arises the problem of how to take
@@ -348,8 +350,8 @@ public abstract class TLCDebuggerExpression {
 	 * spec like this?
 	 *
 	 * op(i) ==
-	 *   \A j \in S :
-	 *     F(i, j) (* want to add breakpoint here *)
+	 * \A j \in S :
+	 * F(i, j) (* want to add breakpoint here *)
 	 * VARIABLE i
 	 *
 	 * Since when we extend the module so as to define our generated op it is
@@ -363,9 +365,9 @@ public abstract class TLCDebuggerExpression {
 	 * The way this method works is it first finds the parse tree node where
 	 * the breakpoint was introduced, then traces its parentage up to the
 	 * module root while recording identifiers produced by:
-	 *  - LET/IN blocks
-	 *  - Quantification operators
-	 *  - Operator parameters
+	 * - LET/IN blocks
+	 * - Quantification operators
+	 * - Operator parameters
 	 *
 	 * There are probably others but we will add to this code as the need is
 	 * discovered. A better solution would be to record this info in the
@@ -390,21 +392,21 @@ public abstract class TLCDebuggerExpression {
 		//
 		// Consider the following TLA+ snippet:
 		//
-		//		     SomeContext ==
-		//		         LET max(a, b) == IF a > b THEN a ELSE b
-		//		         IN max(1, 2) = 2
+		// SomeContext ==
+		// LET max(a, b) == IF a > b THEN a ELSE b
+		// IN max(1, 2) = 2
 		//
 		// Now assume the following breakpoint expression:
 		//
-		//		     max(3, 4) = 4
+		// max(3, 4) = 4
 		//
 		// When generating a module for the breakpoint expression, we must produce:
 		//
-		//		     __DebuggerExpr__123(max(_, _)) == max(3, 4) = 4
+		// __DebuggerExpr__123(max(_, _)) == max(3, 4) = 4
 		//
 		// If we were to generate:
 		//
-		//		     __DebuggerExpr__123(max) == max(3, 4) = 4
+		// __DebuggerExpr__123(max) == max(3, 4) = 4
 		//
 		// this would result in a parse error, because the operator reference does not
 		// specify the required arity.
@@ -419,32 +421,32 @@ public abstract class TLCDebuggerExpression {
 		for (SemanticNode current : path) {
 			// Extract i from LET i == 5 IN ...
 			if (current instanceof LetInNode) {
-				LetInNode node = (LetInNode)current;
+				LetInNode node = (LetInNode) current;
 				for (OpDefNode def : node.getLets()) {
 					identifiers.add(def);
 				}
-			// Extract op, i, j, k from op(i, j, k) == ...
-			// Note: will not extract "op" if is top-level definition
+				// Extract op, i, j, k from op(i, j, k) == ...
+				// Note: will not extract "op" if is top-level definition
 			} else if (current instanceof OpDefNode) {
-				OpDefNode node = (OpDefNode)current;
+				OpDefNode node = (OpDefNode) current;
 				if (null == semanticRoot.getOpDef(node.getName())) {
 					identifiers.add(node);
 				}
 				for (FormalParamNode param : node.getParams()) {
 					identifiers.add(param);
 				}
-			// Extract i, j from \A i, j \in Nat : ...
+				// Extract i, j from \A i, j \in Nat : ...
 			} else if (current instanceof OpApplNode) {
-				OpApplNode node = (OpApplNode)current;
+				OpApplNode node = (OpApplNode) current;
 				for (FormalParamNode param : node.getQuantSymbolLists()) {
 					identifiers.add(param);
 				}
-			// Extract i, j from LAMBDA i, j : ...
+				// Extract i, j from LAMBDA i, j : ...
 			} else if (current instanceof OpArgNode) {
-				OpArgNode node = (OpArgNode)current;
+				OpArgNode node = (OpArgNode) current;
 				SymbolNode opSymbol = node.getOp();
 				if (opSymbol instanceof OpDefNode) {
-					OpDefNode op = (OpDefNode)opSymbol;
+					OpDefNode op = (OpDefNode) opSymbol;
 					for (FormalParamNode param : op.getParams()) {
 						identifiers.add(param);
 					}

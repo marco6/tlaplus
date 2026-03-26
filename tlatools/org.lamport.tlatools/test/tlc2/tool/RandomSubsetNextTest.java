@@ -40,7 +40,7 @@ import tlc2.tool.liveness.ModelCheckerTestCase;
 public class RandomSubsetNextTest extends ModelCheckerTestCase {
 
 	public RandomSubsetNextTest() {
-		super("RandomSubsetNext", new String[] {"-seed", Long.toString(15041980L)}, ExitStatus.VIOLATION_SAFETY);
+		super("RandomSubsetNext", new String[] { "-seed", Long.toString(15041980L) }, ExitStatus.VIOLATION_SAFETY);
 	}
 
 	@Test
@@ -50,7 +50,7 @@ public class RandomSubsetNextTest extends ModelCheckerTestCase {
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "67291", "7729", "999"));
 
 		assertTrue(recorder.recorded(EC.TLC_BEHAVIOR_UP_TO_THIS_POINT));
-		
+
 		final List<String> expectedTrace = new ArrayList<String>(11);
 		expectedTrace.add("/\\ x = 23\n/\\ y = 0");
 		expectedTrace.add("/\\ x = 26\n/\\ y = 1");
@@ -64,7 +64,7 @@ public class RandomSubsetNextTest extends ModelCheckerTestCase {
 		expectedTrace.add("/\\ x = 52\n/\\ y = 9");
 		expectedTrace.add("/\\ x = 78\n/\\ y = 10");
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace);
-		
+
 		assertZeroUncovered();
 	}
 }

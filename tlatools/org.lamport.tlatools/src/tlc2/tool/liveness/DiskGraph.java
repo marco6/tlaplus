@@ -25,7 +25,7 @@ import tlc2.util.statistics.IBucketStatistics;
 public class DiskGraph extends AbstractDiskGraph {
 
 	private NodePtrTable nodePtrTbl;
-	
+
 	public DiskGraph(String metadir, int soln, IBucketStatistics graphStats) throws IOException {
 		super(metadir, soln, graphStats);
 		nodePtrTbl = new NodePtrTable(255);
@@ -34,12 +34,12 @@ public class DiskGraph extends AbstractDiskGraph {
 	public final GraphNode getNode(long fp, int tidx) throws IOException {
 		return getNode(fp);
 	}
-	
+
 	/* Get the graph node. Return null if the node is not in this. */
 	public final GraphNode getNode(long stateFP) throws IOException {
 		long ptr = this.nodePtrTbl.get(stateFP);
 		if (ptr < 0) {
-			return  new GraphNode(stateFP, -1);
+			return new GraphNode(stateFP, -1);
 		}
 		if (gnodes == null) {
 			// No cache, get directly from disk.
@@ -47,8 +47,10 @@ public class DiskGraph extends AbstractDiskGraph {
 		}
 		return this.getNode(stateFP, -1, ptr);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.AbstractDiskGraph#getPtr(long, int)
 	 */
 	public final long getPtr(long fp, int tidx) {
@@ -64,33 +66,44 @@ public class DiskGraph extends AbstractDiskGraph {
 		this.nodeRAF.reset();
 		this.nodePtrTbl = new NodePtrTable(255);
 	}
-	
-	/* (non-Javadoc)
-	 * @see tlc2.tool.liveness.AbstractDiskGraph#putNode(tlc2.tool.liveness.GraphNode, long)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * tlc2.tool.liveness.AbstractDiskGraph#putNode(tlc2.tool.liveness.GraphNode,
+	 * long)
 	 */
 	protected void putNode(GraphNode node, long ptr) {
 		this.nodePtrTbl.put(node.stateFP, ptr);
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.liveness.AbstractDiskGraph#checkDuplicate(tlc2.tool.liveness.GraphNode)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.tool.liveness.AbstractDiskGraph#checkDuplicate(tlc2.tool.liveness.
+	 * GraphNode)
 	 */
 	protected boolean checkDuplicate(final GraphNode node) {
 		return this.nodePtrTbl.get(node.stateFP) != -1;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.AbstractDiskGraph#getLink(long, int)
 	 */
 	public long getLink(long state, int tidx) {
 		return this.nodePtrTbl.get(state);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.AbstractDiskGraph#putLink(long, int, long)
 	 */
 	public long putLink(long state, int tidx, long link) {
-		assert MAX_PTR <= link && link < MAX_LINK; 
+		assert MAX_PTR <= link && link < MAX_LINK;
 		int loc = this.nodePtrTbl.getLoc(state);
 		long oldLink = this.nodePtrTbl.getByLoc(loc);
 		if (!isFilePointer(oldLink)) {
@@ -100,14 +113,18 @@ public class DiskGraph extends AbstractDiskGraph {
 		return -1;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.DiskGraph#setMaxLink(long, int)
 	 */
 	public void setMaxLink(long state, int tidx) {
 		this.nodePtrTbl.put(state, MAX_LINK);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.DiskGraph#makeNodePtrTbl(long)
 	 */
 	protected void makeNodePtrTbl(long ptr) throws IOException {
@@ -121,19 +138,23 @@ public class DiskGraph extends AbstractDiskGraph {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.AbstractDiskGraph#size()
 	 */
 	public long size() {
 		return this.nodePtrTbl.size();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	public final String toString() {
 		/*
-		 * BEWARE THAT THIS ALTERS (populates) THE CACHE (this.gnodes)!!! 
+		 * BEWARE THAT THIS ALTERS (populates) THE CACHE (this.gnodes)!!!
 		 */
 
 		// The following code relies on gnodes not being null, thus safeguard
@@ -144,7 +165,7 @@ public class DiskGraph extends AbstractDiskGraph {
 		if (this.gnodes == null) {
 			return "";
 		}
-		
+
 		StringBuffer sb = new StringBuffer();
 		try {
 			long nodePtr = this.nodeRAF.getFilePointer();
@@ -170,12 +191,15 @@ public class DiskGraph extends AbstractDiskGraph {
 
 			System.exit(1);
 		}
-		
+
 		return sb.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.liveness.AbstractDiskGraph#toDotViz(tlc2.tool.liveness.OrderOfSolution)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.tool.liveness.AbstractDiskGraph#toDotViz(tlc2.tool.liveness.
+	 * OrderOfSolution)
 	 */
 	public final String toDotViz(final OrderOfSolution oos, final Map<Long, String> labels) {
 		final int slen = oos.getCheckState().length;
@@ -195,8 +219,8 @@ public class DiskGraph extends AbstractDiskGraph {
 			sb.append("nodesep = 0.7\n");
 			sb.append("rankdir=LR;\n"); // Left to right rather than top to bottom
 			sb.append(toDotVizLegend(oos));
-			sb.append("subgraph cluster_graph {\n"); 
-	        sb.append("color=\"white\";\n"); // no border.
+			sb.append("subgraph cluster_graph {\n");
+			sb.append("color=\"white\";\n"); // no border.
 			long nodePtr = this.nodeRAF.getFilePointer();
 			long nodePtrPtr = this.nodePtrRAF.getFilePointer();
 			long len = this.nodePtrRAF.length();
@@ -218,8 +242,10 @@ public class DiskGraph extends AbstractDiskGraph {
 		}
 		return sb.toString();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.AbstractDiskGraph#getPath(long, int)
 	 */
 	public final LongVec getPath(final long state, final int tidxIgnored) throws IOException {

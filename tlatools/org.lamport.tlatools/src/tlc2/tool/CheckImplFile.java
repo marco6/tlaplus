@@ -32,21 +32,19 @@ import util.UniqueString;
 
 /**
  * CheckImplFile is a subclass of CheckImpl. It uses files to
- * communicate with simulator.  Traces are stored in files.
+ * communicate with simulator. Traces are stored in files.
  **/
-public class CheckImplFile extends CheckImpl
-{
+public class CheckImplFile extends CheckImpl {
 
     private static int WaitForTrace = 10000;
 
     /**
      * @param fpMemSize : Parameter added 6 Apr 2010 by Yuan Yu because it was added
-     * to ModelChecker constructor.
+     *                  to ModelChecker constructor.
      * 
      */
     public CheckImplFile(ITool tool, String metadir, boolean deadlock, int depth, String fromChkpt,
-            String traceFile, final FPSetConfiguration fpSetConfig) throws IOException
-    {
+            String traceFile, final FPSetConfiguration fpSetConfig) throws IOException {
         super(tool, metadir, deadlock, depth, fromChkpt, fpSetConfig);
         this.traceFile = traceFile;
         this.states = null;
@@ -65,23 +63,19 @@ public class CheckImplFile extends CheckImpl
      * This method gets a new state from the external world via files.
      * It returns null if there is nothing available.
      */
-    public final TLCState getState()
-    {
-        if (this.sidx < this.states.length)
-        {
+    public final TLCState getState() {
+        if (this.sidx < this.states.length) {
             return this.states[sidx++];
         }
         return null;
     }
 
-    /* This method exports a trace by writing it into a file.  */
-    public final void exportTrace(TLCStateInfo[] trace) throws IOException
-    {
+    /* This method exports a trace by writing it into a file. */
+    public final void exportTrace(TLCStateInfo[] trace) throws IOException {
         String fname = this.traceFile + "_out_" + this.tocnt;
         FileOutputStream fos = new FileOutputStream(fname);
         PrintWriter pw = new PrintWriter(fos);
-        for (int i = 0; i < trace.length; i++)
-        {
+        for (int i = 0; i < trace.length; i++) {
             pw.println("STATE_" + (i + 1));
             pw.println(trace[i].state + "\n");
         }
@@ -90,8 +84,7 @@ public class CheckImplFile extends CheckImpl
     }
 
     /* This method reads in a trace from a file. */
-    public final boolean getTrace()
-    {
+    public final boolean getTrace() {
         String rfname = this.traceFile + this.ticnt;
         File tfile = new File(rfname);
         ToolIO.out.println("Trying to work on trace " + tfile + " ...");
@@ -101,19 +94,16 @@ public class CheckImplFile extends CheckImpl
         // Parse the trace file:
         // REFACTOR: Call SANY.frontendparse
         SpecObj spec = new SpecObj(rfname, null);
-        try
-        {
+        try {
             SanyOutput out = new SimpleSanyOutput(ToolIO.out, LogLevel.INFO);
             SANY.frontEndInitialize();
             SANY.frontEndParse(spec, out);
             SANY.frontEndSemanticAnalysis(spec, out, true);
-        } catch (Throwable e)
-        {
-            String msg = (e.getMessage()==null)?e.toString():e.getMessage();
+        } catch (Throwable e) {
+            String msg = (e.getMessage() == null) ? e.toString() : e.getMessage();
             Assert.fail(EC.CHECK_COULD_NOT_READ_TRACE, msg);
         }
-        if (!spec.parseErrors.isSuccess() || !spec.semanticErrors.isSuccess())
-        {
+        if (!spec.parseErrors.isSuccess() || !spec.semanticErrors.isSuccess()) {
             Assert.fail(EC.TLC_PARSING_FAILED);
         }
 
@@ -126,8 +116,7 @@ public class CheckImplFile extends CheckImpl
         OpDefNode[] opDefs = module.getOpDefs();
         int len = opDefs.length;
         this.states = new TLCState[len];
-        for (int i = 0; i < len; i++)
-        {
+        for (int i = 0; i < len; i++) {
             TLCState state = this.tool.makeState(opDefs[i].getBody());
             this.states[i] = state;
         }
@@ -145,204 +134,183 @@ public class CheckImplFile extends CheckImpl
      * CheckImplFile checks the abstract states in the files.
      *
      * 2. CheckImplFile maintains coverage information while doing the
-     * checking.  It continuously generates traces to uncovered states,
-     * and store the traces in files.  The simulation engine uses the
+     * checking. It continuously generates traces to uncovered states,
+     * and store the traces in files. The simulation engine uses the
      * traces in the files to guide the simulation into the parts of
      * the state space that simulation fails to reach up to that point.
      *
      * Usage: java tlc2.tool.CheckImplFile [options] spec[.tla]
      *
      * Below is a list of the command line options:
-     *  o -config file: provide the config file.
-     *    Defaults to spec.cfg if not provided
-     *  o -deadlock: do not check for deadlock.
-     *    Defaults to checking deadlock if not specified
-     *  o -recover path: recover from checkpoint in path
-     *    Defaults to scratch run if not specified
-     *  o -workers num: the number of TLC worker threads
-     *    Defaults to 1
-     *  o -depth num: the depth of the initial (partial) state space
-     *    Defaults to 20
-     *  o -trace filename: the prefix of the trace file name.   
-     *  o -coverage seconds: collect coverage information on the spec,
-     *                       print out the information every seconds
-     *    Defaults to no coverage if not specified
+     * o -config file: provide the config file.
+     * Defaults to spec.cfg if not provided
+     * o -deadlock: do not check for deadlock.
+     * Defaults to checking deadlock if not specified
+     * o -recover path: recover from checkpoint in path
+     * Defaults to scratch run if not specified
+     * o -workers num: the number of TLC worker threads
+     * Defaults to 1
+     * o -depth num: the depth of the initial (partial) state space
+     * Defaults to 20
+     * o -trace filename: the prefix of the trace file name.
+     * o -coverage seconds: collect coverage information on the spec,
+     * print out the information every seconds
+     * Defaults to no coverage if not specified
      **/
     public static void main(String[] args) {
-    ToolIO.out.println("TLC CheckImpl" + TLCGlobals.Version.get());
+        ToolIO.out.println("TLC CheckImpl" + TLCGlobals.Version.get());
 
-    String mainFile = null;
-    String configFile = null;
-    String traceFile = null;
-    boolean deadlock = true;
-    int depth = 20;
-    String fromChkpt = null;
+        String mainFile = null;
+        String configFile = null;
+        String traceFile = null;
+        boolean deadlock = true;
+        int depth = 20;
+        String fromChkpt = null;
 
-    int index = 0;
-    while (index < args.length) {
-        if (args[index].equals("-config")) {
-            index++;
-            if (index < args.length) {
-                configFile = args[index++];
-                if (configFile.endsWith(TLAConstants.Files.CONFIG_EXTENSION))
-                {
-                    configFile
-                    	= configFile.substring(0,
-                    			(configFile.length() - TLAConstants.Files.CONFIG_EXTENSION.length()));
-                }
-            }
-            else {
-                printErrorMsg(MP.getMessage(EC.CHECK_PARAM_EXPECT_CONFIG_FILENAME));
-                return;
-            }
-        }
-        else if (args[index].equals("-deadlock")) {
-            index++;
-            deadlock = false;
-        }	
-        else if (args[index].equals("-recover")) {
-            index++;
-            if (index < args.length) {
-                fromChkpt = args[index++] + FileUtil.separator;
-            }
-            else {
-                printErrorMsg(MP.getMessage(EC.CHECK_PARAM_NEED_TO_SPECIFY_CONFIG_DIR));
-                return;
-            }
-        }
-        else if (args[index].equals("-workers")) {
-            index++;
-            if (index < args.length) {
-                try 
-                {
-                    TLCGlobals.setNumWorkers(Integer.parseInt(args[index]));
-                    index++;
-                } catch (NumberFormatException e) 
-                {
-                    printErrorMsg(MP.getMessage(EC.CHECK_PARAM_WORKER_NUMBER_REQUIRED, args[index]));
+        int index = 0;
+        while (index < args.length) {
+            if (args[index].equals("-config")) {
+                index++;
+                if (index < args.length) {
+                    configFile = args[index++];
+                    if (configFile.endsWith(TLAConstants.Files.CONFIG_EXTENSION)) {
+                        configFile = configFile.substring(0,
+                                (configFile.length() - TLAConstants.Files.CONFIG_EXTENSION.length()));
+                    }
+                } else {
+                    printErrorMsg(MP.getMessage(EC.CHECK_PARAM_EXPECT_CONFIG_FILENAME));
                     return;
                 }
-                if (TLCGlobals.getNumWorkers() < 1) 
-                {
-                    printErrorMsg(MP.getMessage(EC.CHECK_PARAM_WORKER_NUMBER_TOO_SMALL));
+            } else if (args[index].equals("-deadlock")) {
+                index++;
+                deadlock = false;
+            } else if (args[index].equals("-recover")) {
+                index++;
+                if (index < args.length) {
+                    fromChkpt = args[index++] + FileUtil.separator;
+                } else {
+                    printErrorMsg(MP.getMessage(EC.CHECK_PARAM_NEED_TO_SPECIFY_CONFIG_DIR));
                     return;
                 }
-            } else 
-            {
-                printErrorMsg(MP.getMessage(EC.CHECK_PARAM_WORKER_NUMBER_REQUIRED2));
-                return;
-            }
-        }
-        else if (args[index].equals("-depth")) {
-            index++;
-            if (index < args.length) {
-                try {
-                    depth = Integer.parseInt(args[index]);
-                    index++;
-                }
-                catch (NumberFormatException e) 
-                {
-                    printErrorMsg(MP.getMessage(EC.CHECK_PARAM_DEPTH_REQUIRED, args[index]));
-                    return;
-                }
-            }
-            else {
-                printErrorMsg(MP.getMessage(EC.CHECK_PARAM_DEPTH_REQUIRED2));
-                return;
-            }
-        }
-        else if (args[index].equals("-trace")) {
-            index++;
-            if (index < args.length) {
-                traceFile = args[index++];
-            }
-            else {
-                printErrorMsg(MP.getMessage(EC.CHECK_PARAM_TRACE_REQUIRED));
-                return;
-            }
-        }
-        else if (args[index].equals("-coverage")) {
-            index++;
-            if (index < args.length) {
-                try {
-                    TLCGlobals.coverageInterval = Integer.parseInt(args[index]) * 1000 * 60;
-                    if (TLCGlobals.coverageInterval < 0) {
-                        printErrorMsg(MP.getMessage(EC.CHECK_PARAM_COVREAGE_TOO_SMALL));
+            } else if (args[index].equals("-workers")) {
+                index++;
+                if (index < args.length) {
+                    try {
+                        TLCGlobals.setNumWorkers(Integer.parseInt(args[index]));
+                        index++;
+                    } catch (NumberFormatException e) {
+                        printErrorMsg(MP.getMessage(EC.CHECK_PARAM_WORKER_NUMBER_REQUIRED, args[index]));
                         return;
                     }
-                    index++;
-                }
-                catch (NumberFormatException e) {
-                    printErrorMsg(MP.getError(EC.CHECK_PARAM_COVREAGE_REQUIRED, args[index]));
+                    if (TLCGlobals.getNumWorkers() < 1) {
+                        printErrorMsg(MP.getMessage(EC.CHECK_PARAM_WORKER_NUMBER_TOO_SMALL));
+                        return;
+                    }
+                } else {
+                    printErrorMsg(MP.getMessage(EC.CHECK_PARAM_WORKER_NUMBER_REQUIRED2));
                     return;
                 }
-            }
-            else {
-                printErrorMsg(MP.getError(EC.CHECK_PARAM_COVREAGE_REQUIRED));
-                return;
+            } else if (args[index].equals("-depth")) {
+                index++;
+                if (index < args.length) {
+                    try {
+                        depth = Integer.parseInt(args[index]);
+                        index++;
+                    } catch (NumberFormatException e) {
+                        printErrorMsg(MP.getMessage(EC.CHECK_PARAM_DEPTH_REQUIRED, args[index]));
+                        return;
+                    }
+                } else {
+                    printErrorMsg(MP.getMessage(EC.CHECK_PARAM_DEPTH_REQUIRED2));
+                    return;
+                }
+            } else if (args[index].equals("-trace")) {
+                index++;
+                if (index < args.length) {
+                    traceFile = args[index++];
+                } else {
+                    printErrorMsg(MP.getMessage(EC.CHECK_PARAM_TRACE_REQUIRED));
+                    return;
+                }
+            } else if (args[index].equals("-coverage")) {
+                index++;
+                if (index < args.length) {
+                    try {
+                        TLCGlobals.coverageInterval = Integer.parseInt(args[index]) * 1000 * 60;
+                        if (TLCGlobals.coverageInterval < 0) {
+                            printErrorMsg(MP.getMessage(EC.CHECK_PARAM_COVREAGE_TOO_SMALL));
+                            return;
+                        }
+                        index++;
+                    } catch (NumberFormatException e) {
+                        printErrorMsg(MP.getError(EC.CHECK_PARAM_COVREAGE_REQUIRED, args[index]));
+                        return;
+                    }
+                } else {
+                    printErrorMsg(MP.getError(EC.CHECK_PARAM_COVREAGE_REQUIRED));
+                    return;
+                }
+            } else {
+                if (args[index].charAt(0) == '-') {
+                    printErrorMsg(MP.getError(EC.CHECK_PARAM_UNRECOGNIZED, args[index]));
+                    return;
+                }
+                if (mainFile != null) {
+                    printErrorMsg(MP.getError(EC.CHECK_PARAM_UNRECOGNIZED, new String[] { args[index], mainFile }));
+                    return;
+                }
+                mainFile = args[index++];
+                if (mainFile.endsWith(TLAConstants.Files.TLA_EXTENSION)) {
+                    mainFile = mainFile.substring(0, (mainFile.length() - TLAConstants.Files.TLA_EXTENSION.length()));
+                }
             }
         }
-        else {
-            if (args[index].charAt(0) == '-') {
-                printErrorMsg(MP.getError(EC.CHECK_PARAM_UNRECOGNIZED, args[index]));
-                return;
-            }
-            if (mainFile != null) {
-                printErrorMsg(MP.getError(EC.CHECK_PARAM_UNRECOGNIZED, new String[]{args[index], mainFile }));
-                return;
-            }
-            mainFile = args[index++];
-            if (mainFile.endsWith(TLAConstants.Files.TLA_EXTENSION)) {
-                mainFile = mainFile.substring(0, (mainFile.length() - TLAConstants.Files.TLA_EXTENSION.length()));
-            }
+
+        if (mainFile == null) {
+            printErrorMsg(MP.getMessage(EC.CHECK_PARAM_MISSING_TLA_MODULE));
+            return;
         }
+
+        if (configFile == null)
+            configFile = mainFile;
+        if (traceFile == null)
+            traceFile = mainFile + "_trace";
+
+        final File f = new File(mainFile);
+        String metadir = FileUtil.makeMetaDir(f.isAbsolute() ? f.getParent() : "", fromChkpt);
+
+        try {
+            // Initialize:
+            if (fromChkpt != null) {
+                // We must recover the intern var table as early as possible
+                UniqueString.internTbl.recover(fromChkpt);
+            }
+            FP64.Init(0);
+
+            // Start the checker:
+            final ITool tool = new FastTool(mainFile, configFile);
+            CheckImplFile checker = new CheckImplFile(tool, metadir, deadlock,
+                    depth, fromChkpt, traceFile, new FPSetConfiguration());
+            checker.init();
+            while (true) {
+                // Get a trace and check it.
+                checker.export();
+                boolean ok = checker.getTrace();
+                if (ok) {
+                    checker.checkTrace();
+                } else {
+                    synchronized (checker) {
+                        checker.wait(WaitForTrace);
+                    }
+                }
+            }
+        } catch (Throwable e) {
+            MP.printError(EC.CHECK_FAILED_TO_CHECK, e);
+        }
+        System.exit(0);
     }
 
-    if (mainFile == null) {
-      printErrorMsg(MP.getMessage(EC.CHECK_PARAM_MISSING_TLA_MODULE));
-      return;
-    }
-
-    if (configFile == null) configFile = mainFile;
-    if (traceFile == null) traceFile = mainFile + "_trace";
-
-    final File f = new File(mainFile);
-	String metadir = FileUtil.makeMetaDir(f.isAbsolute() ? f.getParent() : "", fromChkpt);
-
-    try {
-      // Initialize:
-      if (fromChkpt != null) {
-        // We must recover the intern var table as early as possible
-        UniqueString.internTbl.recover(fromChkpt);
-      }
-      FP64.Init(0);
-      
-      // Start the checker:
-      final ITool tool = new FastTool(mainFile, configFile);
-      CheckImplFile checker = new CheckImplFile(tool, metadir, deadlock,
-						depth, fromChkpt, traceFile, new FPSetConfiguration());
-      checker.init();
-      while (true) {
-	// Get a trace and check it.
-	checker.export();
-	boolean ok = checker.getTrace();
-	if (ok) {
-	  checker.checkTrace();
-	}
-	else {
-	  synchronized(checker) { checker.wait(WaitForTrace); }
-	}
-      }
-    }
-    catch (Throwable e) 
-    {
-      MP.printError(EC.CHECK_FAILED_TO_CHECK, e);
-    }
-    System.exit(0);    
-  }
-
-    private static void printErrorMsg(String msg)
-    {
+    private static void printErrorMsg(String msg) {
         ToolIO.out.println(msg);
         MP.printError(EC.CHECK_PARAM_USAGE);
     }

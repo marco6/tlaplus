@@ -43,7 +43,8 @@ public class FingerprintExceptionNextCallstackTest extends ModelCheckerTestCase 
 
 	@Test
 	public void testSpec() {
-		// ModelChecker has finished with a general exception, a fingerprint exception and underlying overflow exception
+		// ModelChecker has finished with a general exception, a fingerprint exception
+		// and underlying overflow exception
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "1", "1", "0"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_INIT_GENERATED1, "1"));

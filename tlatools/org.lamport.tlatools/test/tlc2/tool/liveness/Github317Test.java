@@ -36,7 +36,7 @@ import tlc2.output.EC;
 public class Github317Test extends ModelCheckerTestCase {
 
 	public Github317Test() {
-		super("Github317", new String[] { "-config", "Github317.tla"}, EC.ExitStatus.ERROR);
+		super("Github317", new String[] { "-config", "Github317.tla" }, EC.ExitStatus.ERROR);
 	}
 
 	@Override
@@ -48,10 +48,12 @@ public class Github317Test extends ModelCheckerTestCase {
 
 	@Override
 	protected boolean noGenerateSpec() {
-		// Because of getNumberOfThreads above, TLC runs with multiple workers. This leads
+		// Because of getNumberOfThreads above, TLC runs with multiple workers. This
+		// leads
 		// to non-determinism in the length of the error-trace (usually one state, but
 		// occasionally two). Iff the length is greater than one, TLC would write a
-		// trace spec, which causes this test to fail because it expects no trace spec to
+		// trace spec, which causes this test to fail because it expects no trace spec
+		// to
 		// be written. Thus, we generally turn off trace specs for any length.
 		return true;
 	}
@@ -67,12 +69,12 @@ public class Github317Test extends ModelCheckerTestCase {
 
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_NESTED_EXPRESSION,
 				"0. Line 18, column 20 to line 18, column 23 in Github317\n"
-				+ "1. Line 10, column 9 to line 11, column 23 in Github317\n"
-				+ "2. Line 10, column 12 to line 10, column 21 in Github317\n"
-				+ "3. Line 11, column 12 to line 11, column 23 in Github317\n"
-				+ "4. Line 18, column 15 to line 18, column 18 in Github317\n"
-				+ "5. Line 5, column 9 to line 5, column 15 in Github317\n"
-				+ "6. Line 5, column 13 to line 5, column 13 in Github317\n\n"));
+						+ "1. Line 10, column 9 to line 11, column 23 in Github317\n"
+						+ "2. Line 10, column 12 to line 10, column 21 in Github317\n"
+						+ "3. Line 11, column 12 to line 11, column 23 in Github317\n"
+						+ "4. Line 18, column 15 to line 18, column 18 in Github317\n"
+						+ "5. Line 5, column 9 to line 5, column 15 in Github317\n"
+						+ "6. Line 5, column 13 to line 5, column 13 in Github317\n\n"));
 
 		// Assert error stack has only been printed once by one of the workers.
 		assertEquals(1, recorder.getRecords(EC.TLC_NESTED_EXPRESSION).size());

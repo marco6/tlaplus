@@ -22,39 +22,45 @@
 * The String str is the name of the command, and is used only for an       *
 * error message.                                                           *
 ***************************************************************************/
-package tla2tex ;
+package tla2tex;
+
 import java.io.InputStream;
 
-public class GobbleOutput extends Thread 
- { boolean stdOrError ;  
-     /**********************************************************************
-     * True  if gobbling stdout                                            *
-     * False if gobbling stderr                                            *
-     **********************************************************************/
-   Process proc ;
-   String  cmd ;
-   GobbleOutput(boolean stdOrError ,
-                Process proc,
-                String  cmd)
-     {this.stdOrError = stdOrError ;
-      this.proc = proc;
-      this.cmd  = cmd;
-     }
-   public void run()
-    { InputStream outStream = null;
-      if (stdOrError)
-        { outStream = proc.getInputStream(); }
-       else
-        { outStream = proc.getErrorStream(); }
-      byte[] readBytes   = new byte[100000] ;
-      int outBytes = 1;
-      try { while ( outBytes != -1 )
-             { outBytes = outStream.read(readBytes); }
-          }
-      catch (Exception e)
-       { Debug.ReportError(
-              "Trying to read output for command\n " + cmd +
-               "\n produced the following error\n    " + e.getMessage());
-       } ;
+public class GobbleOutput extends Thread {
+  boolean stdOrError;
+  /**********************************************************************
+   * True if gobbling stdout *
+   * False if gobbling stderr *
+   **********************************************************************/
+  Process proc;
+  String cmd;
+
+  GobbleOutput(boolean stdOrError,
+      Process proc,
+      String cmd) {
+    this.stdOrError = stdOrError;
+    this.proc = proc;
+    this.cmd = cmd;
+  }
+
+  public void run() {
+    InputStream outStream = null;
+    if (stdOrError) {
+      outStream = proc.getInputStream();
+    } else {
+      outStream = proc.getErrorStream();
     }
- }
+    byte[] readBytes = new byte[100000];
+    int outBytes = 1;
+    try {
+      while (outBytes != -1) {
+        outBytes = outStream.read(readBytes);
+      }
+    } catch (Exception e) {
+      Debug.ReportError(
+          "Trying to read output for command\n " + cmd +
+              "\n produced the following error\n    " + e.getMessage());
+    }
+    ;
+  }
+}

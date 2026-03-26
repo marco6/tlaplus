@@ -16,8 +16,8 @@ public abstract class UserObj {
   public abstract boolean member(Value val);
 
   public abstract boolean isFinite();
-  
-  /* The String representation.    */
+
+  /* The String representation. */
   public abstract StringBuffer toString(StringBuffer sb, int offset, boolean swallow);
 
   public final String toString() {
@@ -27,6 +27,6 @@ public abstract class UserObj {
   }
 
   public String getNonEnumerableErrorMsg(final ExprNode exprNode) {
-	return null;
-  } 
+    return null;
+  }
 }

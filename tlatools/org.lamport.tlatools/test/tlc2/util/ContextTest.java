@@ -52,7 +52,7 @@ public class ContextTest {
 		assertNull(Context.Empty.lookup(new DummySymbolNode()));
 		assertNull(Context.Empty.lookup(new DummySymbolNode(), true));
 		assertNull(Context.Empty.lookup(new DummySymbolNode(), false));
-		assertNull(Context.Empty.lookup((SymbolNode)null));
+		assertNull(Context.Empty.lookup((SymbolNode) null));
 		assertNull(Context.Empty.lookup(null, true));
 		assertNull(Context.Empty.lookup(null, false));
 	}
@@ -64,81 +64,81 @@ public class ContextTest {
 		assertNull(ctx.lookup(new DummySymbolNode()));
 		assertNull(ctx.lookup(new DummySymbolNode(), true));
 		assertNull(ctx.lookup(new DummySymbolNode(), false));
-		assertNull(ctx.lookup((SymbolNode)null));
+		assertNull(ctx.lookup((SymbolNode) null));
 		assertNull(ctx.lookup(null, false));
 		assertNull(ctx.lookup(null, true));
 	}
-	
+
 	@Test
 	public void testLookupSymbolNodeNull() {
 		final Context ctx = Context.branch(Context.Empty);
-		assertNull(ctx.lookup((SymbolNode)null));
+		assertNull(ctx.lookup((SymbolNode) null));
 	}
-	
+
 	@Test
 	public void testLookup() {
 		final DummySymbolNode name = new DummySymbolNode("ctx1");
 		final Object value = "value1";
-		
+
 		// Ctx 3 -> Ctx 2 -> Ctx Branch -> Ctx 1 -> Ctx Empty
 		final Context ctx1 = Context.Empty.cons(name, value);
 		final Context branch = Context.branch(ctx1);
 		final Context ctx2 = branch.cons(new DummySymbolNode("ctx2"), "value2");
 		final Context ctx3 = ctx2.cons(new DummySymbolNode("ctx3"), "value3");
-		
+
 		assertEquals(value, ctx3.lookup(name));
 	}
-	
+
 	@Test
 	public void testLookupCutOffFalse() {
 		final DummySymbolNode name = new DummySymbolNode("ctx1");
 		final Object value = "value1";
-		
+
 		// Ctx 3 -> Ctx 2 -> Ctx Branch -> Ctx 1 -> Ctx Empty
 		final Context ctx1 = Context.Empty.cons(name, value);
 		final Context branch = Context.branch(ctx1);
 		final Context ctx2 = branch.cons(new DummySymbolNode("ctx2"), "value2");
 		final Context ctx3 = ctx2.cons(new DummySymbolNode("ctx3"), "value3");
-		
+
 		assertEquals(value, ctx3.lookup(name, false));
 	}
-	
+
 	// Cutoff causes lookup to stop at branching context
 	@Test
 	public void testLookupCutOffTrue() {
 		final DummySymbolNode name = new DummySymbolNode("ctx1");
 		final Object value = "value1";
-		
+
 		// Ctx 3 -> Ctx 2 -> Ctx Branch -> Ctx 1 -> Ctx Empty
 		final Context ctx1 = Context.Empty.cons(name, value);
 		final Context branch = Context.branch(ctx1);
 		final Context ctx2 = branch.cons(new DummySymbolNode("ctx2"), "value2");
 		final Context ctx3 = ctx2.cons(new DummySymbolNode("ctx3"), "value3");
-		
+
 		assertNull(ctx3.lookup(name, true));
 	}
-	
+
 	@Test
 	public void testLookupWithAtBranching() {
 		final DummySymbolNode name = new DummySymbolNode("ctx1");
 		final Object value = "value1";
-		
+
 		// Ctx Branch -> Ctx 1 -> Ctx Empty
 		final Context ctx1 = Context.Empty.cons(name, value);
 		final Context branch = Context.branch(ctx1);
-		
+
 		assertEquals(value, branch.lookup(name));
 	}
-	
+
 	@Test
 	public void testLookupWithCutOffFalseAtBranching() {
 		final DummySymbolNode name = new DummySymbolNode("ctx1");
 		final Object value = "value1";
-		
+
 		// Ctx Branch -> Ctx 1 -> Ctx Empty
 		final Context ctx1 = Context.Empty.cons(name, value);
 		final Context branch = Context.branch(ctx1);
-		
+
 		assertEquals(value, branch.lookup(name, false));
 	}
 
@@ -146,16 +146,17 @@ public class ContextTest {
 	public void testLookupWithCutOffTrueAtBranching() {
 		final DummySymbolNode name = new DummySymbolNode("ctx1");
 		final Object value = "value1";
-		
+
 		// Ctx Branch -> Ctx 1 -> Ctx Empty
 		final Context ctx1 = Context.Empty.cons(name, value);
 		final Context branch = Context.branch(ctx1);
-		
+
 		assertNull(branch.lookup(name, true));
 	}
-	
+
 	/**
-	 * Test method for {@link tlc2.util.Context#lookup(tla2sany.semantic.SymbolNode)}.
+	 * Test method for
+	 * {@link tlc2.util.Context#lookup(tla2sany.semantic.SymbolNode)}.
 	 */
 	@Test
 	public void testLookupSymbolNode() {
@@ -164,18 +165,18 @@ public class ContextTest {
 
 		final Context ctx = Context.branch(Context.Empty);
 		Context cons = ctx.cons(name, value);
-		
+
 		Object lookup = cons.lookup(name);
 		assertEquals(value, lookup);
 	}
-	
-	// Need a dummy for the instance identity checks in Context 
+
+	// Need a dummy for the instance identity checks in Context
 	private static class DummySymbolNode extends SymbolNode {
 
 		DummySymbolNode() {
 			this("Dummy");
 		}
-		
+
 		DummySymbolNode(String name) {
 			super(-1, new SyntaxTreeNode(), UniqueString.uniqueStringOf(name));
 		}
@@ -187,12 +188,13 @@ public class ContextTest {
 		public boolean isLocal() {
 			return false;
 		}
-		
+
 		public boolean match(OpApplNode test, ModuleNode mn, Errors errors) throws AbortException {
 			return false;
 		}
 
-		protected Element getSymbolElement(Document doc, SymbolContext context, BiPredicate<SemanticNode, SemanticNode> filter) {
+		protected Element getSymbolElement(Document doc, SymbolContext context,
+				BiPredicate<SemanticNode, SemanticNode> filter) {
 			return null;
 		}
 

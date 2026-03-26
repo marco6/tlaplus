@@ -13,7 +13,8 @@ import static org.junit.Assert.*;
 public abstract class LexiconTest {
 
     /**
-     * Compares src/test/resources/inputs/name.tla to src/test/resources/outputs/name.tla
+     * Compares src/test/resources/inputs/name.tla to
+     * src/test/resources/outputs/name.tla
      */
     public void testSpecFiles(String name) {
         try {
@@ -38,18 +39,20 @@ public abstract class LexiconTest {
             assertEquals("Formatted output does not match expected output(" + outputFile.toURI() + ").",
                     expected.replace("\r\n", "\n"), actual.replace("\r\n", "\n"));
 
-
             // initialize tlaplusfmt using output file path.
-            // in this way, if the spec EXTENDS other specs, we can include them in the outputs resource folder.
+            // in this way, if the spec EXTENDS other specs, we can include them in the
+            // outputs resource folder.
             // For example see TowerOfHanoi.tla.
             // If output is an invalid spec, SANY will let us know.
             var f2 = new TLAPlusFormatter(new File(outputFile.toURI()));
 
             // the ast of the initial spec should match the ast of the output spec.
-            // initial spec is the non-reformatted input. f2 is the parsed ast of the reformat output.
+            // initial spec is the non-reformatted input. f2 is the parsed ast of the
+            // reformat output.
             assertAstEquals(root1, f2.root);
 
-            // It should be a bit redundant with the compareAst above, but it's just an additional sanity check.
+            // It should be a bit redundant with the compareAst above, but it's just an
+            // additional sanity check.
             // might remove later to keep tests fast
             actual = f2.getOutput();
             assertNotNull("Formatted output is null", actual);

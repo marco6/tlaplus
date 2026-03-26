@@ -27,7 +27,7 @@ public class IfThenElseConstruct implements TlaConstruct {
         assert (node.zero().length >= 6);
         // Expected structure:
         // zero[0]: IF keyword (kind=50)
-        // zero[1]: condition expression  
+        // zero[1]: condition expression
         // zero[2]: THEN keyword (kind=62)
         // zero[3]: then expression
         // zero[4]: ELSE keyword (kind=45)

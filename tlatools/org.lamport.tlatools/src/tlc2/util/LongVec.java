@@ -17,7 +17,9 @@ public class LongVec implements Serializable {
 	protected long[] elementData;
 	protected int elementCount;
 
-	public LongVec() { this(10); }
+	public LongVec() {
+		this(10);
+	}
 
 	public LongVec(int initialCapacity) {
 		this.elementCount = 0;
@@ -40,7 +42,7 @@ public class LongVec implements Serializable {
 		rangeCheck(index);
 		return this.elementData[index];
 	}
-	
+
 	public final long lastElement() {
 		return this.elementData[elementCount - 1];
 	}
@@ -56,16 +58,16 @@ public class LongVec implements Serializable {
 			throw new IndexOutOfBoundsException(outOfBoundsMsg(index));
 		}
 	}
-	
-    /**
-     * Constructs an IndexOutOfBoundsException detail message.
-     * Of the many possible refactorings of the error handling code,
-     * this "outlining" performs best with both server and client VMs.
-     */
+
+	/**
+	 * Constructs an IndexOutOfBoundsException detail message.
+	 * Of the many possible refactorings of the error handling code,
+	 * this "outlining" performs best with both server and client VMs.
+	 */
 	// Copied from java.util.ArrayList
-    private String outOfBoundsMsg(int index) {
-        return "Index: "+index+", Size: "+elementCount;
-    }
+	private String outOfBoundsMsg(int index) {
+		return "Index: " + index + ", Size: " + elementCount;
+	}
 
 	public final boolean isEmpty() {
 		return this.elementCount == 0;
@@ -88,10 +90,12 @@ public class LongVec implements Serializable {
 		}
 	}
 
-	public final void reset() { this.elementCount = 0; }
+	public final void reset() {
+		this.elementCount = 0;
+	}
 
 	private void readObject(ObjectInputStream ois)
-			  throws IOException, ClassNotFoundException {
+			throws IOException, ClassNotFoundException {
 		this.elementCount = ois.readInt();
 		this.elementData = new long[this.elementCount];
 		for (int i = 0; i < this.elementCount; i++) {
@@ -151,7 +155,7 @@ public class LongVec implements Serializable {
 		}
 		return this;
 	}
-	
+
 	public LongVec reverse() {
 		try {
 			return new LongVec(this).reverse0();
@@ -160,7 +164,7 @@ public class LongVec implements Serializable {
 		}
 	}
 
-	/** 
+	/**
 	 * Remove *consecutive* duplicates:
 	 * [1,2,2,1,1,3] -> [1,2,1,3]
 	 */

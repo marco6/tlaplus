@@ -38,7 +38,7 @@ public class NoSymmetryTableauModelCheckerTest extends ModelCheckerTestCase {
 	public NoSymmetryTableauModelCheckerTest() {
 		super("NoSymmetryLivenessTableauMC", "symmetry");
 	}
-	
+
 	@Test
 	public void testSpec() {
 		// ModelChecker intends to check liveness
@@ -46,17 +46,17 @@ public class NoSymmetryTableauModelCheckerTest extends ModelCheckerTestCase {
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_INIT_GENERATED1, "8", "s"));
 
 		assertNoTESpec();
-		
+
 		// ModelChecker has finished and generated the expected amount of states
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "5492", "1272", "0"));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		// Assert it has not found a temporal violation nor a counter example
 		assertFalse(recorder.recorded(EC.TLC_TEMPORAL_PROPERTY_VIOLATED));
 		assertFalse(recorder.recorded(EC.TLC_COUNTER_EXAMPLE));
 		assertFalse(recorder.recorded(EC.TLC_STATE_PRINT2));
 
-	assertZeroUncovered();
+		assertZeroUncovered();
 	}
 }

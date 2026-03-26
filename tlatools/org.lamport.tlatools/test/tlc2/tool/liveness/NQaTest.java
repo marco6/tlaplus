@@ -42,7 +42,7 @@ public class NQaTest extends ModelCheckerTestCase {
 	public NQaTest() {
 		super("MCa", "symmetry" + File.separator + "NQ");
 	}
-	
+
 	@Test
 	@Ignore("Ignored for as long as symmetry is incorrectly handled by TLC with liveness checking.")
 	public void testSpec() {
@@ -53,10 +53,10 @@ public class NQaTest extends ModelCheckerTestCase {
 		// Assert it has found the temporal violation and also a counter example
 		assertTrue(recorder.recorded(EC.TLC_TEMPORAL_PROPERTY_VIOLATED));
 		assertTrue(recorder.recorded(EC.TLC_COUNTER_EXAMPLE));
-		
+
 		// Assert an error trace
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
-		
+
 		fail("Check actual error trace and its completeness");
 	}
 }

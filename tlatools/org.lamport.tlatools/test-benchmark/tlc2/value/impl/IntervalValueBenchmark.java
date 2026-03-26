@@ -46,20 +46,20 @@ public class IntervalValueBenchmark {
 
 		FP64.Init();
 	}
-	
-	@Param({"16", "18", "20", "22"})
+
+	@Param({ "16", "18", "20", "22" })
 	public int size;
-	
-	@Param({"10", "12", "14", "16"})
+
+	@Param({ "10", "12", "14", "16" })
 	public int numOfElements;
 
 	public Enumerable intervalValue;
-	
+
 	@Setup(Level.Invocation)
 	public void setup() {
 		intervalValue = (Enumerable) new IntervalValue(1, 1 << size).normalize();
 	}
-	
+
 	@Benchmark
 	public Enumerable randomSubset() {
 		return intervalValue.getRandomSubset(1 << numOfElements);

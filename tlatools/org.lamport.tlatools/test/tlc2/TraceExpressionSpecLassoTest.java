@@ -70,7 +70,7 @@ public class TraceExpressionSpecLassoTest extends TraceExpressionSpecTest {
 		assertEquals(1, actions.length);
 
 		assertEquals(0, specProcessor.getInvariants().length);
-		
+
 		// Assert that one property exists.
 		final Action[] property = specProcessor.getImpliedTemporals();
 		assertEquals(1, property.length);
@@ -81,20 +81,21 @@ public class TraceExpressionSpecLassoTest extends TraceExpressionSpecTest {
 
 		// Assert there exists a next-state relation
 		assertNotNull(specProcessor.getNextPred());
-		
+
 		assertNotNull(tool.getModelConfig().getAlias());
 		assertFalse(tool.getModelConfig().getCheckDeadlock());
-		
+
 		// Assert that all three sub-modules exist
 		final ExternalModuleTable moduleTbl = specProcessor.getModuleTbl();
 		assertNotNull(moduleTbl.getModuleNode(UniqueString.of(TE_SPEC_TEST)));
 		assertNotNull(moduleTbl.getModuleNode(
 				UniqueString.of(TE_SPEC_TEST + "_" + TLAConstants.TraceExplore.EXPLORATION_MODULE_NAME)));
-		assertNotNull(moduleTbl.getModuleNode(UniqueString.of(TE_SPEC_TEST + "_" + TLAConstants.TraceExplore.SPEC_TETRACE_NAME)));
+		assertNotNull(moduleTbl
+				.getModuleNode(UniqueString.of(TE_SPEC_TEST + "_" + TLAConstants.TraceExplore.SPEC_TETRACE_NAME)));
 
 		final LiveCheck1 lc = new LiveCheck1(tool);
 		lc.init(tool, tool.getActions(), "states");
-		
+
 		// Assert the trace
 		StateVec sv = tool.getInitStates();
 		assertEquals(1, sv.size());
@@ -118,7 +119,7 @@ public class TraceExpressionSpecLassoTest extends TraceExpressionSpecTest {
 		nextStates.put(sv.first());
 		lc.addNextState(tool, cur, cur.fingerPrint(), nextStates);
 		cur = sv.first();
-		
+
 		sv = tool.getNextStates(actions[0], sv.first());
 		assertEquals(1, sv.size());
 		assertTrue(tool.isGoodState(sv.first()));
@@ -130,7 +131,7 @@ public class TraceExpressionSpecLassoTest extends TraceExpressionSpecTest {
 		nextStates = new SetOfStates(1);
 		nextStates.put(sv.first());
 		lc.addNextState(tool, cur, cur.fingerPrint(), nextStates);
-		
+
 		try {
 			lc.finalCheck(tool);
 		} catch (LiveException e) {

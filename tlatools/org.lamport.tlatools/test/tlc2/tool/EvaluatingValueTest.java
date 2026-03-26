@@ -67,9 +67,9 @@ public class EvaluatingValueTest extends ModelCheckerTestCase {
 	public synchronized static Value action(final Tool tool, final ExprOrOpArgNode[] args, final Context c,
 			final TLCState s0, final TLCState s1, final int control, final CostModel cm) {
 
-		// Set value of x variable of successor state to 42. 
+		// Set value of x variable of successor state to 42.
 		s1.bind(UniqueString.of("x"), IntValue.gen(42));
-		
+
 		return BoolValue.ValTrue;
 	}
 }

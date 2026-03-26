@@ -42,7 +42,7 @@ public class TableauSymmetryTest extends ModelCheckerTestCase {
 	public TableauSymmetryTest() {
 		super("TableauSymmetryMC", "symmetry");
 	}
-	
+
 	@Test
 	@Ignore("Ignored for as long as symmetry is incorrectly handled by TLC with liveness checking.")
 	public void testSpec() {
@@ -53,7 +53,7 @@ public class TableauSymmetryTest extends ModelCheckerTestCase {
 		// Assert it has found the temporal violation and also a counter example
 		assertTrue(recorder.recorded(EC.TLC_TEMPORAL_PROPERTY_VIOLATED));
 		assertTrue(recorder.recorded(EC.TLC_COUNTER_EXAMPLE));
-		
+
 		assertNodeAndPtrSizes(624L, 224L);
 
 		// Assert the error trace
@@ -67,7 +67,7 @@ public class TableauSymmetryTest extends ModelCheckerTestCase {
 		expectedTrace.add("arr = (a :> \"done\" @@ b :> \"done\")");
 		expectedTrace.add("arr = (a :> \"done\" @@ b :> \"ready\")");
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace);
-		
+
 		assertBackToState(4, "<Action line 7, col 13 to line 8, col 47 of module TableauSymmetry>");
 	}
 }

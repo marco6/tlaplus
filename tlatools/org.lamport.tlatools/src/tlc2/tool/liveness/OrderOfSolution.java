@@ -49,13 +49,13 @@ public class OrderOfSolution {
 	 * in the temporal formulas.
 	 */
 	private final TBGraph tableau; // tableau graph
-	
+
 	/**
 	 * A promise &#966; that a property expressed by a formula will eventually hold.
 	 * 
 	 * @see Page 409ff of Manna & Pnueli
-	 * "Temporal Verification of Reactive Systems: Safety"
-	 * <p>
+	 *      "Temporal Verification of Reactive Systems: Safety"
+	 *      <p>
 	 * @see https://books.google.de/books?id=lfIGCAAAQBAJ&lpg=PR5&ots=_YBX09o5tM
 	 *      &dq=manna%20pnueli%20temporal%20verification%20of%20reactive%
 	 *      20systems%20safety%20doi&pg=PA409
@@ -137,7 +137,7 @@ public class OrderOfSolution {
 	public LiveExprNode[] getCheckState() {
 		return checkState;
 	}
-	
+
 	public boolean[] checkState(ITool tool, final TLCState state) {
 		final boolean[] result = new boolean[checkState.length];
 		for (int i = 0; i < checkState.length; i++) {
@@ -158,8 +158,9 @@ public class OrderOfSolution {
 		}
 		return result;
 	}
-	
-	public BitVector checkAction(ITool tool, final TLCState state0, final TLCState state1, final BitVector result, final int offset) {
+
+	public BitVector checkAction(ITool tool, final TLCState state0, final TLCState state1, final BitVector result,
+			final int offset) {
 		for (int i = 0; i < checkAction.length; i++) {
 			if (checkAction[i].eval(tool, state0, state1)) {
 				result.set(offset + i);
@@ -167,7 +168,7 @@ public class OrderOfSolution {
 		}
 		return result;
 	}
-	
+
 	public LiveExprNode[] getCheckAction() {
 		return checkAction;
 	}
@@ -210,15 +211,19 @@ public class OrderOfSolution {
 	 * (no {@code <>[]}/{@code []<>} cycle conditions) and every promise body is
 	 * box-free (no {@code []} operator nested inside any {@code <>} promise).
 	 *
-	 * <p>When both conditions hold, a counter-example can be witnessed by a
+	 * <p>
+	 * When both conditions hold, a counter-example can be witnessed by a
 	 * finite prefix reaching an accepting tableau node, without requiring
-	 * cycle detection in the behaviour graph.</p>
+	 * cycle detection in the behaviour graph.
+	 * </p>
 	 *
-	 * <p>Returns {@code false} when any of the following holds:</p>
+	 * <p>
+	 * Returns {@code false} when any of the following holds:
+	 * </p>
 	 * <ul>
-	 *   <li>At least one PEM is non-empty — cycle conditions must be checked.</li>
-	 *   <li>A promise body contains a {@code []} operator — the eventuality
-	 *       is not pure and requires cycle-based reasoning.</li>
+	 * <li>At least one PEM is non-empty — cycle conditions must be checked.</li>
+	 * <li>A promise body contains a {@code []} operator — the eventuality
+	 * is not pure and requires cycle-based reasoning.</li>
 	 * </ul>
 	 */
 	public boolean hasEmptyPEMAndBoxFreePromises() {

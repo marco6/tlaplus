@@ -17,7 +17,8 @@ public class Github723Test extends SANYTest {
 		ToolIO.out = testPrintStream;
 		ToolIO.err = testPrintStream;
 
-		SANY.SANYmain(new String[] { CommonTestCase.BASE_PATH + File.separator + "sany" + File.separator + "Github723.tla" });
+		SANY.SANYmain(
+				new String[] { CommonTestCase.BASE_PATH + File.separator + "sany" + File.separator + "Github723.tla" });
 
 		testPrintStream.assertSubstring("An operator must be substituted for symbol 'C', and it must have arity 1.");
 	}

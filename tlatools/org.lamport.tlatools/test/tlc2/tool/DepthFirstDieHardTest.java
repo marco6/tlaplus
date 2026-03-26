@@ -42,7 +42,7 @@ import tlc2.tool.liveness.ModelCheckerTestCase;
 public class DepthFirstDieHardTest extends ModelCheckerTestCase {
 
 	public DepthFirstDieHardTest() {
-		super("DieHard", "", new String[] {"-dfid", "7"}, ExitStatus.VIOLATION_SAFETY);
+		super("DieHard", "", new String[] { "-dfid", "7" }, ExitStatus.VIOLATION_SAFETY);
 	}
 
 	@Test
@@ -50,21 +50,26 @@ public class DepthFirstDieHardTest extends ModelCheckerTestCase {
 		// ModelChecker has finished and generated the expected amount of states
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		// Assert the error trace
 		assertFalse(recorder.recorded(EC.TLC_STATE_PRINT1));
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
 		final List<String> expectedTrace = new ArrayList<String>(7);
 		expectedTrace.add("/\\ action = \"nondet\"\n/\\ smallBucket = 0\n/\\ bigBucket = 0\n/\\ water_to_pour = 0");
 		expectedTrace.add("/\\ action = \"fill big\"\n/\\ smallBucket = 0\n/\\ bigBucket = 5\n/\\ water_to_pour = 0");
-		expectedTrace.add("/\\ action = \"pour big to small\"\n/\\ smallBucket = 3\n/\\ bigBucket = 2\n/\\ water_to_pour = 3");
-		expectedTrace.add("/\\ action = \"empty small\"\n/\\ smallBucket = 0\n/\\ bigBucket = 2\n/\\ water_to_pour = 3");
-		expectedTrace.add("/\\ action = \"pour big to small\"\n/\\ smallBucket = 2\n/\\ bigBucket = 0\n/\\ water_to_pour = 2");
-		
+		expectedTrace.add(
+				"/\\ action = \"pour big to small\"\n/\\ smallBucket = 3\n/\\ bigBucket = 2\n/\\ water_to_pour = 3");
+		expectedTrace
+				.add("/\\ action = \"empty small\"\n/\\ smallBucket = 0\n/\\ bigBucket = 2\n/\\ water_to_pour = 3");
+		expectedTrace.add(
+				"/\\ action = \"pour big to small\"\n/\\ smallBucket = 2\n/\\ bigBucket = 0\n/\\ water_to_pour = 2");
+
 		expectedTrace.add("/\\ action = \"fill big\"\n/\\ smallBucket = 2\n/\\ bigBucket = 5\n/\\ water_to_pour = 2");
-		
-		expectedTrace.add("/\\ action = \"pour big to small\"\n/\\ smallBucket = 3\n/\\ bigBucket = 4\n/\\ water_to_pour = 1");
-		// DFID doesn't show names for the initial predicate or the sub-actions of the next-state relation.
+
+		expectedTrace.add(
+				"/\\ action = \"pour big to small\"\n/\\ smallBucket = 3\n/\\ bigBucket = 4\n/\\ water_to_pour = 1");
+		// DFID doesn't show names for the initial predicate or the sub-actions of the
+		// next-state relation.
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace,
 				Collections.nCopies(expectedTrace.size(), ""));
 		assertZeroUncovered();

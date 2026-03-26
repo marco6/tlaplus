@@ -8,18 +8,17 @@ public interface LevelConstants {
 
   static final int ConstantLevel = 0;
   static final int VariableLevel = 1;
-  static final int ActionLevel   = 2;
+  static final int ActionLevel = 2;
   static final int TemporalLevel = 3;
 
-  static final int MinLevel      = 0;
-  static final int MaxLevel      = 3;
+  static final int MinLevel = 0;
+  static final int MaxLevel = 3;
 
-  static final Integer[] Levels = {ConstantLevel,
-				   VariableLevel,
-				   ActionLevel,
-				   TemporalLevel};
-  
+  static final Integer[] Levels = { ConstantLevel,
+      VariableLevel,
+      ActionLevel,
+      TemporalLevel };
+
   static final SetOfLevelConstraints EmptyLC = new SetOfLevelConstraints();
   static final SetOfArgLevelConstraints EmptyALC = new SetOfArgLevelConstraints();
 }
-

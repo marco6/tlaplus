@@ -42,15 +42,15 @@ import tlc2.tool.liveness.ModelCheckerTestCase;
 public class DepthFirstErrorTraceTest extends ModelCheckerTestCase {
 
 	public DepthFirstErrorTraceTest() {
-		super("DepthFirstErrorTrace", "", new String[] {"-dfid", "9"}, ExitStatus.VIOLATION_SAFETY);
+		super("DepthFirstErrorTrace", "", new String[] { "-dfid", "9" }, ExitStatus.VIOLATION_SAFETY);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		// ModelChecker has finished and generated the expected amount of states
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
-	
+
 		// Assert the error trace
 		assertFalse(recorder.recorded(EC.TLC_STATE_PRINT1));
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
@@ -63,7 +63,8 @@ public class DepthFirstErrorTraceTest extends ModelCheckerTestCase {
 		expectedTrace.add("x = 5");
 		expectedTrace.add("x = 6");
 		expectedTrace.add("x = 7");
-		// DFID doesn't show names for the initial predicate or the sub-actions of the next-state relation.
+		// DFID doesn't show names for the initial predicate or the sub-actions of the
+		// next-state relation.
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace,
 				Collections.nCopies(expectedTrace.size(), ""));
 		assertZeroUncovered();

@@ -106,12 +106,12 @@ public class Github971eTest extends ModelCheckerTestCase {
 		try {
 			IStateQueue.Factory.sq = new IStateQueue() {
 				private final CountDownLatch signal = new CountDownLatch(4);
-				
+
 				private final IStateQueue inner = new MemStateQueue();
-				
+
 				public void sEnqueue(TLCState state) {
 					inner.sEnqueue(state);
-					
+
 					// block the worker that picked state (x=0/\y="a") and enqueues (x=0/\y="b")
 					if (IntValue.ValZero.equals(state.lookup("x"))
 							&& state.lookup("y").equals(new StringValue("b"))) {

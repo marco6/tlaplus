@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class SimpleMultiProcTest extends PCalModelCheckerTestCase {
 
 	public SimpleMultiProcTest() {
-		super("SimpleMultiProc", "pcal", new String[] {"-wf", "-termination"});
+		super("SimpleMultiProc", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test
@@ -49,29 +49,39 @@ public class SimpleMultiProcTest extends PCalModelCheckerTestCase {
 	}
 }
 /*
-C:\lamport\tla\pluscal>java -mx1000m -cp "c:/lamport/tla/newtools/tla2-inria-workspace/tla2-inria/tlatools/class" tlc2.TLC -cleanup SimpleMultiProc.tla         
-TLC2 Version 2.05 of 18 May 2012
-Running in Model-Checking mode.
-Parsing file SimpleMultiProc.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\Naturals.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\Sequences.tla
-Parsing file C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\tla2sany\StandardModules\TLC.tla
-Semantic processing of module Naturals
-Semantic processing of module Sequences
-Semantic processing of module TLC
-Semantic processing of module SimpleMultiProc
-Starting... (2012-08-10 17:38:40)
-Implied-temporal checking--satisfiability problem has 1 branches.
-Computing initial states...
-Finished computing initial states: 16 distinct states generated.
-Progress(7) at 2012-08-10 17:38:43: 27922 states generated (27922 s/min), 12586 distinct states found (12586 ds/min), 6768 states left on queue.
-Checking temporal properties for the complete state space...
-Model checking completed. No error has been found.
-  Estimates of the probability that TLC did not check all reachable states
-  because two distinct states had the same fingerprint:
-  calculated (optimistic):  val = 1.5E-9
-  based on the actual fingerprints:  val = 4.7E-10
-369680 states generated, 103944 distinct states found, 0 states left on queue.
-The depth of the complete state graph search is 17.
-Finished. (2012-08-10 17:39:23)
-*/
+ * C:\lamport\tla\pluscal>java -mx1000m -cp
+ * "c:/lamport/tla/newtools/tla2-inria-workspace/tla2-inria/tlatools/class"
+ * tlc2.TLC -cleanup SimpleMultiProc.tla
+ * TLC2 Version 2.05 of 18 May 2012
+ * Running in Model-Checking mode.
+ * Parsing file SimpleMultiProc.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\Naturals.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\Sequences.tla
+ * Parsing file
+ * C:\lamport\tla\newtools\tla2-inria-workspace\tla2-inria\tlatools\class\
+ * tla2sany\StandardModules\TLC.tla
+ * Semantic processing of module Naturals
+ * Semantic processing of module Sequences
+ * Semantic processing of module TLC
+ * Semantic processing of module SimpleMultiProc
+ * Starting... (2012-08-10 17:38:40)
+ * Implied-temporal checking--satisfiability problem has 1 branches.
+ * Computing initial states...
+ * Finished computing initial states: 16 distinct states generated.
+ * Progress(7) at 2012-08-10 17:38:43: 27922 states generated (27922 s/min),
+ * 12586 distinct states found (12586 ds/min), 6768 states left on queue.
+ * Checking temporal properties for the complete state space...
+ * Model checking completed. No error has been found.
+ * Estimates of the probability that TLC did not check all reachable states
+ * because two distinct states had the same fingerprint:
+ * calculated (optimistic): val = 1.5E-9
+ * based on the actual fingerprints: val = 4.7E-10
+ * 369680 states generated, 103944 distinct states found, 0 states left on
+ * queue.
+ * The depth of the complete state graph search is 17.
+ * Finished. (2012-08-10 17:39:23)
+ */

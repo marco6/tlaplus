@@ -41,18 +41,18 @@ public class SynchronousDiskIntStack implements IntStack {
 
 	private final int bufSize;
 	private final String filePrefix;
-	
+
 	private long size = 0L;
 	private int index = 0;
 
 	private int hiPool = 0;
-	
+
 	private int[] buf;
 
 	public SynchronousDiskIntStack(String diskdir, String name) {
 		this(diskdir, name, BufSize);
 	}
-	
+
 	public SynchronousDiskIntStack(String diskdir, String name, int capacity) {
 		// Hard-limit capacity to 1gb per page file
 		capacity = Math.min(BufSizeMax, capacity);
@@ -61,14 +61,18 @@ public class SynchronousDiskIntStack implements IntStack {
 		this.buf = new int[capacity];
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.IntStack#size()
 	 */
 	public long size() {
 		return this.size;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.IntStack#pushInt(int)
 	 */
 	public void pushInt(int x) {
@@ -93,7 +97,9 @@ public class SynchronousDiskIntStack implements IntStack {
 		this.size++;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.IntStack#pushLong(long)
 	 */
 	public void pushLong(long x) {
@@ -101,7 +107,9 @@ public class SynchronousDiskIntStack implements IntStack {
 		this.pushInt((int) (x >>> 32));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.IntStack#popInt()
 	 */
 	public int popInt() {
@@ -124,12 +132,14 @@ public class SynchronousDiskIntStack implements IntStack {
 		this.size--;
 		return this.buf[--this.index];
 	}
-	
+
 	private boolean hasPool() {
 		return this.hiPool >= 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.IntStack#popLong()
 	 */
 	public long popLong() {
@@ -138,7 +148,9 @@ public class SynchronousDiskIntStack implements IntStack {
 		return (high << 32) | (low & 0xFFFFFFFFL);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.IntStack#reset()
 	 */
 	public void reset() {

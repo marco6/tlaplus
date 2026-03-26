@@ -25,12 +25,12 @@ public class MultiFPIntSet extends FPIntSet {
   }
 
   public final void init(int numThreads, String metadir, String filename)
-  throws IOException {
+      throws IOException {
     for (int i = 0; i < this.sets.length; i++) {
-      this.sets[i].init(numThreads, metadir, filename+"_"+i);
+      this.sets[i].init(numThreads, metadir, filename + "_" + i);
     }
   }
-  
+
   /**
    * Returns the number of fingerprints in this set.
    * Warning: The size is only accurate in single-threaded mode.
@@ -44,24 +44,25 @@ public class MultiFPIntSet extends FPIntSet {
   }
 
   public final void setLeveled(long fp) {
-    int idx = (int)(fp >>> this.fpbits);
+    int idx = (int) (fp >>> this.fpbits);
     this.sets[idx].setLeveled(fp);
   }
-  
+
   public final int setStatus(long fp, int status) {
-    int idx = (int)(fp >>> this.fpbits);
+    int idx = (int) (fp >>> this.fpbits);
     return this.sets[idx].setStatus(fp, status);
   }
 
   /* Returns the status of fp. */
   public final int getStatus(long fp) {
-    int idx = (int)(fp >>> this.fpbits);
+    int idx = (int) (fp >>> this.fpbits);
     return this.sets[idx].getStatus(fp);
   }
 
   public final boolean allLeveled() {
     for (int i = 0; i < this.sets.length; i++) {
-      if (!this.sets[i].allLeveled()) return false;
+      if (!this.sets[i].allLeveled())
+        return false;
     }
     return true;
   }
@@ -86,19 +87,19 @@ public class MultiFPIntSet extends FPIntSet {
       this.sets[i].exit(cleanup);
     }
   }
-  
+
   public final void beginChkpt() throws IOException {
     for (int i = 0; i < this.sets.length; i++) {
       this.sets[i].beginChkpt();
     }
   }
-  
+
   public final void commitChkpt() throws IOException {
     for (int i = 0; i < this.sets.length; i++) {
       this.sets[i].commitChkpt();
     }
   }
-       
+
   public final void recover() throws IOException {
     for (int i = 0; i < this.sets.length; i++) {
       this.sets[i].recover();
@@ -110,13 +111,13 @@ public class MultiFPIntSet extends FPIntSet {
       this.sets[i].beginChkpt(filename);
     }
   }
-  
+
   public final void commitChkpt(String filename) throws IOException {
     for (int i = 0; i < this.sets.length; i++) {
       this.sets[i].commitChkpt(filename);
     }
   }
-  
+
   public final void recover(String filename) throws IOException {
     for (int i = 0; i < this.sets.length; i++) {
       this.sets[i].recover(filename);

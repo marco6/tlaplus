@@ -37,97 +37,93 @@ import util.TestPrintStream;
 import util.ToolIO;
 
 public class OptionalSemicolonTest extends PCalTest {
-	
+
 	/*
 	 * A PlusCal User's Manual P-Syntax:
 	 * "[...] the final semicolon [or comma] is optional in the p-syntax."
 	 */
-	
+
 	@Test
 	public void noOptionalSemiColonVariableList1() throws IOException {
 		// Translate from PCal to TLA+
 		final String filename = "MissingSemiColonVariableListTest1" + System.currentTimeMillis();
 		final String absolutePath = writeFile(System.getProperty("java.io.tmpdir") + File.separator + filename,
-				"---- MODULE " + filename + " ----\n" + 
-				"(*\n" + 
-				"--algorithm algo\n" + 
-				"variables foo = 0" + // no optional semicolon
-				"\n" + 
-				"fair process bug = 0\n" + // notice the "fair" statement 
-				"begin\n" + 
-				"L:\n" + 
-				"    skip\n" + 
-				"end process\n" + 
-				"\n" + 
-				"end algorithm *)\n" + 
-				"===="
-				);
+				"---- MODULE " + filename + " ----\n" +
+						"(*\n" +
+						"--algorithm algo\n" +
+						"variables foo = 0" + // no optional semicolon
+						"\n" +
+						"fair process bug = 0\n" + // notice the "fair" statement
+						"begin\n" +
+						"L:\n" +
+						"    skip\n" +
+						"end process\n" +
+						"\n" +
+						"end algorithm *)\n" +
+						"====");
 		test(filename, absolutePath);
 	}
-	
+
 	@Test
 	public void noOptionalSemiColonVariableList2() throws IOException {
 		// Translate from PCal to TLA+
 		final String filename = "MissingSemiColonVariableListTest2" + System.currentTimeMillis();
 		final String absolutePath = writeFile(System.getProperty("java.io.tmpdir") + File.separator + filename,
-				"---- MODULE " + filename + " ----\n" + 
-				"(*\n" + 
-				"--algorithm algo\n" + 
-				"variables foo = 0 ;" + // optional semicolon
-				"\n" + 
-				"fair process bug = 0\n" + // notice the "fair" statement 
-				"begin\n" + 
-				"L:\n" + 
-				"    skip\n" + 
-				"end process\n" + 
-				"\n" + 
-				"end algorithm *)\n" + 
-				"===="
-				);
+				"---- MODULE " + filename + " ----\n" +
+						"(*\n" +
+						"--algorithm algo\n" +
+						"variables foo = 0 ;" + // optional semicolon
+						"\n" +
+						"fair process bug = 0\n" + // notice the "fair" statement
+						"begin\n" +
+						"L:\n" +
+						"    skip\n" +
+						"end process\n" +
+						"\n" +
+						"end algorithm *)\n" +
+						"====");
 		test(filename, absolutePath);
 	}
-	
+
 	@Test
 	public void noOptionalSemiColonVariableList3() throws IOException {
 		// Translate from PCal to TLA+
 		final String filename = "MissingSemiColonVariableListTest3" + System.currentTimeMillis();
 		final String absolutePath = writeFile(System.getProperty("java.io.tmpdir") + File.separator + filename,
-				"---- MODULE " + filename + " ----\n" + 
-				"(*\n" + 
-				"--algorithm algo\n" + 
-				"variables foo = 0 ;" + // optional semicolon
-				"\n" + 
-				"process bug = 0\n" + // notice the "fair" statement 
-				"begin\n" + 
-				"L:\n" + 
-				"    skip\n" + 
-				"end process\n" + 
-				"\n" + 
-				"end algorithm *)\n" + 
-				"===="
-				);
+				"---- MODULE " + filename + " ----\n" +
+						"(*\n" +
+						"--algorithm algo\n" +
+						"variables foo = 0 ;" + // optional semicolon
+						"\n" +
+						"process bug = 0\n" + // notice the "fair" statement
+						"begin\n" +
+						"L:\n" +
+						"    skip\n" +
+						"end process\n" +
+						"\n" +
+						"end algorithm *)\n" +
+						"====");
 		test(filename, absolutePath);
 	}
-	
+
 	@Test
 	public void noOptionalSemiColonVariableList4() throws IOException {
 		// Translate from PCal to TLA+
 		final String filename = "MissingSemiColonVariableListTest4" + System.currentTimeMillis();
 		final String absolutePath = writeFile(System.getProperty("java.io.tmpdir") + File.separator + filename,
-				"---- MODULE " + filename + " ----\n" + 
-				"(*\n" + 
-				"--algorithm algo\n" + 
-				"variables foo = 0" + // no optional semicolon
-				"\n" + 
-				"process bug = 0\n" + // no "fair" statement 
-				"begin\n" + 
-				"L:\n" + 
-				"    skip\n" + 
-				"end process\n" + 
-				"\n" + 
-				"end algorithm *)\n" + 
-				"===="
-				);
+				"---- MODULE " + filename + " ----\n" +
+						"(*\n" +
+						"--algorithm algo\n" +
+						"variables foo = 0" + // no optional semicolon
+						"\n" +
+						"process bug = 0\n" + // no "fair" statement
+						"begin\n" +
+						"L:\n" +
+						"    skip\n" +
+						"end process\n" +
+						"\n" +
+						"end algorithm *)\n" +
+						"====");
 		test(filename, absolutePath);
 	}
 

@@ -5,7 +5,9 @@ import java.io.IOException;
 
 public class MSBDiskFPSetTest extends FPSetTest {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.AbstractFPSetTest#getFPSet(long)
 	 */
 	@Override

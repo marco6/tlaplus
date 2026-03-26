@@ -54,7 +54,7 @@ public class TLCGetAllTest extends ModelCheckerTestCase {
 	public void testSpec() {
 		assertFalse(recorder.recorded(EC.GENERAL));
 		assertZeroUncovered();
-		
+
 		// Assert POSTCONDITION.
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_FALSE));
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_EVALUATION_ERROR));

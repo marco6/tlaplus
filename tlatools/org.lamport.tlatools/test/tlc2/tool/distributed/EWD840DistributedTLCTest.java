@@ -37,7 +37,7 @@ import tlc2.output.EC;
 public class EWD840DistributedTLCTest extends DistributedTLCTestCase {
 
 	public EWD840DistributedTLCTest() {
-		super("MC06", BASE_PATH + "EWD840" + File.separator, new String[] {"-deadlock"});
+		super("MC06", BASE_PATH + "EWD840" + File.separator, new String[] { "-deadlock" });
 	}
 
 	@Test

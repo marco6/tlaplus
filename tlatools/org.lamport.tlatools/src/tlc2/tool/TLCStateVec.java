@@ -13,8 +13,10 @@ import java.io.Serializable;
 public class TLCStateVec implements Serializable {
   private TLCState[] elementData;
   private int elementCount;
-         
-  public TLCStateVec() { this(10); }
+
+  public TLCStateVec() {
+    this(10);
+  }
 
   public TLCStateVec(int initialCapacity) {
     this.elementCount = 0;
@@ -23,7 +25,7 @@ public class TLCStateVec implements Serializable {
 
   public final void addElement(TLCState x) {
     if (this.elementCount == this.elementData.length) {
-      ensureCapacity(this.elementCount+1);
+      ensureCapacity(this.elementCount + 1);
     }
     this.elementData[this.elementCount++] = x;
   }
@@ -32,13 +34,15 @@ public class TLCStateVec implements Serializable {
     return this.elementData[index];
   }
 
-  public final int size() { return this.elementCount; }
+  public final int size() {
+    return this.elementCount;
+  }
 
-  public final void ensureCapacity(int minCapacity) { 
+  public final void ensureCapacity(int minCapacity) {
     if (elementData.length < minCapacity) {
       int newCapacity = elementData.length + elementData.length;
       if (newCapacity < minCapacity) {
-	newCapacity = minCapacity;
+        newCapacity = minCapacity;
       }
       TLCState oldBuffer[] = this.elementData;
       this.elementData = new TLCState[newCapacity];
@@ -48,11 +52,11 @@ public class TLCStateVec implements Serializable {
   }
 
   private void readObject(ObjectInputStream ois)
-  throws IOException, ClassNotFoundException {
+      throws IOException, ClassNotFoundException {
     this.elementCount = ois.readInt();
     this.elementData = new TLCState[this.elementCount];
     for (int i = 0; i < this.elementCount; i++) {
-      this.elementData[i] = (TLCState)ois.readObject();
+      this.elementData[i] = (TLCState) ois.readObject();
     }
   }
 
@@ -64,5 +68,3 @@ public class TLCStateVec implements Serializable {
   }
 
 }
-
-

@@ -29,7 +29,6 @@ public class RecursiveConstruct implements TlaConstruct {
         }
 
         return Doc.group(
-                recursiveKey
-        );
+                recursiveKey);
     }
 }

@@ -35,18 +35,18 @@ import tla2sany.semantic.ExternalModuleTable;
  * This is intended to support three types of users:
  *
  * 1. Users who want a single simple function that parses a module and all
- *    its dependencies from a {@link Path} to a root module; these users will
- *    want the {@link Frontend#parse(String, Resolver, Errors)} method, by
- *    initializing a {@link RootModuleResolver} instance.
+ * its dependencies from a {@link Path} to a root module; these users will
+ * want the {@link Frontend#parse(String, Resolver, Errors)} method, by
+ * initializing a {@link RootModuleResolver} instance.
  *
  * 2. Users who want finer-grained control over the stages of the parsing
- *    process by calling a type-driven sequence of functions; these users
- *    will want to start at {@link Frontend#processSyntax(String, Resolver)},
- *    using a {@link RootModuleResolver} or {@link StringResolver} instance.
+ * process by calling a type-driven sequence of functions; these users
+ * will want to start at {@link Frontend#processSyntax(String, Resolver)},
+ * using a {@link RootModuleResolver} or {@link StringResolver} instance.
  *
  * 3. (TODO) Users who want to modify the parsing result in-memory after the
- *    ordinary parsing process is completed - adding modules, definitions,
- *    expressions, etc.
+ * ordinary parsing process is completed - adding modules, definitions,
+ * expressions, etc.
  *
  * The only implementation of this interface is {@link SANYFrontend}, although
  * it was made an interface to enable SANY consumers to isolate their code in
@@ -59,15 +59,15 @@ public interface Frontend {
    * all dependencies and performing semantic- & level-checking.
    *
    * @param rootModuleName The name of the root module.
-   * @param resolver Utility for resolving module names to source code.
-   * @param log A log for non-fatal semantic errors.
+   * @param resolver       Utility for resolving module names to source code.
+   * @param log            A log for non-fatal semantic errors.
    * @return A table of external modules, with root module marked.
-   * @throws TokenMgrError if lexing fails for any module.
+   * @throws TokenMgrError  if lexing fails for any module.
    * @throws ParseException if syntax processing fails for any module.
    * @throws AbortException on fatal semantic-checking errors.
    */
   public ExternalModuleTable parse(String rootModuleName, Resolver resolver, Errors log)
-    throws TokenMgrError, ParseException, AbortException;
+      throws TokenMgrError, ParseException, AbortException;
 
   /**
    * Checks the syntax of the given module and builds a parse tree from it.
@@ -75,13 +75,13 @@ public interface Frontend {
    * this to the {@link Errors} class for uniformity & improved testability.
    *
    * @param moduleName The name of the module on which to run syntax parsing.
-   * @param resolver Utility for resolving the given module name.
+   * @param resolver   Utility for resolving the given module name.
    * @return A parse tree, or null if syntax error.
-   * @throws TokenMgrError on lexing error in module.
+   * @throws TokenMgrError  on lexing error in module.
    * @throws ParseException on syntax parsing error in module.
    */
   public ModuleSyntaxTree processSyntax(String moduleName, Resolver resolver)
-    throws TokenMgrError, ParseException;
+      throws TokenMgrError, ParseException;
 
   /**
    * Given a root module's syntax tree, find all modules the root module
@@ -91,16 +91,16 @@ public interface Frontend {
    * If the given module does not import any modules, it is safe to call this
    * function with the resolver parameter set to null.
    *
-   * @param root The root module syntax tree.
+   * @param root     The root module syntax tree.
    * @param resolver Utility to resolve module names into source code.
-   * @param log A log for non-fatal semantic errors.
+   * @param log      A log for non-fatal semantic errors.
    * @return A table of syntax parse trees, with root indicated.
-   * @throws TokenMgrError on lexing error of a dependency.
+   * @throws TokenMgrError  on lexing error of a dependency.
    * @throws ParseException on syntax parsing error of a dependency.
    * @throws AbortException on detection of circular dependencies.
    */
   public DependencyTable resolveDependencies(ModuleSyntaxTree root, Resolver resolver, Errors log)
-    throws TokenMgrError, ParseException, AbortException;
+      throws TokenMgrError, ParseException, AbortException;
 
   /**
    * Performs semantic checking on a table of syntax tree dependencies,
@@ -108,12 +108,12 @@ public interface Frontend {
    * applying various semantic validation constraints.
    *
    * @param dependencyTable A table of modules parsed to syntax level.
-   * @param log A log for non-fatal semantic errors.
+   * @param log             A log for non-fatal semantic errors.
    * @return A table of semantic parse trees, with root indicated.
    * @throws AbortException On non-recoverable semantic error.
    */
   public ExternalModuleTable processSemantics(DependencyTable dependencyTable, Errors log)
-    throws AbortException;
+      throws AbortException;
 
   /**
    * Performs level-checking on the semantic parse tree, ensuring that
@@ -121,7 +121,7 @@ public interface Frontend {
    * rules and constraints across all parsed modules.
    *
    * @param modules A table of semantic parse trees, with root indicated.
-   * @param log A log for non-fatal semantic errors.
+   * @param log     A log for non-fatal semantic errors.
    * @return Whether levels in semantic parse tree are correct.
    */
   public boolean checkLevel(ExternalModuleTable modules, Errors log);

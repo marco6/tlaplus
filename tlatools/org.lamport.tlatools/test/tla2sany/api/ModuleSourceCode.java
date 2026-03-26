@@ -80,9 +80,9 @@ public class ModuleSourceCode {
   /**
    * Constructs a new instance of the {@link ModuleSourceCode} class.
    *
-   * @param text The source code text, as a byte array.
+   * @param text   The source code text, as a byte array.
    * @param origin The module origin.
-   * @param path The path to the module, if applicable.
+   * @param path   The path to the module, if applicable.
    */
   public ModuleSourceCode(byte[] text, ModuleOrigin origin, Path path) {
     this.text = text;

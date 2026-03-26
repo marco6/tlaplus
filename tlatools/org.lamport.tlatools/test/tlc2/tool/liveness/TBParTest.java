@@ -88,7 +88,7 @@ public class TBParTest {
 		// <>p \/ []~p from page 454 of Manna & Pnueli book with p constant-level
 		// expression.
 		final LiveExprNode p = new LNBool(true);
-		
+
 		final TBPar tbPar = new TBPar();
 		final LNEven evenP = new LNEven(p);
 		// Because the same LNStateAST instance appears in both disjuncts, there is no
@@ -108,7 +108,7 @@ public class TBParTest {
 		// <>p \/ []~p, <>p, ()<>p
 		assertEquals(phi, particleClosure.elementAt(1).elementAt(0));
 		assertEquals(evenP, particleClosure.elementAt(1).elementAt(1));
-		// LN*#equals(Object) just object identify, thus, manually checked here. 
+		// LN*#equals(Object) just object identify, thus, manually checked here.
 		final LiveExprNode nextEvenP = particleClosure.elementAt(1).elementAt(2);
 		assertTrue(nextEvenP instanceof LNNext);
 		assertEquals(evenP, ((LNNext) nextEvenP).getBody());
@@ -156,7 +156,7 @@ public class TBParTest {
 		// <>p \/ []~p, <>p, ()<>p
 		assertEquals(phi, particleClosure.elementAt(1).elementAt(0));
 		assertEquals(evenP, particleClosure.elementAt(1).elementAt(1));
-		// LN*#equals(Object) just object identify, thus, manually checked here. 
+		// LN*#equals(Object) just object identify, thus, manually checked here.
 		final LiveExprNode nextEvenP = particleClosure.elementAt(1).elementAt(2);
 		assertTrue(nextEvenP instanceof LNNext);
 		assertEquals(evenP, ((LNNext) nextEvenP).getBody());
@@ -179,7 +179,6 @@ public class TBParTest {
 		assertEquals("()[]-p", particleClosure.elementAt(2).elementAt(3).toString());
 	}
 
-	
 	public static class DummyOpApplNode extends OpApplNode {
 
 		public DummyOpApplNode(String name) {
@@ -190,38 +189,39 @@ public class TBParTest {
 		public String toString() {
 			return this.operator.toString();
 		}
-		
+
 		private static class DummySymbolNode extends SymbolNode {
-			
+
 			protected DummySymbolNode(String name) {
 				super(1, SyntaxTreeNode.nullSTN, UniqueString.uniqueStringOf(name));
 			}
-			
+
 			@Override
 			public int getArity() {
 				throw new UnsupportedOperationException("not implemented");
 			}
-			
+
 			@Override
 			public boolean isLocal() {
 				throw new UnsupportedOperationException("not implemented");
 			}
-			
+
 			@Override
 			public boolean match(OpApplNode test, ModuleNode mn, Errors errors) throws AbortException {
 				throw new UnsupportedOperationException("not implemented");
 			}
-			
+
 			@Override
-			protected Element getSymbolElement(Document doc, SymbolContext context, BiPredicate<SemanticNode, SemanticNode> filter) {
+			protected Element getSymbolElement(Document doc, SymbolContext context,
+					BiPredicate<SemanticNode, SemanticNode> filter) {
 				throw new UnsupportedOperationException("not implemented");
 			}
-			
+
 			@Override
 			protected String getNodeRef() {
 				throw new UnsupportedOperationException("not implemented");
 			}
-			
+
 			@Override
 			public String toString() {
 				return name.toString();

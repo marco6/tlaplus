@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class Factorial2Test extends PCalModelCheckerTestCase {
 
 	public Factorial2Test() {
-		super("Factorial2", "pcal", new String[] {"-wf", "-termination"});
+		super("Factorial2", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test
@@ -47,10 +47,10 @@ public class Factorial2Test extends PCalModelCheckerTestCase {
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "13", "12", "0"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "12"));
 
-		assertUncovered("line 53, col 21 to line 53, col 40 of module Factorial2: 0\n" + 
-				"line 54, col 21 to line 54, col 38 of module Factorial2: 0\n" + 
-				"line 55, col 21 to line 55, col 44 of module Factorial2: 0\n" + 
-				"line 56, col 21 to line 56, col 40 of module Factorial2: 0\n" + 
+		assertUncovered("line 53, col 21 to line 53, col 40 of module Factorial2: 0\n" +
+				"line 54, col 21 to line 54, col 38 of module Factorial2: 0\n" +
+				"line 55, col 21 to line 55, col 44 of module Factorial2: 0\n" +
+				"line 56, col 21 to line 56, col 40 of module Factorial2: 0\n" +
 				"line 57, col 21 to line 57, col 52 of module Factorial2: 0");
 	}
 }

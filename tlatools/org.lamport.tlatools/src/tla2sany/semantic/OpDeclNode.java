@@ -34,33 +34,35 @@ import util.UniqueString;
  *        Represents a bound symbol such as the b in \E a, b \in S : P
  */
 /***************************************************************************
-* Additional kinds added by LL on 22 Mar 2007:                             *
-*                                                                          *
-*   NewConstantKind                                                        *
-*   NewVariableKind                                                        *
-*   NewStateKind                                                           *
-*   NewActionKind                                                          *
-*   NewTemporalKind                                                        *
-*                                                                          *
-* Each represents a declaration in the ASSUME part of an ASSUME/PROVE.     *
-***************************************************************************/
+ * Additional kinds added by LL on 22 Mar 2007: *
+ * *
+ * NewConstantKind *
+ * NewVariableKind *
+ * NewStateKind *
+ * NewActionKind *
+ * NewTemporalKind *
+ * *
+ * Each represents a declaration in the ASSUME part of an ASSUME/PROVE. *
+ ***************************************************************************/
 
 public class OpDeclNode extends OpDefOrDeclNode {
 
-// Now a field in all subclasses of LevelNode
-//  private int level;
+  // Now a field in all subclasses of LevelNode
+  // private int level;
 
   /*************************************************************************
-  * The constructor.                                                       *
-  *************************************************************************/
+   * The constructor. *
+   *************************************************************************/
   public OpDeclNode(UniqueString us, int kind, int level,
-		    int arity, ModuleNode mn, SymbolTable symbolTable,
-                    TreeNode stn) {
+      int arity, ModuleNode mn, SymbolTable symbolTable,
+      TreeNode stn) {
     super(us, kind, arity, mn, symbolTable, stn);
     this.level = level;
     if (this.getKind() == ConstantDeclKind) {
       this.levelParams.add(this);
-      this.allParams.add(this);} ;
+      this.allParams.add(this);
+    }
+    ;
     this.levelChecked = 1;
     if (st != null) {
       st.addSymbol(us, this);
@@ -72,9 +74,13 @@ public class OpDeclNode extends OpDefOrDeclNode {
    * Their scope may *be* local (as with LET, or bound variables, or
    * in inner modules), but the LOCAL modifier is not used.
    */
-  public final boolean isLocal() { return false; }
+  public final boolean isLocal() {
+    return false;
+  }
 
-  public final int getArity() { return this.arity; }
+  public final int getArity() {
+    return this.arity;
+  }
 
   public final boolean match(OpApplNode oa, ModuleNode mn, Errors errors) {
     ExprOrOpArgNode[] args = oa.getArgs();
@@ -82,8 +88,8 @@ public class OpDeclNode extends OpDefOrDeclNode {
     if (args == null || arity != args.length) {
       // One of many duplicate arity checks.
       errors.addError(ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
-		      oa.getTreeNode().getLocation(),
-		      "Operator used with the wrong number of arguments.");
+          oa.getTreeNode().getLocation(),
+          "Operator used with the wrong number of arguments.");
       return false;
     }
     return true;
@@ -91,117 +97,118 @@ public class OpDeclNode extends OpDefOrDeclNode {
 
   /* Level checking */
 
-//  private HashSet levelParams;
+  // private HashSet levelParams;
 
   @Override
   public final boolean levelCheck(int iter, Errors errors) {
     /***********************************************************************
-    * Level information set by constructor.                                *
-    ***********************************************************************/
-//    if (levelChecked > 0) { return true ;} ;
-//    levelChecked = iter;
-//    /***********************************************************************
-//    * Note: level set by constructor.                                      *
-//    ***********************************************************************/
-//    if (this.getKind() == ConstantDeclKind) {this.levelParams.add(this);} ;
+     * Level information set by constructor. *
+     ***********************************************************************/
+    // if (levelChecked > 0) { return true ;} ;
+    // levelChecked = iter;
+    // /***********************************************************************
+    // * Note: level set by constructor. *
+    // ***********************************************************************/
+    // if (this.getKind() == ConstantDeclKind) {this.levelParams.add(this);} ;
     return true;
-   }
+  }
 
-
-//  public final int getLevel() { return this.level; }
-//
-//  public final HashSet getLevelParams() {
-//    if (this.levelParams == null) {
-//      if (this.getKind() == ConstantDeclKind) {
-//	this.levelParams = new HashSet();
-//	this.levelParams.add(this);
-//      }
-//      else {
-//	this.levelParams = EmptySet;
-//      }
-//    }
-//    return this.levelParams;
-//  }
-//
-//  public final SetOfLevelConstraints getLevelConstraints() {
-//    return EmptyLC;
-//  }
-//
-//  public final SetOfArgLevelConstraints getArgLevelConstraints() {
-//    return EmptyALC;
-//  }
-//
-//  public final HashSet getArgLevelParams() { return EmptySet; }
+  // public final int getLevel() { return this.level; }
+  //
+  // public final HashSet getLevelParams() {
+  // if (this.levelParams == null) {
+  // if (this.getKind() == ConstantDeclKind) {
+  // this.levelParams = new HashSet();
+  // this.levelParams.add(this);
+  // }
+  // else {
+  // this.levelParams = EmptySet;
+  // }
+  // }
+  // return this.levelParams;
+  // }
+  //
+  // public final SetOfLevelConstraints getLevelConstraints() {
+  // return EmptyLC;
+  // }
+  //
+  // public final SetOfArgLevelConstraints getArgLevelConstraints() {
+  // return EmptyALC;
+  // }
+  //
+  // public final HashSet getArgLevelParams() { return EmptySet; }
 
   /**
    * walkGraph, levelDataToString, and toString methods to implement
    * ExploreNode interface
    */
-//  public final String levelDataToString() {
-//    return "Level: "               + this.level                    + "\n" +
-//           "LevelParameters: "     + this.getLevelParams()         + "\n" +
-//           "LevelConstraints: "    + this.getLevelConstraints()    + "\n" +
-//           "ArgLevelConstraints: " + this.getArgLevelConstraints() + "\n" +
-//           "ArgLevelParams: "      + this.getArgLevelParams()      + "\n";
-//  }
+  // public final String levelDataToString() {
+  // return "Level: " + this.level + "\n" +
+  // "LevelParameters: " + this.getLevelParams() + "\n" +
+  // "LevelConstraints: " + this.getLevelConstraints() + "\n" +
+  // "ArgLevelConstraints: " + this.getArgLevelConstraints() + "\n" +
+  // "ArgLevelParams: " + this.getArgLevelParams() + "\n";
+  // }
 
   @Override
   public final void walkGraph(Hashtable<Integer, ExploreNode> semNodesTable, ExplorerVisitor visitor) {
     Integer uid = Integer.valueOf(myUID);
-    if (semNodesTable.get(uid) != null) return;
+    if (semNodesTable.get(uid) != null)
+      return;
     semNodesTable.put(uid, this);
     visitor.preVisit(this);
     visitor.postVisit(this);
   }
 
-	@Override
-	public String getHumanReadableImage() {
-		if (getKind() == 2) {
-			return super.getName().toString() + " CONSTANT";
-		} else if (getKind() == 3) {
-			return super.getName().toString() + " VARIABLE";
-		}
-		return super.getHumanReadableImage();
-	}
-
   @Override
-  public final String toString (int depth, Errors errors) {
-    if (depth <= 0) return "";
-    return "\n*OpDeclNode: " + this.getName() + "  " + super.toString(depth, errors)
-           + "\n  originallyDefinedInModule: " +
-                            (originallyDefinedInModule != null
-                             ? originallyDefinedInModule.getName().toString()
-                             : "<null>" ) ;
+  public String getHumanReadableImage() {
+    if (getKind() == 2) {
+      return super.getName().toString() + " CONSTANT";
+    } else if (getKind() == 3) {
+      return super.getName().toString() + " VARIABLE";
+    }
+    return super.getHumanReadableImage();
   }
 
+  @Override
+  public final String toString(int depth, Errors errors) {
+    if (depth <= 0)
+      return "";
+    return "\n*OpDeclNode: " + this.getName() + "  " + super.toString(depth, errors)
+        + "\n  originallyDefinedInModule: " +
+        (originallyDefinedInModule != null
+            ? originallyDefinedInModule.getName().toString()
+            : "<null>");
+  }
 
   protected String getNodeRef() {
     return "OpDeclNodeRef";
   }
 
-  protected Element getSymbolElement(Document doc, SymbolContext context, BiPredicate<SemanticNode, SemanticNode> filter) {
+  protected Element getSymbolElement(Document doc, SymbolContext context,
+      BiPredicate<SemanticNode, SemanticNode> filter) {
     Element e = doc.createElement("OpDeclNode");
-    e.appendChild(appendText(doc,"uniquename",getName().toString()));
-    e.appendChild(appendText(doc,"arity",Integer.toString(getArity())));
-    e.appendChild(appendText(doc,"kind", Integer.toString(getKind())));
+    e.appendChild(appendText(doc, "uniquename", getName().toString()));
+    e.appendChild(appendText(doc, "arity", Integer.toString(getArity())));
+    e.appendChild(appendText(doc, "kind", Integer.toString(getKind())));
     return e;
   }
-  
+
   // ------------------ //
-  
+
   private CountDistinct cd;
-  
+
   public OpDeclNode count(final IValue v) {
-	  cd.add(v);
-	  return this;
+    cd.add(v);
+    return this;
   }
-  
+
   public OpDeclNode setCountDistinct(final CountDistinct cd) {
-	  this.cd = cd;
-	  return this;
+    this.cd = cd;
+    return this;
   }
-  
+
   public CountDistinct getCountDistinct() {
-	  return this.cd;
+    return this.cd;
   }
 }

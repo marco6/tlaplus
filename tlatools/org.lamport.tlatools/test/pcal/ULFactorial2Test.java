@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class ULFactorial2Test extends PCalModelCheckerTestCase {
 
 	public ULFactorial2Test() {
-		super("ULFactorial2", "pcal", new String[] {"-wf", "-termination"});
+		super("ULFactorial2", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test

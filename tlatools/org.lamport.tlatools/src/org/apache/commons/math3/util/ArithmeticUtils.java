@@ -4,7 +4,7 @@ import org.apache.commons.math3.exception.MathArithmeticException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
 
 public class ArithmeticUtils {
-	/**
+    /**
      * Computes the greatest common divisor of the absolute value of two
      * numbers, using a modified version of the "binary gcd" method.
      * See Knuth 4.5.2 algorithm B.
@@ -12,35 +12,35 @@ public class ArithmeticUtils {
      * <br/>
      * Special cases:
      * <ul>
-     *  <li>The invocations
-     *   {@code gcd(Integer.MIN_VALUE, Integer.MIN_VALUE)},
-     *   {@code gcd(Integer.MIN_VALUE, 0)} and
-     *   {@code gcd(0, Integer.MIN_VALUE)} throw an
-     *   {@code ArithmeticException}, because the result would be 2^31, which
-     *   is too large for an int value.</li>
-     *  <li>The result of {@code gcd(x, x)}, {@code gcd(0, x)} and
-     *   {@code gcd(x, 0)} is the absolute value of {@code x}, except
-     *   for the special cases above.</li>
-     *  <li>The invocation {@code gcd(0, 0)} is the only one which returns
-     *   {@code 0}.</li>
+     * <li>The invocations
+     * {@code gcd(Integer.MIN_VALUE, Integer.MIN_VALUE)},
+     * {@code gcd(Integer.MIN_VALUE, 0)} and
+     * {@code gcd(0, Integer.MIN_VALUE)} throw an
+     * {@code ArithmeticException}, because the result would be 2^31, which
+     * is too large for an int value.</li>
+     * <li>The result of {@code gcd(x, x)}, {@code gcd(0, x)} and
+     * {@code gcd(x, 0)} is the absolute value of {@code x}, except
+     * for the special cases above.</li>
+     * <li>The invocation {@code gcd(0, 0)} is the only one which returns
+     * {@code 0}.</li>
      * </ul>
      *
      * @param p Number.
      * @param q Number.
      * @return the greatest common divisor (never negative).
      * @throws MathArithmeticException if the result cannot be represented as
-     * a non-negative {@code int} value.
+     *                                 a non-negative {@code int} value.
      * @since 1.1
      */
     public static int gcd(int p, int q) throws MathArithmeticException {
         int a = p;
         int b = q;
         if (a == 0 ||
-            b == 0) {
+                b == 0) {
             if (a == Integer.MIN_VALUE ||
-                b == Integer.MIN_VALUE) {
+                    b == Integer.MIN_VALUE) {
                 throw new MathArithmeticException(LocalizedFormats.GCD_OVERFLOW_32_BITS,
-                                                  p, q);
+                        p, q);
             }
             return TLCFastMath.abs(a + b);
         }
@@ -49,7 +49,7 @@ public class ArithmeticUtils {
         long bl = b;
         boolean useLong = false;
         if (a < 0) {
-            if(Integer.MIN_VALUE == a) {
+            if (Integer.MIN_VALUE == a) {
                 useLong = true;
             } else {
                 a = -a;
@@ -65,9 +65,9 @@ public class ArithmeticUtils {
             bl = -bl;
         }
         if (useLong) {
-            if(al == bl) {
+            if (al == bl) {
                 throw new MathArithmeticException(LocalizedFormats.GCD_OVERFLOW_32_BITS,
-                                                  p, q);
+                        p, q);
             }
             long blbu = bl;
             bl = al;
@@ -75,7 +75,7 @@ public class ArithmeticUtils {
             if (al == 0) {
                 if (bl > Integer.MAX_VALUE) {
                     throw new MathArithmeticException(LocalizedFormats.GCD_OVERFLOW_32_BITS,
-                                                      p, q);
+                            p, q);
                 }
                 return (int) bl;
             }
@@ -99,10 +99,10 @@ public class ArithmeticUtils {
      * <br/>
      * Special cases:
      * <ul>
-     *  <li>The result of {@code gcd(x, x)}, {@code gcd(0, x)} and
-     *   {@code gcd(x, 0)} is the value of {@code x}.</li>
-     *  <li>The invocation {@code gcd(0, 0)} is the only one which returns
-     *   {@code 0}.</li>
+     * <li>The result of {@code gcd(x, x)}, {@code gcd(0, x)} and
+     * {@code gcd(x, 0)} is the value of {@code x}.</li>
+     * <li>The invocation {@code gcd(0, 0)} is the only one which returns
+     * {@code 0}.</li>
      * </ul>
      *
      * @param a Positive number.
@@ -112,8 +112,7 @@ public class ArithmeticUtils {
     private static int gcdPositive(int a, int b) {
         if (a == 0) {
             return b;
-        }
-        else if (b == 0) {
+        } else if (b == 0) {
             return a;
         }
 
@@ -128,8 +127,8 @@ public class ArithmeticUtils {
         // If a > b then "gdc(a, b)" is equal to "gcd(a - b, b)".
         // If a < b then "gcd(a, b)" is equal to "gcd(b - a, a)".
         // Hence, in the successive iterations:
-        //  "a" becomes the absolute difference of the current values,
-        //  "b" becomes the minimum of the current values.
+        // "a" becomes the absolute difference of the current values,
+        // "b" becomes the minimum of the current values.
         while (a != b) {
             final int delta = a - b;
             b = Math.min(a, b);

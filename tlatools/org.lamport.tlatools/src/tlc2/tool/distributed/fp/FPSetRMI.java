@@ -34,12 +34,12 @@ public interface FPSetRMI extends Remote {
 	 *         collision.
 	 */
 	long checkFPs() throws IOException;
-	
+
 	/**
 	 * @see FPSet#checkInvariant()
 	 */
 	boolean checkInvariant() throws IOException;
-	
+
 	/**
 	 * Disposes this {@link FPSet}. It cannot be used afterwards anymore.
 	 * 
@@ -51,10 +51,10 @@ public interface FPSetRMI extends Remote {
 
 	void commitChkpt(String filename) throws IOException;
 
-    /**
-     * Returns <code>true</code> iff the fingerprint <code>fp</code> is
-     * in this {@link FPSet}.
-     */
+	/**
+	 * Returns <code>true</code> iff the fingerprint <code>fp</code> is
+	 * in this {@link FPSet}.
+	 */
 	boolean contains(long fp) throws IOException;
 
 	/**
@@ -74,7 +74,7 @@ public interface FPSetRMI extends Remote {
 	 * calling {@link FPSet#exit(boolean)}.
 	 * 
 	 * @param cleanup
-	 *            if disk storage used by the {@link FPSet} should be removed
+	 *                if disk storage used by the {@link FPSet} should be removed
 	 */
 	void exit(boolean cleanup) throws IOException;
 
@@ -83,11 +83,11 @@ public interface FPSetRMI extends Remote {
 	 */
 	long getStatesSeen() throws RemoteException;
 
-    /**
-     * Returns <code>true</code> iff the fingerprint <code>fp</code> is
-     * in this set. If the fingerprint is not in the set, it is added to
-     * the {@link FPSet} as a side-effect.
-     */
+	/**
+	 * Returns <code>true</code> iff the fingerprint <code>fp</code> is
+	 * in this set. If the fingerprint is not in the set, it is added to
+	 * the {@link FPSet} as a side-effect.
+	 */
 	boolean put(long fp) throws IOException;
 
 	/**

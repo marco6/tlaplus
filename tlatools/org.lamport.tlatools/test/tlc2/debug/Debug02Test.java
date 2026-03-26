@@ -150,7 +150,8 @@ public class Debug02Test extends TLCDebuggerTestCase {
 		assertEquals(DebuggerValue.NOT_EVALUATED, var.getResult());
 
 		// Assert that constants of a single module spec (a spec without instantiation
-		// and variables declared only in one module) gets flattened in the variable view.
+		// and variables declared only in one module) gets flattened in the variable
+		// view.
 		final TLCActionStackFrame f = (TLCActionStackFrame) debugger.stack.peek();
 		Variable[] variables = f.getVariables(f.getConstantsId());
 		assertEquals(2, variables.length);
@@ -173,7 +174,7 @@ public class Debug02Test extends TLCDebuggerTestCase {
 		assertEquals("FALSE", var.getResult());
 		var = debugger.evaluate(RM, "x", 7, 9, 7, 10);
 		assertEquals(null, var.getType());
-		
+
 		// Remove all breakpoints and run the spec to completion.
 		debugger.unsetBreakpoints();
 		debugger.continue_();

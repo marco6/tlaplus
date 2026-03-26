@@ -38,7 +38,7 @@ public class April22Test extends ModelCheckerTestCase {
 	public April22Test() {
 		super("April22MC", "symmetry");
 	}
-	
+
 	@Test
 	@Ignore("Ignored for as long as symmetry is incorrectly handled by TLC with liveness checking.")
 	public void testSpec() {

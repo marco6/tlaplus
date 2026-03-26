@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class DiningPhilosophersTest extends PCalModelCheckerTestCase {
 
 	public DiningPhilosophersTest() {
-		super("DiningPhilosophers", "pcal", new String[] {"-sf"});
+		super("DiningPhilosophers", "pcal", new String[] { "-sf" });
 	}
 
 	@Test
@@ -46,7 +46,7 @@ public class DiningPhilosophersTest extends PCalModelCheckerTestCase {
 		assertFalse(recorder.recorded(EC.GENERAL));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "301", "118", "0"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "14"));
-		
+
 		assertZeroUncovered();
 	}
 }

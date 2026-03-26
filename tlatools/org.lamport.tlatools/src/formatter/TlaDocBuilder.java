@@ -129,7 +129,8 @@ public class TlaDocBuilder {
         TlaConstruct construct = registry.findHandler(node);
         if (construct != null) {
             try {
-                //LOG.fine("Calling " + construct.getName() + ": '" + node.getHumanReadableImage() + "'");
+                // LOG.fine("Calling " + construct.getName() + ": '" +
+                // node.getHumanReadableImage() + "'");
                 var indentSize = context.getConfig().getIndentSize();
                 return construct.buildDoc(node, context, indentSize);
             } catch (Exception e) {
@@ -145,7 +146,8 @@ public class TlaDocBuilder {
 
     /**
      * Get the best available image string from a node.
-     * Uses getHumanReadableImage() if non-empty, otherwise falls back to getImage().
+     * Uses getHumanReadableImage() if non-empty, otherwise falls back to
+     * getImage().
      * This is needed because SANY returns empty getHumanReadableImage() for certain
      * keywords/tokens like "Token" even though getImage() has the correct value.
      */
@@ -166,14 +168,15 @@ public class TlaDocBuilder {
 
         // Log unknown node types to help with future construct development
         if (image != null && image.startsWith("N_")) {
-            LOG.fine("Generic node kind: " + node.getKind() + " image: '" + image + "' hri: '" + node.getHumanReadableImage() + "'");
+            LOG.fine("Generic node kind: " + node.getKind() + " image: '" + image + "' hri: '"
+                    + node.getHumanReadableImage() + "'");
         }
 
         // Leaf nodes (no children) are always rendered as text, even if image
         // starts with "N_" -- user identifiers like "N_Assumption" must not be
         // confused with SANY internal node kind names.
         boolean isLeaf = (node.zero() == null || node.zero().length == 0)
-                      && (node.one() == null || node.one().length == 0);
+                && (node.one() == null || node.one().length == 0);
         if (image != null && !image.isEmpty() && (isLeaf || !image.startsWith("N_"))) {
             return Doc.text(getBestImage(node));
         }
@@ -246,7 +249,8 @@ public class TlaDocBuilder {
         if (nodeEndLine == Integer.MAX_VALUE || nextStartLine == Integer.MAX_VALUE) {
             return null;
         }
-        // Count consecutive empty lines after this node (starting from the line after the node ends)
+        // Count consecutive empty lines after this node (starting from the line after
+        // the node ends)
         int emptyLines = nextStartLine - nodeEndLine;
         // Return appropriate spacing (preserve extra newlines)
         if (emptyLines == 1) {
@@ -264,27 +268,34 @@ public class TlaDocBuilder {
     }
 
     /**
-     * Get the number of pre comment lines, by recursively searching them in the first child.
-     * It's used in the format method to respect the newlines between different declarations
+     * Get the number of pre comment lines, by recursively searching them in the
+     * first child.
+     * It's used in the format method to respect the newlines between different
+     * declarations
      * in the module's body.
      *
      * @return the number of preComments, recursively.
      */
     private static int getPreCommentsRec(TreeNode node) {
         if (node.getPreComments().length > 0) {
-            // Each entry in PreComments is either a single line comments or a block comment.
+            // Each entry in PreComments is either a single line comments or a block
+            // comment.
             // Block comments are composed of multiple lines, so we need to count them all.
-            // TODO: AND single line comments only include a single \n even if there is \* comment\n\n\n\n\n\n=======
+            // TODO: AND single line comments only include a single \n even if there is \*
+            // comment\n\n\n\n\n\n=======
             // would be great to fix this in SANY.
-            // Alternatively we would need to run a new parsing of the spec, find the actual number of new lines between every line comment and
+            // Alternatively we would need to run a new parsing of the spec, find the actual
+            // number of new lines between every line comment and
             // apply them as expected.
             return Arrays.stream(node.getPreComments())
                     .mapToInt(s -> Math.toIntExact(s.lines().count()))
                     .sum();
         }
 
-        if (node.zero() != null && node.zero().length > 0) return getPreCommentsRec(node.zero()[0]);
-        if (node.one() != null && node.one().length > 0) return getPreCommentsRec(node.one()[0]);
+        if (node.zero() != null && node.zero().length > 0)
+            return getPreCommentsRec(node.zero()[0]);
+        if (node.one() != null && node.one().length > 0)
+            return getPreCommentsRec(node.one()[0]);
         return 0;
     }
 }

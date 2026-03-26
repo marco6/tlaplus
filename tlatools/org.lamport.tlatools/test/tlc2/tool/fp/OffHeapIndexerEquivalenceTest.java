@@ -49,10 +49,10 @@ import tlc2.tool.fp.OffHeapDiskFPSet.Mult1024Indexer;
 public class OffHeapIndexerEquivalenceTest {
 	// Round down to the specified number of positions to the nearest multiple that
 	// requires a 1024MB allocation.
-    public static long roundHalfEven(long l) {
-        final long MULTIPLE = 8L * 1024 * 1024 * 1024;
-        return (l / MULTIPLE) * MULTIPLE;
-    }
+	public static long roundHalfEven(long l) {
+		final long MULTIPLE = 8L * 1024 * 1024 * 1024;
+		return (l / MULTIPLE) * MULTIPLE;
+	}
 
 	@Parameters(name = "positions: {0}, fpBits: {1}, fp: 1L<<{2}")
 	public static Collection<Object[]> data() {
@@ -91,7 +91,7 @@ public class OffHeapIndexerEquivalenceTest {
 	@Ignore("Checked in older commits")
 	public void testInfiniteBitshifting() {
 		Assume.assumeTrue(Long.bitCount(positions) == 1);
-		
+
 		final Indexer iIndexer = new InfinitePrecisionIndexer(positions, fpBits);
 		final Indexer bIndexer = new BitshiftingIndexer(positions, fpBits);
 
@@ -124,7 +124,7 @@ public class OffHeapIndexerEquivalenceTest {
 		final long upperBound = 1L << fpRangeBit;
 
 		final int N = 1 << 10;
-		
+
 		// Check N fps randomly generated number in the range [lower,upper).
 		final long lowerBound = 1L << (fpRangeBit - 1);
 		for (int i = 0; i < Math.min(N, upperBound - lowerBound); i++) {
@@ -132,7 +132,7 @@ public class OffHeapIndexerEquivalenceTest {
 			// RandomGenerator has nextLong(long, long)
 			final long fp = ThreadLocalRandom.current().nextLong(lowerBound, upperBound);
 			Assert.assertEquals(expected.getIdx(fp), actual.getIdx(fp));
-			Assert.assertTrue(actual.getIdx(fp+1) >= actual.getIdx(fp));
+			Assert.assertTrue(actual.getIdx(fp + 1) >= actual.getIdx(fp));
 		}
 
 		// Check N fps uniformly distributed in the range [lower,upper].
@@ -140,20 +140,20 @@ public class OffHeapIndexerEquivalenceTest {
 		for (int i = 0; i < Math.min(N, upperBound - lowerBound); i++) {
 			final long fp = lowerBound + i * step;
 			Assert.assertEquals(expected.getIdx(fp), actual.getIdx(fp));
-			Assert.assertEquals(expected.getIdx(fp+1), actual.getIdx(fp+1));
-			Assert.assertTrue(actual.getIdx(fp) <= actual.getIdx(fp+1));
+			Assert.assertEquals(expected.getIdx(fp + 1), actual.getIdx(fp + 1));
+			Assert.assertTrue(actual.getIdx(fp) <= actual.getIdx(fp + 1));
 		}
 
 		// Check N fps around the upper bound.
 		for (long l = 1L; l < N && upperBound + l <= Long.MAX_VALUE; l++) {
 			final long fp = upperBound + l;
 			Assert.assertEquals(expected.getIdx(fp), actual.getIdx(fp));
-			Assert.assertTrue(actual.getIdx(fp) >= actual.getIdx(fp-1));
+			Assert.assertTrue(actual.getIdx(fp) >= actual.getIdx(fp - 1));
 		}
 		for (long l = 1L; l < N && upperBound - l >= 0L; l++) {
 			final long fp = upperBound - l;
 			Assert.assertEquals(expected.getIdx(fp), actual.getIdx(fp));
-			Assert.assertTrue(actual.getIdx(fp) <= actual.getIdx(fp+1));
+			Assert.assertTrue(actual.getIdx(fp) <= actual.getIdx(fp + 1));
 		}
 
 		// Check fp given by junit parameter.

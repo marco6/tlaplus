@@ -13,7 +13,8 @@ import java.util.Map;
 
 /**
  * Construct implementation for record constructors.
- * Handles formatting of record expressions like [field1 |-> value1, field2 |-> value2].
+ * Handles formatting of record expressions like [field1 |-> value1, field2 |->
+ * value2].
  * See FieldValConstruct for "field1 |-> value1".
  */
 public class RcdConstructorConstruct implements TlaConstruct {

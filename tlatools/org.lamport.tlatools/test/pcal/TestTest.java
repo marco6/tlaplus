@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class TestTest extends PCalModelCheckerTestCase {
 
 	public TestTest() {
-		super("Test", "pcal", new String[] {"-wf", "-termination"});
+		super("Test", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test

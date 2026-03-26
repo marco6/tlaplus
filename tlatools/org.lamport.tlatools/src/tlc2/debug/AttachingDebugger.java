@@ -48,29 +48,31 @@ import tlc2.tool.impl.Tool;
 import util.ToolIO;
 
 public class AttachingDebugger extends TLCDebugger {
-	
+
 	private String buffer = "";
 	private final int port;
-	
-	public AttachingDebugger(int port, final Step s, final boolean halt) throws IOException, InterruptedException, ExecutionException {
+
+	public AttachingDebugger(int port, final Step s, final boolean halt)
+			throws IOException, InterruptedException, ExecutionException {
 		super(s, halt);
 		this.port = port;
-		
+
 		// Connect TLC's stdin to the debugger's console for users to be able to control
-		// TLC should it accept user input on stdin.  For example, a Java module override
+		// TLC should it accept user input on stdin. For example, a Java module override
 		// might prompt a user to respond on stdin.
 		final PipedInputStream pin = new PipedInputStream();
 		System.setIn(pin);
 		pipedOutputStream = new PipedOutputStream(pin);
-		
-		// Listen to that SANY and TLC have to say, and what gets written with TLC!Print*.
+
+		// Listen to that SANY and TLC have to say, and what gets written with
+		// TLC!Print*.
 		ToolIO.out = new PrintStream(ToolIO.out) {
 			// ToolIO.out passed to PrintStream above is either System.out or one of TLC's
 			// ToolIO.ToolPrintStream, TestPrintStream, ..., which intercept print*
-			// invocations to store the string parameter.  This instance of a PrintStream
-			// is just a wrapper that -in turn- intercept the only two print methods that 
-			// TLC invokes.  We cannot simply call super.print* below, because PrintStream
-			// delegates those call to out.write instead of out.print.  In other words,
+			// invocations to store the string parameter. This instance of a PrintStream
+			// is just a wrapper that -in turn- intercept the only two print methods that
+			// TLC invokes. We cannot simply call super.print* below, because PrintStream
+			// delegates those call to out.write instead of out.print. In other words,
 			// ToolIO.ToolPrintStream, TestPrintStream, ..., would not be able to store
 			// the string parameters, which causes several tests to fail.
 			@Override
@@ -89,13 +91,13 @@ public class AttachingDebugger extends TLCDebugger {
 				if (launcher != null) {
 					final OutputEventArguments oea = new OutputEventArguments();
 					// TODO Make use of OutputEventArgumentsCategory and OutputEventArgumentsGroup
-					// to make TLC's more readable in a debugger.  For example, TLC's progress
+					// to make TLC's more readable in a debugger. For example, TLC's progress
 					// messages tend to get mixed up with other, more relevant output.
 					// Don't parse the strings here!!! Instead, BroadcastMessagePrinterRecorder
 					// provides first-class access to the log output without parsing.
 					// When launched from the debugger (VScode), TLC does not run in -tool mode.
-					//oea.setGroup(OutputEventArgumentsGroup.START_COLLAPSED);
-					//oea.setCategory("Progress");
+					// oea.setGroup(OutputEventArgumentsGroup.START_COLLAPSED);
+					// oea.setCategory("Progress");
 					oea.setOutput(str);
 					launcher.getRemoteProxy().output(oea);
 				} else {
@@ -105,14 +107,14 @@ public class AttachingDebugger extends TLCDebugger {
 		};
 	}
 
-
 	@Override
 	public IDebugTarget setTool(final Tool tool) {
 		super.setTool(tool);
 		Executors.newSingleThreadExecutor().submit(() -> {
 			try (ServerSocket serverSocket = new ServerSocket(port)) {
-				// Immediately re-open the debugger to front-end requests after a front-end disconnected.
-				//TODO: This doesn't terminate when TLC terminates.
+				// Immediately re-open the debugger to front-end requests after a front-end
+				// disconnected.
+				// TODO: This doesn't terminate when TLC terminates.
 				while (true) {
 					// Beware: Do not remove "Debugger is listening on %s\n" below, because the
 					// debugger front-end of the VSCode extension waits for TLC to print this
@@ -137,8 +139,8 @@ public class AttachingDebugger extends TLCDebugger {
 				e.printStackTrace();
 				System.err.println(
 						"Verify that the three bundles o.e.lsp4j.debug, o.e.lsp4j.jsonrpc, and o.e.lsp4j.jsonrpc.debug are included in "
-						+ "your launch configuration. In particular, o.e.lsp4j.jsonrpc.debug is often missing because it is not included "
-						+ "automatically.");
+								+ "your launch configuration. In particular, o.e.lsp4j.jsonrpc.debug is often missing because it is not included "
+								+ "automatically.");
 				throw e;
 			}
 		});
@@ -151,7 +153,8 @@ public class AttachingDebugger extends TLCDebugger {
 		Executors.newSingleThreadExecutor().submit(() -> {
 			// Debuggee -> Frontend initialize has to come after the capabilities according
 			// to https://github.com/Microsoft/vscode/issues/4902#issuecomment-368583522.
-			// Also see https://github.com/eclipse-lsp4j/lsp4j/issues/229#issuecomment-413826135
+			// Also see
+			// https://github.com/eclipse-lsp4j/lsp4j/issues/229#issuecomment-413826135
 			launcher.getRemoteProxy().initialized();
 
 			if (!"".equals(buffer)) {
@@ -161,7 +164,7 @@ public class AttachingDebugger extends TLCDebugger {
 				launcher.getRemoteProxy().output(oea);
 				buffer = "";
 			}
-			
+
 			// Warn users if TLC is running with multiple workers, as the debugger only
 			// attaches to one worker and breakpoint triggers will only fire for events in
 			// that worker.
@@ -175,16 +178,17 @@ public class AttachingDebugger extends TLCDebugger {
 				oea.setCategory(OutputEventArgumentsCategory.CONSOLE);
 				launcher.getRemoteProxy().output(oea);
 			}
-			
+
 			StoppedEventArguments eventArguments = new StoppedEventArguments();
 			eventArguments.setThreadId(0);
 			// DAP mandates non-null reason in StoppedEvent by spec.
-			// Since StoppedEvent created here is to stop the execution voluntarily on launch which
+			// Since StoppedEvent created here is to stop the execution voluntarily on
+			// launch which
 			// pre-defined reasons doesn't fit, we fill empty-string as default.
 			eventArguments.setReason("");
 			launcher.getRemoteProxy().stopped(eventArguments);
 		});
-		
+
 		return CompletableFuture.completedFuture(null);
 	}
 }

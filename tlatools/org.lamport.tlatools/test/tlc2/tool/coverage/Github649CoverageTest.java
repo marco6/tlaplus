@@ -34,12 +34,12 @@ import tlc2.output.EC;
 
 public class Github649CoverageTest extends AbstractCoverageTest {
 
-    public Github649CoverageTest () {
-        super("Github649");
-    }
+	public Github649CoverageTest() {
+		super("Github649");
+	}
 
-    @Test
-    public void testSpec () {
+	@Test
+	public void testSpec() {
 		// ModelChecker has finished and generated the expected amount of states
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "2"));
@@ -71,5 +71,5 @@ public class Github649CoverageTest extends AbstractCoverageTest {
 				+ "  |line 19, col 10 to line 19, col 14 of module Github649: 3\n"
 				+ "  |line 19, col 17 to line 19, col 22 of module Github649: 3");
 		assertFalse(recorder.recorded(EC.TLC_COVERAGE_MISMATCH));
-    }
+	}
 }

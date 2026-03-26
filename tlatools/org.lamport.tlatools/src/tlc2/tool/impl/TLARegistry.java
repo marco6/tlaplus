@@ -10,7 +10,8 @@ import java.util.Hashtable;
 
 /**
  * Provides a mapping between the TLA+ names and Java names.
- * <br><b>Note:</b>
+ * <br>
+ * <b>Note:</b>
  * 
  * @author Simon Zambrovski
  */
@@ -24,7 +25,8 @@ public class TLARegistry {
 
   /**
    * puts a value into the registry.
-   * @param tname the TLA+ name 
+   * 
+   * @param tname the TLA+ name
    * @param jname the corresponding Java name
    * @return the previous value, if one
    */

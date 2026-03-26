@@ -37,10 +37,9 @@ public class TLCRuntime {
 		}
 		return runtime;
 	}
-	
 
 	private long physicalSystemMemory = -1;
-	
+
 	/**
 	 * @return the total amount of memory, measured in bytes.
 	 */
@@ -58,7 +57,7 @@ public class TLCRuntime {
 
 	/**
 	 * @param fraction
-	 *            The percentage of physical memory required
+	 *                 The percentage of physical memory required
 	 * @return the absolute amount of physical memory in MB
 	 */
 	public long getAbsolutePhysicalSystemMemory(double fraction) {
@@ -68,15 +67,16 @@ public class TLCRuntime {
 		final double d = physicalSystemMemory * fraction;
 		return (long) (d / 1024d / 1024d);
 	}
-	
+
 	/**
-	 * @return The non-heap memory JVM memory set with -XX:MaxDirectMemorySize in Bytes
+	 * @return The non-heap memory JVM memory set with -XX:MaxDirectMemorySize in
+	 *         Bytes
 	 */
 	public long getNonHeapPhysicalMemory() {
 		// 64MB by default. This happens to be the JVM default for
 		// XX:MaxDirectMemorySize if no other value is given.
 		long l = (64L * 1024L * 1024L);
-		
+
 		final RuntimeMXBean RuntimemxBean = ManagementFactory.getRuntimeMXBean();
 		final List<String> arguments = RuntimemxBean.getInputArguments();
 		for (String arg : arguments) {
@@ -84,15 +84,15 @@ public class TLCRuntime {
 				String[] strings = arg.split("=");
 				String mem = strings[1].toLowerCase();
 				if (mem.endsWith("g")) {
-					l = Long.parseLong(mem.substring(0, mem.length() -1));
+					l = Long.parseLong(mem.substring(0, mem.length() - 1));
 					l = l << 30;
 					break;
 				} else if (mem.endsWith("m")) {
-					l = Long.parseLong(mem.substring(0, mem.length() -1));
+					l = Long.parseLong(mem.substring(0, mem.length() - 1));
 					l = l << 20;
 					break;
 				} else if (mem.endsWith("k")) {
-					l = Long.parseLong(mem.substring(0, mem.length() -1));
+					l = Long.parseLong(mem.substring(0, mem.length() - 1));
 					l = l << 10;
 					break;
 				} else {
@@ -106,24 +106,28 @@ public class TLCRuntime {
 
 	/**
 	 * @param fpMemSize
-	 *            can be used in two ways:
-	 *            <ul>
-	 *            <li>to set the relative memory to be used for fingerprints
-	 *            (being machine independent)</li>
-	 *            <li>to set the absolute memory to be used for fingerprints.
-	 *            </li>
-	 *            </ul>
-	 * 	<p>
-	 *            In order to set memory relatively, a value in the domain [0.0,
-	 *            1.0] is interpreted as a fraction. A value in the [2,
-	 *            Double.MaxValue] domain allocates memory absolutely.
-	 * </p>
-	 *            Independently of relative or absolute mem allocation, a user
-	 *            cannot allocate more than JVM heap space available. Conversely
-	 *            there is the lower hard limit {@link TLCRuntime#MinFpMemSize}.
-	 * @return a long value that indicates the absolute amount of fingerprints that can potentially fit into VM heap memory
+	 *                  can be used in two ways:
+	 *                  <ul>
+	 *                  <li>to set the relative memory to be used for fingerprints
+	 *                  (being machine independent)</li>
+	 *                  <li>to set the absolute memory to be used for fingerprints.
+	 *                  </li>
+	 *                  </ul>
+	 *                  <p>
+	 *                  In order to set memory relatively, a value in the domain
+	 *                  [0.0,
+	 *                  1.0] is interpreted as a fraction. A value in the [2,
+	 *                  Double.MaxValue] domain allocates memory absolutely.
+	 *                  </p>
+	 *                  Independently of relative or absolute mem allocation, a user
+	 *                  cannot allocate more than JVM heap space available.
+	 *                  Conversely
+	 *                  there is the lower hard limit
+	 *                  {@link TLCRuntime#MinFpMemSize}.
+	 * @return a long value that indicates the absolute amount of fingerprints that
+	 *         can potentially fit into VM heap memory
 	 */
-	//TODO rename to non-fp specific
+	// TODO rename to non-fp specific
 	public long getFPMemSize(double fpMemSize) {
 		// determine amount of memory to be used for fingerprints
 		final long maxMemory = Runtime.getRuntime().maxMemory();
@@ -161,17 +165,17 @@ public class TLCRuntime {
 			return label;
 		}
 	}
-	
+
 	public ARCH getArchitecture() {
 		if (System.getProperty("sun.arch.data.model") != null
 				&& System.getProperty("sun.arch.data.model").equals("64")) {
 			return ARCH.BIT_64;
 		}
-		if (System.getProperty("com.ibm.vm.bitmode") != null 
+		if (System.getProperty("com.ibm.vm.bitmode") != null
 				&& System.getProperty("com.ibm.vm.bitmode").equals("64")) {
 			return ARCH.BIT_64;
 		}
-		if (System.getProperty("java.vm.version") != null 
+		if (System.getProperty("java.vm.version") != null
 				&& System.getProperty("java.vm.version").contains("_64")) {
 			return ARCH.BIT_64;
 		}
@@ -182,16 +186,16 @@ public class TLCRuntime {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public long pid() {
 		// Once Java9 is minimum BREE, change to:
-        // return java.lang.ProcessHandle.current().pid();
+		// return java.lang.ProcessHandle.current().pid();
 		try {
 			// Get class.
 			final ClassLoader classLoader = getClass().getClassLoader();
-	        final Class aClass = classLoader.loadClass("java.lang.ProcessHandle");
-	        // Execute static current()
-	        final Object o = aClass.getMethod("current").invoke(null, (Object[]) null);
-	        // Execute instance method pid()
-	        return (long) aClass.getMethod("pid").invoke(o, (Object[]) null);
-	    } catch (Exception e) {
+			final Class aClass = classLoader.loadClass("java.lang.ProcessHandle");
+			// Execute static current()
+			final Object o = aClass.getMethod("current").invoke(null, (Object[]) null);
+			// Execute instance method pid()
+			return (long) aClass.getMethod("pid").invoke(o, (Object[]) null);
+		} catch (Exception e) {
 			return -1;
 		}
 	}

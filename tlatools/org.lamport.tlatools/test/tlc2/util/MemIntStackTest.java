@@ -35,12 +35,12 @@ public class MemIntStackTest {
 	@Test
 	public void testPeak() {
 		final MemIntStack memIntStack = new MemIntStack("", "");
-		
+
 		memIntStack.pushLong(4711L);
 		memIntStack.pushLong(2323L);
 		memIntStack.pushInt(1);
 		memIntStack.pushLong(77L);
-		
+
 		assertEquals(4711L, memIntStack.peakLong(0));
 		assertEquals(2323L, memIntStack.peakLong(2));
 		assertEquals(1, memIntStack.peakInt(4));

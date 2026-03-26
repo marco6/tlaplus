@@ -21,23 +21,22 @@ import tlc2.util.LongVec;
  * guarantee that their methods are thread-safe.
  */
 @SuppressWarnings("serial")
-public abstract class FPSet implements FPSetRMI
-{
-	/**
-	 * Size of a Java long in bytes
-	 */
-	protected static final long LongSize = 8;
+public abstract class FPSet implements FPSetRMI {
+    /**
+     * Size of a Java long in bytes
+     */
+    protected static final long LongSize = 8;
 
-	/**
-	 * Counts the amount of states passed to the containsBlock method
-	 */
-	//TODO need AtomicLong here to prevent dirty writes to statesSeen?
-	protected long statesSeen = 0L;
+    /**
+     * Counts the amount of states passed to the containsBlock method
+     */
+    // TODO need AtomicLong here to prevent dirty writes to statesSeen?
+    protected long statesSeen = 0L;
 
-	protected final FPSetConfiguration fpSetConfig;
-	
+    protected final FPSetConfiguration fpSetConfig;
+
     protected FPSet(final FPSetConfiguration fpSetConfig) throws RemoteException {
-    	this.fpSetConfig = fpSetConfig;
+        this.fpSetConfig = fpSetConfig;
     }
 
     /**
@@ -47,71 +46,89 @@ public abstract class FPSet implements FPSetRMI
      * after the constructor but before any of the other methods below.
      */
     public abstract FPSet init(int numThreads, String metadir, String filename) throws IOException;
-    
+
     public void incWorkers(int num) {
-    	// subclasses may override
+        // subclasses may override
     }
 
     /* Returns the number of fingerprints in this set. */
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see tlc2.tool.distributed.fp.FPSetRMI#size()
      */
     public abstract long size();
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see tlc2.tool.distributed.fp.FPSetRMI#put(long)
      */
     public abstract boolean put(long fp) throws IOException;
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see tlc2.tool.distributed.fp.FPSetRMI#contains(long)
      */
     public abstract boolean contains(long fp) throws IOException;
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see tlc2.tool.distributed.fp.FPSetRMI#close()
      */
-    public void close()
-    { /*SKIP*/
+    public void close() { /* SKIP */
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see tlc2.tool.distributed.fp.FPSetRMI#addThread()
      */
-    public void addThread() throws IOException
-    { /*SKIP*/
+    public void addThread() throws IOException { /* SKIP */
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see tlc2.tool.distributed.fp.FPSetRMI#exit(boolean)
      */
     public void exit(boolean cleanup) throws IOException {
-		// If DistributedFPSet is running, signal termination and wake it up.
-		// This is necessary when a SecurityManager intercepts System.exit(int)
-		// calls which has the side effect that DistributedFPSet's reporting
-		// loop does not terminate and keeps going forever.
-		DistributedFPSet.shutdown();
-		synchronized (this) {
-			this.notify();
-		}
+        // If DistributedFPSet is running, signal termination and wake it up.
+        // This is necessary when a SecurityManager intercepts System.exit(int)
+        // calls which has the side effect that DistributedFPSet's reporting
+        // loop does not terminate and keeps going forever.
+        DistributedFPSet.shutdown();
+        synchronized (this) {
+            this.notify();
+        }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see tlc2.tool.distributed.fp.FPSetRMI#checkFPs()
      */
     public abstract long checkFPs() throws IOException;
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see tlc2.tool.distributed.fp.FPSetRMI#beginChkpt()
      */
     public abstract void beginChkpt() throws IOException;
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see tlc2.tool.distributed.fp.FPSetRMI#commitChkpt()
      */
     public abstract void commitChkpt() throws IOException;
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see tlc2.tool.distributed.fp.FPSetRMI#recover()
      */
     public abstract void recover(TLCTrace trace) throws IOException;
@@ -119,102 +136,108 @@ public abstract class FPSet implements FPSetRMI
     public abstract void recoverFP(long fp) throws IOException;
 
     /* The set of checkpoint methods for remote checkpointing. */
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see tlc2.tool.distributed.fp.FPSetRMI#beginChkpt(java.lang.String)
      */
     public abstract void beginChkpt(String filename) throws IOException;
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see tlc2.tool.distributed.fp.FPSetRMI#commitChkpt(java.lang.String)
      */
     public abstract void commitChkpt(String filename) throws IOException;
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see tlc2.tool.distributed.fp.FPSetRMI#recover(java.lang.String)
      */
     public abstract void recover(String filename) throws IOException;
-    
-	/**
-	 * @return true iff no invaritant is violated.
-	 * @throws IOException
-	 */
-	public boolean checkInvariant() throws IOException {
-		return true;
-	}
-	
-	/**
-	 * @param expectFPs
-	 *            The expected amount of fingerprints stored in this
-	 *            {@link FPSet}
-	 * @return true iff no invaritant is violated and the FPSet contains the
-	 *         expected amount of fingerprints.
-	 * @throws IOException
-	 */
-	public boolean checkInvariant(long expectFPs) throws IOException {
-		return true;
-	}
 
-    /* (non-Javadoc)
+    /**
+     * @return true iff no invaritant is violated.
+     * @throws IOException
+     */
+    public boolean checkInvariant() throws IOException {
+        return true;
+    }
+
+    /**
+     * @param expectFPs
+     *                  The expected amount of fingerprints stored in this
+     *                  {@link FPSet}
+     * @return true iff no invaritant is violated and the FPSet contains the
+     *         expected amount of fingerprints.
+     * @throws IOException
+     */
+    public boolean checkInvariant(long expectFPs) throws IOException {
+        return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see tlc2.tool.distributed.fp.FPSetRMI#putBlock(tlc2.util.LongVec)
      */
-    public BitVector putBlock(LongVec fpv) throws IOException
-    {
+    public BitVector putBlock(LongVec fpv) throws IOException {
         int size = fpv.size();
-		BitVector bv = new BitVector(size);
-        for (int i = 0; i < fpv.size(); i++)
-        {
-			// TODO Figure out why corresponding value in BitVector is inverted
-			// compared to put(long)
-            if (!this.put(fpv.elementAt(i)))
-            {
+        BitVector bv = new BitVector(size);
+        for (int i = 0; i < fpv.size(); i++) {
+            // TODO Figure out why corresponding value in BitVector is inverted
+            // compared to put(long)
+            if (!this.put(fpv.elementAt(i))) {
                 bv.set(i);
             }
         }
         return bv;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see tlc2.tool.distributed.fp.FPSetRMI#containsBlock(tlc2.util.LongVec)
      */
-    public BitVector containsBlock(LongVec fpv) throws IOException
-    {
-    	statesSeen += fpv.size();
+    public BitVector containsBlock(LongVec fpv) throws IOException {
+        statesSeen += fpv.size();
         BitVector bv = new BitVector(fpv.size());
-        for (int i = 0; i < fpv.size(); i++)
-        {
-			// TODO Figure out why corresponding value in BitVector is inverted
-			// compared to contains(long)
-            if (!this.contains(fpv.elementAt(i)))
-            {
+        for (int i = 0; i < fpv.size(); i++) {
+            // TODO Figure out why corresponding value in BitVector is inverted
+            // compared to contains(long)
+            if (!this.contains(fpv.elementAt(i))) {
                 bv.set(i);
             }
         }
         return bv;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see tlc2.tool.distributed.fp.FPSetRMI#getStatesSeen()
      */
     public long getStatesSeen() throws RemoteException {
-    	return statesSeen;
+        return statesSeen;
     }
-    
+
     public FPSetConfiguration getConfiguration() {
-    	return fpSetConfig;
+        return fpSetConfig;
     }
 
-	/**
-	 * @param fpBits
-	 * @return
-	 */
-	public static boolean isValid(int fpBits) {
-		return fpBits >= 0 && fpBits <= MultiFPSet.MAX_FPBITS;
-	}
+    /**
+     * @param fpBits
+     * @return
+     */
+    public static boolean isValid(int fpBits) {
+        return fpBits >= 0 && fpBits <= MultiFPSet.MAX_FPBITS;
+    }
 
-	/**
-	 * No-op: RMI export/unexport not needed for non-distributed TLC.
-	 */
-	public void unexportObject(boolean force) {
-		// no-op: RMI not used
-	}
+    /**
+     * No-op: RMI export/unexport not needed for non-distributed TLC.
+     */
+    public void unexportObject(boolean force) {
+        // no-op: RMI not used
+    }
 }

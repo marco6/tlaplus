@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class MPFactorial2Test extends PCalModelCheckerTestCase {
 
 	public MPFactorial2Test() {
-		super("MPFactorial2", "pcal", new String[] {"-wf", "-termination"});
+		super("MPFactorial2", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test
@@ -47,10 +47,10 @@ public class MPFactorial2Test extends PCalModelCheckerTestCase {
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "4754", "1728", "0"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "34"));
 
-		assertUncovered("line 61, col 27 to line 61, col 74 of module MPFactorial2: 0\n" + 
-				"line 62, col 27 to line 62, col 71 of module MPFactorial2: 0\n" + 
-				"line 63, col 27 to line 63, col 80 of module MPFactorial2: 0\n" + 
-				"line 64, col 27 to line 64, col 77 of module MPFactorial2: 0\n" + 
+		assertUncovered("line 61, col 27 to line 61, col 74 of module MPFactorial2: 0\n" +
+				"line 62, col 27 to line 62, col 71 of module MPFactorial2: 0\n" +
+				"line 63, col 27 to line 63, col 80 of module MPFactorial2: 0\n" +
+				"line 64, col 27 to line 64, col 77 of module MPFactorial2: 0\n" +
 				"line 65, col 27 to line 65, col 58 of module MPFactorial2: 0");
 	}
 }

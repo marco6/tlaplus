@@ -45,6 +45,6 @@ public class InitEvalOrderBasicTest extends ModelCheckerTestCase {
 		assertFalse(recorder.recorded(EC.GENERAL));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "2", "1", "0"));
 
-	assertZeroUncovered();
+		assertZeroUncovered();
 	}
 }

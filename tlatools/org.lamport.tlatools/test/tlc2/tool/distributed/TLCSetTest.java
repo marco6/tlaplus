@@ -41,7 +41,7 @@ public class TLCSetTest extends TLCServerTestCase {
 	public TLCSetTest() {
 		super("TLCSet");
 	}
-	
+
 	@Test
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_COMPUTING_INIT));

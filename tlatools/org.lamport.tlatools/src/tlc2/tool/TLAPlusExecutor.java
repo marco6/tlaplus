@@ -127,7 +127,7 @@ public class TLAPlusExecutor {
 	public ReentrantLock getLock() {
 		return lock;
 	}
-	
+
 	public Value getConstant(final String string) {
 		return (Value) this.tool.getSpecProcessor().getDefns().get(string);
 	}

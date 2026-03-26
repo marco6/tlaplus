@@ -31,13 +31,13 @@ import java.util.concurrent.atomic.AtomicLongArray;
 import java.util.concurrent.atomic.LongAdder;
 
 public class FixedSizedConcurrentBucketStatistics extends AbstractBucketStatistics implements IBucketStatistics {
-	
+
 	/**
 	 * The amount of samples seen by this statistics. It's identical
 	 * to the sum of the value of all buckets.
 	 */
 	private final LongAdder observations = new LongAdder();
-	
+
 	/**
 	 * Instead of using an ever-growing list of samples, identical
 	 * samples are counted in a bucket. E.g. the sample 5 is stored
@@ -49,39 +49,45 @@ public class FixedSizedConcurrentBucketStatistics extends AbstractBucketStatisti
 
 	/**
 	 * @param aTitle
-	 *            A title for console pretty printing
+	 *                  A title for console pretty printing
 	 * @param aMaxmimum
-	 *            see {@link BucketStatistics#maximum}
+	 *                  see {@link BucketStatistics#maximum}
 	 */
 	public FixedSizedConcurrentBucketStatistics(final String aTitle, final int aMaxmimum) {
 		super(aTitle);
 		this.buckets = new AtomicLongArray(aMaxmimum);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.IBucketStatistics#addSample(int)
 	 */
 	public void addSample(final int amount) {
 		if (amount < 0) {
 			throw new IllegalArgumentException("Negative amount invalid");
 		}
-		
+
 		// If the amount exceeds the fixed maximum, increment the overflow
-		// bucket. The overflow bucket is the very last bucket. 
+		// bucket. The overflow bucket is the very last bucket.
 		final int idx = Math.min(this.buckets.length() - 1, amount);
-		
+
 		this.buckets.incrementAndGet(idx);
 		this.observations.increment();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.AbstractBucketStatistics#getObservations()
 	 */
 	public long getObservations() {
 		return observations.sum();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.IBucketStatistics#getSamples()
 	 */
 	public NavigableMap<Integer, Long> getSamples() {

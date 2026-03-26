@@ -24,7 +24,8 @@ public abstract class AbstractDeclarationListConstruct implements TlaConstruct {
 
     /**
      * Get the children array to iterate over.
-     * Default checks one() first, then zero(). Override to change (e.g., EXTENDS uses only zero()).
+     * Default checks one() first, then zero(). Override to change (e.g., EXTENDS
+     * uses only zero()).
      */
     protected TreeNode[] getChildren(TreeNode node) {
         if (node.one() != null && node.one().length > 0) {
@@ -37,7 +38,8 @@ public abstract class AbstractDeclarationListConstruct implements TlaConstruct {
     }
 
     /**
-     * Get the display name for an item node. Override for special handling (e.g., IDENT_DECL).
+     * Get the display name for an item node. Override for special handling (e.g.,
+     * IDENT_DECL).
      */
     protected String getItemName(TreeNode node) {
         return TlaDocBuilder.getBestImage(node);
@@ -49,7 +51,8 @@ public abstract class AbstractDeclarationListConstruct implements TlaConstruct {
     protected List<TreeNode> extractItemNodes(TreeNode node) {
         List<TreeNode> result = new ArrayList<>();
         TreeNode[] children = getChildren(node);
-        if (children == null) return result;
+        if (children == null)
+            return result;
 
         Set<String> keywords = getKeywords();
         for (TreeNode child : children) {
@@ -71,12 +74,14 @@ public abstract class AbstractDeclarationListConstruct implements TlaConstruct {
     protected Map<Integer, String[]> extractCommaPreComments(TreeNode node) {
         Map<Integer, String[]> result = new HashMap<>();
         TreeNode[] children = getChildren(node);
-        if (children == null) return result;
+        if (children == null)
+            return result;
 
         Set<String> keywords = getKeywords();
         int itemIndex = -1;
         for (TreeNode child : children) {
-            if (!isValidNode(child) || child.getImage() == null) continue;
+            if (!isValidNode(child) || child.getImage() == null)
+                continue;
             String image = child.getHumanReadableImage();
             if (",".equals(image)) {
                 String[] comments = child.getPreComments();

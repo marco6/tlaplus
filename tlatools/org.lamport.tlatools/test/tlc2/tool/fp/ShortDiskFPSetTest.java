@@ -22,11 +22,13 @@ public class ShortDiskFPSetTest extends AbstractFPSetTest {
 	 * flush.
 	 */
 	private static int CNT = 0;
-	
+
 	private static final boolean runKnownFailures = Boolean
 			.getBoolean(ShortDiskFPSetTest.class.getName() + ".runKnown");
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.AbstractFPSetTest#getFPSet(FPSetConfiguration)
 	 */
 	protected FPSet getFPSet(FPSetConfiguration fpSetConfig) throws IOException {
@@ -34,46 +36,50 @@ public class ShortDiskFPSetTest extends AbstractFPSetTest {
 		fpSet.init(1, tmpdir, filename + CNT++);
 		return fpSet;
 	}
-	
+
 	/**
 	 * Tests if {@link DiskFPSet#diskLookup(long)} returns true for zero fp
-	 * @throws IOException 
+	 * 
+	 * @throws IOException
 	 */
 	@Test
 	public void testWithoutZeroFP() throws IOException {
 		final DiskFPSet fpSet = (DiskFPSet) getFPSet(new FPSetConfiguration());
 		assertFalse("Succeeded to look up 0 fp", fpSet.contains(0l));
 	}
-	
+
 	/**
 	 * Tests if {@link DiskFPSet#diskLookup(long)} returns true for min fp
-	 * @throws IOException 
+	 * 
+	 * @throws IOException
 	 */
 	@Test
 	public void testWithoutMinFP() throws IOException {
 		final DiskFPSet fpSet = (DiskFPSet) getFPSet(new FPSetConfiguration());
 		assertFalse("Succeeded to look up 0 fp", fpSet.contains(Long.MIN_VALUE));
 	}
-	
+
 	/**
 	 * Tests if {@link DiskFPSet#diskLookup(long)} returns true for max fp
-	 * @throws IOException 
+	 * 
+	 * @throws IOException
 	 */
 	@Test
 	public void testWithoutMaxFP() throws IOException {
 		final DiskFPSet fpSet = (DiskFPSet) getFPSet(new FPSetConfiguration());
 		assertFalse("Succeeded to look up 0 fp", fpSet.contains(Long.MAX_VALUE));
 	}
-	
+
 	/**
 	 * Tests if {@link DiskFPSet#diskLookup(long)} accepts a 0 fp
-	 * @throws IOException 
+	 * 
+	 * @throws IOException
 	 */
 	@Test
 	public void testZeroFP() throws IOException {
 		// skip known failures which aren't likely to be fixed anytime soon
 		// @see Bug #213 in general/bugzilla/index.html
-		if(!runKnownFailures) {
+		if (!runKnownFailures) {
 			System.out
 					.println("Skipping test failing due to Bug #213 in general/bugzilla/index.html");
 			return;
@@ -83,30 +89,32 @@ public class ShortDiskFPSetTest extends AbstractFPSetTest {
 		assertFalse(fpSet.put(0l));
 		assertTrue("Failed to look up 0 fp", fpSet.contains(0l));
 	}
-	
+
 	/**
 	 * Tests if {@link DiskFPSet#diskLookup(long)} accepts a min fp
-	 * @throws IOException 
+	 * 
+	 * @throws IOException
 	 */
 	@Test
 	public void testMinFP() throws IOException {
 		// skip known failures which aren't likely to be fixed anytime soon
 		// @see Bug #213 in general/bugzilla/index.html
-		if(!runKnownFailures) {
+		if (!runKnownFailures) {
 			System.out
 					.println("Skipping test failing due to Bug #213 in general/bugzilla/index.html");
 			return;
 		}
-		
+
 		final DiskFPSet fpSet = (DiskFPSet) getFPSet(new FPSetConfiguration());
 		// zeroing the msb in DiskFPSet turns Long.Min_Value into 0
 		assertFalse(fpSet.put(Long.MIN_VALUE));
 		assertTrue("Failed to look up min fp", fpSet.contains(Long.MIN_VALUE));
 	}
-	
+
 	/**
-	 * Tests if {@link DiskFPSet#diskLookup(long)} accepts a min - 1  fp
-	 * @throws IOException 
+	 * Tests if {@link DiskFPSet#diskLookup(long)} accepts a min - 1 fp
+	 * 
+	 * @throws IOException
 	 */
 	@Test
 	public void testMinMin1FP() throws IOException {
@@ -116,10 +124,10 @@ public class ShortDiskFPSetTest extends AbstractFPSetTest {
 		assertTrue("Failed to look up min fp", fpSet.contains(Long.MIN_VALUE - 1l));
 	}
 
-
 	/**
 	 * Tests if {@link DiskFPSet#diskLookup(long)} accepts a -1 fp
-	 * @throws IOException 
+	 * 
+	 * @throws IOException
 	 */
 	@Test
 	public void testNeg1FP() throws IOException {
@@ -127,10 +135,11 @@ public class ShortDiskFPSetTest extends AbstractFPSetTest {
 		assertFalse(fpSet.put(-1l));
 		assertTrue("Failed to look up min fp", fpSet.contains(-1l));
 	}
-	
+
 	/**
 	 * Tests if {@link DiskFPSet#diskLookup(long)} accepts a +1 fp
-	 * @throws IOException 
+	 * 
+	 * @throws IOException
 	 */
 	@Test
 	public void testPos1FP() throws IOException {
@@ -141,7 +150,8 @@ public class ShortDiskFPSetTest extends AbstractFPSetTest {
 
 	/**
 	 * Tests if {@link DiskFPSet#diskLookup(long)} accepts a max fp
-	 * @throws IOException 
+	 * 
+	 * @throws IOException
 	 */
 	@Test
 	public void testMaxFP() throws IOException {
@@ -248,18 +258,18 @@ public class ShortDiskFPSetTest extends AbstractFPSetTest {
 		if (!isInvalidInput(loVal, hiVal, fp, loEntry, hiEntry)) {
 			try {
 				long midEntry = fpSet.calculateMidEntry(loVal, hiVal, fp, loEntry, hiEntry);
-				
+
 				assertTrue(getMessage("Negative mid entry", loVal, hiVal, fp, loEntry, hiEntry, midEntry),
 						midEntry >= 0);
 				assertTrue(getMessage("Not within lower bound", loVal, hiVal, fp, loEntry, hiEntry, midEntry),
 						midEntry >= loEntry);
 				assertTrue(getMessage("Not within upper bound", loVal, hiVal, fp, loEntry, hiEntry, midEntry),
 						midEntry <= hiEntry);
-				
-				// DiskFPSet#diskLookup uses long addressing and thus has to multiply by 8 
+
+				// DiskFPSet#diskLookup uses long addressing and thus has to multiply by 8
 				assertTrue(getMessage("midEntry turned negative", loVal, hiVal, fp, loEntry, hiEntry, midEntry),
 						(midEntry * 8) >= 0);
-				
+
 			} catch (RuntimeException e) {
 				fail("failed to calculate for valid input (loVal, hiVal, fp, loEntry, hiEntry): " + loVal + ", "
 						+ hiVal + ", " + fp + ", " + loEntry + ", " + hiEntry);
@@ -275,14 +285,14 @@ public class ShortDiskFPSetTest extends AbstractFPSetTest {
 	private boolean isInvalidInput(long loVal, long hiVal, long fp, long loEntry, long hiEntry) {
 		return loVal > hiVal || loVal > fp || hiVal < fp || loEntry >= hiEntry;
 	}
-	
+
 	/**
 	 * Tests if {@link DiskFPSet#diskLookup(long)} returns true for a fp that is
 	 * first fp in first page
 	 * 
 	 * page size hard-coded in {@link DiskFPSet} to be 1024
 	 * 
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@Test
 	@SuppressWarnings("deprecation")
@@ -292,63 +302,63 @@ public class ShortDiskFPSetTest extends AbstractFPSetTest {
 		fpSetConfig.setRatio(1.0d);
 		fpSetConfig.setMemory(freeMemory);
 		final DiskFPSet fpSet = (DiskFPSet) getFPSet(fpSetConfig);
-		
+
 		// add enough fps to cause 3 disk writes
 		final long fp = 1l;
 		for (long i = 0; i < 1024 * 3; i++) {
 			assertFalse(fpSet.put(fp + i));
 			assertTrue(fpSet.contains(fp + i));
 		}
-		
+
 		assertTrue("Failed to lookup fp on first page", fpSet.diskLookup(fp));
 	}
-	
+
 	/**
 	 * Tests how {@link DiskFPSet#memLookup(long)} handles zeros
 	 * 
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@Test
 	public void testMemLookupWithZeros() throws IOException {
 		// skip known failures which aren't likely to be fixed anytime soon
 		// @see Bug #213 in general/bugzilla/index.html
-		if(!runKnownFailures) {
+		if (!runKnownFailures) {
 			System.out
 					.println("Skipping test failing due to Bug #213 in general/bugzilla/index.html");
 			return;
 		}
-		
+
 		final DiskFPSet fpSet = (DiskFPSet) getFPSet(new FPSetConfiguration(.75d));
 		assertFalse(fpSet.memInsert(0l));
 		assertFalse(fpSet.diskLookup(0l));
 		assertTrue(fpSet.memLookup(0l));
 	}
-	
+
 	/**
 	 * Tests how {@link DiskFPSet#memLookup(long)} handles Long.Min_VALUE
 	 * 
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@Test
 	public void testMemLookupWithMin() throws IOException {
 		// skip known failures which aren't likely to be fixed anytime soon
 		// @see Bug #213 in general/bugzilla/index.html
-		if(!runKnownFailures) {
+		if (!runKnownFailures) {
 			System.out
 					.println("Skipping test failing due to Bug #213 in general/bugzilla/index.html");
 			return;
 		}
-		
+
 		final DiskFPSet fpSet = (DiskFPSet) getFPSet(new FPSetConfiguration(.75d));
 		assertFalse(fpSet.memInsert(Long.MIN_VALUE & 0x7FFFFFFFFFFFFFFFL));
 		assertFalse(fpSet.diskLookup(Long.MIN_VALUE & 0x7FFFFFFFFFFFFFFFL));
 		assertTrue(fpSet.memLookup(Long.MIN_VALUE & 0x7FFFFFFFFFFFFFFFL));
 	}
-	
+
 	/**
 	 * Tests how {@link DiskFPSet#memLookup(long)} handles MAx_Value
 	 * 
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@Test
 	public void testMemLookupWithMax() throws IOException {
@@ -361,7 +371,7 @@ public class ShortDiskFPSetTest extends AbstractFPSetTest {
 	/**
 	 * Tests how {@link DiskFPSet#memLookup(long)} handles zeros
 	 * 
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@Test
 	public void testDiskLookupWithZeros() throws IOException {
@@ -370,13 +380,13 @@ public class ShortDiskFPSetTest extends AbstractFPSetTest {
 		final DiskFPSet fpSet = (DiskFPSet) getFPSet(new FPSetConfiguration(.75d));
 
 		// Add fp to empty fpset
-		//assertFalse(fpSet.memInsert(fp));
+		// assertFalse(fpSet.memInsert(fp));
 		assertFalse(fpSet.put(fp));
-	
+
 		// Optionally verify that neither ram nor disk
 		// contain 0L yet (before flush)
 		assertFalse(fpSet.memLookup(fp));
-		assertFalse(fpSet.diskLookup(fp)); 
+		assertFalse(fpSet.diskLookup(fp));
 		assertFalse(fpSet.contains(fp));
 
 		// explicitly flush to disk which makes 0l "magically" appear in the set
@@ -384,19 +394,19 @@ public class ShortDiskFPSetTest extends AbstractFPSetTest {
 
 		// mem still doesn't "see" the fp
 		assertFalse(fpSet.memLookup(fp));
-		
+
 		// it's just on disk
 		assertTrue(fpSet.diskLookup(fp));
 		assertTrue(fpSet.contains(fp));
-		
+
 		// undefined behavior
 		// assertTrue(fpSet.memLookup(fp));
 	}
-	
+
 	/**
 	 * Tests how {@link DiskFPSet#memLookup(long)} handles Long.Min_VALUE
 	 * 
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@Test
 	public void testDiskLookupWithMin() throws IOException {
@@ -408,11 +418,11 @@ public class ShortDiskFPSetTest extends AbstractFPSetTest {
 		// undefined behavior
 		// assertTrue(fpSet.memLookup(Long.MIN_VALUE & 0x7FFFFFFFFFFFFFFFL));
 	}
-	
+
 	/**
 	 * Tests how {@link DiskFPSet#memLookup(long)} handles MAx_Value
 	 * 
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@Test
 	public void testDiskLookupWithMax() throws IOException {
@@ -427,7 +437,7 @@ public class ShortDiskFPSetTest extends AbstractFPSetTest {
 	/**
 	 * Tests how {@link DiskFPSet#diskLookup(long)} handles max on pages
 	 * 
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@Test
 	public void testDiskLookupWithMaxOnPage() throws IOException {
@@ -437,13 +447,13 @@ public class ShortDiskFPSetTest extends AbstractFPSetTest {
 	/**
 	 * Tests how {@link DiskFPSet#diskLookup(long)} handles zeros on pages
 	 * 
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@Test
 	public void testDiskLookupWithZerosOnPage() throws IOException {
 		// skip known failures which aren't likely to be fixed anytime soon
 		// @see Bug #213 in general/bugzilla/index.html
-		if(!runKnownFailures) {
+		if (!runKnownFailures) {
 			System.out
 					.println("Skipping test failing due to Bug #213 in general/bugzilla/index.html");
 			return;
@@ -454,18 +464,18 @@ public class ShortDiskFPSetTest extends AbstractFPSetTest {
 	/**
 	 * Tests how {@link DiskFPSet#diskLookup(long)} handles Long#Min_Value on pages
 	 * 
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@Test
 	public void testDiskLookupWithLongMinValueOnPage() throws IOException {
 		// skip known failures which aren't likely to be fixed anytime soon
 		// @see Bug #213 in general/bugzilla/index.html
-		if(!runKnownFailures) {
+		if (!runKnownFailures) {
 			System.out
 					.println("Skipping test failing due to Bug #213 in general/bugzilla/index.html");
 			return;
 		}
-		
+
 		testDiskLookupOnPage(Long.MIN_VALUE);
 	}
 
@@ -476,14 +486,14 @@ public class ShortDiskFPSetTest extends AbstractFPSetTest {
 		fpSetConfig.setRatio(1.0d);
 		fpSetConfig.setMemory(freeMemory);
 		final DiskFPSet fpSet = (DiskFPSet) getFPSet(fpSetConfig);
-		
+
 		// add enough fps to cause 2 disk writes
 		assertFalse(fpSet.put(fp));
 		for (long i = 1; i < 1024 * 2; i++) {
 			assertTrue("Failed to add fingerprint", fpSet.put(fp));
 			assertTrue(fpSet.contains(fp));
 		}
-		
+
 		final long fp0 = fp & 0x7FFFFFFFFFFFFFFFL;
 		assertTrue(fpSet.memLookup(fp));
 		assertFalse(fpSet.diskLookup(fp0));
@@ -497,29 +507,30 @@ public class ShortDiskFPSetTest extends AbstractFPSetTest {
 	public void testComparePutAndPutBlock() throws IOException {
 		final FPSet putFpSet = (FPSet) getFPSetInitialized();
 		final FPSet putBlockFpSet = (FPSet) getFPSetInitialized();
-		
+
 		final long fp = 1L;
 		final LongVec fpv = new LongVec();
 		fpv.addElement(fp);
-		
+
 		// put and putBlock have flipped return values %)
 		boolean putBlockRes = !putBlockFpSet.putBlock(fpv).get(0);
 		assertEquals(putFpSet.put(fp), putBlockRes);
 	}
 
 	/**
-	 * Test that both implementations - contains(long) & containsBlock(LongVec) - yield
+	 * Test that both implementations - contains(long) & containsBlock(LongVec) -
+	 * yield
 	 * the same results.
 	 */
 	@Test
 	public void testCompareContainsAndContainsBlock() throws IOException {
 		final FPSet containsFpSet = (FPSet) getFPSetInitialized();
 		final FPSet containsBlockFpSet = (FPSet) getFPSetInitialized();
-		
+
 		final long fp = 1L;
 		final LongVec fpv = new LongVec();
 		fpv.addElement(fp);
-		
+
 		// put and putBlock have flipped return values %)
 		boolean containsBlockRes = !containsBlockFpSet.containsBlock(fpv).get(0);
 		assertEquals(containsFpSet.contains(fp), containsBlockRes);
@@ -528,32 +539,32 @@ public class ShortDiskFPSetTest extends AbstractFPSetTest {
 	@Test
 	public void testContainsBlock() throws IOException {
 		final FPSet fpSet = (FPSet) getFPSetInitialized();
-		
+
 		final long fp = 1L;
 		final LongVec fpv = new LongVec();
 		fpv.addElement(fp);
-		
-		// BitVector is true if fp not in set 
+
+		// BitVector is true if fp not in set
 		assertTrue(fpSet.containsBlock(fpv).get(0));
-		
+
 		fpSet.put(fp);
-		
-		// BitVector is false if fp is in set 
+
+		// BitVector is false if fp is in set
 		assertFalse(fpSet.containsBlock(fpv).get(0));
 	}
-	
+
 	@Test
 	public void testPutBlock() throws IOException {
 		final FPSet fpSet = (FPSet) getFPSetInitialized();
-		
+
 		final long fp = 1L;
 		final LongVec fpv = new LongVec();
 		fpv.addElement(fp);
-		
-		// BitVector is true if fp not in set 
+
+		// BitVector is true if fp not in set
 		assertTrue(fpSet.putBlock(fpv).get(0));
-		
-		// BitVector is false if fp is in set 
+
+		// BitVector is false if fp is in set
 		assertFalse(fpSet.putBlock(fpv).get(0));
 	}
 }

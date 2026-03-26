@@ -50,10 +50,13 @@ public class AddAndCheckLiveCheck extends LiveCheck {
 
 	public AddAndCheckLiveCheck(ITool tool, String metadir, IBucketStatistics stats) throws IOException {
 		super(tool.noDebug(), metadir, stats);
-		MP.printWarning(EC.UNIT_TEST, new String[]{ "!!!WARNING: TLC is running in inefficient unit testing mode!!!", ""} );
+		MP.printWarning(EC.UNIT_TEST,
+				new String[] { "!!!WARNING: TLC is running in inefficient unit testing mode!!!", "" });
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.LiveCheck#addInitState(tlc2.tool.TLCState, long)
 	 */
 	@Override
@@ -68,11 +71,15 @@ public class AddAndCheckLiveCheck extends LiveCheck {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.liveness.LiveCheck#addNextState(tlc2.tool.TLCState, long, tlc2.util.SetOfStates)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.tool.liveness.LiveCheck#addNextState(tlc2.tool.TLCState, long,
+	 * tlc2.util.SetOfStates)
 	 */
 	@Override
-	public synchronized void addNextState(ITool tool, TLCState s0, long fp0, SetOfStates nextStates) throws IOException {
+	public synchronized void addNextState(ITool tool, TLCState s0, long fp0, SetOfStates nextStates)
+			throws IOException {
 		super.addNextState(tool, s0, fp0, nextStates);
 		try {
 			check0(tool, false);

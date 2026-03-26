@@ -38,8 +38,10 @@ import org.openjdk.jmh.results.Result;
 public class FlightRecorderProfiler implements ExternalProfiler {
 
 	// Inspired by https://github.com/nicoulaj/jmh-utils
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openjdk.jmh.profile.Profiler#getDescription()
 	 */
 	@Override
@@ -47,15 +49,21 @@ public class FlightRecorderProfiler implements ExternalProfiler {
 		return FlightRecorderProfiler.class.getSimpleName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openjdk.jmh.profile.ExternalProfiler#addJVMInvokeOptions(org.openjdk.jmh.infra.BenchmarkParams)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.openjdk.jmh.profile.ExternalProfiler#addJVMInvokeOptions(org.openjdk.jmh.
+	 * infra.BenchmarkParams)
 	 */
 	@Override
 	public Collection<String> addJVMInvokeOptions(BenchmarkParams arg0) {
 		return new ArrayList<String>();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openjdk.jmh.profile.ExternalProfiler#allowPrintErr()
 	 */
 	@Override
@@ -63,7 +71,9 @@ public class FlightRecorderProfiler implements ExternalProfiler {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openjdk.jmh.profile.ExternalProfiler#allowPrintOut()
 	 */
 	@Override
@@ -71,28 +81,41 @@ public class FlightRecorderProfiler implements ExternalProfiler {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openjdk.jmh.profile.ExternalProfiler#beforeTrial(org.openjdk.jmh.infra.BenchmarkParams)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.openjdk.jmh.profile.ExternalProfiler#beforeTrial(org.openjdk.jmh.infra.
+	 * BenchmarkParams)
 	 */
 	@Override
 	public void beforeTrial(BenchmarkParams arg0) {
-		//noop
+		// noop
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openjdk.jmh.profile.ExternalProfiler#afterTrial(org.openjdk.jmh.results.BenchmarkResult, long, java.io.File, java.io.File)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.openjdk.jmh.profile.ExternalProfiler#afterTrial(org.openjdk.jmh.results.
+	 * BenchmarkResult, long, java.io.File, java.io.File)
 	 */
 	@Override
 	public Collection<? extends Result> afterTrial(BenchmarkResult arg0, long arg1, File arg2, File arg3) {
-        return new ArrayList<>();
+		return new ArrayList<>();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openjdk.jmh.profile.ExternalProfiler#addJVMOptions(org.openjdk.jmh.infra.BenchmarkParams)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.openjdk.jmh.profile.ExternalProfiler#addJVMOptions(org.openjdk.jmh.infra.
+	 * BenchmarkParams)
 	 */
 	@Override
 	public Collection<String> addJVMOptions(BenchmarkParams bp) {
 		// Create the jfr file in the current directory named after the benchmark.
-		return Arrays.asList("-XX:StartFlightRecording=settings=default,disk=true,dumponexit=true,filename=./" + bp.id() + ".jfr");
+		return Arrays.asList(
+				"-XX:StartFlightRecording=settings=default,disk=true,dumponexit=true,filename=./" + bp.id() + ".jfr");
 	}
 }

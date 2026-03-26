@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public interface ValueEnumeration {
-  /* Reset allows repeated use of this enumerator. */
-  void reset();
+	/* Reset allows repeated use of this enumerator. */
+	void reset();
 
-  /* Return the next element if there is one. Otherwise return null. */
-  Value nextElement();
-  
+	/* Return the next element if there is one. Otherwise return null. */
+	Value nextElement();
+
 	default List<Value> all() {
 		final List<Value> values = new ArrayList<Value>();
 		Value elem;
@@ -31,7 +31,7 @@ public interface ValueEnumeration {
 			action.accept(elem);
 		}
 	}
-	
+
 	default SetEnumValue asSet() {
 		final ValueVec vv = new ValueVec();
 		Value elem;

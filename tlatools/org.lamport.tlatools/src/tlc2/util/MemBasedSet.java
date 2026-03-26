@@ -36,13 +36,13 @@ public abstract class MemBasedSet {
 		this.size = 0;
 		this.elems = new int[minCapacity];
 	}
-	
+
 	protected int[] ensureCapacity(final int minCapacity) {
 		// If the internal storage reaches its capacity, double the size of
 		// the internal storage. This strategy is great for as long as size
 		// is smaller than 2^31. Once size is >= 2^31, doubling it means it
 		// becomes negative resulting in a NegativeArraySizeException. Additionally
-		// if size gets larger and larger, an OutOfMemory exception becomes 
+		// if size gets larger and larger, an OutOfMemory exception becomes
 		// more likely when MemIntStacks memory requirements get doubled.
 		// From the literature and popular implementations (e.g. Java's ArrayList),
 		// a growth factor of 1.5 seems to be practical.
@@ -57,7 +57,7 @@ public abstract class MemBasedSet {
 		// from looking at the ctor's parameters - appears to be the preferred
 		// solution of the original MemIntStack authors).
 		//
-		// Performance obviously goes south the moment the array is 
+		// Performance obviously goes south the moment the array is
 		// increased in MIN_CAPACITY steps. It's a trade off between risking
 		// an OutOfMemory exception and performance.
 		return new int[Math.max(newSize, this.size + minCapacity)];

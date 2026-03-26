@@ -64,7 +64,7 @@ class JunctionListContext {
      * ∧ requires three bytes to store. So a nested conjunction list like:
      *
      * ∧ ∧ x
-     *   ∧ y
+     * ∧ y
      *
      * requires us to count codepoints, not bytes, because if you count bytes
      * then the second conjunct will appear to be two bytes below the first
@@ -76,7 +76,7 @@ class JunctionListContext {
     /**
      * Constructs a new instance of the {@link JunctionListInfo} class.
      *
-     * @param type The junction list type.
+     * @param type   The junction list type.
      * @param column The junction list alignment column.
      */
     public JunctionListInfo(JunctionListType type, int column) {
@@ -93,7 +93,8 @@ class JunctionListContext {
   /**
    * Creates an empty {@link JunctionListContext}.
    */
-  public JunctionListContext() { }
+  public JunctionListContext() {
+  }
 
   /**
    * Determines whether the given {@link TLAplusParserConstants} value is a
@@ -104,7 +105,7 @@ class JunctionListContext {
    */
   private static boolean isJunctionListBulletToken(int kind) {
     return TLAplusParserConstants.AND == kind
-      || TLAplusParserConstants.OR == kind;
+        || TLAplusParserConstants.OR == kind;
   }
 
   /**
@@ -131,7 +132,7 @@ class JunctionListContext {
    * start of a new junction list.
    *
    * @param column The start column of the new junction list.
-   * @param kind The token kind, a {@link TLAplusParserConstants} value.
+   * @param kind   The token kind, a {@link TLAplusParserConstants} value.
    * @throws {@link IllegalArgumentException} if invalid junction list token.
    */
   public void startNewJunctionList(int column, int kind) throws IllegalArgumentException {
@@ -156,16 +157,15 @@ class JunctionListContext {
    * with valid conjunction or disjunction token kinds.
    *
    * @param column The token start column.
-   * @param kind The token kind, a {@link TLAplusParserConstants} value.
+   * @param kind   The token kind, a {@link TLAplusParserConstants} value.
    * @return True if token is another bullet in the current junction list.
    */
   public boolean isNewBullet(int column, int kind) {
     JunctionListInfo headOrNull = this.stack.peekFirst();
-    return
-      headOrNull != null
-      && isJunctionListBulletToken(kind)
-      && headOrNull.Column == column
-      && headOrNull.Type == asJunctionListType(kind);
+    return headOrNull != null
+        && isJunctionListBulletToken(kind)
+        && headOrNull.Column == column
+        && headOrNull.Type == asJunctionListType(kind);
   }
 
   /**

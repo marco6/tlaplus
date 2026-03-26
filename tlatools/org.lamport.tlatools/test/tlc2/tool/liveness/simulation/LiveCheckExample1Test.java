@@ -33,7 +33,7 @@ public class LiveCheckExample1Test extends AbstractExampleTestCase {
 	static {
 		Simulator.EXPERIMENTAL_LIVENESS_SIMULATION = true;
 	}
-	
+
 	public LiveCheckExample1Test() {
 		super("Example1", false);
 	}

@@ -41,7 +41,7 @@ public class UserModuleOverrideAnnotationTest extends ModelCheckerTestCase {
 	public UserModuleOverrideAnnotationTest() {
 		super("UserModuleOverrideAnnotation");
 	}
-	
+
 	@Test
 	public void testSpec() {
 		recorder.recorded(EC.TLC_MODULE_VALUE_JAVA_METHOD_OVERRIDE_MODULE_MISMATCH);

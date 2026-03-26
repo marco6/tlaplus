@@ -42,9 +42,9 @@ public final class Context implements Iterator<Context> {
 	private final Context next;
 
 	public final static Context Empty = new Context(null, null, null);
-	
+
 	private final static Context BaseBranch = new Context(null, null, Empty);
-	
+
 	private Context(SymbolNode name, Object value, final Context next) {
 		this.name = name;
 		this.value = value;
@@ -88,7 +88,7 @@ public final class Context implements Iterator<Context> {
 		}
 		return null; // On Empty Context (end of chain), return null value
 	}
-	
+
 	public final Object lookup(final Function<SymbolNode, Boolean> f) {
 		Context cur = this;
 		while (cur != Empty) {
@@ -113,19 +113,22 @@ public final class Context implements Iterator<Context> {
 
 	/**
 	 * @param var
-	 *            The SymbolNode to lookup
+	 *               The SymbolNode to lookup
 	 * @param cutoff
-	 *            Iff true, lookup stops at a branching Context. Follows
-	 *            complete chain if false.
+	 *               Iff true, lookup stops at a branching Context. Follows
+	 *               complete chain if false.
 	 * @return value associated with the {@link SymbolNode} var or null if var
 	 *         could not be found in the search along the Context "chain"
 	 */
 	public final Object lookup(final SymbolNode var, final boolean cutoff) {
 		Context cur = this;
-		// Follow the linked list of Contexts (chain) starting at this context until a Context has been
-		// reached whose name (SymbolNode) is identical to the searched for var. Stop if the Context's
+		// Follow the linked list of Contexts (chain) starting at this context until a
+		// Context has been
+		// reached whose name (SymbolNode) is identical to the searched for var. Stop if
+		// the Context's
 		// name is null, which is the case for a branching Context (see branch(..)
-		// above) or the Empty context (the base of all Context "chains") has been reached.
+		// above) or the Empty context (the base of all Context "chains") has been
+		// reached.
 		while (cur != Empty) {
 			// Check identity of value if not empty or branching
 			if (cur.name != null) {
@@ -162,7 +165,7 @@ public final class Context implements Iterator<Context> {
 
 		return res;
 	}
-	
+
 	public final StringBuffer toString(StringBuffer sb) {
 		if (this.name == null) {
 			if (this == Empty) {
@@ -208,7 +211,7 @@ public final class Context implements Iterator<Context> {
 	public final Object getValue() {
 		return value;
 	}
-	
+
 	public final boolean isEmpty() {
 		return this == Empty;
 	}
@@ -238,42 +241,42 @@ public final class Context implements Iterator<Context> {
 	}
 }
 /*
------------------------------ MODULE Scoping -----------------------------
-EXTENDS Naturals
-CONSTANT Limit
-VARIABLE var
-
-A(a) == TRUE
-B(b) == A(b)
-C(c) == B(c)
-D(d) == C(d)
-E(e) == D(e)
-F(f) == E(f)
-G(g) == F(g)
-H(h) == G(h)
-I(i) == H(i)
-J(j) == I(j)
-K(k) == J(k)
-L(l) == K(l)
-M(m) == L(m)
-N(n) == M(n) 
-O(o) == N(o)
-P(p) == O(p)
-Q(q) == P(q)
-R(r) == Q(r) 
-S(s) == R(s)
-T(t) == S(t)
-U(u) == T(u)
-V(v) == U(v)
-W(w) == V(w)
-X(x) == W(x)
-Y(y) == X(y)
-Z(z) == U(z)
-
-Next == /\ var' = var + 1
-        /\ var < 1
-        /\ Z(1)
-
-Spec == var=0 /\ [][Next]_<<var>>
-=============================================================================
-*/
+ * ----------------------------- MODULE Scoping -----------------------------
+ * EXTENDS Naturals
+ * CONSTANT Limit
+ * VARIABLE var
+ * 
+ * A(a) == TRUE
+ * B(b) == A(b)
+ * C(c) == B(c)
+ * D(d) == C(d)
+ * E(e) == D(e)
+ * F(f) == E(f)
+ * G(g) == F(g)
+ * H(h) == G(h)
+ * I(i) == H(i)
+ * J(j) == I(j)
+ * K(k) == J(k)
+ * L(l) == K(l)
+ * M(m) == L(m)
+ * N(n) == M(n)
+ * O(o) == N(o)
+ * P(p) == O(p)
+ * Q(q) == P(q)
+ * R(r) == Q(r)
+ * S(s) == R(s)
+ * T(t) == S(t)
+ * U(u) == T(u)
+ * V(v) == U(v)
+ * W(w) == V(w)
+ * X(x) == W(x)
+ * Y(y) == X(y)
+ * Z(z) == U(z)
+ * 
+ * Next == /\ var' = var + 1
+ * /\ var < 1
+ * /\ Z(1)
+ * 
+ * Spec == var=0 /\ [][Next]_<<var>>
+ * =============================================================================
+ */

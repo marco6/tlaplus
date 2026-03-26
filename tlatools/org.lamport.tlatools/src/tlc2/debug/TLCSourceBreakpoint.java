@@ -51,12 +51,12 @@ public class TLCSourceBreakpoint extends SourceBreakpoint {
 	private final Location location;
 	private OpDefNode condition;
 	private Exception conditionException;
-	
+
 	public TLCSourceBreakpoint(final SpecProcessor processor, final String s) {
 		this.location = Location.nullLoc;
 		this.setLine(this.location.beginLine());
 		this.hits = 0;
-		
+
 		setCondition(s);
 		final ModuleNode semanticRoot = processor.getRootModule();
 		final OpDefNode odn = semanticRoot.getOpDef(s);
@@ -71,19 +71,20 @@ public class TLCSourceBreakpoint extends SourceBreakpoint {
 			}
 		}
 	}
-	
+
 	public TLCSourceBreakpoint(final SpecProcessor processor, final String module, final SourceBreakpoint s,
 			final ModuleNode semanticRoot) {
 		setColumn(s.getColumn());
 		setLine(s.getLine());
 		// Create a location that's not a point.
 		final int column = getColumn() != null ? getColumn() : 1;
-		//TODO: If the location spans lines, getLine() + 1 should be the endline (second line parameter of Location).
+		// TODO: If the location spans lines, getLine() + 1 should be the endline
+		// (second line parameter of Location).
 		location = new Location(module, getLine() + 1, column, getLine(), column + 1);
-		
+
 		setCondition(s.getCondition());
 		setLogMessage(s.getLogMessage());
-		
+
 		setHitCondition(s.getHitCondition());
 		// Try to convert the input string that can be anything into a integer.
 		int h = 0;
@@ -116,11 +117,11 @@ public class TLCSourceBreakpoint extends SourceBreakpoint {
 	public int getHits() {
 		return hits;
 	}
-	
+
 	public boolean isInline() {
 		return getColumnAsInt() == -1;
 	}
-	
+
 	public int getColumnAsInt() {
 		if (this.getColumn() != null) {
 			return this.getColumn();
@@ -131,41 +132,41 @@ public class TLCSourceBreakpoint extends SourceBreakpoint {
 	public Location getLocation() {
 		return location;
 	}
-	
+
 	public Exception getConditionException() {
 		return conditionException;
 	}
-	
+
 	protected boolean matchesExpression(final Tool tool, final TLCState s, final TLCState t, final Context c,
 			boolean fire) {
 		if (condition != null) {
 			// Wrap in tool.eval(() -> to evaluate the debug expression *outside* of the
 			// debugger. In that case, we would have to handle the exceptions below.
-//			fire = tool.eval(() -> {
-				try {					
-					// Create the debug expression's context from the stack frame's context.
-					// Best effort as lookup is purely syntactic on UniqueString!
-					Context ctxt = Context.Empty;
-					for (FormalParamNode p : condition.getParams()) {
-						ctxt = ctxt.cons(p, c.lookup(sn -> sn.getName().equals(p.getName())));
-					}
-					
-					final IValue eval = tool.noDebug().eval(condition.getBody(), ctxt, s, t, EvalControl.Clear);
-					if (eval instanceof BoolValue) {
-//						return 
-								fire &= ((BoolValue) eval).val;
-					}
-				} catch (TLCRuntimeException | EvalException | FingerprintException e) {
-					// TODO DAP spec not clear on how to handle an evaluation failure of a debug
-					// expression. Given our limitation that debug expressions have to be defined in
-					// the spec, the same error will be raised like for any other broken expression
-					// in the spec. In other words, a user may use the debugger to debug a debug
-					// expression.
-					
-					// Swallow the exception to make TLC continue instead of crash.
+			// fire = tool.eval(() -> {
+			try {
+				// Create the debug expression's context from the stack frame's context.
+				// Best effort as lookup is purely syntactic on UniqueString!
+				Context ctxt = Context.Empty;
+				for (FormalParamNode p : condition.getParams()) {
+					ctxt = ctxt.cons(p, c.lookup(sn -> sn.getName().equals(p.getName())));
 				}
-//				return false;
-//			});
+
+				final IValue eval = tool.noDebug().eval(condition.getBody(), ctxt, s, t, EvalControl.Clear);
+				if (eval instanceof BoolValue) {
+					// return
+					fire &= ((BoolValue) eval).val;
+				}
+			} catch (TLCRuntimeException | EvalException | FingerprintException e) {
+				// TODO DAP spec not clear on how to handle an evaluation failure of a debug
+				// expression. Given our limitation that debug expressions have to be defined in
+				// the spec, the same error will be raised like for any other broken expression
+				// in the spec. In other words, a user may use the debugger to debug a debug
+				// expression.
+
+				// Swallow the exception to make TLC continue instead of crash.
+			}
+			// return false;
+			// });
 		}
 		return fire;
 	}
@@ -175,7 +176,7 @@ public class TLCSourceBreakpoint extends SourceBreakpoint {
 			return true;
 		}
 		return getLine() == loc.beginLine()
-				//TODO why *smaller* than BEGINcolumn?
+				// TODO why *smaller* than BEGINcolumn?
 				&& getColumnAsInt() <= loc.beginColumn();
 	}
 }

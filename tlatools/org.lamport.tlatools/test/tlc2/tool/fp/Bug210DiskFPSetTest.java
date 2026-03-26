@@ -10,7 +10,9 @@ import org.junit.Test;
 
 public class Bug210DiskFPSetTest extends AbstractFPSetTest {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.AbstractFPSetTest#getFPSet(int)
 	 */
 	@Override
@@ -38,7 +40,7 @@ public class Bug210DiskFPSetTest extends AbstractFPSetTest {
 
 		final DummyDiskFPSet fpSet = (DummyDiskFPSet) getFPSet(new FPSetConfiguration());
 		fpSet.setIndex(anIndex);
-		
+
 		// do a diskLookup for a non-existent fp that accesses the index values
 		// [size - 2, b = size - 1]. These two are "close" to an int overflow if
 		// multiplied by 2^10 (DiskFPSet#NumEntriesPerPage).

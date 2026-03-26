@@ -35,7 +35,7 @@ public class FixedSizedBucketStatistics extends AbstractBucketStatistics impleme
 	 * to the sum of the value of all buckets.
 	 */
 	private long observations;
-	
+
 	/**
 	 * Instead of using an ever-growing list of samples, identical
 	 * samples are counted in a bucket. E.g. the sample 5 is stored
@@ -44,42 +44,48 @@ public class FixedSizedBucketStatistics extends AbstractBucketStatistics impleme
 	 * The map is thread safe, so are the values.
 	 */
 	private final long[] buckets;
-	
+
 	/**
 	 * @param aTitle
-	 *            A title for console pretty printing
+	 *                  A title for console pretty printing
 	 * @param aMaxmimum
-	 *            see {@link BucketStatistics#maximum}
+	 *                  see {@link BucketStatistics#maximum}
 	 */
 	public FixedSizedBucketStatistics(final String aTitle, final int aMaxmimum) {
 		super(aTitle);
 		this.buckets = new long[aMaxmimum];
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.IBucketStatistics#addSample(int)
 	 */
 	public void addSample(int amount) {
 		if (amount < 0) {
 			throw new IllegalArgumentException("Negative amount invalid");
 		}
-		
+
 		// If the amount exceeds the fixed maximum, increment the overflow
-		// bucket. The overflow bucket is the very last bucket. 
+		// bucket. The overflow bucket is the very last bucket.
 		final int idx = Math.min(this.buckets.length - 1, amount);
-		
+
 		this.buckets[idx]++;
 		this.observations++;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.AbstractBucketStatistics#getObservations()
 	 */
 	public long getObservations() {
 		return observations;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.util.statistics.IBucketStatistics#getSamples()
 	 */
 	public NavigableMap<Integer, Long> getSamples() {

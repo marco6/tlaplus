@@ -15,10 +15,12 @@ import tla2sany.st.TreeNode;
  * Extended by ExprNode and OpArgNode
  *
  * Further extended by AtNode, DecimalNode, LetInNode, NumeralNode,
- *                     OpApplNode, StringNode, SubstInNode
+ * OpApplNode, StringNode, SubstInNode
  */
 public abstract class ExprOrOpArgNode extends LevelNode {
 
-  ExprOrOpArgNode(int kind, TreeNode stn) { super(kind, stn); }
-  
+  ExprOrOpArgNode(int kind, TreeNode stn) {
+    super(kind, stn);
+  }
+
 }

@@ -99,15 +99,18 @@ public final class ConstructContext {
 
     /**
      * Normalize comment whitespace.
-     * For new comments (starting with (* or \*): strip leading newlines only, preserve
+     * For new comments (starting with (* or \*): strip leading newlines only,
+     * preserve
      * indentation spaces. SANY stores the column indentation in preComment strings
-     * (e.g., '\n    (*'), and stripping it changes the AST on re-parse.
+     * (e.g., '\n (*'), and stripping it changes the AST on re-parse.
      * For continuations: only strip trailing newlines, preserve leading whitespace.
-     * Always preserve trailing spaces before the newline (SANY's AST preserves them).
+     * Always preserve trailing spaces before the newline (SANY's AST preserves
+     * them).
      */
     public static String normalizeCommentWhitespace(String s, boolean isContinuation) {
         int start = 0;
-        // Strip leading newlines only (not spaces/tabs) so column indentation is preserved
+        // Strip leading newlines only (not spaces/tabs) so column indentation is
+        // preserved
         if (!isContinuation) {
             while (start < s.length() && (s.charAt(start) == '\n' || s.charAt(start) == '\r')) {
                 start++;
@@ -122,8 +125,10 @@ public final class ConstructContext {
     }
 
     /**
-     * Normalize a comment by stripping all leading whitespace and trailing newlines.
-     * Use this variant when re-indenting comments (the caller supplies its own indentation).
+     * Normalize a comment by stripping all leading whitespace and trailing
+     * newlines.
+     * Use this variant when re-indenting comments (the caller supplies its own
+     * indentation).
      */
     public static String stripAndNormalizeComment(String s) {
         int start = 0;
@@ -186,7 +191,8 @@ public final class ConstructContext {
         }
 
         /**
-         * Extract string values from a tree node, checking both zero() and one() arrays.
+         * Extract string values from a tree node, checking both zero() and one()
+         * arrays.
          */
         List<String> extractStrings(TreeNode node) {
             List<String> result = new ArrayList<>();

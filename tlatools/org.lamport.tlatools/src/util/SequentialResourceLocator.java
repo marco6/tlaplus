@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Tries several other locators in sequence.  The first found result is returned.
+ * Tries several other locators in sequence. The first found result is returned.
  */
 class SequentialResourceLocator implements ResourceLocator {
 

@@ -14,16 +14,16 @@ import java.io.Serializable;
  *
  */
 public class PCalLocation implements Serializable {
-	
-    /**
+
+	/**
 	 * @see TLAtoPCalMapping#serialVersionUID
 	 */
 	private static final long serialVersionUID = 5224570720345403320L;
 
 	private int line;
-	
+
 	private int column;
-	
+
 	public PCalLocation(int line, int column) {
 		this.line = line;
 		this.column = column;
@@ -32,7 +32,7 @@ public class PCalLocation implements Serializable {
 	public int getLine() {
 		return line;
 	}
-	
+
 	public void adjustLineBy(int l) {
 		line -= l;
 	}
@@ -40,17 +40,19 @@ public class PCalLocation implements Serializable {
 	public int getColumn() {
 		return column;
 	}
-	
+
 	public int getOffset() {
 		return line + column;
 	}
-	
+
 	public String toString() {
-//		return "[line |-> " + line + ", column |-> " + column + "]" ;
-		return "(" + line + ", " + column +")" ;
+		// return "[line |-> " + line + ", column |-> " + column + "]" ;
+		return "(" + line + ", " + column + ")";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -62,7 +64,9 @@ public class PCalLocation implements Serializable {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

@@ -36,7 +36,7 @@ class LNEven extends LiveExprNode {
 	public final boolean containAction() {
 		return this.body.containAction();
 	}
-	
+
 	@Override
 	public final boolean isPositiveForm() {
 		return this.body.isPositiveForm();
@@ -51,7 +51,7 @@ class LNEven extends LiveExprNode {
 		sb.append(EVENTUALLY);
 		this.getBody().toString(sb, padding + "  ");
 	}
-	
+
 	public LiveExprNode getEABody() {
 		LiveExprNode evenBody = getBody();
 		if (evenBody instanceof LNAll) {
@@ -123,7 +123,9 @@ class LNEven extends LiveExprNode {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.LiveExprNode#toDotViz()
 	 */
 	public String toDotViz() {

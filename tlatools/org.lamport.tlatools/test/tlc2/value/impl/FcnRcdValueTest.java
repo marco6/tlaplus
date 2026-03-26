@@ -107,7 +107,7 @@ public class FcnRcdValueTest {
 			}
 		}
 	}
-	
+
 	/*
 	 * #### Typed Model Values
 	 * 
@@ -127,7 +127,7 @@ public class FcnRcdValueTest {
 	 * values _x_ab2_ and _none_, but will report an error if it tries to compare
 	 * _x\_1_ to _a\_1_.
 	 */
-	
+
 	@Test
 	public void testSelectLinearSearchTypedMV() {
 		final String str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -135,7 +135,7 @@ public class FcnRcdValueTest {
 		for (int i = 0; i < str.length(); i++) {
 			l.add((ModelValue) TLCExt.tlcModelValue(new StringValue("A_" + str.charAt(i))));
 		}
-		
+
 		final Value[] dom = l.toArray(ModelValue[]::new);
 		final Value[] rng = getInts(0, dom.length, 0);
 		final FcnRcdValue rcdValue = (FcnRcdValue) new FcnRcdValue(dom, rng, false).normalize();
@@ -144,7 +144,8 @@ public class FcnRcdValueTest {
 			rcdValue.select(ModelValue.make("B_c"));
 			fail("Comparison to typed model value should fail");
 		} catch (TLCRuntimeException e) {
-			assertEquals("Attempted to check equality of the differently-typed model values A_A and B_c", e.getMessage());
+			assertEquals("Attempted to check equality of the differently-typed model values A_A and B_c",
+					e.getMessage());
 		}
 		try {
 			rcdValue.select(IntValue.ValNegOne);
@@ -153,14 +154,14 @@ public class FcnRcdValueTest {
 			assertEquals("Attempted to check equality of typed model value A_A and non-model value\n"
 					+ "-1", e.getMessage());
 		}
-		
+
 		for (int i = 0; i < dom.length; i++) {
 			IntValue val = (IntValue) rcdValue.select(dom[i]);
 			assertNotNull(val);
 			assertEquals(IntValue.gen(i), val);
 		}
 	}
-	
+
 	@Test
 	public void testSelectBinarySearchTypedMV() {
 		final String str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -168,7 +169,7 @@ public class FcnRcdValueTest {
 		for (int i = 0; i < str.length(); i++) {
 			l.add((ModelValue) TLCExt.tlcModelValue(new StringValue("A_" + str.charAt(i))));
 		}
-		
+
 		final Value[] dom = l.toArray(ModelValue[]::new);
 		final Value[] rng = getInts(0, dom.length, 0);
 		final FcnRcdValue rcdValue = (FcnRcdValue) new FcnRcdValue(dom, rng, false).normalize();
@@ -186,7 +187,7 @@ public class FcnRcdValueTest {
 			assertEquals("Attempted to compare the typed model value A_Z and non-model value\n"
 					+ "-1", e.getMessage());
 		}
-		
+
 		for (int i = 0; i < dom.length; i++) {
 			IntValue val = (IntValue) rcdValue.select(dom[i]);
 			assertNotNull(val);

@@ -11,8 +11,9 @@ import java.io.IOException;
 
 /**
  * This class is not used from anywhere from the project
- * it seems to be a helper utility used during the development 
- * @deprecated according to the paths it is not used (SZ February 19, 2009) 
+ * it seems to be a helper utility used during the development
+ * 
+ * @deprecated according to the paths it is not used (SZ February 19, 2009)
  */
 @Deprecated
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -23,11 +24,11 @@ public class FileClassLoader extends ClassLoader {
   public FileClassLoader(String dir) {
     this.dir = dir;
     if (dir.length() != 0 &&
-	!dir.endsWith(File.separator)) {
+        !dir.endsWith(File.separator)) {
       this.dir += File.separator;
     }
   }
-    
+
   private byte[] loadClassData(String name) {
     byte[] bytes = null;
     String fileName = name + ".class";
@@ -37,8 +38,9 @@ public class FileClassLoader extends ClassLoader {
       bytes = new byte[size];
       fis.read(bytes);
       fis.close();
+    } catch (IOException e) {
+      bytes = null;
     }
-    catch (IOException e) { bytes = null; }
     return bytes;
   }
 
@@ -47,7 +49,8 @@ public class FileClassLoader extends ClassLoader {
     byte[] data = loadClassData(name);
     if (data != null) {
       c = defineClass(name, data, 0, data.length);
-      if (resolve) resolveClass(c);
+      if (resolve)
+        resolveClass(c);
     }
     return c;
   }
@@ -55,15 +58,12 @@ public class FileClassLoader extends ClassLoader {
   public static void main(String argv[]) {
     FileClassLoader fcl = new FileClassLoader("/udir/yuanyu/proj/tlc/module");
     try {
-      Class c = fcl.loadClass("Strings", true);  // must set CLASSPATH correctly
+      Class c = fcl.loadClass("Strings", true); // must set CLASSPATH correctly
       System.err.println(c);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       // Assert.printStack();
       System.err.println("Error: " + e.getMessage());
     }
   }
 
 }
-
-

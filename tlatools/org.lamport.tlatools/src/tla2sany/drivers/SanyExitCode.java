@@ -26,7 +26,8 @@ package tla2sany.drivers;
  * The coarse-grained result of running SANY that is returned from its main
  * parsing functions like {@link SANY#parse} and also emitted as an exit
  * code when SANY is run from the command line. The exit code emitted from
- * those functions should correspond to {@link tla2sany.modanalyzer.SpecObj#getErrorLevel()},
+ * those functions should correspond to
+ * {@link tla2sany.modanalyzer.SpecObj#getErrorLevel()},
  * but there likely exist code paths where this is not true. For programmatic
  * users, this exit code can be retrieved from {@link SANYExitException}.
  * Finer-grained {@link tla2sany.semantic.ErrorCode} instances can be found
@@ -39,27 +40,28 @@ package tla2sany.drivers;
 public enum SanyExitCode {
 
   /**
-   * Code returned when all is well, or when {@link SanySettings#doStrictErrorCodes}
+   * Code returned when all is well, or when
+   * {@link SanySettings#doStrictErrorCodes}
    * is false.
    */
-  OK (0),
+  OK(0),
 
   /**
    * Code returned when a failure occurs during the syntax parsing phase.
    */
-  SYNTAX_PARSING_FAILURE (2),
+  SYNTAX_PARSING_FAILURE(2),
 
   /**
    * Code returned when a failure occurs during the semantic analysis or
    * level-checking phases.
    */
-  SEMANTIC_ANALYSIS_OR_LEVEL_CHECKING_FAILURE (4),
+  SEMANTIC_ANALYSIS_OR_LEVEL_CHECKING_FAILURE(4),
 
   /**
    * A very broad error code that encompasses everything from internal errors
    * to command-line argument parsing failures.
    */
-  ERROR (-1);
+  ERROR(-1);
 
   private final int code;
 

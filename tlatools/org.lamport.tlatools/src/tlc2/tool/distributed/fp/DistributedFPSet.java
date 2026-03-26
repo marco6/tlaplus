@@ -20,28 +20,28 @@ import tlc2.tool.fp.FPSetFactory;
 import tlc2.tool.fp.MultiFPSet;
 import util.ToolIO;
 
-public class DistributedFPSet  {
+public class DistributedFPSet {
 
 	private static volatile boolean running = true;
 
 	public static void main(String[] args) {
 		ToolIO.out.println("TLC Distributed FP Server " + TLCGlobals.Version.get());
 
-        // Must have exactly one arg: a hostname (spec is read from the server
+		// Must have exactly one arg: a hostname (spec is read from the server
 		// connecting to).
-		if(args.length != 1) {
+		if (args.length != 1) {
 			printErrorMsg("Error: Missing hostname of the TLC server to be contacted.");
 			return;
 		}
 		final String serverName = args[0];
 
-		 //TODO read parameter fpbits?
+		// TODO read parameter fpbits?
 		final int prefixBits = 0;
 
 		try {
 			// Lookup FPSetManager
 			TLCServerRMI tlcServer = lookupTLCServer(serverName);
-			
+
 			// Create metadata directory
 			final String metadir = System.getProperty("java.io.tmpdir") + File.separator + "FPSet"
 					+ System.currentTimeMillis();
@@ -49,14 +49,14 @@ public class DistributedFPSet  {
 			if (!filedir.exists()) {
 				filedir.mkdirs();
 			}
-			
+
 			// Initialize this FPSet with n-prefix bits and m mask bits
 			final FPSetConfiguration fpSetConfiguration = new FPSetConfiguration(1.0d);
 			fpSetConfiguration.setFpBits(1 + prefixBits);
 			final FPSet fpSet = FPSetFactory.getFPSet(fpSetConfiguration);
 			final String filename = "FPSet" + System.currentTimeMillis();
-			fpSet.init(1,metadir,filename);
-			
+			fpSet.init(1, metadir, filename);
+
 			// Print out fpset type and nested FPSets when MultiFPSet
 			System.err.println("FPSet instance type is: " + fpSet.getClass().getName());
 			if (fpSet instanceof MultiFPSet) {
@@ -73,7 +73,7 @@ public class DistributedFPSet  {
 				tlcServer.registerFPSet(fpSet, hostname);
 			} catch (FPSetManagerException e) {
 				// Registration as an FPSet has failed, un-export local FPSet and
-				// exit main thread. Do not System.exit(int) as worker thread might 
+				// exit main thread. Do not System.exit(int) as worker thread might
 				// run in this VM instance.
 				fpSet.unexportObject(false);
 				ToolIO.out.println(e.getMessage());
@@ -81,8 +81,8 @@ public class DistributedFPSet  {
 			}
 
 			// Show FPset is ready accepting fingerprints
-            System.out.println("Fingerprint set server at " + hostname + " is ready.");
-			
+			System.out.println("Fingerprint set server at " + hostname + " is ready.");
+
 			// Periodically report status (every 5 minutes)
 			synchronized (fpSet) {
 				while (running) {
@@ -90,7 +90,7 @@ public class DistributedFPSet  {
 							+ fpSet.size() + ".");
 					fpSet.wait(300000);
 				}
-				
+
 				// exit if signal received
 				fpSet.unexportObject(false);
 				ToolIO.out.println("Exiting TLC Distributed FP Server");
@@ -101,7 +101,7 @@ public class DistributedFPSet  {
 			ToolIO.out.println("Error: Failed to start FPSet "
 					+ " for server " + serverName + ".\n" + e.getMessage());
 		}
-	
+
 		ToolIO.out.flush();
 	}
 
@@ -112,8 +112,9 @@ public class DistributedFPSet  {
 	public static void shutdown() {
 		running = false;
 	}
-	
-	private static TLCServerRMI lookupTLCServer(final String serverName) throws MalformedURLException, RemoteException, NotBoundException, InterruptedException {
+
+	private static TLCServerRMI lookupTLCServer(final String serverName)
+			throws MalformedURLException, RemoteException, NotBoundException, InterruptedException {
 		String url = "//" + serverName + ":" + TLCServer.Port
 				+ "/" + TLCServer.SERVER_NAME;
 
@@ -121,14 +122,14 @@ public class DistributedFPSet  {
 		// see similar while loop in
 		// tlc2.tool.distributed.TLCWorker.main(String[]) for more comments.
 		int i = 1;
-		while(true) {
+		while (true) {
 			try {
 				return (TLCServerRMI) Naming.lookup(url);
 			} catch (ConnectException e) {
 				// if the cause if a java.NET.ConnectException the server is
 				// simply not ready yet
 				final Throwable cause = e.getCause();
-				if(cause instanceof java.net.ConnectException) {
+				if (cause instanceof java.net.ConnectException) {
 					long sleep = (long) Math.sqrt(i);
 					ToolIO.out.println("Server " + serverName
 							+ " unreachable, sleeping " + sleep
@@ -152,7 +153,7 @@ public class DistributedFPSet  {
 			}
 		}
 	}
-	
+
 	private static void printErrorMsg(String msg) {
 		ToolIO.out.println(msg);
 		ToolIO.out

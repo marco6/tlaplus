@@ -55,7 +55,7 @@ public class Github1134bTest extends ModelCheckerTestCase {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertTrue(recorder.recorded(EC.TLC_SUCCESS));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "9", "4", "0"));
-		
+
 		assertZeroUncovered();
 	}
 

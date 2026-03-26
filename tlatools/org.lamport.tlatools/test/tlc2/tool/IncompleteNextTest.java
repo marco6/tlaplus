@@ -52,7 +52,7 @@ public class IncompleteNextTest extends ModelCheckerTestCase {
 		assertFalse(recorder.recorded(EC.GENERAL));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "2", "1", "0"));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		// Assert the error trace
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
 		final List<String> expectedTrace = new ArrayList<String>(2);
@@ -64,7 +64,7 @@ public class IncompleteNextTest extends ModelCheckerTestCase {
 		expectedTrace.add("/\\ x = 1\n/\\ y = null");
 		expectedActions.add("<Action line 6, col 30 to line 6, col 35 of module IncompleteNext>");
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace, expectedActions);
-		
+
 		// Assert TLC indicates unassigned variable
 		assertTrue(recorder.recorded(EC.TLC_STATE_NOT_COMPLETELY_SPECIFIED_NEXT));
 		final List<Object> records = recorder.getRecords(EC.TLC_STATE_NOT_COMPLETELY_SPECIFIED_NEXT);

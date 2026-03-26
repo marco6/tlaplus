@@ -36,22 +36,27 @@ import tlc2.output.EC.ExitStatus;
 public class ETest8 extends SuiteETestCase {
 
 	public ETest8() {
-		super(new String[]{"-simulate"}, ExitStatus.ERROR /*ExitStatus.VIOLATION_ASSERT*/); //TODO Simulator doesn't report correct exit status.
+		super(new String[] { "-simulate" }, ExitStatus.ERROR /* ExitStatus.VIOLATION_ASSERT */); // TODO Simulator
+																									// doesn't report
+																									// correct exit
+																									// status.
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ModelCheckerTestCase#checkDeadLock()
 	 */
 	protected boolean checkDeadLock() {
 		return false;
 	}
-	
+
 	@Test
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertTrue(recorder.recorded(EC.TLC_STATS_SIMU));
 		assertFalse(recorder.recorded(EC.TLC_DEADLOCK_REACHED));
-		
+
 		assertUncovered("line 18, col 15 to line 18, col 22 of module etest8: 0\n");
 	}
 }

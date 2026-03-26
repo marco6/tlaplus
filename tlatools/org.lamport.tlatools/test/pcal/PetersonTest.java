@@ -46,6 +46,6 @@ public class PetersonTest extends PCalModelCheckerTestCase {
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "85", "42", "0"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "11"));
 
-	assertZeroUncovered();
+		assertZeroUncovered();
 	}
 }

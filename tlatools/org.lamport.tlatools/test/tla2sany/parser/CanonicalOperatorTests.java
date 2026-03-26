@@ -35,10 +35,10 @@ import org.junit.runners.Parameterized.Parameters;
 import util.UniqueString;
 
 /**
-* SANY has the concept of a "canonical" operator representation, since some
-* operators have multiple possible symbols associated with them. This tests
-* that the canonical operator is as expected.
-*/
+ * SANY has the concept of a "canonical" operator representation, since some
+ * operators have multiple possible symbols associated with them. This tests
+ * that the canonical operator is as expected.
+ */
 @RunWith(Parameterized.class)
 public class CanonicalOperatorTests {
 

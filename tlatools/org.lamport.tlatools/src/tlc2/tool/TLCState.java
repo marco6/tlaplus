@@ -26,42 +26,44 @@ import util.Assert;
 import util.UniqueString;
 
 public abstract class TLCState implements Serializable {
-  public short workerId = Short.MAX_VALUE; // Must be set to a non-negative number. Valid worker ids \in [0,Short.MAX_VALUE] and start at 0.
-  public static final int INIT_UID = -1;
-  public long uid = INIT_UID;   // Must be set to a non-negative number
-  // The level of an initial state is initialized with 1 to assert that
-  // TLCGet("level") in the first evaluation of the next-state relation equals 1.
-  // The successor states of initial states have level 2.  During the evaluation
-  // of the initial *predicate* - which generates the initial states - the level
-  // is defined to be zero.
-  public static final int INIT_LEVEL = 1;
-  private int level = INIT_LEVEL;
-  
-  // Set by subclasses. Cannot set until we know what the variables are.
-  public static final TLCState Null = null;
-  public static TLCState Empty = null;
+	public short workerId = Short.MAX_VALUE; // Must be set to a non-negative number. Valid worker ids \in
+												// [0,Short.MAX_VALUE] and start at 0.
+	public static final int INIT_UID = -1;
+	public long uid = INIT_UID; // Must be set to a non-negative number
+	// The level of an initial state is initialized with 1 to assert that
+	// TLCGet("level") in the first evaluation of the next-state relation equals 1.
+	// The successor states of initial states have level 2. During the evaluation
+	// of the initial *predicate* - which generates the initial states - the level
+	// is defined to be zero.
+	public static final int INIT_LEVEL = 1;
+	private int level = INIT_LEVEL;
 
-  public static boolean isEmpty(final TLCState state) {
-	  return Empty == state;
-  }
-  
-  // The state variables.
-  protected static OpDeclNode[] vars = null;
+	// Set by subclasses. Cannot set until we know what the variables are.
+	public static final TLCState Null = null;
+	public static TLCState Empty = null;
 
-  public void read(IValueInputStream vis) throws IOException {
-	this.workerId = vis.readShortNat();
-	this.uid = vis.readLongNat();
-    this.level = vis.readShortNat();
-    assert this.level >= 0; // Should never overflow.
-  }
-  
+	public static boolean isEmpty(final TLCState state) {
+		return Empty == state;
+	}
+
+	// The state variables.
+	protected static OpDeclNode[] vars = null;
+
+	public void read(IValueInputStream vis) throws IOException {
+		this.workerId = vis.readShortNat();
+		this.uid = vis.readLongNat();
+		this.level = vis.readShortNat();
+		assert this.level >= 0; // Should never overflow.
+	}
+
 	public void write(IValueOutputStream vos) throws IOException {
 		if (this.level > Short.MAX_VALUE) {
 			// The on-disk representation of TLCState limits the diameter/level to
 			// Short.MAX_VALUE whereas the in-memory rep supports int. The underlying
 			// assumption being that state spaces with a diameter beyond 32767 AND which
 			// require TLC to swap the state queue to disk are infeasible to check anyway.
-			// However, one can easily come up with a spec that corresponds to few, very long
+			// However, one can easily come up with a spec that corresponds to few, very
+			// long
 			// behaviors which can be kept in memory.
 			Assert.fail(EC.TLC_TRACE_TOO_LONG, this.toString());
 		}
@@ -70,125 +72,140 @@ public abstract class TLCState implements Serializable {
 		vos.writeShortNat((short) this.level);
 	}
 
-  public abstract TLCState bind(UniqueString name, IValue value);
-  public abstract TLCState bind(SymbolNode id, IValue value);  
-  public abstract TLCState unbind(UniqueString name);
-  /**
-   * Convenience method when performance doesn't matter.
-   */
-  public IValue lookup(String var) {
-	  return lookup(UniqueString.uniqueStringOf(var));
-  }
-  public abstract IValue lookup(UniqueString var);
-  public abstract boolean containsKey(UniqueString var);
-  public abstract TLCState copy();
-  public abstract TLCState deepCopy();
-  public abstract StateVec addToVec(StateVec states);
-  public abstract void deepNormalize();
-  public abstract long fingerPrint();
-  public long fingerPrint(ITool tool) {
+	public abstract TLCState bind(UniqueString name, IValue value);
+
+	public abstract TLCState bind(SymbolNode id, IValue value);
+
+	public abstract TLCState unbind(UniqueString name);
+
+	/**
+	 * Convenience method when performance doesn't matter.
+	 */
+	public IValue lookup(String var) {
+		return lookup(UniqueString.uniqueStringOf(var));
+	}
+
+	public abstract IValue lookup(UniqueString var);
+
+	public abstract boolean containsKey(UniqueString var);
+
+	public abstract TLCState copy();
+
+	public abstract TLCState deepCopy();
+
+	public abstract StateVec addToVec(StateVec states);
+
+	public abstract void deepNormalize();
+
+	public abstract long fingerPrint();
+
+	public long fingerPrint(ITool tool) {
 		return fingerPrint();
-  }
+	}
 
-  public abstract boolean allAssigned();
-  public abstract Set<OpDeclNode> getUnassigned();
-  public abstract TLCState createEmpty();
+	public abstract boolean allAssigned();
 
-  protected TLCState copy(TLCState copy) {
-	  copy.level = this.level;
-	  return copy;
-  }
-  
-  protected TLCState deepCopy(TLCState copy) {
-	  copy.level = this.level;
-	  copy.workerId = this.workerId;
-	  copy.uid = this.uid;
-	  return copy;
-  }
-  
-  public boolean noneAssigned() {
+	public abstract Set<OpDeclNode> getUnassigned();
+
+	public abstract TLCState createEmpty();
+
+	protected TLCState copy(TLCState copy) {
+		copy.level = this.level;
+		return copy;
+	}
+
+	protected TLCState deepCopy(TLCState copy) {
+		copy.level = this.level;
+		copy.workerId = this.workerId;
+		copy.uid = this.uid;
+		return copy;
+	}
+
+	public boolean noneAssigned() {
 		// isEmpty just checks referential equality, which is broken when some code
 		// invokes TLCState#copy on the empty state (e.g. FcnRcdValue).
 		return getUnassigned().size() >= vars.length;
-  }
+	}
 
-  /** 
-   * Returns a mapping of variable names to their assigned values in this state.
-   */ 
-  public final Map<UniqueString, IValue> getVals() {
-	final Map<UniqueString, IValue> valMap = new HashMap<UniqueString, IValue>();
-	for(int i = 0; i < vars.length; i++) {
-        UniqueString key = vars[i].getName();
-        IValue val = this.lookup(key);
-        valMap.put(key, val);
-    }
-    return valMap;
-  }
-  
-  public final OpDeclNode[] getVars() {
-	  return vars;
-  }
-  
-  public final String[] getVarsAsStrings() {
-	  String[] res = new String[vars.length];
-	  for (int i = 0; i < vars.length; i++) {
-		res[i] = vars[i].getName().toString();
-	  }
-	  return res;
-  }
+	/**
+	 * Returns a mapping of variable names to their assigned values in this state.
+	 */
+	public final Map<UniqueString, IValue> getVals() {
+		final Map<UniqueString, IValue> valMap = new HashMap<UniqueString, IValue>();
+		for (int i = 0; i < vars.length; i++) {
+			UniqueString key = vars[i].getName();
+			IValue val = this.lookup(key);
+			valMap.put(key, val);
+		}
+		return valMap;
+	}
 
-  public TLCState setPredecessor(final TLCStateInfo predecessor) {
-	  return setPredecessor(predecessor.getOriginalState());
-  }
+	public final OpDeclNode[] getVars() {
+		return vars;
+	}
 
-  public TLCState setPredecessor(final TLCState predecessor) {
-	  // This method only keeps the level instead of the predecessor, because a) we
-	  // don't need the predecessor and b) keeping predecessors would mean that we
-	  // eventually have all states of the state graph in memory.
-	  if (predecessor.getLevel() == Integer.MAX_VALUE) {
-		  Assert.fail(EC.TLC_TRACE_TOO_LONG, this.toString());
-	  }
-	  this.level = predecessor.getLevel() + 1;
-	  return this;
-  }
+	public final String[] getVarsAsStrings() {
+		String[] res = new String[vars.length];
+		for (int i = 0; i < vars.length; i++) {
+			res[i] = vars[i].getName().toString();
+		}
+		return res;
+	}
 
-  public TLCState unsetPredecessor() {
-	  return this;
-  }
- 
-  public TLCState getPredecessor() {
-	  return null;
-  }
+	public TLCState setPredecessor(final TLCStateInfo predecessor) {
+		return setPredecessor(predecessor.getOriginalState());
+	}
 
-  public final int getLevel() {
-	return this.level;  
-  }
-  
-  public final boolean isInitial() {
-	return this.level == INIT_LEVEL;
-  }
-  
-  /* Returns a string representation of this state.  */
-  public abstract String toString();
-  public abstract String toString(TLCState lastState);
-  public abstract String toString(UniqueString[] vars, TLCState lastState);
-  
-  public Object execCallable() throws Exception {
-	  // no-op - see TLAPlusExecutorState
-	  return null;
-  }
-  
-  public void setCallable(Callable<?> cl) {
-	  // no-op - see TLAPlusExecutorState
-  }
+	public TLCState setPredecessor(final TLCState predecessor) {
+		// This method only keeps the level instead of the predecessor, because a) we
+		// don't need the predecessor and b) keeping predecessors would mean that we
+		// eventually have all states of the state graph in memory.
+		if (predecessor.getLevel() == Integer.MAX_VALUE) {
+			Assert.fail(EC.TLC_TRACE_TOO_LONG, this.toString());
+		}
+		this.level = predecessor.getLevel() + 1;
+		return this;
+	}
+
+	public TLCState unsetPredecessor() {
+		return this;
+	}
+
+	public TLCState getPredecessor() {
+		return null;
+	}
+
+	public final int getLevel() {
+		return this.level;
+	}
+
+	public final boolean isInitial() {
+		return this.level == INIT_LEVEL;
+	}
+
+	/* Returns a string representation of this state. */
+	public abstract String toString();
+
+	public abstract String toString(TLCState lastState);
+
+	public abstract String toString(UniqueString[] vars, TLCState lastState);
+
+	public Object execCallable() throws Exception {
+		// no-op - see TLAPlusExecutorState
+		return null;
+	}
+
+	public void setCallable(Callable<?> cl) {
+		// no-op - see TLAPlusExecutorState
+	}
 
 	public Action getAction() {
-		  // no-op - see TLCStateMutExt
+		// no-op - see TLCStateMutExt
 		return null;
 	}
 
 	public TLCState setAction(Action action) {
-		  // no-op - see TLCStateMutExt
+		// no-op - see TLCStateMutExt
 		return this;
 	}
 
@@ -203,7 +220,7 @@ public abstract class TLCState implements Serializable {
 	public Value setCached(int key, Value value) {
 		return null;
 	}
-	
+
 	public TLCState evalStateLevelAlias() {
 		return this;
 	}
@@ -214,34 +231,46 @@ public abstract class TLCState implements Serializable {
 	 */
 	public TLCState copyWith(final TLCState prototype) {
 		final TLCState s = createEmpty();
-		for(int i = 0; i < vars.length; i++) {
-	        final UniqueString key = vars[i].getName();
-	        final IValue val = prototype.lookup(key);
-	        if (val != null) {
-	        	s.bind(key, this.lookup(key));
-	        }
-	    }
+		for (int i = 0; i < vars.length; i++) {
+			final UniqueString key = vars[i].getName();
+			final IValue val = prototype.lookup(key);
+			if (val != null) {
+				s.bind(key, this.lookup(key));
+			}
+		}
 		return this.copy(s);
 	}
 
 	/**
-	 * Determine if <code>s1</code> is a subset of <code>s2</code> (i.e. <code>s1</code> has the same value
+	 * Determine if <code>s1</code> is a subset of <code>s2</code> (i.e.
+	 * <code>s1</code> has the same value
 	 * as <code>s2</code> for every variable that <code>s2</code> has a value for).
 	 *
-	 * <p>In TLA+, a "state" defines a value for every variable in the universe, not just the ones defined
-	 * in your spec.  In that sense, a {@link TLCState} really represents a <i>set</i> of states.  For
-	 * instance, the {@link TLCState} <code>a = 1 /\ b = 2</code> includes every TLA+ state where
-	 * <code>a = 1</code> and <code>b = 2</code>, including some states where <code>c = 3</code> and some
-	 * states where <code>c = 100</code>.  The {@link TLCState}s {@link #Null} and {@link #Empty} represent
+	 * <p>
+	 * In TLA+, a "state" defines a value for every variable in the universe, not
+	 * just the ones defined
+	 * in your spec. In that sense, a {@link TLCState} really represents a
+	 * <i>set</i> of states. For
+	 * instance, the {@link TLCState} <code>a = 1 /\ b = 2</code> includes every
+	 * TLA+ state where
+	 * <code>a = 1</code> and <code>b = 2</code>, including some states where
+	 * <code>c = 3</code> and some
+	 * states where <code>c = 100</code>. The {@link TLCState}s {@link #Null} and
+	 * {@link #Empty} represent
 	 * the set of all states.
 	 *
-	 * <p>This function treats <code>s1</code> and <code>s2</code> as sets of states and determines if the
-	 * first is a subset of the second.  Note that the result might not be knowable, since the values in
-	 * the two states might not be comparable (see "Comparability" in the docstring for {@link IValue}).
+	 * <p>
+	 * This function treats <code>s1</code> and <code>s2</code> as sets of states
+	 * and determines if the
+	 * first is a subset of the second. Note that the result might not be knowable,
+	 * since the values in
+	 * the two states might not be comparable (see "Comparability" in the docstring
+	 * for {@link IValue}).
 	 *
 	 * @param s1 the first set of states
 	 * @param s2 the second set of states
-	 * @return whether <code>s1</code> represents a subset of the states of <code>s2</code>
+	 * @return whether <code>s1</code> represents a subset of the states of
+	 *         <code>s2</code>
 	 */
 	public static PartialBoolean isSubset(TLCState s1, TLCState s2) {
 		if (s2 == null || s2 == Empty) {
@@ -252,7 +281,8 @@ public abstract class TLCState implements Serializable {
 			s1 = Empty;
 		}
 
-		// Optimization: if the arguments point to the same state, then we can return true
+		// Optimization: if the arguments point to the same state, then we can return
+		// true
 		// without inspecting the state's contents.
 		if (s1 == s2) {
 			return PartialBoolean.YES;

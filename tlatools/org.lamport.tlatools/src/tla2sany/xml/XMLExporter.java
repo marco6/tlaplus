@@ -71,12 +71,12 @@ public class XMLExporter {
         "-o", "Offline mode; skip XML schema validation step.", true));
     args.add(new UsageGenerator.Argument(
         "-t", "Terse; format XML output without tabs or newlines.", true));
-	args.add(new UsageGenerator.Argument("-r",
-			"Restrict mode; include only declarations and definitions of the specified module, excluding extended or instantiated modules.",
-			true));
-	args.add(new UsageGenerator.Argument("-u",
-			"Uncomment; process boxed comments and single-line comments (\\*) in pre-comments to extract their content.",
-			true));
+    args.add(new UsageGenerator.Argument("-r",
+        "Restrict mode; include only declarations and definitions of the specified module, excluding extended or instantiated modules.",
+        true));
+    args.add(new UsageGenerator.Argument("-u",
+        "Uncomment; process boxed comments and single-line comments (\\*) in pre-comments to extract their content.",
+        true));
     args.add(new UsageGenerator.Argument(
         "-I", "Include; use given directory path to resolve module dependencies.", true));
     args.add(new UsageGenerator.Argument(
@@ -94,13 +94,12 @@ public class XMLExporter {
         SANY.version,
         "Emit SANY's parse tree as XML",
         "Given a TLA+ file, parse that file with SANY then translate the module's " +
-        "semantic parse tree to XML, including all the modules depended on. The " +
-        "XML is printed to stdout and its output format is given by an XML Schema " +
-        "file (.xsd) found at https://proofs.tlapl.us/doc/web/sany.xsd.",
+            "semantic parse tree to XML, including all the modules depended on. The " +
+            "XML is printed to stdout and its output format is given by an XML Schema " +
+            "file (.xsd) found at https://proofs.tlapl.us/doc/web/sany.xsd.",
         variants,
         tips,
-        ' '
-      );
+        ' ');
   }
 
   /**
@@ -137,9 +136,8 @@ public class XMLExporter {
         ToolIO.err.println(e.toString());
         if (error.isBug()) {
           ToolIO.err.println(
-            "This is likely a bug in the XML Exporter; please report to " +
-            "https://github.com/tlaplus/tlaplus/issues"
-          );
+              "This is likely a bug in the XML Exporter; please report to " +
+                  "https://github.com/tlaplus/tlaplus/issues");
         }
 
         return error.code();
@@ -149,7 +147,8 @@ public class XMLExporter {
 
   /**
    * Parses the given command line arguments then converts the specified TLA+
-   * spec to XML, output to standard output. Will throw a {@link XMLExportingException}
+   * spec to XML, output to standard output. Will throw a
+   * {@link XMLExportingException}
    * on error. On success, simply returns without throwing an exception.
    *
    * @param args The list of command-line arguments.
@@ -177,11 +176,11 @@ public class XMLExporter {
         pretty_print = false;
         lastarg = i;
       } else if ("-r".equals(args[i])) {
-          restricted = true;
-          lastarg = i;
+        restricted = true;
+        lastarg = i;
       } else if ("-u".equals(args[i])) {
-          uncomment = true;
-          lastarg = i;
+        uncomment = true;
+        lastarg = i;
       } else if ("-I".equals(args[i])) {
         i++;
         if (i > args.length - 2)
@@ -196,7 +195,8 @@ public class XMLExporter {
     lastarg++;
 
     String[] paths = new String[pathsLs.size()];
-    for (int i = 0; i < paths.length; i++) paths[i] = (String) pathsLs.get(i);
+    for (int i = 0; i < paths.length; i++)
+      paths[i] = (String) pathsLs.get(i);
 
     if (args.length - lastarg != 1)
       throw new XMLExportingException(
@@ -204,8 +204,8 @@ public class XMLExporter {
           "Only one TLA file to check allowed!", null);
 
     if (args[args.length - 1].equals("-help")) {
-        printUsage(ToolIO.out);
-        return;
+      printUsage(ToolIO.out);
+      return;
     }
 
     String tla_name = args[lastarg++];
@@ -217,23 +217,21 @@ public class XMLExporter {
         uncomment,
         pretty_print,
         offline_mode,
-        ToolIO.out
-      );
+        ToolIO.out);
   }
 
   /**
    * Parses the TLA+ spec with the given path and import directories. Throws
    * an exception on parse failure.
    *
-   * @param specPath The path to the TLA+ spec.
+   * @param specPath    The path to the TLA+ spec.
    * @param includeDirs A list of directories in which to search for imports.
    * @return A {@link ExternalModuleTable} of all parsed modules.
    * @throws XMLExportingException On parse failure.
    */
   static ExternalModuleTable parseSpec(
       final String specPath,
-      final String... includeDirs
-  ) throws XMLExportingException {
+      final String... includeDirs) throws XMLExportingException {
     FilenameToStream fts = new SimpleFilenameToStream(includeDirs);
 
     SpecObj spec = new SpecObj(specPath, fts);
@@ -260,9 +258,9 @@ public class XMLExporter {
    * {@link ByteArrayOutputStream} instance to convert to a string, which is
    * returned.
    *
-   * @param spec The table of TLA+ specs to convert.
-   * @param restricted Only export the root TLA+ module.
-   * @param uncomment Process operator pre-comments to remove '(*' and '*)'.
+   * @param spec        The table of TLA+ specs to convert.
+   * @param restricted  Only export the root TLA+ module.
+   * @param uncomment   Process operator pre-comments to remove '(*' and '*)'.
    * @param prettyPrint XML output will have line breaks and indentation.
    * @param offlineMode Skip schema validation (not recommended).
    * @return A string representation of the XML output.
@@ -273,8 +271,7 @@ public class XMLExporter {
       final boolean restricted,
       final boolean uncomment,
       final boolean prettyPrint,
-      final boolean offlineMode
-  ) throws XMLExportingException {
+      final boolean offlineMode) throws XMLExportingException {
     final ByteArrayOutputStream output = new ByteArrayOutputStream();
     specToXMLStream(spec, restricted, uncomment, prettyPrint, offlineMode, output);
     return output.toString(StandardCharsets.UTF_8);
@@ -284,12 +281,12 @@ public class XMLExporter {
    * Converts the given set of TLA+ specs to XML and then outputs the XML to
    * the given {@link OutputStream} instance.
    *
-   * @param spec The table of TLA+ specs to convert.
-   * @param restricted Only export the root TLA+ module.
-   * @param uncomment Process operator pre-comments to remove '(*' and '*)'.
+   * @param spec         The table of TLA+ specs to convert.
+   * @param restricted   Only export the root TLA+ module.
+   * @param uncomment    Process operator pre-comments to remove '(*' and '*)'.
    * @param pretty_print XML output will have line breaks and indentation.
    * @param offline_mode Skip schema validation (not recommended).
-   * @param output The stream to which to output the XML.
+   * @param output       The stream to which to output the XML.
    * @throws XMLExportingException If error occurred during XML conversion.
    */
   static void specToXMLStream(
@@ -298,12 +295,10 @@ public class XMLExporter {
       final boolean uncomment,
       final boolean pretty_print,
       final boolean offline_mode,
-      final OutputStream output
-  ) throws XMLExportingException {
+      final OutputStream output) throws XMLExportingException {
     try {
 
-      DocumentBuilderFactory docFactory =
-              DocumentBuilderFactory.newInstance();
+      DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 
       // write XML
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -312,57 +307,58 @@ public class XMLExporter {
       Document doc = docBuilder.newDocument();
       Element rootElement = doc.createElement("modules");
       doc.appendChild(rootElement);
-      // Create symbol context. It will be filled by all symbol references during module export.
+      // Create symbol context. It will be filled by all symbol references during
+      // module export.
       SymbolContext context = new SymbolContext();
 
-		if (restricted) {
-			final BiPredicate<SemanticNode, SemanticNode> filter = (s1, s2) -> {
-				if (s1 instanceof OpDefOrDeclNode && s2 instanceof ModuleNode) {
-					final OpDefOrDeclNode oddn = (OpDefOrDeclNode) s1;
-					return s2.equals(oddn.getOriginallyDefinedInModuleNode());
-				}
-				return true;
-			};
-			Element ext_e = spec.getRootModule().export(doc, context, filter);
-			rootElement.appendChild(ext_e);
-		} else {
-			ModuleNode[] externalModules = spec.getModuleNodes();
-			for (int j = 0; j < externalModules.length; j++) {
-				// Element ext_e = externalModules[j].exportDefinition(doc, context);
-				Element ext_e = externalModules[j].export(doc, context);
-				rootElement.appendChild(ext_e);
-			}
-		}
+      if (restricted) {
+        final BiPredicate<SemanticNode, SemanticNode> filter = (s1, s2) -> {
+          if (s1 instanceof OpDefOrDeclNode && s2 instanceof ModuleNode) {
+            final OpDefOrDeclNode oddn = (OpDefOrDeclNode) s1;
+            return s2.equals(oddn.getOriginallyDefinedInModuleNode());
+          }
+          return true;
+        };
+        Element ext_e = spec.getRootModule().export(doc, context, filter);
+        rootElement.appendChild(ext_e);
+      } else {
+        ModuleNode[] externalModules = spec.getModuleNodes();
+        for (int j = 0; j < externalModules.length; j++) {
+          // Element ext_e = externalModules[j].exportDefinition(doc, context);
+          Element ext_e = externalModules[j].export(doc, context);
+          rootElement.appendChild(ext_e);
+        }
+      }
 
       // Insert the symbol table into the beginning of the XML DOM
       rootElement.insertBefore(context.getContextElement(doc), rootElement.getFirstChild());
 
-      //Insert name of root module
+      // Insert name of root module
       insertRootName(doc, rootElement, spec);
 
       if (uncomment) {
-			// Instead of traversing all XML nodes, it would be more efficient to uncomment
-			// pre-comments directly within SANY's OpDefNode#getSymbolElement during the AST
-			// traversal that produces the XML. Moreover, since SemanticNode#getPreComments
-			// already returns an array of strings, the subsequent string-splitting
-			// operations are unnecessary. Unfortunately, I don't have time to refactor
-			// XMLExportable#export to accept a (generic) visitor capable of mapping,
-			// mutating, or transforming AST elements prior to their conversion into XML
-			// nodes (see https://github.com/tlaplus/tlaplus/issues/1236)
-    	  NodeList nodes = doc.getElementsByTagName("pre-comments");
-          for (int i = 0; i < nodes.getLength(); i++) {
-              NodeList children = ((Element) nodes.item(i)).getChildNodes();
-              for (int j = 0; j < children.getLength(); j++) {
-                  Node child = children.item(j);
-                  if (child.getNodeType() == Node.CDATA_SECTION_NODE) {
-						((CDATASection) child).setData(SyntaxTreeNode.unboxBackslashStarComment(
-								SyntaxTreeNode.unboxComment(((CDATASection) child).getData())));
-	              }
-              }
+        // Instead of traversing all XML nodes, it would be more efficient to uncomment
+        // pre-comments directly within SANY's OpDefNode#getSymbolElement during the AST
+        // traversal that produces the XML. Moreover, since SemanticNode#getPreComments
+        // already returns an array of strings, the subsequent string-splitting
+        // operations are unnecessary. Unfortunately, I don't have time to refactor
+        // XMLExportable#export to accept a (generic) visitor capable of mapping,
+        // mutating, or transforming AST elements prior to their conversion into XML
+        // nodes (see https://github.com/tlaplus/tlaplus/issues/1236)
+        NodeList nodes = doc.getElementsByTagName("pre-comments");
+        for (int i = 0; i < nodes.getLength(); i++) {
+          NodeList children = ((Element) nodes.item(i)).getChildNodes();
+          for (int j = 0; j < children.getLength(); j++) {
+            Node child = children.item(j);
+            if (child.getNodeType() == Node.CDATA_SECTION_NODE) {
+              ((CDATASection) child).setData(SyntaxTreeNode.unboxBackslashStarComment(
+                  SyntaxTreeNode.unboxComment(((CDATASection) child).getData())));
+            }
           }
+        }
       }
 
-      //Create XML file
+      // Create XML file
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = transformerFactory.newTransformer();
       if (pretty_print) {
@@ -372,7 +368,7 @@ public class XMLExporter {
       DOMSource source = new DOMSource(doc);
 
       // validate the file, do not fail if there is a URL connection error
-      if (!offline_mode) { //skip validation in offline mode
+      if (!offline_mode) { // skip validation in offline mode
         try {
           SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
           URL schemaFile = XMLExporter.class.getResource("sany.xsd");
@@ -383,18 +379,21 @@ public class XMLExporter {
                 new FileNotFoundException("Resource sany.xsd not found in classpath"));
           }
           Schema schema = factory.newSchema(schemaFile);
-          // create a Validator instance, which can be used to validate an instance document
+          // create a Validator instance, which can be used to validate an instance
+          // document
           Validator validator = schema.newValidator();
-          //validate the DOM tree
+          // validate the DOM tree
           validator.validate(source);
         } catch (java.io.IOException ioe) {
           // do nothing if there is no internet connection
           // but fail for other errors
         }
-          /*catch (org.xml.sax.SAXParseException spe) {
-            // do nothing if there is no internet connection
-            // but fail for other errors
-          }*/
+        /*
+         * catch (org.xml.sax.SAXParseException spe) {
+         * // do nothing if there is no internet connection
+         * // but fail for other errors
+         * }
+         */
       }
 
       StreamResult result = new StreamResult(output);

@@ -38,9 +38,9 @@ import tlc2.tool.liveness.ModelCheckerTestCase;
 public class SubseteqNextStateTest extends ModelCheckerTestCase {
 
 	public SubseteqNextStateTest() {
-	  super("SubseteqNextState");
+		super("SubseteqNextState");
 	}
-	
+
 	@Test
 	public void testSpec() throws IOException {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));

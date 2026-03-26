@@ -38,7 +38,7 @@ public class FP64Test {
 	public void setup() {
 		FP64.Init();
 	}
-	
+
 	@Test
 	public void testExtendLongInt() {
 		final Random random = new Random();

@@ -37,36 +37,36 @@ import tlc2.util.MemIntQueue;
 import tlc2.util.statistics.IBucketStatistics;
 
 public class TableauDiskGraph extends AbstractDiskGraph {
-	
+
 	private static final long INIT_STATE = MAX_PTR + 1;
 
 	private TableauNodePtrTable nodePtrTbl;
-	
+
 	public TableauDiskGraph(String metadir, int soln, IBucketStatistics graphStats) throws IOException {
 		super(metadir, soln, graphStats);
 		this.nodePtrTbl = new TableauNodePtrTable(255);
 	}
-	
+
 	public final long getPtr(long fp, int tidx) {
 		assert tidx >= 0;
 		return this.nodePtrTbl.get(fp, tidx);
 	}
-	
+
 	public int getElemLength() {
 		return this.nodePtrTbl.getElemLength();
 	}
 
 	/**
-	 * @param fp The fingerprint which should be checked for its done state. 
+	 * @param fp The fingerprint which should be checked for its done state.
 	 * @return true iff the node is done, false otherwise.
-	 *  
+	 * 
 	 * @see TableauDiskGraph#setDone(long)
 	 * @see TableauDiskGraph#recordNode(long, int)
 	 */
 	public final boolean isDone(final long fp) {
 		return this.nodePtrTbl.isDone(fp);
 	}
-	
+
 	/**
 	 * Mark the fingerprint fp as being done. A fingerprint is undone for as
 	 * long as it has been recorded with recordNode().
@@ -83,7 +83,7 @@ public class TableauDiskGraph extends AbstractDiskGraph {
 	 * children (see private TableauLiveChecker#addNextNode(..)).
 	 * 
 	 * @param fp
-	 *            The fingerprint to mark as done
+	 *           The fingerprint to mark as done
 	 * @return The location at which the corresponding node can be looked up
 	 *         with {@link TableauDiskGraph#getNodesByLoc(int)}.
 	 * 
@@ -94,7 +94,7 @@ public class TableauDiskGraph extends AbstractDiskGraph {
 	public int setDone(final long fp) {
 		return this.nodePtrTbl.setDone(fp);
 	}
-	
+
 	/**
 	 * This method records that the node, whose fingerprint is fp, is reachable.
 	 * The node itself is not added into the graph (see
@@ -109,21 +109,28 @@ public class TableauDiskGraph extends AbstractDiskGraph {
 	}
 
 	/**
-	 * @see TableauDiskGraph#setDone(long) 
+	 * @see TableauDiskGraph#setDone(long)
 	 */
 	public final int[] getNodesByLoc(final int loc) {
 		return this.nodePtrTbl.getNodesByLoc(loc);
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.liveness.AbstractDiskGraph#putNode(tlc2.tool.liveness.GraphNode, long)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * tlc2.tool.liveness.AbstractDiskGraph#putNode(tlc2.tool.liveness.GraphNode,
+	 * long)
 	 */
 	protected void putNode(GraphNode node, long ptr) {
 		this.nodePtrTbl.put(node.stateFP, node.tindex, ptr);
 	}
-	
-	/* (non-Javadoc)
-	 * @see tlc2.tool.liveness.AbstractDiskGraph#checkDuplicate(tlc2.tool.liveness.GraphNode)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.tool.liveness.AbstractDiskGraph#checkDuplicate(tlc2.tool.liveness.
+	 * GraphNode)
 	 */
 	protected boolean checkDuplicate(final GraphNode node) {
 		return this.nodePtrTbl.get(node.stateFP, node.tindex) != -1;
@@ -167,7 +174,9 @@ public class TableauDiskGraph extends AbstractDiskGraph {
 		return this.getNode(fp, tidx, ptr);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.AbstractDiskGraph#getLink(long, int)
 	 */
 	public long getLink(long state, int tidx) {
@@ -175,12 +184,14 @@ public class TableauDiskGraph extends AbstractDiskGraph {
 		return this.nodePtrTbl.get(state, tidx);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.AbstractDiskGraph#putLink(long, int, long)
 	 */
 	public long putLink(long state, int tidx, long link) {
 		assert tidx >= 0;
-		assert MAX_PTR <= link && link < MAX_LINK; 
+		assert MAX_PTR <= link && link < MAX_LINK;
 		int[] node = this.nodePtrTbl.getNodes(state);
 		int cloc = this.nodePtrTbl.getIdx(node, tidx);
 		long oldLink = TableauNodePtrTable.getElem(node, cloc);
@@ -191,7 +202,9 @@ public class TableauDiskGraph extends AbstractDiskGraph {
 		return -1;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.AbstractDiskGraph#setMaxLink(long, int)
 	 */
 	public void setMaxLink(long state, int tidx) {
@@ -203,23 +216,27 @@ public class TableauDiskGraph extends AbstractDiskGraph {
 		this.nodePtrRAF.setLength(0);
 		this.nodeRAF.setLength(0);
 		this.nodePtrTbl = new TableauNodePtrTable(255);
-	 }
+	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.AbstractDiskGraph#size()
 	 */
 	public long size() {
 		return this.nodePtrTbl.size();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.AbstractDiskGraph#makeNodePtrTbl(long)
 	 */
-	protected void makeNodePtrTbl(final long ptr) throws IOException  {
+	protected void makeNodePtrTbl(final long ptr) throws IOException {
 		makeNodePtrTbl(ptr, nodePtrTbl);
 	}
-	
-	protected void makeNodePtrTbl(final long ptr, final TableauNodePtrTable aTable) throws IOException  {
+
+	protected void makeNodePtrTbl(final long ptr, final TableauNodePtrTable aTable) throws IOException {
 		this.nodePtrRAF.seek(0);
 		while (this.nodePtrRAF.getFilePointer() < ptr) {
 			long fp = this.nodePtrRAF.readLong();
@@ -229,7 +246,9 @@ public class TableauDiskGraph extends AbstractDiskGraph {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	public final String toString() {
@@ -271,8 +290,11 @@ public class TableauDiskGraph extends AbstractDiskGraph {
 		return sb.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.liveness.AbstractDiskGraph#toDotViz(tlc2.tool.liveness.OrderOfSolution)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.tool.liveness.AbstractDiskGraph#toDotViz(tlc2.tool.liveness.
+	 * OrderOfSolution)
 	 */
 	public final String toDotViz(final OrderOfSolution oos, final Map<Long, String> labels) {
 		final int slen = oos.getCheckState().length;
@@ -294,9 +316,10 @@ public class TableauDiskGraph extends AbstractDiskGraph {
 			sb.append("rankdir=LR;\n"); // Left to right rather than top to bottom
 			sb.append(toDotVizLegend(oos));
 			sb.append(nodePtrTbl.toDotViz());
-			sb.append("subgraph cluster_graph {\n"); 
-	        sb.append("color=\"white\";\n"); // no border.
-			//TODO Reading the file front to end potentially yields node duplicates in the output. Better to create a (temporary) nodeptrtable and traverse it instead.
+			sb.append("subgraph cluster_graph {\n");
+			sb.append("color=\"white\";\n"); // no border.
+			// TODO Reading the file front to end potentially yields node duplicates in the
+			// output. Better to create a (temporary) nodeptrtable and traverse it instead.
 			long nodePtr = this.nodeRAF.getFilePointer();
 			long nodePtrPtr = this.nodePtrRAF.getFilePointer();
 			long len = this.nodePtrRAF.length();
@@ -318,8 +341,10 @@ public class TableauDiskGraph extends AbstractDiskGraph {
 		}
 		return sb.toString();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.AbstractDiskGraph#getPath(long, int)
 	 */
 	public final LongVec getPath(final long state, final int tidx) throws IOException {
@@ -384,7 +409,7 @@ public class TableauDiskGraph extends AbstractDiskGraph {
 			}
 		}
 
-		// While queue has elements, but not longer! while(true)... can get stuck 
+		// While queue has elements, but not longer! while(true)... can get stuck
 		while (queue.hasElements()) {
 			final long curState = queue.dequeueLong();
 			final int curTidx = queue.dequeueInt();
@@ -469,10 +494,10 @@ public class TableauDiskGraph extends AbstractDiskGraph {
 			final int startTidx, final long finalState, final int finalTidx) {
 		// Add the target/final state to the result. Reverse path construction
 		// does not start at the final state that the getPath(..) is searching
-		// for, but at its immediate predecessor alias startState. 
+		// for, but at its immediate predecessor alias startState.
 		final LongVec res = new LongVec(2);
 		res.addElement(finalState);
-		
+
 		// Traverse the graph backwards from currentState using
 		// the NodePtrTable. The NodePtrTable contains the back
 		// pointers from a successor to its predecessor.
@@ -538,7 +563,7 @@ public class TableauDiskGraph extends AbstractDiskGraph {
 		}
 		return res;
 	}
-	
+
 	/**
 	 * This implementation extends {@link TableauNodePtrTable} to additionally
 	 * store the tableau index of the predecessor node. It is needed to traverse
@@ -551,14 +576,18 @@ public class TableauDiskGraph extends AbstractDiskGraph {
 			super(size);
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.tool.liveness.TableauNodePtrTable#getElemTidx(int[], int)
 		 */
 		public int getElemTidx(final int[] node, final int loc) {
 			return node[loc + 3];
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.tool.liveness.TableauNodePtrTable#putElem(int[], long, int, int)
 		 */
 		public void putElem(final int[] node, final long elem, final int tableauIdx, final int loc) {
@@ -566,7 +595,9 @@ public class TableauDiskGraph extends AbstractDiskGraph {
 			node[loc + 3] = tableauIdx;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.tool.liveness.TableauNodePtrTable#getElemLength()
 		 */
 		public int getElemLength() {
@@ -575,7 +606,9 @@ public class TableauDiskGraph extends AbstractDiskGraph {
 			return super.getElemLength() + 1;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.tool.liveness.TableauNodePtrTable#addElem(long, int, long)
 		 */
 		protected int[] addElem(final long key, final int tidx, final long elem) {
@@ -584,7 +617,9 @@ public class TableauDiskGraph extends AbstractDiskGraph {
 			return node;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.tool.liveness.TableauNodePtrTable#appendElem(int[], int, long)
 		 */
 		protected int[] appendElem(final int[] node, final int tidx, final long elem) {

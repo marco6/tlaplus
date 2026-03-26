@@ -40,17 +40,16 @@ public class OutErrSanyOutput implements SanyOutput {
    * Initializes a new instance of the {@link OutErrSanyOutput} class with
    * the given parameters controlling what logs are output to where.
    *
-   * @param out The stream to receive ordinary log output.
-   * @param err The stream to receive erroneous log output.
+   * @param out         The stream to receive ordinary log output.
+   * @param err         The stream to receive erroneous log output.
    * @param outputLevel Only logs of at least this level are output.
-   * @param errorLevel Logs of at least this level go to err; below, to out.
+   * @param errorLevel  Logs of at least this level go to err; below, to out.
    */
   public OutErrSanyOutput(
       PrintStream out,
       PrintStream err,
       LogLevel outputLevel,
-      LogLevel errorLevel
-  ) {
+      LogLevel errorLevel) {
     if (null == out) {
       throw new IllegalArgumentException("out stream cannot be null");
     }
@@ -60,8 +59,7 @@ public class OutErrSanyOutput implements SanyOutput {
     }
 
     for (LogLevel level : LogLevel.values()) {
-      this.outStreams[level.ordinal()] =
-          level.ordinal() >= outputLevel.ordinal()
+      this.outStreams[level.ordinal()] = level.ordinal() >= outputLevel.ordinal()
           ? level.ordinal() >= errorLevel.ordinal() ? err : out
           : SilentSanyOutput.NullOutputStream;
     }

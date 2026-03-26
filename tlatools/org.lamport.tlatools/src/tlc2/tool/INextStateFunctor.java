@@ -26,7 +26,7 @@
 package tlc2.tool;
 
 public interface INextStateFunctor extends IStateFunctor {
-	
+
 	public static class InvariantViolatedException extends StatefulRuntimeException {
 		public InvariantViolatedException() {
 			super("Invariant violated");
@@ -43,7 +43,7 @@ public interface INextStateFunctor extends IStateFunctor {
 	}
 
 	default boolean halt() {
-		//no-op
-		return false;		
+		// no-op
+		return false;
 	}
 }

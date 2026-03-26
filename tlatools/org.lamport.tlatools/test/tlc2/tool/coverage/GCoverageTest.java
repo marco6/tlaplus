@@ -34,12 +34,12 @@ import tlc2.output.EC;
 
 public class GCoverageTest extends AbstractCoverageTest {
 
-    public GCoverageTest () {
-        super("G");
-    }
+	public GCoverageTest() {
+		super("G");
+	}
 
-    @Test
-    public void testSpec () {
+	@Test
+	public void testSpec() {
 		// ModelChecker has finished and generated the expected amount of states
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "1"));
@@ -48,17 +48,17 @@ public class GCoverageTest extends AbstractCoverageTest {
 		// No 'general' errors recorded
 		assertFalse(recorder.recorded(EC.GENERAL));
 
-		assertCoverage("<Init line 6, col 1 to line 6, col 4 of module G>: 1:1\n" + 
-				"  line 6, col 9 to line 6, col 20 of module G: 1\n" + 
-				"<Next line 8, col 1 to line 8, col 4 of module G>: 0:1\n" + 
-				"  line 8, col 12 to line 8, col 25 of module G: 1\n" + 
-				"  line 9, col 12 to line 9, col 27 of module G: 2\n" + 
-				"  line 10, col 12 to line 10, col 23 of module G: 2\n" + 
-				"<Prop line 12, col 1 to line 12, col 4 of module G>\n" + 
-				"  line 12, col 9 to line 12, col 20 of module G: 1\n" + 
-				"  |line 8, col 12 to line 8, col 25 of module G: 1\n" + 
-				"  |line 9, col 12 to line 9, col 27 of module G: 1\n" + 
+		assertCoverage("<Init line 6, col 1 to line 6, col 4 of module G>: 1:1\n" +
+				"  line 6, col 9 to line 6, col 20 of module G: 1\n" +
+				"<Next line 8, col 1 to line 8, col 4 of module G>: 0:1\n" +
+				"  line 8, col 12 to line 8, col 25 of module G: 1\n" +
+				"  line 9, col 12 to line 9, col 27 of module G: 2\n" +
+				"  line 10, col 12 to line 10, col 23 of module G: 2\n" +
+				"<Prop line 12, col 1 to line 12, col 4 of module G>\n" +
+				"  line 12, col 9 to line 12, col 20 of module G: 1\n" +
+				"  |line 8, col 12 to line 8, col 25 of module G: 1\n" +
+				"  |line 9, col 12 to line 9, col 27 of module G: 1\n" +
 				"  |line 10, col 12 to line 10, col 23 of module G: 1");
 		assertFalse(recorder.recorded(EC.TLC_COVERAGE_MISMATCH));
-    }
+	}
 }

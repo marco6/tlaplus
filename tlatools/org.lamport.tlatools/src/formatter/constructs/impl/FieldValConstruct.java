@@ -36,7 +36,6 @@ public class FieldValConstruct implements TlaConstruct {
         return Doc.group(
                 field
                         .appendSpace(operator)
-                        .appendLineOrSpace(value).indent(indentSize)
-        );
+                        .appendLineOrSpace(value).indent(indentSize));
     }
 }

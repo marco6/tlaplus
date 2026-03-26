@@ -40,29 +40,29 @@ import tlc2.tool.CommonTestCase;
 import tlc2.tool.distributed.fp.DistributedFPSet;
 
 public abstract class DistributedTLCTestCase extends CommonTestCase {
-	
+
 	protected final String[] arguments;
 	protected final int fpSets;
-	
+
 	private SecurityManager securityManager;
-	
+
 	public DistributedTLCTestCase(String spec, String path) {
 		this(spec, path, new String[] {});
 	}
-	
+
 	public DistributedTLCTestCase(String spec, String path, String[] args) {
 		this(spec, path, args, 0);
 	}
-	
+
 	public DistributedTLCTestCase(String spec, String path, String[] args, int fpSets) {
 		super(new FilteringTestMPRecorder());
 		this.arguments = new String[args.length + 1];
 		this.arguments[this.arguments.length - 1] = path + spec; // Add path to additional arguments
 		System.arraycopy(args, 0, arguments, 0, args.length);
-		
+
 		this.fpSets = fpSets;
 	}
-    
+
 	@Before
 	public void setUp() {
 		Assume.assumeTrue("DistributedTLCTestCase broken with OffHeapDiskFPSet.", false);
@@ -77,10 +77,10 @@ public abstract class DistributedTLCTestCase extends CommonTestCase {
 		System.setSecurityManager(new NoExitSecurityManager());
 
 		MP.setRecorder(recorder);
-		
+
 		// Wait for all processes to terminate before the setup itself is done
 		final CountDownLatch latch = new CountDownLatch(fpSets + 2);
-		
+
 		// Workers
 		new Thread(new Runnable() {
 			public void run() {
@@ -129,28 +129,35 @@ public abstract class DistributedTLCTestCase extends CommonTestCase {
 			Assert.fail();
 		}
 	}
-	
+
 	@After
 	public void tearDown() {
 		System.setSecurityManager(securityManager);
 	}
-	
+
 	private static class NoExitSecurityManager extends SecurityManager {
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.SecurityManager#checkPermission(java.security.Permission)
 		 */
 		public void checkPermission(Permission perm) {
 			// allow anything.
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.SecurityManager#checkPermission(java.security.Permission, java.lang.Object)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.SecurityManager#checkPermission(java.security.Permission,
+		 * java.lang.Object)
 		 */
 		public void checkPermission(Permission perm, Object context) {
 			// allow anything.
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.SecurityManager#checkExit(int)
 		 */
 		public void checkExit(int status) {
@@ -158,20 +165,22 @@ public abstract class DistributedTLCTestCase extends CommonTestCase {
 			throw new NoExitException();
 		}
 	}
-	
+
 	@SuppressWarnings("serial")
 	public static class NoExitException extends RuntimeException {
 		// Want an easily distinguishable exception.
 	}
-	
+
 	private static class FilteringTestMPRecorder extends TestMPRecorder {
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.TestMPRecorder#record(int, java.lang.Object[])
 		 */
 		public void record(int code, Object... objects) {
 			if (EC.GENERAL == code && objects instanceof String[]) {
 				// GENERAL errors contain the exceptions thrown because of the
-				// intercepted System.exit(int) calls. Remove them so that 
+				// intercepted System.exit(int) calls. Remove them so that
 				// tests can check for real EC.GENERAL errors.
 				final String msg = ((String[]) objects)[0];
 				if (msg.contains(NoExitException.class.getName())) {

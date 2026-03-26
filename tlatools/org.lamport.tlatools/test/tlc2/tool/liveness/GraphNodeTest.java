@@ -104,7 +104,7 @@ public class GraphNodeTest {
 		final Random rnd = new Random(4711);
 
 		final List<Integer> verificationSet = new ArrayList<Integer>();
-		
+
 		int cnt = 0;
 		for (int i = 0; i < 5; i++) {
 			int x = rnd.nextInt(10);
@@ -131,7 +131,7 @@ public class GraphNodeTest {
 		node.addTransition(0, 0, 0, 0, null, 0, -1);
 		assertTrue("overallocated", node.realign() == 0);
 	}
-	
+
 	@Test
 	public void testAllocateAndSuccessorSize() {
 		// Hint to allocate 100 transitions and make sure the actual number of

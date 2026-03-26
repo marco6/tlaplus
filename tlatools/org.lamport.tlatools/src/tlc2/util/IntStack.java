@@ -52,7 +52,7 @@ public interface IntStack {
 	 * Pop the long integer from the top of the stack.
 	 */
 	long popLong();
-	
+
 	/**
 	 * Removes all elements from the stack
 	 */
@@ -62,7 +62,7 @@ public interface IntStack {
 	default long peakLong() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
-	
+
 	default int peakInt() {
 		throw new UnsupportedOperationException("Not implemented");
 	}

@@ -78,7 +78,7 @@ public class OpApplNodeWrapper extends CostModelNode implements Comparable<OpApp
 	}
 
 	// ---------------- Identity... ---------------- //
-	
+
 	@Override
 	public int compareTo(OpApplNodeWrapper arg0) {
 		return this.getLocation().compareTo(arg0.getLocation());
@@ -121,8 +121,8 @@ public class OpApplNodeWrapper extends CostModelNode implements Comparable<OpApp
 		}
 		return node.toString();
 	}
-	
-	// ----------------  ---------------- //
+
+	// ---------------- ---------------- //
 
 	@Override
 	protected Location getLocation() {
@@ -132,13 +132,13 @@ public class OpApplNodeWrapper extends CostModelNode implements Comparable<OpApp
 	public OpApplNode getNode() {
 		return this.node;
 	}
-	
+
 	public boolean isRoot() {
 		return this.node == null;
 	}
 
 	// ---------------- Parent <> Child ---------------- //
-	
+
 	public OpApplNodeWrapper addLets(OpApplNodeWrapper lets) {
 		this.lets.put(lets.getNode(), lets);
 		return this;
@@ -149,44 +149,44 @@ public class OpApplNodeWrapper extends CostModelNode implements Comparable<OpApp
 		this.recursive = recursive;
 		return this;
 	}
-	
+
 	@Override
 	public CostModelNode getRoot() {
 		assert this.root instanceof ActionWrapper;
 		return this.root;
 	}
-	
+
 	private final Set<Integer> seen = new HashSet<>();
-	
+
 	@Override
 	public final CostModelNode get(final SemanticNode eon) {
 		if (eon == this.node || !(eon instanceof OpApplNode)) {
 			return this;
 		}
-		
+
 		CostModelNode child = children.get(eon);
 		if (child != null) {
 			return child;
 		}
-		
+
 		if (recursive != null) {
 			child = recursive.children.get(eon);
 			if (child != null) {
 				return child;
 			}
 		}
-		
+
 		if (lets != null) {
 			child = lets.get(eon);
 			if (child != null) {
 				return child;
 			}
 		}
-		
+
 		// TODO Not all places in Tool lookup the correct CM yet. This should only be an
 		// engineering effort though.
 		if (TLCGlobals.warn && seen.add(eon.myUID)) {
-			//...only report it once to not spam the Toolbox console.
+			// ...only report it once to not spam the Toolbox console.
 			MP.printMessage(EC.TLC_COVERAGE_MISMATCH, new String[] { eon.toString(), this.toString() });
 		}
 		return this;
@@ -204,7 +204,7 @@ public class OpApplNodeWrapper extends CostModelNode implements Comparable<OpApp
 	}
 
 	// ---------------- Primed ---------------- //
-	
+
 	public OpApplNodeWrapper setPrimed() {
 		assert !isPrimed();
 		this.primed = true;
@@ -214,7 +214,7 @@ public class OpApplNodeWrapper extends CostModelNode implements Comparable<OpApp
 	protected boolean isPrimed() {
 		return this.primed;
 	}
-	
+
 	// ---------------- Print ---------------- //
 
 	protected long getEvalCount(Calculate fresh) {
@@ -258,7 +258,8 @@ public class OpApplNodeWrapper extends CostModelNode implements Comparable<OpApp
 			// collapse subtrees into this node under the following cases.
 			final Pair consistentChildren = getCount(collectedEvalCounts);
 
-			if (consistentChildren.primary < node.primary || consistentChildren.secondary < consistentChildren.secondary) {
+			if (consistentChildren.primary < node.primary
+					|| consistentChildren.secondary < consistentChildren.secondary) {
 				// Cannot collapse subtree because inconsistent with this node.
 				printSelf(level++);
 				printChildren(level);
@@ -302,7 +303,7 @@ public class OpApplNodeWrapper extends CostModelNode implements Comparable<OpApp
 		}
 		return null; // make compiler happy
 	}
-	
+
 	protected void printChildren(final int level) {
 		for (CostModelNode cmn : children.values()) {
 			((OpApplNodeWrapper) cmn).print(level, Calculate.CACHED);
@@ -313,7 +314,7 @@ public class OpApplNodeWrapper extends CostModelNode implements Comparable<OpApp
 		MP.printMessage(EC.TLC_COVERAGE_VALUE, new String[] {
 				indentBegin(level, TLCGlobals.coverageIndent, getLocation().toString()), String.valueOf(count) });
 	}
-	
+
 	protected void printSelf(final int level, final long count, final long cost) {
 		MP.printMessage(EC.TLC_COVERAGE_VALUE_COST,
 				new String[] { indentBegin(level, TLCGlobals.coverageIndent, getLocation().toString()),
@@ -333,7 +334,7 @@ public class OpApplNodeWrapper extends CostModelNode implements Comparable<OpApp
 		final String whitespaces = new String(new char[n]).replace('\0', c);
 		return whitespaces + str;
 	}
-	
+
 	static class Pair {
 		public final long primary;
 		public final long secondary;
@@ -342,6 +343,7 @@ public class OpApplNodeWrapper extends CostModelNode implements Comparable<OpApp
 			this.primary = primary;
 			this.secondary = secondary;
 		}
+
 		public boolean isZero() {
 			return primary == 0 && secondary == 0;
 		}
@@ -372,9 +374,9 @@ public class OpApplNodeWrapper extends CostModelNode implements Comparable<OpApp
 			return "<<" + primary + ", " + secondary + ">>";
 		}
 	}
-	
+
 	// ---------------- Child counts ---------------- //
-	
+
 	protected enum Calculate {
 		FRESH, CACHED;
 	}

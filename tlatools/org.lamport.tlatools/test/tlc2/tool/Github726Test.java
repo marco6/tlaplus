@@ -53,7 +53,7 @@ public class Github726Test extends ModelCheckerTestCase {
 
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "0"));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "0", "0", "0"));
-		
+
 		assertTrue(TEST_WRITER.log.contains("[data |-> 15, dst |-> \"a\"]\n"));
 		assertFalse(TEST_WRITER.log.contains("[data |-> \"a\", dst |-> 15]\n"));
 	}
@@ -62,11 +62,11 @@ public class Github726Test extends ModelCheckerTestCase {
 	protected boolean runWithDebugger() {
 		return false;
 	}
-	
+
 	private static class TestPrintWriter extends PrintWriter {
 
 		public final List<String> log = new ArrayList<>();
-		
+
 		public TestPrintWriter(PrintStream out) {
 			super(out);
 		}

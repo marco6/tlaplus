@@ -50,7 +50,7 @@ public class Debug03Test extends TLCDebuggerTestCase {
 		assertEquals(2, stackFrames.length);
 		assertTLCNextStatesFrame(stackFrames[0], 14, 16, 14, 19, RM, Context.Empty, 9);
 		assertTLCSyntheticStateStackFrame(stackFrames[1], 7, 5, 7, 14, RM, Context.Empty, 1);
-		
+
 		// Remove all breakpoints and run the spec to completion.
 		debugger.unsetBreakpoints();
 		debugger.continue_();

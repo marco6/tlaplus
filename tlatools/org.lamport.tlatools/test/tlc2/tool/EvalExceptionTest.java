@@ -36,22 +36,22 @@ import tlc2.output.EC;
 import tlc2.tool.liveness.ModelCheckerTestCase;
 
 public class EvalExceptionTest extends ModelCheckerTestCase {
-    public EvalExceptionTest() {
-        super("DistBakery", new String[] { "-config", "DistBakery.tla" }, EC.ExitStatus.ERROR);
-    }
+	public EvalExceptionTest() {
+		super("DistBakery", new String[] { "-config", "DistBakery.tla" }, EC.ExitStatus.ERROR);
+	}
 
-    @Override
+	@Override
 	protected boolean doCoverage() {
 		return false;
 	}
 
 	@Test
-    public void testSpec() {
-        assertTrue(recorder.recorded(EC.TLC_FINISHED));
-        assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "24", "17", "5"));
+	public void testSpec() {
+		assertTrue(recorder.recorded(EC.TLC_FINISHED));
+		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "24", "17", "5"));
 
-        // Error: The first argument of <= should be an integer, but instead it is:
-        // (-1 :> 0)
+		// Error: The first argument of <= should be an integer, but instead it is:
+		// (-1 :> 0)
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_MODULE_ARGUMENT_ERROR_AN,
 				"first", "<=", "integer", "(-1 :> 0)"));
 
@@ -109,7 +109,7 @@ public class EvalExceptionTest extends ModelCheckerTestCase {
 
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_NESTED_EXPRESSION,
 				"0. Line 209, column 5 to line 209, column 32 in DistBakery\n"
-				+ "1. Line 209, column 22 to line 209, column 32 in DistBakery\n"
-				+ "\n"));
+						+ "1. Line 209, column 22 to line 209, column 32 in DistBakery\n"
+						+ "\n"));
 	}
 }

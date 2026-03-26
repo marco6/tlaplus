@@ -20,7 +20,9 @@ public class MultiFPSetTest {
 	protected static final String tmpdir = System.getProperty("java.io.tmpdir") + File.separator + "MultiFPSetTest"
 			+ System.currentTimeMillis();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Before
@@ -30,6 +32,7 @@ public class MultiFPSetTest {
 
 	/**
 	 * Test method for {@link tlc2.tool.fp.MultiFPSet#new}.
+	 * 
 	 * @throws IOException Not supposed to happen
 	 */
 	@Test
@@ -45,9 +48,10 @@ public class MultiFPSetTest {
 		}
 		fail("Negative fpbits must fail");
 	}
-	
+
 	/**
 	 * Test method for {@link tlc2.tool.fp.MultiFPSet#new}.
+	 * 
 	 * @throws IOException Not supposed to happen
 	 */
 	@Test
@@ -64,6 +68,7 @@ public class MultiFPSetTest {
 
 	/**
 	 * Test method for {@link tlc2.tool.fp.MultiFPSet#new}.
+	 * 
 	 * @throws IOException Not supposed to happen
 	 */
 	@Test
@@ -91,6 +96,7 @@ public class MultiFPSetTest {
 
 	/**
 	 * Test method for {@link tlc2.tool.fp.MultiFPSet#new}.
+	 * 
 	 * @throws IOException Not supposed to happen
 	 */
 	@Test
@@ -104,9 +110,10 @@ public class MultiFPSetTest {
 		}
 		fail();
 	}
-	
+
 	/**
 	 * Test method for {@link tlc2.tool.fp.MultiFPSet#put(long)}.
+	 * 
 	 * @throws IOException Not supposed to happen
 	 */
 	@Test
@@ -126,6 +133,7 @@ public class MultiFPSetTest {
 
 	/**
 	 * Test method for {@link tlc2.tool.fp.MultiFPSet#put(long)}.
+	 * 
 	 * @throws IOException Not supposed to happen
 	 */
 	@Test
@@ -145,6 +153,7 @@ public class MultiFPSetTest {
 
 	/**
 	 * Test method for {@link tlc2.tool.fp.MultiFPSet#put(long)}.
+	 * 
 	 * @throws IOException Not supposed to happen
 	 */
 	@Test
@@ -161,27 +170,27 @@ public class MultiFPSetTest {
 			fail();
 		}
 	}
-	
+
 	@Test
 	public void testGetFPSet() throws IOException {
 		System.setProperty(FPSetFactory.IMPL_PROPERTY, MSBDiskFPSet.class.getName());
 		final FPSetConfiguration conf = new FPSetConfiguration();
 		conf.setFpBits(1);
-		
+
 		MultiFPSet mfps = new MultiFPSet(conf);
 		mfps.init(1, tmpdir, "testGetFPSet");
-		
+
 		final long a = (1L << 62) + 1; // 01...0
 		printBinaryString("a01...1", a);
 		final long b = 1L; // 0...1
 		printBinaryString("b00...1", b);
-		
+
 		FPSet aFPSet = mfps.getFPSet(a);
 		Assert.assertTrue(aFPSet == mfps.getFPSet(b));
-		
+
 		// Initially neither a nor b are in the set.
 		Assert.assertFalse(aFPSet.contains(a));
-		
+
 		Assert.assertFalse(mfps.contains(a));
 		Assert.assertFalse(mfps.contains(b));
 
@@ -200,7 +209,7 @@ public class MultiFPSetTest {
 		Assert.assertTrue(aFPSet.contains(a));
 		Assert.assertTrue(aFPSet.contains(b));
 		Assert.assertEquals(2, aFPSet.size());
-		
+
 		// Get the other FPSet
 		FPSet[] fpSets = mfps.getFPSets();
 		Set<FPSet> s = new HashSet<FPSet>();
@@ -209,11 +218,11 @@ public class MultiFPSetTest {
 		}
 		s.remove(aFPSet);
 		FPSet bFPSet = (FPSet) s.toArray()[0];
-		
+
 		Assert.assertFalse(bFPSet.contains(a));
 		Assert.assertFalse(bFPSet.contains(b));
 		Assert.assertEquals(0, bFPSet.size());
-		
+
 		Assert.assertTrue(mfps.checkInvariant());
 	}
 
@@ -222,27 +231,27 @@ public class MultiFPSetTest {
 		System.setProperty(FPSetFactory.IMPL_PROPERTY, MSBDiskFPSet.class.getName());
 		final FPSetConfiguration conf = new FPSetConfiguration();
 		conf.setFpBits(1);
-		
+
 		MultiFPSet mfps = new MultiFPSet(conf);
 		mfps.init(1, tmpdir, "testGetFPSet0");
-		
+
 		final long a = (1L << 63) + 1; // 10...1
 		printBinaryString("a1...1", a);
-		final long b = 1L;             // 00...1
+		final long b = 1L; // 00...1
 		printBinaryString("b0...1", b);
 		final long c = (1L << 62) + 1; // 01...1
 		printBinaryString("c1...1", c);
 		final long d = (3L << 62) + 1; // 11...1
 		printBinaryString("d0...1", d);
-		
+
 		FPSet aFPSet = mfps.getFPSet(a);
 		FPSet bFPSet = mfps.getFPSet(b);
 		Assert.assertTrue(aFPSet != bFPSet);
-		
+
 		// Initially neither a nor b are in the set.
 		Assert.assertFalse(aFPSet.contains(a));
 		Assert.assertFalse(bFPSet.contains(b));
-		
+
 		Assert.assertFalse(mfps.contains(a));
 		Assert.assertFalse(mfps.contains(b));
 		Assert.assertFalse(mfps.contains(c));
@@ -269,22 +278,22 @@ public class MultiFPSetTest {
 		Assert.assertTrue(mfps.contains(b));
 		Assert.assertTrue(mfps.contains(c));
 		Assert.assertFalse(mfps.contains(d));
-		
+
 		Assert.assertFalse(mfps.put(d));
 		Assert.assertTrue(mfps.contains(a));
 		Assert.assertTrue(mfps.contains(b));
 		Assert.assertTrue(mfps.contains(c));
 		Assert.assertTrue(mfps.contains(d));
-		
+
 		for (FPSet fpSet : mfps.getFPSets()) {
 			Assert.assertEquals(2, fpSet.size());
 			// Expect to have two buckets
 			Assert.assertEquals(2, ((FPSetStatistic) fpSet).getTblLoad());
 		}
-		
+
 		Assert.assertTrue(mfps.checkInvariant());
 	}
-	
+
 	@Test
 	public void testGetFPSet1() throws IOException {
 		System.setProperty(FPSetFactory.IMPL_PROPERTY, MSBDiskFPSet.class.getName());
@@ -292,7 +301,7 @@ public class MultiFPSetTest {
 		conf.setFpBits(2);
 		final MultiFPSet mfps = new MultiFPSet(conf);
 		mfps.init(1, tmpdir, "testGetFPSet1");
-		
+
 		final long a = 1L; // 00...1
 		printBinaryString("a02", a);
 		final long b = (1L << 62) + 1; // 01...1
@@ -301,7 +310,7 @@ public class MultiFPSetTest {
 		printBinaryString("c02", c);
 		final long d = (3L << 62) + 1; // 11...1
 		printBinaryString("d02", d);
-		
+
 		final Set<FPSet> s = new HashSet<FPSet>();
 		final FPSet aFPSet = mfps.getFPSet(a);
 		s.add(aFPSet);
@@ -312,7 +321,7 @@ public class MultiFPSetTest {
 		final FPSet dFPSet = mfps.getFPSet(d);
 		s.add(dFPSet);
 		Assert.assertEquals(4, s.size());
-		
+
 		Assert.assertFalse(mfps.contains(a));
 		Assert.assertFalse(mfps.contains(b));
 		Assert.assertFalse(mfps.contains(c));
@@ -341,19 +350,19 @@ public class MultiFPSetTest {
 		Assert.assertTrue(mfps.contains(b));
 		Assert.assertTrue(mfps.contains(c));
 		Assert.assertTrue(mfps.contains(d));
-		
+
 		for (FPSet fpSet : s) {
 			Assert.assertEquals(1, fpSet.size());
 			// Expect to have two buckets
 			Assert.assertEquals(1, ((FPSetStatistic) fpSet).getTblLoad());
 		}
-		
+
 		// a & c and b & d have collisions at the individual DiskFPSet level.
 		Assert.assertTrue(aFPSet.contains(a));
 		Assert.assertFalse(aFPSet.contains(b));
 		Assert.assertTrue(aFPSet.contains(c)); // expected collision
 		Assert.assertFalse(aFPSet.contains(d));
-		
+
 		Assert.assertTrue(bFPSet.contains(b));
 		Assert.assertFalse(bFPSet.contains(a));
 		Assert.assertFalse(bFPSet.contains(c));
@@ -377,21 +386,21 @@ public class MultiFPSetTest {
 		System.setProperty(FPSetFactory.IMPL_PROPERTY, LSBDiskFPSet.class.getName());
 		final FPSetConfiguration conf = new FPSetConfiguration();
 		conf.setFpBits(1);
-		
+
 		MultiFPSet mfps = new MultiFPSet(conf);
 		mfps.init(1, tmpdir, "testGetFPSetL");
-		
+
 		final long a = (1L << 62) + 1;
 		printBinaryString("a01", a);
 		final long b = 1L;
 		printBinaryString("b01", b);
-		
+
 		FPSet aFPSet = mfps.getFPSet(a);
 		Assert.assertTrue(aFPSet == mfps.getFPSet(b));
-		
+
 		// Initially neither a nor b are in the set.
 		Assert.assertFalse(aFPSet.contains(a));
-		
+
 		Assert.assertFalse(mfps.contains(a));
 		Assert.assertFalse(mfps.contains(b));
 
@@ -410,7 +419,7 @@ public class MultiFPSetTest {
 		Assert.assertTrue(aFPSet.contains(a));
 		Assert.assertTrue(aFPSet.contains(b));
 		Assert.assertEquals(2, aFPSet.size());
-		
+
 		// Get the other FPSet
 		FPSet[] fpSets = mfps.getFPSets();
 		Set<FPSet> s = new HashSet<FPSet>();
@@ -419,7 +428,7 @@ public class MultiFPSetTest {
 		}
 		s.remove(aFPSet);
 		FPSet bFPSet = (FPSet) s.toArray()[0];
-		
+
 		Assert.assertFalse(bFPSet.contains(a));
 		Assert.assertFalse(bFPSet.contains(b));
 		Assert.assertEquals(0, bFPSet.size());
@@ -432,23 +441,23 @@ public class MultiFPSetTest {
 		System.setProperty(FPSetFactory.IMPL_PROPERTY, LSBDiskFPSet.class.getName());
 		final FPSetConfiguration conf = new FPSetConfiguration();
 		conf.setFpBits(1);
-		
+
 		MultiFPSet mfps = new MultiFPSet(conf);
 		mfps.init(1, tmpdir, "testGetFPSet0L");
-		
+
 		final long a = (1L << 63) + 1;
 		printBinaryString("a01", a);
 		final long b = 1L;
 		printBinaryString("b01", b);
-		
+
 		FPSet aFPSet = mfps.getFPSet(a);
 		FPSet bFPSet = mfps.getFPSet(b);
 		Assert.assertTrue(aFPSet != bFPSet);
-		
+
 		// Initially neither a nor b are in the set.
 		Assert.assertFalse(aFPSet.contains(a));
 		Assert.assertFalse(bFPSet.contains(b));
-		
+
 		Assert.assertFalse(mfps.contains(a));
 		Assert.assertFalse(mfps.contains(b));
 
@@ -466,7 +475,7 @@ public class MultiFPSetTest {
 
 		Assert.assertTrue(mfps.checkInvariant());
 	}
-	
+
 	@Test
 	public void testGetFPSet1L() throws IOException {
 		System.setProperty(FPSetFactory.IMPL_PROPERTY, LSBDiskFPSet.class.getName());
@@ -474,7 +483,7 @@ public class MultiFPSetTest {
 		conf.setFpBits(2);
 		final MultiFPSet mfps = new MultiFPSet(conf);
 		mfps.init(1, tmpdir, "testGetFPSet1L");
-		
+
 		final long a = 1L; // 00...1
 		printBinaryString("a02", a);
 		final long b = (1L << 62) + 1; // 01...1
@@ -483,7 +492,7 @@ public class MultiFPSetTest {
 		printBinaryString("c02", c);
 		final long d = (3L << 62) + 1; // 11...1
 		printBinaryString("d02", d);
-		
+
 		final Set<FPSet> s = new HashSet<FPSet>();
 		final FPSet aFPSet = mfps.getFPSet(a);
 		s.add(aFPSet);
@@ -494,7 +503,7 @@ public class MultiFPSetTest {
 		final FPSet dFPSet = mfps.getFPSet(d);
 		s.add(dFPSet);
 		Assert.assertEquals(4, s.size());
-		
+
 		Assert.assertFalse(mfps.contains(a));
 		Assert.assertFalse(mfps.contains(b));
 		Assert.assertFalse(mfps.contains(c));
@@ -523,17 +532,17 @@ public class MultiFPSetTest {
 		Assert.assertTrue(mfps.contains(b));
 		Assert.assertTrue(mfps.contains(c));
 		Assert.assertTrue(mfps.contains(d));
-		
+
 		for (FPSet fpSet : s) {
 			Assert.assertEquals(1, fpSet.size());
 		}
-		
+
 		// a & c and b & d have collisions at the individual DiskFPSet level.
 		Assert.assertTrue(aFPSet.contains(a));
 		Assert.assertFalse(aFPSet.contains(b));
 		Assert.assertTrue(aFPSet.contains(c)); // expected collision
 		Assert.assertFalse(aFPSet.contains(d));
-		
+
 		Assert.assertTrue(bFPSet.contains(b));
 		Assert.assertFalse(bFPSet.contains(a));
 		Assert.assertFalse(bFPSet.contains(c));
@@ -551,7 +560,7 @@ public class MultiFPSetTest {
 
 		Assert.assertTrue(mfps.checkInvariant());
 	}
-	
+
 	@Test
 	public void testGetFPSetOffHeap() throws IOException {
 		if (!System.getProperty("sun.arch.data.model").equals("64")) {
@@ -562,21 +571,21 @@ public class MultiFPSetTest {
 		System.setProperty(FPSetFactory.IMPL_PROPERTY, OffHeapDiskFPSet.class.getName());
 		final FPSetConfiguration conf = new FPSetConfiguration();
 		conf.setFpBits(1);
-		
+
 		MultiFPSet mfps = new MultiFPSet(conf);
 		mfps.init(1, tmpdir, "testGetFPSetOffHeap");
-		
+
 		final long a = (1L << 62) + 1; // 01...0
 		printBinaryString("a01...1", a);
 		final long b = 1L; // 0...1
 		printBinaryString("b00...1", b);
-		
+
 		FPSet aFPSet = mfps.getFPSet(a);
 		Assert.assertTrue(aFPSet == mfps.getFPSet(b));
-		
+
 		// Initially neither a nor b are in the set.
 		Assert.assertFalse(aFPSet.contains(a));
-		
+
 		Assert.assertFalse(mfps.contains(a));
 		Assert.assertFalse(mfps.contains(b));
 
@@ -595,7 +604,7 @@ public class MultiFPSetTest {
 		Assert.assertTrue(aFPSet.contains(a));
 		Assert.assertTrue(aFPSet.contains(b));
 		Assert.assertEquals(2, aFPSet.size());
-		
+
 		// Get the other FPSet
 		FPSet[] fpSets = mfps.getFPSets();
 		Set<FPSet> s = new HashSet<FPSet>();
@@ -604,11 +613,11 @@ public class MultiFPSetTest {
 		}
 		s.remove(aFPSet);
 		FPSet bFPSet = (FPSet) s.toArray()[0];
-		
+
 		Assert.assertFalse(bFPSet.contains(a));
 		Assert.assertFalse(bFPSet.contains(b));
 		Assert.assertEquals(0, bFPSet.size());
-		
+
 		Assert.assertTrue(mfps.checkInvariant());
 	}
 
@@ -622,27 +631,27 @@ public class MultiFPSetTest {
 		System.setProperty(FPSetFactory.IMPL_PROPERTY, OffHeapDiskFPSet.class.getName());
 		final FPSetConfiguration conf = new FPSetConfiguration();
 		conf.setFpBits(1);
-		
+
 		MultiFPSet mfps = new MultiFPSet(conf);
 		mfps.init(1, tmpdir, "testGetFPSetOffHeap0");
-		
+
 		final long a = (1L << 63) + 1; // 10...1
 		printBinaryString("a1...1", a);
-		final long b = 1L;             // 00...1
+		final long b = 1L; // 00...1
 		printBinaryString("b0...1", b);
 		final long c = (1L << 62) + 1; // 01...1
 		printBinaryString("c1...1", c);
 		final long d = (3L << 62) + 1; // 11...1
 		printBinaryString("d0...1", d);
-		
+
 		FPSet aFPSet = mfps.getFPSet(a);
 		FPSet bFPSet = mfps.getFPSet(b);
 		Assert.assertTrue(aFPSet != bFPSet);
-		
+
 		// Initially neither a nor b are in the set.
 		Assert.assertFalse(aFPSet.contains(a));
 		Assert.assertFalse(bFPSet.contains(b));
-		
+
 		Assert.assertFalse(mfps.contains(a));
 		Assert.assertFalse(mfps.contains(b));
 		Assert.assertFalse(mfps.contains(c));
@@ -669,22 +678,22 @@ public class MultiFPSetTest {
 		Assert.assertTrue(mfps.contains(b));
 		Assert.assertTrue(mfps.contains(c));
 		Assert.assertFalse(mfps.contains(d));
-		
+
 		Assert.assertFalse(mfps.put(d));
 		Assert.assertTrue(mfps.contains(a));
 		Assert.assertTrue(mfps.contains(b));
 		Assert.assertTrue(mfps.contains(c));
 		Assert.assertTrue(mfps.contains(d));
-		
+
 		for (FPSet fpSet : mfps.getFPSets()) {
 			Assert.assertEquals(2, fpSet.size());
 			// Expect to have two buckets
 			Assert.assertEquals(2, ((FPSetStatistic) fpSet).getTblLoad());
 		}
-		
+
 		Assert.assertTrue(mfps.checkInvariant());
 	}
-	
+
 	@Test
 	public void testGetFPSetOffHeap1() throws IOException {
 		if (!System.getProperty("sun.arch.data.model").equals("64")) {
@@ -697,7 +706,7 @@ public class MultiFPSetTest {
 		conf.setFpBits(2);
 		final MultiFPSet mfps = new MultiFPSet(conf);
 		mfps.init(1, tmpdir, "testGetFPSetOffHeap1");
-		
+
 		final long a = 1L; // 00...1
 		printBinaryString("a02", a);
 		final long b = (1L << 62) + 1; // 01...1
@@ -706,7 +715,7 @@ public class MultiFPSetTest {
 		printBinaryString("c02", c);
 		final long d = (3L << 62) + 1; // 11...1
 		printBinaryString("d02", d);
-		
+
 		final Set<FPSet> s = new HashSet<FPSet>();
 		final FPSet aFPSet = mfps.getFPSet(a);
 		s.add(aFPSet);
@@ -717,7 +726,7 @@ public class MultiFPSetTest {
 		final FPSet dFPSet = mfps.getFPSet(d);
 		s.add(dFPSet);
 		Assert.assertEquals(4, s.size());
-		
+
 		Assert.assertFalse(mfps.contains(a));
 		Assert.assertFalse(mfps.contains(b));
 		Assert.assertFalse(mfps.contains(c));
@@ -746,19 +755,19 @@ public class MultiFPSetTest {
 		Assert.assertTrue(mfps.contains(b));
 		Assert.assertTrue(mfps.contains(c));
 		Assert.assertTrue(mfps.contains(d));
-		
+
 		for (FPSet fpSet : s) {
 			Assert.assertEquals(1, fpSet.size());
 			// Expect to have two buckets
 			Assert.assertEquals(1, ((FPSetStatistic) fpSet).getTblLoad());
 		}
-		
+
 		// a & c and b & d have collisions at the individual DiskFPSet level.
 		Assert.assertTrue(aFPSet.contains(a));
 		Assert.assertFalse(aFPSet.contains(b));
 		Assert.assertTrue(aFPSet.contains(c)); // expected collision
 		Assert.assertFalse(aFPSet.contains(d));
-		
+
 		Assert.assertTrue(bFPSet.contains(b));
 		Assert.assertFalse(bFPSet.contains(a));
 		Assert.assertFalse(bFPSet.contains(c));
@@ -778,6 +787,7 @@ public class MultiFPSetTest {
 	}
 
 	private void printBinaryString(final String id, final long a) {
-//		System.out.println(String.format(id + ":%64s", Long.toBinaryString(a)).replace(' ', '0'));
+		// System.out.println(String.format(id + ":%64s",
+		// Long.toBinaryString(a)).replace(' ', '0'));
 	}
 }

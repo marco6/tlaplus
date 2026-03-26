@@ -25,6 +25,7 @@
  ******************************************************************************/
 
 package tlc2.tool.suite;
+
 import tlc2.output.EC.ExitStatus;
 import tlc2.tool.liveness.ModelCheckerTestCase;
 import util.TestPrintStream;
@@ -41,7 +42,7 @@ public abstract class SuiteETestCase extends ModelCheckerTestCase {
 	public SuiteETestCase(int exitStatus) {
 		super("setBySetUp", "suite", exitStatus);
 	}
-	
+
 	public SuiteETestCase(String[] params) {
 		this(params, ExitStatus.SUCCESS);
 	}
@@ -50,21 +51,22 @@ public abstract class SuiteETestCase extends ModelCheckerTestCase {
 		super("setBySetUp", "suite", params, exitStatus);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ModelCheckerTestCase#setUp()
 	 */
 	public void setUp() {
 		// Set spec name to the name of the unit tests
 		spec = getClass().getSimpleName().toLowerCase();
-		
+
 		// Intercept tool out to check SANY parser errors
 		ToolIO.out = testPrintStream;
 		ToolIO.err = testPrintStream;
-		
+
 		super.setUp();
 	}
-	
-	
+
 	protected void assertSubstring(String substring) {
 		testPrintStream.assertSubstring(substring);
 	}

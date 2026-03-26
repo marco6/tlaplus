@@ -59,20 +59,28 @@ public class ProofConstruct implements TlaConstruct {
 
     /** Check if a node or its first descendant has pre-comments */
     private static boolean hasPreComments(TreeNode node) {
-        if (node == null) return false;
-        if (node.getPreComments() != null && node.getPreComments().length > 0) return true;
-        if (node.zero() != null && node.zero().length > 0) return hasPreComments(node.zero()[0]);
-        if (node.one() != null && node.one().length > 0) return hasPreComments(node.one()[0]);
+        if (node == null)
+            return false;
+        if (node.getPreComments() != null && node.getPreComments().length > 0)
+            return true;
+        if (node.zero() != null && node.zero().length > 0)
+            return hasPreComments(node.zero()[0]);
+        if (node.one() != null && node.one().length > 0)
+            return hasPreComments(node.one()[0]);
         return false;
     }
 
     /** Handles N_InnerProof (374) - nested proof block */
     public static class InnerProofConstruct implements TlaConstruct {
         @Override
-        public String getName() { return "N_InnerProof"; }
+        public String getName() {
+            return "N_InnerProof";
+        }
 
         @Override
-        public int getSupportedNodeKind() { return NodeKind.INNER_PROOF.getId(); }
+        public int getSupportedNodeKind() {
+            return NodeKind.INNER_PROOF.getId();
+        }
 
         @Override
         public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
@@ -83,15 +91,20 @@ public class ProofConstruct implements TlaConstruct {
     /** Handles N_ProofStep (406) - wraps a step label with its content */
     public static class ProofStepConstruct implements TlaConstruct {
         @Override
-        public String getName() { return "N_ProofStep"; }
+        public String getName() {
+            return "N_ProofStep";
+        }
 
         @Override
-        public int getSupportedNodeKind() { return NodeKind.PROOF_STEP.getId(); }
+        public int getSupportedNodeKind() {
+            return NodeKind.PROOF_STEP.getId();
+        }
 
         @Override
         public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
             List<Doc> children = collectChildren(node, context);
-            if (children.isEmpty()) return Doc.empty();
+            if (children.isEmpty())
+                return Doc.empty();
             // First children are the step content (label + assertion),
             // last child is the proof (BY/OBVIOUS/inner proof).
             Doc result = children.get(0);
@@ -105,7 +118,7 @@ public class ProofConstruct implements TlaConstruct {
                 TreeNode lastChild = zero != null && zero.length > 0 ? zero[zero.length - 1] : null;
                 boolean isNestedProof = lastChild != null &&
                         (lastChild.getKind() == NodeKind.INNER_PROOF.getId() ||
-                         lastChild.getKind() == NodeKind.PROOF.getId());
+                                lastChild.getKind() == NodeKind.PROOF.getId());
                 if (isNestedProof) {
                     // Inner proofs always go on new line indented
                     result = result.append(Doc.line().append(proof).indent(indentSize));
@@ -124,23 +137,34 @@ public class ProofConstruct implements TlaConstruct {
             return result;
         }
 
-        /** Check if step content nodes produce multi-line output (e.g. PICK with conj/disj body) */
+        /**
+         * Check if step content nodes produce multi-line output (e.g. PICK with
+         * conj/disj body)
+         */
         private static boolean hasMultiLineStepContent(TreeNode[] zero) {
-            if (zero == null) return false;
+            if (zero == null)
+                return false;
             for (int i = 0; i < zero.length - 1; i++) {
-                if (containsConjOrDisjList(zero[i])) return true;
+                if (containsConjOrDisjList(zero[i]))
+                    return true;
             }
             return false;
         }
 
-        /** Recursively check if a node or its direct children contain a conjunction/disjunction list */
+        /**
+         * Recursively check if a node or its direct children contain a
+         * conjunction/disjunction list
+         */
         private static boolean containsConjOrDisjList(TreeNode node) {
-            if (node == null) return false;
+            if (node == null)
+                return false;
             int kind = node.getKind();
-            if (kind == NodeKind.CONJ_LIST.getId() || kind == NodeKind.DISJ_LIST.getId()) return true;
+            if (kind == NodeKind.CONJ_LIST.getId() || kind == NodeKind.DISJ_LIST.getId())
+                return true;
             if (node.zero() != null) {
                 for (TreeNode child : node.zero()) {
-                    if (containsConjOrDisjList(child)) return true;
+                    if (containsConjOrDisjList(child))
+                        return true;
                 }
             }
             return false;

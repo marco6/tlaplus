@@ -45,7 +45,7 @@ public class Github179aTest extends ModelCheckerTestCase {
 
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_MODULE_VALUE_JAVA_METHOD_OVERRIDE,
 				"public static tlc2.value.impl.Value tlc2.module.TLC.PrintT(tlc2.value.impl.Value)",
-				"Attempted to check equality of integer 1 with non-integer:\n" + 
-				"{1}"));
+				"Attempted to check equality of integer 1 with non-integer:\n" +
+						"{1}"));
 	}
 }

@@ -13,10 +13,12 @@ import java.util.List;
  */
 final class BracketedListHelper {
 
-    private BracketedListHelper() {}
+    private BracketedListHelper() {
+    }
 
     /**
-     * Collect element Docs from children between the first and last nodes (brackets),
+     * Collect element Docs from children between the first and last nodes
+     * (brackets),
      * skipping commas.
      */
     static List<Doc> collectElements(TreeNode[] children, ConstructContext context) {
@@ -44,13 +46,13 @@ final class BracketedListHelper {
     }
 
     /**
-     * Wrap content in brackets: open + space + content (indented) + lineOrSpace + close.
+     * Wrap content in brackets: open + space + content (indented) + lineOrSpace +
+     * close.
      */
     static Doc wrapInBrackets(Doc openDoc, Doc content, Doc closeDoc, int indentWidth) {
         return Doc.group(
                 openDoc
                         .appendSpace(content.indent(indentWidth))
-                        .appendLineOrSpace(closeDoc)
-        );
+                        .appendLineOrSpace(closeDoc));
     }
 }

@@ -44,29 +44,37 @@ public class ViewMapTest_TTraceTest extends TTraceModelCheckerTestCase {
 		super(ViewMapTest.class, new String[] { "-view" }, ExitStatus.VIOLATION_SAFETY);
 	}
 
-	@Test    
+	@Test
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
 		assertFalse(recorder.recorded(EC.TLC_BUG));
 
 		assertTrue(recorder.recorded(EC.TLC_BEHAVIOR_UP_TO_THIS_POINT));
-		
+
 		final List<String> expectedTrace = new ArrayList<String>(8);
-		expectedTrace.add("/\\ buffer = <<>>\n/\\ waitset = {}\n/\\ pc = (c1 :> \"lbc\" @@ c2 :> \"lbc\" @@ p1 :> \"lbp\")");
-		expectedTrace.add("/\\ buffer = <<>>\n/\\ waitset = {c1}\n/\\ pc = (c1 :> \"lbc\" @@ c2 :> \"lbc\" @@ p1 :> \"lbp\")");
-		expectedTrace.add("/\\ buffer = <<>>\n/\\ waitset = {c1, c2}\n/\\ pc = (c1 :> \"lbc\" @@ c2 :> \"lbc\" @@ p1 :> \"lbp\")");
-		expectedTrace.add("/\\ buffer = <<\"d\">>\n/\\ waitset = {c2}\n/\\ pc = (c1 :> \"lbc\" @@ c2 :> \"lbc\" @@ p1 :> \"lbp\")");
-		expectedTrace.add("/\\ buffer = <<\"d\">>\n/\\ waitset = {c2, p1}\n/\\ pc = (c1 :> \"lbc\" @@ c2 :> \"lbc\" @@ p1 :> \"lbp\")");
-		expectedTrace.add("/\\ buffer = <<>>\n/\\ waitset = {p1}\n/\\ pc = (c1 :> \"lbc\" @@ c2 :> \"lbc\" @@ p1 :> \"lbp\")");
-		expectedTrace.add("/\\ buffer = <<>>\n/\\ waitset = {c1, p1}\n/\\ pc = (c1 :> \"lbc\" @@ c2 :> \"lbc\" @@ p1 :> \"lbp\")");
-		expectedTrace.add("/\\ buffer = <<>>\n/\\ waitset = {c1, c2, p1}\n/\\ pc = (c1 :> \"lbc\" @@ c2 :> \"lbc\" @@ p1 :> \"lbp\")");
+		expectedTrace
+				.add("/\\ buffer = <<>>\n/\\ waitset = {}\n/\\ pc = (c1 :> \"lbc\" @@ c2 :> \"lbc\" @@ p1 :> \"lbp\")");
+		expectedTrace.add(
+				"/\\ buffer = <<>>\n/\\ waitset = {c1}\n/\\ pc = (c1 :> \"lbc\" @@ c2 :> \"lbc\" @@ p1 :> \"lbp\")");
+		expectedTrace.add(
+				"/\\ buffer = <<>>\n/\\ waitset = {c1, c2}\n/\\ pc = (c1 :> \"lbc\" @@ c2 :> \"lbc\" @@ p1 :> \"lbp\")");
+		expectedTrace.add(
+				"/\\ buffer = <<\"d\">>\n/\\ waitset = {c2}\n/\\ pc = (c1 :> \"lbc\" @@ c2 :> \"lbc\" @@ p1 :> \"lbp\")");
+		expectedTrace.add(
+				"/\\ buffer = <<\"d\">>\n/\\ waitset = {c2, p1}\n/\\ pc = (c1 :> \"lbc\" @@ c2 :> \"lbc\" @@ p1 :> \"lbp\")");
+		expectedTrace.add(
+				"/\\ buffer = <<>>\n/\\ waitset = {p1}\n/\\ pc = (c1 :> \"lbc\" @@ c2 :> \"lbc\" @@ p1 :> \"lbp\")");
+		expectedTrace.add(
+				"/\\ buffer = <<>>\n/\\ waitset = {c1, p1}\n/\\ pc = (c1 :> \"lbc\" @@ c2 :> \"lbc\" @@ p1 :> \"lbp\")");
+		expectedTrace.add(
+				"/\\ buffer = <<>>\n/\\ waitset = {c1, c2, p1}\n/\\ pc = (c1 :> \"lbc\" @@ c2 :> \"lbc\" @@ p1 :> \"lbp\")");
 		final List<String> expectedActions = new ArrayList<>();
 		expectedActions.add(isExtendedTLCState()
 				? "<_init line 27, col 5 to line 29, col 26 of module ViewMapTestTTrace>"
 				: TLCStateInfo.INITIAL_PREDICATE);
 		expectedActions.addAll(
-			Collections.nCopies(7, "<_next line 33, col 5 to line 41, col 31 of module ViewMapTestTTrace>"));
+				Collections.nCopies(7, "<_next line 33, col 5 to line 41, col 31 of module ViewMapTestTTrace>"));
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace, expectedActions);
 	}
 }

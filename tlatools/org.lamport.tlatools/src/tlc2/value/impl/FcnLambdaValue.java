@@ -31,9 +31,9 @@ import util.Assert;
 import util.UniqueString;
 
 public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaValue {
-  private final FcnParams params;      // the function formals
-  public final SemanticNode body;      // the function body
-  private ValueExcept[] excepts;  // the EXCEPTs
+  private final FcnParams params; // the function formals
+  public final SemanticNode body; // the function body
+  private ValueExcept[] excepts; // the EXCEPTs
   private final ITool tool;
   private Context con;
   private final TLCState state;
@@ -41,10 +41,10 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
   private int control;
   public FcnRcdValue fcnRcd;
 
-	/*
-	 * Constructor: E.g. [ s \in {"A", "B", "C"} |-> "foo" ] where s \in {"A", "B",
-	 * "C"} is FcnLambdaValue and body is the expression "foo".
-	 */
+  /*
+   * Constructor: E.g. [ s \in {"A", "B", "C"} |-> "foo" ] where s \in {"A", "B",
+   * "C"} is FcnLambdaValue and body is the expression "foo".
+   */
   public FcnLambdaValue(FcnParams params, SemanticNode body, ITool tool,
       Context c, TLCState s0, TLCState s1, int control) {
     this.params = params;
@@ -52,11 +52,11 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
     this.excepts = null;
     this.tool = tool;
     this.con = c;
-    this.state = s0.copy();  // copy() added 12 Mar 2010 by Yuan Yu.
-    if (s1 != null) {        // see SetPredValue constructor.
-        this.pstate = s1.copy();
+    this.state = s0.copy(); // copy() added 12 Mar 2010 by Yuan Yu.
+    if (s1 != null) { // see SetPredValue constructor.
+      this.pstate = s1.copy();
     } else {
-        this.pstate = null;
+      this.pstate = null;
     }
 
     this.control = control;
@@ -64,9 +64,9 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
   }
 
   public FcnLambdaValue(FcnParams params, SemanticNode body, ITool tool,
-	      Context c, TLCState s0, TLCState s1, int control, CostModel cm) {
-	  this(params, body, tool, c, s0, s1, control);
-	  this.cm = cm;
+      Context c, TLCState s0, TLCState s1, int control, CostModel cm) {
+    this(params, body, tool, c, s0, s1, control);
+    this.cm = cm;
   }
 
   public FcnLambdaValue(FcnLambdaValue fcn, ITool tool) {
@@ -82,20 +82,24 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
   }
 
   public FcnLambdaValue(FcnLambdaValue fcn) {
-	  this(fcn, fcn.tool);
+    this(fcn, fcn.tool);
   }
 
   @Override
-  public final byte getKind() { return FCNLAMBDAVALUE; }
+  public final byte getKind() {
+    return FCNLAMBDAVALUE;
+  }
 
   public final void makeRecursive(SymbolNode fname) {
     try {
       this.con = this.con.cons(fname, this);
       this.control = EvalControl.setKeepLazy(this.control);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -104,10 +108,12 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
     try {
       FcnRcdValue fcn = (FcnRcdValue) this.toFcnRcd();
       return fcn.compareTo(obj);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -115,10 +121,12 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
     try {
       FcnRcdValue fcn = (FcnRcdValue) this.toFcnRcd();
       return fcn.equals(obj);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -126,12 +134,14 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
   public final boolean member(Value elem) {
     try {
       Assert.fail("Attempted to check if the value:\n" + Values.ppr(elem.toString()) +
-      "\nis an element of the function " + Values.ppr(this.toString()), getSource());
-      return false;   // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          "\nis an element of the function " + Values.ppr(this.toString()), getSource());
+      return false; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -139,16 +149,18 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
   public final boolean isFinite() {
     try {
       Assert.fail("Attempted to check if the function:\n" + Values.ppr(this.toString()) +
-      "\nis a finite set.", getSource());
-      return false;   // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          "\nis a finite set.", getSource());
+      return false; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
-  /* Apply this function to the arguments given by args.  */
+  /* Apply this function to the arguments given by args. */
   @Override
   public final Value apply(Value args, int control) throws EvalException {
     try {
@@ -158,20 +170,24 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
       }
 
       // First, find all the excepts that match args.
-      Value  res = null;
+      Value res = null;
       int num = 0;
       ValueExcept[] excepts1 = null;
       if (this.excepts != null) {
         int exlen = this.excepts.length;
-        for (int i = exlen-1; i >= 0; i--) {
+        for (int i = exlen - 1; i >= 0; i--) {
           ValueExcept ex = this.excepts[i];
-          Value  arg = ex.current();
+          Value arg = ex.current();
           boolean inExcept = true;
           inExcept = arg.equals(args);
           if (inExcept) {
-            if (ex.isLast()) { res = ex.value; break; }
-            if (excepts1 == null) excepts1 = new ValueExcept[exlen];
-            excepts1[num++] = new ValueExcept(ex, ex.idx+1);
+            if (ex.isLast()) {
+              res = ex.value;
+              break;
+            }
+            if (excepts1 == null)
+              excepts1 = new ValueExcept[exlen];
+            excepts1[num++] = new ValueExcept(ex, ex.idx + 1);
           }
         }
       }
@@ -180,71 +196,70 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
       if (res == null) {
         Context c1 = this.con;
         FormalParamNode[][] formals = this.params.formals;
-        Value [] domains = this.params.domains;
+        Value[] domains = this.params.domains;
         boolean[] isTuples = this.params.isTuples;
         int plen = this.params.length();
 
         if (plen == 1) {
           if (!domains[0].member(args)) {
             Assert.fail("In applying the function\n" + Values.ppr(this.toString()) +
-            ",\nthe first argument is:\n" + Values.ppr(args.toString()) +
-            "\nwhich is not in its domain.\n", getSource());
+                ",\nthe first argument is:\n" + Values.ppr(args.toString()) +
+                "\nwhich is not in its domain.\n", getSource());
           }
           if (isTuples[0]) {
             FormalParamNode[] ids = formals[0];
             TupleValue argVal = (TupleValue) args.toTuple();
             if (argVal == null) {
               Assert.fail("In applying the function\n" + Values.ppr(this.toString()) +
-              ",\nthe first argument is:\n" + Values.ppr(args.toString()) +
-              "\nwhich does not match its formal parameter.\n", getSource());
+                  ",\nthe first argument is:\n" + Values.ppr(args.toString()) +
+                  "\nwhich does not match its formal parameter.\n", getSource());
             }
-            if (argVal.size() != ids.length) return null;
-            Value [] elems = argVal.elems;
+            if (argVal.size() != ids.length)
+              return null;
+            Value[] elems = argVal.elems;
             for (int i = 0; i < ids.length; i++) {
               c1 = c1.cons(ids[i], elems[i]);
             }
-          }
-          else {
+          } else {
             c1 = c1.cons(formals[0][0], args);
           }
-        }
-        else {
+        } else {
           TupleValue tv = (TupleValue) args.toTuple();
           if (tv == null) {
             Assert.fail("In applying the function\n" + Values.ppr(this.toString()) +
-                  ",\nthe argument list is:\n" + Values.ppr(args.toString()) +
-                  "\nwhich does not match its formal parameter.\n", getSource());
+                ",\nthe argument list is:\n" + Values.ppr(args.toString()) +
+                "\nwhich does not match its formal parameter.\n", getSource());
           }
           Value[] elems = tv.elems;
           int argn = 0;
           for (int i = 0; i < formals.length; i++) {
             FormalParamNode[] ids = formals[i];
-            Value  domain = domains[i];
+            Value domain = domains[i];
             if (isTuples[i]) {
               if (!domain.member(elems[argn])) {
                 Assert.fail("In applying the function\n" + Values.ppr(this.toString()) +
-                ",\nthe argument number " + (argn+1) + " is:\n" +
-                Values.ppr(elems[argn].toString()) +
-                "\nwhich is not in its domain.\n", getSource());
+                    ",\nthe argument number " + (argn + 1) + " is:\n" +
+                    Values.ppr(elems[argn].toString()) +
+                    "\nwhich is not in its domain.\n", getSource());
               }
               TupleValue tv1 = (TupleValue) elems[argn++].toTuple();
               if (tv1 == null || tv1.size() != ids.length) {
                 Assert.fail("In applying the function\n" + Values.ppr(this.toString()) +
-                ",\nthe argument number " + argn + " is:\n" +
-                Values.ppr(elems[argn-1].toString()) +
-                "\nwhich does not match its formal parameter.\n", getSource());
+                    ",\nthe argument number " + argn + " is:\n" +
+                    Values.ppr(elems[argn - 1].toString()) +
+                    "\nwhich does not match its formal parameter.\n", getSource());
               }
-              Value [] avals = tv1.elems;
+              Value[] avals = tv1.elems;
               for (int j = 0; j < ids.length; j++) {
                 c1 = c1.cons(ids[j], avals[j]);
               }
-            }
-            else {
+            } else {
               for (int j = 0; j < ids.length; j++) {
                 if (!domain.member(elems[argn])) {
                   Assert.fail("In applying the function\n" + Values.ppr(this.toString()) +
-                        ",\nthe argument number " + (argn+1) + " is:\n" +
-                        Values.ppr(elems[argn].toString()) + "\nwhich is not in the function's domain " + this.getDomain().toString() +".\n", getSource());
+                      ",\nthe argument number " + (argn + 1) + " is:\n" +
+                      Values.ppr(elems[argn].toString()) + "\nwhich is not in the function's domain "
+                      + this.getDomain().toString() + ".\n", getSource());
                 }
                 c1 = c1.cons(ids[j], elems[argn++]);
               }
@@ -255,17 +270,20 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
       }
 
       // Finally, apply the matching excepts on the result.
-      if (num == 0) return res;
+      if (num == 0)
+        return res;
       ValueExcept[] excepts2 = new ValueExcept[num];
       for (int i = 0; i < num; i++) {
-        excepts2[num-1-i] = excepts1[i];
+        excepts2[num - 1 - i] = excepts1[i];
       }
       return res.takeExcept(excepts2);
 
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -283,14 +301,18 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
       ValueExcept[] excepts1 = null;
       if (this.excepts != null) {
         int exlen = this.excepts.length;
-        for (int i = exlen-1; i >= 0; i--) {
+        for (int i = exlen - 1; i >= 0; i--) {
           ValueExcept ex = this.excepts[i];
           Value exArg = ex.current();
           boolean inExcept = exArg.equals(arg);
           if (inExcept) {
-            if (ex.isLast()) { res = ex.value; break; }
-            if (excepts1 == null) excepts1 = new ValueExcept[exlen];
-            excepts1[num++] = new ValueExcept(ex, ex.idx+1);
+            if (ex.isLast()) {
+              res = ex.value;
+              break;
+            }
+            if (excepts1 == null)
+              excepts1 = new ValueExcept[exlen];
+            excepts1[num++] = new ValueExcept(ex, ex.idx + 1);
           }
         }
       }
@@ -304,34 +326,35 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
         int plen = this.params.length();
 
         if (plen == 1) {
-          if (!domains[0].member(arg)) return null;
+          if (!domains[0].member(arg))
+            return null;
           if (isTuples[0]) {
             FormalParamNode[] ids = formals[0];
             TupleValue argVal = (TupleValue) arg.toTuple();
             /*
-             * SZA: Changed from argVal.toString() to arg.toString() to prevent a NullPointerException
+             * SZA: Changed from argVal.toString() to arg.toString() to prevent a
+             * NullPointerException
              */
             if (argVal == null) {
               Assert.fail("In applying the function\n" + Values.ppr(this.toString()) +
-              ",\nthe first argument is:\n" + Values.ppr(arg.toString()) +
-              "\nwhich does not match its formal parameter.\n", getSource());
+                  ",\nthe first argument is:\n" + Values.ppr(arg.toString()) +
+                  "\nwhich does not match its formal parameter.\n", getSource());
             }
-            if (argVal.size() != ids.length) return null;
-            Value [] elems = argVal.elems;
+            if (argVal.size() != ids.length)
+              return null;
+            Value[] elems = argVal.elems;
             for (int i = 0; i < ids.length; i++) {
               c1 = c1.cons(ids[i], elems[i]);
             }
-          }
-          else {
+          } else {
             c1 = c1.cons(formals[0][0], arg);
           }
-        }
-        else {
+        } else {
           TupleValue tv = (TupleValue) arg.toTuple();
           if (tv == null) {
             Assert.fail("In applying the function\n" + Values.ppr(this.toString()) +
-                  ",\nthe argument list is:\n" + Values.ppr(arg.toString()) +
-                  "\nwhich does not match its formal parameter.\n", getSource());
+                ",\nthe argument list is:\n" + Values.ppr(arg.toString()) +
+                "\nwhich does not match its formal parameter.\n", getSource());
           }
           Value[] elems = tv.elems;
           int argn = 0;
@@ -339,23 +362,25 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
             FormalParamNode[] ids = formals[i];
             Value domain = domains[i];
             if (isTuples[i]) {
-              if (!domain.member(elems[argn])) return null;
+              if (!domain.member(elems[argn]))
+                return null;
               TupleValue tv1 = (TupleValue) elems[argn++].toTuple();
               if (tv1 == null) {
                 Assert.fail("In applying the function\n" + Values.ppr(this.toString()) +
-                ",\nthe argument number " + argn + " is:\n" +
-                Values.ppr(elems[argn-1].toString()) +
-                "\nwhich does not match its formal parameter.\n", getSource());
+                    ",\nthe argument number " + argn + " is:\n" +
+                    Values.ppr(elems[argn - 1].toString()) +
+                    "\nwhich does not match its formal parameter.\n", getSource());
               }
-              if (tv1.size() != ids.length) return null;
-              Value [] avals = tv1.elems;
+              if (tv1.size() != ids.length)
+                return null;
+              Value[] avals = tv1.elems;
               for (int j = 0; j < ids.length; j++) {
                 c1 = c1.cons(ids[j], avals[j]);
               }
-            }
-            else {
+            } else {
               for (int j = 0; j < ids.length; j++) {
-                if (!domain.member(elems[argn])) return null;
+                if (!domain.member(elems[argn]))
+                  return null;
                 c1 = c1.cons(ids[j], elems[argn++]);
               }
             }
@@ -365,17 +390,20 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
       }
 
       // Finally, apply the matching excepts on the result.
-      if (num == 0) return res;
+      if (num == 0)
+        return res;
       ValueExcept[] excepts2 = new ValueExcept[num];
       for (int i = 0; i < num; i++) {
-        excepts2[num-1-i] = excepts1[i];
+        excepts2[num - 1 - i] = excepts1[i];
       }
       return res.takeExcept(excepts2);
 
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -384,7 +412,7 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
   }
 
   protected Value evalBody(Context ctx, int control) {
-	return (Value) this.tool.eval(this.body, ctx, this.state, this.pstate, control, this.cm);
+    return (Value) this.tool.eval(this.body, ctx, this.state, this.pstate, control, this.cm);
   }
 
   /* This method returns a new function value by taking except. */
@@ -392,7 +420,8 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
   public final Value takeExcept(ValueExcept ex) {
     try {
 
-      if (ex.idx >= ex.path.length) return ex.value;
+      if (ex.idx >= ex.path.length)
+        return ex.value;
 
       if (this.fcnRcd != null) {
         return this.fcnRcd.takeExcept(ex);
@@ -401,10 +430,9 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
       if (this.excepts == null) {
         fcn.excepts = new ValueExcept[1];
         fcn.excepts[0] = ex;
-      }
-      else {
+      } else {
         int exlen = this.excepts.length;
-        fcn.excepts = new ValueExcept[exlen+1];
+        fcn.excepts = new ValueExcept[exlen + 1];
         for (int i = 0; i < exlen; i++) {
           fcn.excepts[i] = this.excepts[i];
         }
@@ -412,10 +440,12 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
       }
       return fcn;
 
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -431,19 +461,18 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
       int exslen = exs.length;
       if (exslen != 0) {
         int i = 0;
-        for (i = exs.length-1; i >= 0; i--) {
-          if (exs[i].idx >= exs[i].path.length) break;
+        for (i = exs.length - 1; i >= 0; i--) {
+          if (exs[i].idx >= exs[i].path.length)
+            break;
         }
         if (i >= 0) {
-          int xlen = exslen-i-1;
+          int xlen = exslen - i - 1;
           fcn.excepts = new ValueExcept[xlen];
-          System.arraycopy(exs, i+1, fcn.excepts, 0, xlen);
-        }
-        else if (this.excepts == null) {
+          System.arraycopy(exs, i + 1, fcn.excepts, 0, xlen);
+        } else if (this.excepts == null) {
           fcn.excepts = new ValueExcept[exslen];
           System.arraycopy(exs, 0, fcn.excepts, 0, exslen);
-        }
-        else {
+        } else {
           int len = this.excepts.length;
           fcn.excepts = new ValueExcept[len + exslen];
           System.arraycopy(this.excepts, 0, fcn.excepts, 0, len);
@@ -452,10 +481,12 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
       }
       return fcn;
 
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -470,17 +501,16 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
       if (len == 1) {
         return this.params.domains[0];
       }
-      Value [] sets = new Value [len];
+      Value[] sets = new Value[len];
       int dlen = this.params.domains.length;
       boolean[] isTuples = this.params.isTuples;
       int idx = 0;
       for (int i = 0; i < dlen; i++) {
         FormalParamNode[] formal = this.params.formals[i];
-        Value  domain = this.params.domains[i];
+        Value domain = this.params.domains[i];
         if (isTuples[i]) {
           sets[idx++] = domain;
-        }
-        else {
+        } else {
           for (int j = 0; j < formal.length; j++) {
             sets[idx++] = domain;
           }
@@ -488,10 +518,12 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
       }
       return new SetOfTuplesValue(sets);
 
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -502,35 +534,43 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
         return this.params.size();
       }
       return this.fcnRcd.size();
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   @Override
-  public final boolean isDefined() { return true; }
+  public final boolean isDefined() {
+    return true;
+  }
 
   @Override
   public final IValue deepCopy() {
     try {
       FcnLambdaValue fcn = new FcnLambdaValue(this);
-      // A bug occured when printing a function whose domain is a Cartesian product because this.fcnRcd 
-      // is null at this point.  On 5 Mar 2012, LL wrapped the following null test around the assignment.
+      // A bug occured when printing a function whose domain is a Cartesian product
+      // because this.fcnRcd
+      // is null at this point. On 5 Mar 2012, LL wrapped the following null test
+      // around the assignment.
       if (this.fcnRcd != null) {
-        fcn.fcnRcd = (FcnRcdValue)this.fcnRcd.deepCopy();
+        fcn.fcnRcd = (FcnRcdValue) this.fcnRcd.deepCopy();
       }
       return fcn;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-    this.fcnRcd = (FcnRcdValue)ois.readObject();
+    this.fcnRcd = (FcnRcdValue) ois.readObject();
   }
 
   private void writeObject(ObjectOutputStream oos) throws IOException {
@@ -545,10 +585,12 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
         return false;
       }
       return this.fcnRcd.isNormalized();
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -559,22 +601,24 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
         this.fcnRcd.normalize();
       }
       return this;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   @Override
   public final void deepNormalize() {
-	    try {
+    try {
       if (fcnRcd == null) {
         if (excepts != null) {
           for (int i = 0; i < excepts.length; i++) {
             excepts[i].value.deepNormalize();
             for (int j = 0; j < excepts[i].path.length; j++) {
-        excepts[i].path[j].deepNormalize();
+              excepts[i].path[j].deepNormalize();
             }
           }
         }
@@ -582,64 +626,74 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
         for (int i = 0; i < paramDoms.length; i++) {
           paramDoms[i].deepNormalize();
         }
-      }
-      else {
+      } else {
         fcnRcd.deepNormalize();
       }
-	    }
-	    catch (RuntimeException | OutOfMemoryError e) {
-	      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-	      else { throw e; }
-	    }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
+    }
   }
 
   @Override
   public final Value toTuple() {
-      if (this.params.length() != 1) return null;
-      Value  dom = this.params.domains[0];
-      if (dom instanceof IntervalValue) {
-        IntervalValue intv = (IntervalValue)dom;
-        if (intv.low != 1) return null;
-        Value [] elems = new Value [intv.high];
-        for (int i = 1; i <= intv.high; i++) {
-          elems[i-1] = select(IntValue.gen(i));
-        }
-        if (coverage) {cm.incSecondary(elems.length);}
-        return new TupleValue(elems, cm);
+    if (this.params.length() != 1)
+      return null;
+    Value dom = this.params.domains[0];
+    if (dom instanceof IntervalValue) {
+      IntervalValue intv = (IntervalValue) dom;
+      if (intv.low != 1)
+        return null;
+      Value[] elems = new Value[intv.high];
+      for (int i = 1; i <= intv.high; i++) {
+        elems[i - 1] = select(IntValue.gen(i));
       }
-      else {
-        SetEnumValue eSet = (SetEnumValue) dom.toSetEnum();
-        if (eSet == null)
-          Assert.fail("To convert a function of form [x \\in S |-> f(x)] " +
-                "to a tuple, the set S must be enumerable.", getSource());
-        eSet.normalize();
-        int len = eSet.size();
-        Value [] elems = new Value [len];
-        for (int i = 0; i < len; i++) {
-          Value  argVal = eSet.elems.elementAt(i);
-          if (!(argVal instanceof IntValue)) return null;
-          if (((IntValue)argVal).val != i + 1) return null;
-          elems[i] = select(argVal);
-        }
+      if (coverage) {
         cm.incSecondary(elems.length);
-        return new TupleValue(elems, cm);
       }
+      return new TupleValue(elems, cm);
+    } else {
+      SetEnumValue eSet = (SetEnumValue) dom.toSetEnum();
+      if (eSet == null)
+        Assert.fail("To convert a function of form [x \\in S |-> f(x)] " +
+            "to a tuple, the set S must be enumerable.", getSource());
+      eSet.normalize();
+      int len = eSet.size();
+      Value[] elems = new Value[len];
+      for (int i = 0; i < len; i++) {
+        Value argVal = eSet.elems.elementAt(i);
+        if (!(argVal instanceof IntValue))
+          return null;
+        if (((IntValue) argVal).val != i + 1)
+          return null;
+        elems[i] = select(argVal);
+      }
+      cm.incSecondary(elems.length);
+      return new TupleValue(elems, cm);
+    }
   }
 
   @Override
   public final Value toRcd() {
-      FcnRcdValue fcn = (FcnRcdValue) this.toFcnRcd();
-      if (fcn == null || fcn.domain == null) { return null; }
-      fcn.normalize();
-      UniqueString[] vars = new UniqueString[fcn.domain.length];
-      for (int i = 0; i < fcn.domain.length; i++) {
-        if (!(fcn.domain[i] instanceof StringValue)) {
-          return null;
-        }
-        vars[i] = ((StringValue)fcn.domain[i]).getVal();
+    FcnRcdValue fcn = (FcnRcdValue) this.toFcnRcd();
+    if (fcn == null || fcn.domain == null) {
+      return null;
+    }
+    fcn.normalize();
+    UniqueString[] vars = new UniqueString[fcn.domain.length];
+    for (int i = 0; i < fcn.domain.length; i++) {
+      if (!(fcn.domain[i] instanceof StringValue)) {
+        return null;
       }
-      if (coverage) {cm.incSecondary(vars.length);}
-      return new RecordValue(vars, fcn.values, fcn.isNormalized(), cm);
+      vars[i] = ((StringValue) fcn.domain[i]).getVal();
+    }
+    if (coverage) {
+      cm.incSecondary(vars.length);
+    }
+    return new RecordValue(vars, fcn.values, fcn.isNormalized(), cm);
   }
 
   @Override
@@ -651,49 +705,46 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
         FormalParamNode[][] formals = this.params.formals;
         boolean[] isTuples = this.params.isTuples;
 
-        Value [] domain = new Value [sz];
-        Value [] values = new Value [sz];
+        Value[] domain = new Value[sz];
+        Value[] values = new Value[sz];
         int idx = 0;
         ValueEnumeration Enum = this.params.elements();
-        Value  arg;
+        Value arg;
         if (this.params.length() == 1) {
           while ((arg = Enum.nextElement()) != null) {
             domain[idx] = arg;
             Context c1 = this.con;
             if (isTuples[0]) {
               FormalParamNode[] ids = formals[0];
-              Value [] avals = ((TupleValue)arg).elems;
+              Value[] avals = ((TupleValue) arg).elems;
               for (int j = 0; j < ids.length; j++) {
                 c1 = c1.cons(ids[j], avals[j]);
               }
-            }
-            else {
+            } else {
               c1 = c1.cons(formals[0][0], arg);
             }
             values[idx++] = evalBody(c1);
           }
-	      if (this.params.domains[0] instanceof IntervalValue) {
-	      	final IntervalValue iv = (IntervalValue) this.params.domains[0];
-	      	this.fcnRcd = new FcnRcdValue(iv, values, cm);
-	      } else {
-	        this.fcnRcd = new FcnRcdValue(domain, values, false, cm);
-	      }
-        }
-        else {
+          if (this.params.domains[0] instanceof IntervalValue) {
+            final IntervalValue iv = (IntervalValue) this.params.domains[0];
+            this.fcnRcd = new FcnRcdValue(iv, values, cm);
+          } else {
+            this.fcnRcd = new FcnRcdValue(domain, values, false, cm);
+          }
+        } else {
           while ((arg = Enum.nextElement()) != null) {
             domain[idx] = arg;
-            Value [] argList = ((TupleValue)arg).elems;
+            Value[] argList = ((TupleValue) arg).elems;
             int argn = 0;
             Context c1 = this.con;
             for (int i = 0; i < formals.length; i++) {
               FormalParamNode[] ids = formals[i];
               if (isTuples[i]) {
-                Value [] avals = ((TupleValue)argList[argn++]).elems;
+                Value[] avals = ((TupleValue) argList[argn++]).elems;
                 for (int j = 0; j < ids.length; j++) {
                   c1 = c1.cons(ids[j], avals[j]);
                 }
-              }
-              else {
+              } else {
                 for (int j = 0; j < ids.length; j++) {
                   c1 = c1.cons(ids[j], argList[argn++]);
                 }
@@ -703,115 +754,125 @@ public class FcnLambdaValue extends Value implements FunctionValue, IFcnLambdaVa
           }
           this.fcnRcd = new FcnRcdValue(domain, values, false, cm);
         }
-        if (coverage) {cm.incSecondary(sz);}
+        if (coverage) {
+          cm.incSecondary(sz);
+        }
         if (this.excepts != null) {
-			// Creating fresh ValueExcept instances before takeExcept ensures toFcnRcd() has
-			// no side effects beyond setting fcnRcd. That keeps the FcnLambdaValue safe to
-			// use afterward (e.g. for takeExcept, select, or apply) without its excepts
-			// being mutated by the conversion.
-			final ValueExcept[] excepts = new ValueExcept[this.excepts.length];
-			for (int i = 0; i < this.excepts.length; i++) {
-				excepts[i] = new ValueExcept(this.excepts[i]);
-			}
-			// TODO:
-			// tlc2.tool.simulation.NQSpecTest is the only test in our test suite that
-			// exercises this code path--it works fine. In the general case, however,
-			// it is not clear why the cast to FRV should be safe. As a matter of fact,
-			// this threw a ClassCastException when working on the TLA+ debugger, where
-			// toFcnRcd is called from toString below. Given that the API contract of
-			// Value#toFcnRcd allows null, the cast could be secured with a conditional
-			// and null returned otherwise. In case of null, toString returns the symbolic
-			// value.
-	        this.fcnRcd = (FcnRcdValue)fcnRcd.takeExcept(excepts);
+          // Creating fresh ValueExcept instances before takeExcept ensures toFcnRcd() has
+          // no side effects beyond setting fcnRcd. That keeps the FcnLambdaValue safe to
+          // use afterward (e.g. for takeExcept, select, or apply) without its excepts
+          // being mutated by the conversion.
+          final ValueExcept[] excepts = new ValueExcept[this.excepts.length];
+          for (int i = 0; i < this.excepts.length; i++) {
+            excepts[i] = new ValueExcept(this.excepts[i]);
+          }
+          // TODO:
+          // tlc2.tool.simulation.NQSpecTest is the only test in our test suite that
+          // exercises this code path--it works fine. In the general case, however,
+          // it is not clear why the cast to FRV should be safe. As a matter of fact,
+          // this threw a ClassCastException when working on the TLA+ debugger, where
+          // toFcnRcd is called from toString below. Given that the API contract of
+          // Value#toFcnRcd allows null, the cast could be secured with a conditional
+          // and null returned otherwise. In case of null, toString returns the symbolic
+          // value.
+          this.fcnRcd = (FcnRcdValue) fcnRcd.takeExcept(excepts);
         }
       }
       return this.fcnRcd;
 
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
-	@Override
-	public final void write(final IValueOutputStream vos) throws IOException {
-		fcnRcd.write(vos);
-	}
-  
-  /* The fingerprint methods.  */
+  @Override
+  public final void write(final IValueOutputStream vos) throws IOException {
+    fcnRcd.write(vos);
+  }
+
+  /* The fingerprint methods. */
   @Override
   public final long fingerPrint(long fp) {
     try {
-      Value  fcn = this.toFcnRcd();
+      Value fcn = this.toFcnRcd();
       return fcn.fingerPrint(fp);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   @Override
   public final IValue permute(IMVPerm perm) {
     try {
-      Value  fcn = this.toFcnRcd();
+      Value fcn = this.toFcnRcd();
       return fcn.permute(perm);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
-  /* The string representation of this function.  */
+  /* The string representation of this function. */
   public final StringBuffer toString(StringBuffer sb, int offset) {
-	return toString(sb, offset, true);
-}
+    return toString(sb, offset, true);
+  }
 
-/* The string representation of this function.  */
+  /* The string representation of this function. */
   @Override
   public final StringBuffer toString(StringBuffer sb, int offset, boolean swallow) {
     try {
       if (TLCGlobals.expand || this.params == null) {
         try {
-          Value  val = this.toFcnRcd();
+          Value val = this.toFcnRcd();
           return val.toString(sb, offset, true);
-        }
-        catch (Throwable e) { /*SKIP*/ }
+        } catch (Throwable e) {
+          /* SKIP */ }
       }
       sb.append("[" + this.params.toString());
       sb.append(" |-> <expression " + this.body + ">]");
       return sb;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
-	@Override
-	public final SemanticNode getBody() {
-		return body;
-	}
-	
-	@Override
-	public final FcnRcdValue getRcd() {
-		return fcnRcd;
-	}
+  @Override
+  public final SemanticNode getBody() {
+    return body;
+  }
 
-	@Override
-	public FcnParams getParams() {
-		return params;
-	}
+  @Override
+  public final FcnRcdValue getRcd() {
+    return fcnRcd;
+  }
 
-	@Override
-	public Context getCon() {
-		return con;
-	}
+  @Override
+  public FcnParams getParams() {
+    return params;
+  }
 
-	@Override
-	public boolean hasRcd() {
-		return fcnRcd != null;
-	}
+  @Override
+  public Context getCon() {
+    return con;
+  }
+
+  @Override
+  public boolean hasRcd() {
+    return fcnRcd != null;
+  }
 }

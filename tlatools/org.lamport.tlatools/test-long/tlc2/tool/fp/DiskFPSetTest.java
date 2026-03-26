@@ -4,7 +4,9 @@ import java.io.IOException;
 
 public class DiskFPSetTest extends FPSetTest {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.AbstractFPSetTest#getFPSet(int)
 	 */
 	@Override
@@ -12,6 +14,6 @@ public class DiskFPSetTest extends FPSetTest {
 		final DiskFPSet fpSet = new LSBDiskFPSet(fpSetConfig);
 		System.out.println("DiskFPSet approx. consumes MiB: "
 				+ ((fpSet.getMaxTblCnt() * (long) FPSet.LongSize) >> 20));
-    	return fpSet;
+		return fpSet;
 	}
 }

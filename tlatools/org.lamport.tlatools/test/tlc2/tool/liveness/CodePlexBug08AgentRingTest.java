@@ -49,82 +49,82 @@ public class CodePlexBug08AgentRingTest extends ModelCheckerTestCase {
 	public CodePlexBug08AgentRingTest() {
 		super("AgentRingMC", "CodePlexBug08", ExitStatus.VIOLATION_LIVENESS);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		// ModelChecker has finished and generated the expected amount of states
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "361", "120"));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		// Assert it has found the temporal violation and also a counter example
 		assertTrue(recorder.recorded(EC.TLC_TEMPORAL_PROPERTY_VIOLATED));
 		assertTrue(recorder.recorded(EC.TLC_COUNTER_EXAMPLE));
 
 		assertNodeAndPtrSizes(8496L, 2880L);
-		
+
 		// Assert the error trace
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
 		final List<String> expectedTrace = new ArrayList<String>(13);
 		final List<String> expectedActions = new ArrayList<>();
 		expectedActions.add("<Init line 50, col 3 to line 53, col 12 of module AgentRing>");
 		expectedTrace.add("/\\ Agent = [Loc |-> 0, LastLoad |-> 0, ReadyToMove |-> TRUE, Task |-> 0]\n"
-				   + "/\\ CanCreate = TRUE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 0] @@ 1 :> [Load |-> 0])");
+				+ "/\\ CanCreate = TRUE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 0] @@ 1 :> [Load |-> 0])");
 		expectedActions.add("<CreateTasks line 82, col 3 to line 84, col 35 of module AgentRing>");
 		expectedTrace.add("/\\ Agent = [Loc |-> 0, LastLoad |-> 0, ReadyToMove |-> TRUE, Task |-> 0]\n"
-				   + "/\\ CanCreate = TRUE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 0])");
+				+ "/\\ CanCreate = TRUE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 0])");
 		expectedActions.add("<Move line 58, col 3 to line 60, col 35 of module AgentRing>");
 		expectedTrace.add("/\\ Agent = [Loc |-> 1, LastLoad |-> 0, ReadyToMove |-> FALSE, Task |-> 0]\n"
-				   + "/\\ CanCreate = TRUE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 0])");
+				+ "/\\ CanCreate = TRUE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 0])");
 		expectedActions.add("<CreateTasks line 82, col 3 to line 84, col 35 of module AgentRing>");
 		expectedTrace.add("/\\ Agent = [Loc |-> 1, LastLoad |-> 0, ReadyToMove |-> FALSE, Task |-> 0]\n"
-				   + "/\\ CanCreate = TRUE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
+				+ "/\\ CanCreate = TRUE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
 		expectedActions.add("<Stop line 78, col 3 to line 79, col 31 of module AgentRing>");
 		expectedTrace.add("/\\ Agent = [Loc |-> 1, LastLoad |-> 0, ReadyToMove |-> FALSE, Task |-> 0]\n"
-				   + "/\\ CanCreate = FALSE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
+				+ "/\\ CanCreate = FALSE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
 		expectedActions.add("<LookAndAct line 63, col 3 to line 75, col 24 of module AgentRing>");
 		expectedTrace.add("/\\ Agent = [Loc |-> 1, LastLoad |-> 1, ReadyToMove |-> TRUE, Task |-> 1]\n"
-				   + "/\\ CanCreate = FALSE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 1])");
+				+ "/\\ CanCreate = FALSE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 1])");
 		expectedActions.add("<Move line 58, col 3 to line 60, col 35 of module AgentRing>");
 		expectedTrace.add("/\\ Agent = [Loc |-> 0, LastLoad |-> 1, ReadyToMove |-> FALSE, Task |-> 1]\n"
-				   + "/\\ CanCreate = FALSE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 1])");
+				+ "/\\ CanCreate = FALSE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 1])");
 		expectedActions.add("<LookAndAct line 63, col 3 to line 75, col 24 of module AgentRing>");
 		expectedTrace.add("/\\ Agent = [Loc |-> 0, LastLoad |-> 2, ReadyToMove |-> TRUE, Task |-> 1]\n"
-				   + "/\\ CanCreate = FALSE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 1])");
+				+ "/\\ CanCreate = FALSE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 1])");
 		expectedActions.add("<Move line 58, col 3 to line 60, col 35 of module AgentRing>");
 		expectedTrace.add("/\\ Agent = [Loc |-> 1, LastLoad |-> 2, ReadyToMove |-> FALSE, Task |-> 1]\n"
-				   + "/\\ CanCreate = FALSE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 1])");
+				+ "/\\ CanCreate = FALSE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 1])");
 		expectedActions.add("<LookAndAct line 63, col 3 to line 75, col 24 of module AgentRing>");
 		expectedTrace.add("/\\ Agent = [Loc |-> 1, LastLoad |-> 2, ReadyToMove |-> TRUE, Task |-> 0]\n"
-				   + "/\\ CanCreate = FALSE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
+				+ "/\\ CanCreate = FALSE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
 		expectedActions.add("<Move line 58, col 3 to line 60, col 35 of module AgentRing>");
 		expectedTrace.add("/\\ Agent = [Loc |-> 0, LastLoad |-> 2, ReadyToMove |-> FALSE, Task |-> 0]\n"
-				   + "/\\ CanCreate = FALSE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
+				+ "/\\ CanCreate = FALSE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
 		expectedActions.add("<LookAndAct line 63, col 3 to line 75, col 24 of module AgentRing>");
 		expectedTrace.add("/\\ Agent = [Loc |-> 0, LastLoad |-> 2, ReadyToMove |-> TRUE, Task |-> 0]\n"
-				   + "/\\ CanCreate = FALSE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
+				+ "/\\ CanCreate = FALSE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
 		expectedActions.add("<Move line 58, col 3 to line 60, col 35 of module AgentRing>");
 		expectedTrace.add("/\\ Agent = [Loc |-> 1, LastLoad |-> 2, ReadyToMove |-> FALSE, Task |-> 0]\n"
-				   + "/\\ CanCreate = FALSE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
+				+ "/\\ CanCreate = FALSE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
 
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace, expectedActions);
 		assertBackToState(10);
 
 		assertZeroUncovered();
-		
+
 		// Assert POSTCONDITION.
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_FALSE));
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_EVALUATION_ERROR));

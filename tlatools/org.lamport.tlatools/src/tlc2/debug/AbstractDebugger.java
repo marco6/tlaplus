@@ -124,7 +124,8 @@ public abstract class AbstractDebugger implements IDebugProtocolServer, GotoStat
 	}
 
 	@Override
-	public CompletableFuture<SetExceptionBreakpointsResponse> setExceptionBreakpoints(SetExceptionBreakpointsArguments args) {
+	public CompletableFuture<SetExceptionBreakpointsResponse> setExceptionBreakpoints(
+			SetExceptionBreakpointsArguments args) {
 		System.out.println("setExceptionBreakpoints");
 		return CompletableFuture.completedFuture(new SetExceptionBreakpointsResponse());
 	}
@@ -203,10 +204,12 @@ public abstract class AbstractDebugger implements IDebugProtocolServer, GotoStat
 	}
 
 	@Override
-	public synchronized CompletableFuture<BreakpointLocationsResponse> breakpointLocations(BreakpointLocationsArguments args) {
+	public synchronized CompletableFuture<BreakpointLocationsResponse> breakpointLocations(
+			BreakpointLocationsArguments args) {
 		System.out.println("breakpointLocations");
 		// https://microsoft.github.io/debug-adapter-protocol/specification#Requests_BreakpointLocations
-		// Requires Capabilities#setSupportBreakpointLocationsRequest(true) to be returned in TLCDebugger.initialize(..).
+		// Requires Capabilities#setSupportBreakpointLocationsRequest(true) to be
+		// returned in TLCDebugger.initialize(..).
 		return CompletableFuture.completedFuture(new BreakpointLocationsResponse());
 	}
 }

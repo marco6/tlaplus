@@ -39,7 +39,7 @@ import org.openjdk.jmh.annotations.Warmup;
 
 @State(Scope.Benchmark)
 public class CombinatoricsBenchmark {
-	
+
 	private static List<BigInteger> bincoef;
 	private static List<BigInteger> slowBincoef;
 
@@ -47,7 +47,7 @@ public class CombinatoricsBenchmark {
 		bincoef = new ArrayList<BigInteger>(187489);
 		slowBincoef = new ArrayList<BigInteger>(187489);
 	}
-	
+
 	@Benchmark
 	@Warmup(iterations = 3, time = 1)
 	@Measurement(iterations = 3, time = 1)

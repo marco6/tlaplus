@@ -165,11 +165,11 @@ public abstract class AbstractDiskGraph {
 	 * not allow to draw a conclusion about the graph's node count.
 	 * 
 	 * @see commented tlc2.tool.liveness.DiskGraphTest#
-	 *      testAddSameGraphN	odeTwiceCorrectSuccessors
+	 *      testAddSameGraphN odeTwiceCorrectSuccessors
 	 */
 	public long addNode(GraphNode node) throws IOException {
 		outDegreeGraphStats.addSample(node.succSize());
-		
+
 		long ptr = this.nodeRAF.getFilePointer();
 
 		// Write node to nodePtrTbl:
@@ -185,7 +185,7 @@ public abstract class AbstractDiskGraph {
 		node.write(this.nodeRAF);
 		return ptr;
 	}
-	
+
 	/**
 	 * @return true iff the given {@link GraphNode} has already been added to
 	 *         this {@link AbstractDiskGraph}.
@@ -193,7 +193,7 @@ public abstract class AbstractDiskGraph {
 	protected abstract boolean checkDuplicate(GraphNode node);
 
 	public abstract GraphNode getNode(long fingerprint, int tableauIdx) throws IOException;
-	
+
 	/**
 	 * @return true iff the given GraphNode belongs to the set of initial
 	 *         states. Inefficient, only use for auxiliary use cases (e.g.
@@ -216,7 +216,8 @@ public abstract class AbstractDiskGraph {
 	/* Get the graph node at the file location ptr. */
 	public synchronized final GraphNode getNode(final long stateFP, final int tidx, final long ptr) throws IOException {
 		// Get from memory cache if cached:
-		//TODO Adapt mask to array length iff array length is a func of available memory
+		// TODO Adapt mask to array length iff array length is a func of available
+		// memory
 		int idx = (int) (stateFP + tidx) & 0xFFFF;
 		GraphNode gnode = this.gnodes[idx];
 		if (gnode != null && gnode.stateFP == stateFP && gnode.tindex == tidx) {
@@ -230,8 +231,9 @@ public abstract class AbstractDiskGraph {
 		}
 		return gnode1;
 	}
-	
-	protected synchronized final GraphNode getNodeFromDisk(final long stateFP, final int tidx, final long ptr) throws IOException {
+
+	protected synchronized final GraphNode getNodeFromDisk(final long stateFP, final int tidx, final long ptr)
+			throws IOException {
 		// If the node is not found in the in-memory cache, the ptr has to be
 		// positive. BufferedRandomAccessFile#seek will throw an IOException due
 		// to "negative seek offset" anyway. Lets catch it early on!
@@ -245,7 +247,7 @@ public abstract class AbstractDiskGraph {
 
 		GraphNode gnode1 = new GraphNode(stateFP, tidx);
 		gnode1.read(this.nodeRAF);
-		
+
 		this.nodeRAF.seek(curPtr);
 		return gnode1;
 	}
@@ -278,21 +280,21 @@ public abstract class AbstractDiskGraph {
 	 * @param ptr
 	 *            The length of the ptr file up to which this method reads.
 	 * @throws IOException
-	 *             Reading the file failed
+	 *                     Reading the file failed
 	 */
 	protected abstract void makeNodePtrTbl(final long ptr) throws IOException;
 
 	/* Link information for SCC search */
-	
+
 	/**
 	 * Return the link assigned to the node via putLink() or -1 if the node has
 	 * no link assigned yet. Unless -1, the link is in interval [
 	 * {@link AbstractDiskGraph#MAX_PTR}, {@link AbstractDiskGraph#MAX_LINK}]
 	 * 
 	 * @param state
-	 *            The state's fingerprint
+	 *              The state's fingerprint
 	 * @param tidx
-	 *            The corresponding tableau index
+	 *              The corresponding tableau index
 	 */
 	public abstract long getLink(long state, int tidx);
 
@@ -309,9 +311,9 @@ public abstract class AbstractDiskGraph {
 	 * {@link AbstractDiskGraph#setMaxLink(long, int)}.
 	 * 
 	 * @param state
-	 *            The state's fingerprint
+	 *              The state's fingerprint
 	 * @param tidx
-	 *            The corresponding tableau index
+	 *              The corresponding tableau index
 	 */
 	public abstract long putLink(long state, int tidx, long link);
 
@@ -321,9 +323,9 @@ public abstract class AbstractDiskGraph {
 	 * as a node during SCC's depth-first-search.
 	 * 
 	 * @param state
-	 *            The state's fingerprint
+	 *              The state's fingerprint
 	 * @param tidx
-	 *            The corresponding tableau index
+	 *              The corresponding tableau index
 	 */
 	public abstract void setMaxLink(long state, int tidx);
 
@@ -340,19 +342,21 @@ public abstract class AbstractDiskGraph {
 		}
 		return true;
 	}
-	
+
 	/* start iteration */
-	
-    private Iterator<GraphNode> iterator() {
+
+	private Iterator<GraphNode> iterator() {
 		try {
 			// reverse ptr file to beginning
 			this.nodePtrRAF.seek(0);
-			
+
 			final long length = this.nodePtrRAF.length();
-	        
+
 			return new Iterator<GraphNode>() {
 
-				/* (non-Javadoc)
+				/*
+				 * (non-Javadoc)
+				 * 
 				 * @see java.util.Iterator#hasNext()
 				 */
 				public boolean hasNext() {
@@ -363,7 +367,9 @@ public abstract class AbstractDiskGraph {
 					}
 				}
 
-				/* (non-Javadoc)
+				/*
+				 * (non-Javadoc)
+				 * 
 				 * @see java.util.Iterator#next()
 				 */
 				public GraphNode next() {
@@ -377,7 +383,9 @@ public abstract class AbstractDiskGraph {
 					}
 				}
 
-				/* (non-Javadoc)
+				/*
+				 * (non-Javadoc)
+				 * 
 				 * @see java.util.Iterator#remove()
 				 */
 				public void remove() {
@@ -387,10 +395,10 @@ public abstract class AbstractDiskGraph {
 		} catch (IOException e1) {
 			throw new RuntimeException(e1);
 		}
-    }
-	
+	}
+
 	/* end iteration */
-	
+
 	/**
 	 * Return the shortest path (inclusive and in reverse order) from some
 	 * initial state to state. The path is a vector of states <s1, s2, ..., sn>,
@@ -409,7 +417,7 @@ public abstract class AbstractDiskGraph {
 	 *         via {@link AbstractDiskGraph#addNode(GraphNode)}.
 	 */
 	public abstract long size();
-	
+
 	/**
 	 * @return The size of both disk files (ptrs and nodes) measured in bytes.
 	 *         Can be incorrect during short periods when the graph is being
@@ -421,7 +429,7 @@ public abstract class AbstractDiskGraph {
 	public long getSizeOnDisk() throws IOException {
 		return this.nodePtrRAF.length() + this.nodeRAF.length();
 	}
-	
+
 	public long getSizeAtLastCheck() {
 		return sizeAtCheck;
 	}
@@ -429,7 +437,7 @@ public abstract class AbstractDiskGraph {
 	public void recordSize() {
 		this.sizeAtCheck = size();
 	}
-	
+
 	/**
 	 * Only useful for debugging.
 	 * 
@@ -448,7 +456,7 @@ public abstract class AbstractDiskGraph {
 		sb.append("graph[style=bold];");
 		sb.append("label = \"PossibleErrorModel\" style=\"solid\"\n");
 		sb.append("node [ labeljust=\"l\",shape=record ]\n");
-		
+
 		// State checks
 		int i = 1;
 		LiveExprNode[] checkState = oos.getCheckState();
@@ -463,18 +471,19 @@ public abstract class AbstractDiskGraph {
 			sb.append(String.format("A%s [label=\"A%s: %s\"]", i, i++, node2dot(liveExprNode)));
 			sb.append("\n");
 		}
-		
+
 		sb.append("}");
 		return sb.toString();
 	}
-	
+
 	protected static String node2dot(final LiveExprNode node) {
-		// Replace "\" with "\\" and """ with "\"".	Replace "<" and ">" with "\<" and "\>".
-		return node.toString().replace("\\", "\\\\").replace("\"", "\\\"").replace("<", "\\<").replace(">", "\\>").trim()
-				.replace("\n", "\\l"); // Do not remove remaining (i.e. no dangling/leading) "\n". 
+		// Replace "\" with "\\" and """ with "\"". Replace "<" and ">" with "\<" and
+		// "\>".
+		return node.toString().replace("\\", "\\\\").replace("\"", "\\\"").replace("<", "\\<").replace(">", "\\>")
+				.trim()
+				.replace("\n", "\\l"); // Do not remove remaining (i.e. no dangling/leading) "\n".
 	}
 
-	
 	/**
 	 * Only useful for debugging.
 	 * 
@@ -486,11 +495,11 @@ public abstract class AbstractDiskGraph {
 	 * https://github.com/abstratt/eclipsegraphviz
 	 * 
 	 * @param oos
-	 *            Length of state checks
+	 *             Length of state checks
 	 * @param alen
-	 *            Length of action checks
+	 *             Length of action checks
 	 * @param file
-	 *            Destination
+	 *             Destination
 	 */
 	public final void writeDotViz(final OrderOfSolution oos, final File file) {
 		writeDotViz(oos, file, new HashMap<>());
@@ -552,8 +561,11 @@ public abstract class AbstractDiskGraph {
 	/**
 	 * Flush any in-memory buffered data to the disk.
 	 *
-	 * <p>This method has essentially no visible effect, since any disk files are private to this object and flushing
-	 * writes should not affect reads from those files.  However, there are some tests that call this method to make
+	 * <p>
+	 * This method has essentially no visible effect, since any disk files are
+	 * private to this object and flushing
+	 * writes should not affect reads from those files. However, there are some
+	 * tests that call this method to make
 	 * assertions about the data being written to disk.
 	 *
 	 * @throws IOException if an I/O error occurs
@@ -565,7 +577,8 @@ public abstract class AbstractDiskGraph {
 
 	public abstract void reset() throws IOException;
 
-	// This method is not called anywhere because *out degree* graph statistics are collected
+	// This method is not called anywhere because *out degree* graph statistics are
+	// collected
 	// during liveness checking with negligible overhead (see DiskGraph#addNode).
 	public void calculateOutDegreeDiskGraph(final IBucketStatistics outDegreeGraphStats) throws IOException {
 		try {
@@ -587,19 +600,20 @@ public abstract class AbstractDiskGraph {
 			System.exit(1);
 		}
 	}
-	
+
 	public void calculateInDegreeDiskGraph(final IBucketStatistics inDegreeGraphStats) throws IOException {
-		//TODO This only supports 2^31 map elements and thus less of what TLC can handle. A
+		// TODO This only supports 2^31 map elements and thus less of what TLC can
+		// handle. A
 		// longlong FPSet with a user defined mask could be used to store 2^63.
 		final Map<NodeRAFRecord, Integer> nodes2count = new HashMap<NodeRAFRecord, Integer>();
-		
+
 		// One-pass (start to end) through the nodeRAF file reading all "records".
 		// A record is a combination of a state's fingerprint and a tableau id.
 		// Together they uniquely identify a vertex in the graph.
 		// The nodeRAF is the secondary disk storage file of the disk graph. It
 		// contains vertices that are successors of a vertex stored in the nodePtrRAF.
-		// The nodePtrRAF is the primary disk storage file with a fingerprint & 
-		// tableau id and a pointer to the successor nodes in nodeRAF. While 
+		// The nodePtrRAF is the primary disk storage file with a fingerprint &
+		// tableau id and a pointer to the successor nodes in nodeRAF. While
 		// a node appears only once in the nodePtrRAF, the same node is potentially
 		// listed in nodeRAF multiple times.
 		try {
@@ -620,7 +634,7 @@ public abstract class AbstractDiskGraph {
 					nodes2count.put(record, inArcCounter + 1);
 				}
 				// Skip checks
-				// (we don't care for the checks) 
+				// (we don't care for the checks)
 				int checksLen = nodeRAF.readNat();
 				nodeRAF.seek(nodeRAF.getFilePointer() + (checksLen * 8)); // 8 bytes is long
 			}
@@ -628,13 +642,13 @@ public abstract class AbstractDiskGraph {
 			MP.printError(EC.SYSTEM_DISKGRAPH_ACCESS, e);
 			System.exit(1);
 		}
-		
+
 		final Collection<Integer> values = nodes2count.values();
 		for (Integer integer : values) {
 			inDegreeGraphStats.addSample(integer);
 		}
 	}
-	
+
 	/**
 	 * A {@link NodeRAFRecord} is the technical representation of each
 	 * record in the NodeRAF file
@@ -648,7 +662,7 @@ public abstract class AbstractDiskGraph {
 			long high = nodeRAF.readInt();
 			long low = nodeRAF.readInt();
 			fp = (high << 32) | (low & 0xFFFFFFFFL);
-			
+
 			tidx = nodeRAF.readInt();
 		}
 

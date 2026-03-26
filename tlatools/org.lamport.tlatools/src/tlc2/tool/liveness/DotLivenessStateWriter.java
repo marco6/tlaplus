@@ -33,16 +33,19 @@ import tlc2.util.DotStateWriter;
 import tlc2.util.IStateWriter;
 
 public class DotLivenessStateWriter extends DotStateWriter implements ILivenessStateWriter {
-	
+
 	public DotLivenessStateWriter(IStateWriter aStateWriter) throws IOException {
 		super(aStateWriter.getDumpFileName().replace(".dot", "_liveness.dot"), "");
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.liveness.ILivenessStateWriter#writeState(tlc2.tool.TLCState, tlc2.tool.liveness.TBGraphNode)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.tool.liveness.ILivenessStateWriter#writeState(tlc2.tool.TLCState,
+	 * tlc2.tool.liveness.TBGraphNode)
 	 */
 	public void writeState(TLCState state, TBGraphNode tableauNode) {
-		
+
 		// Marker the state as an initial state by using a filled style.
 		this.writer.append("\"");
 		this.writer.append(Long.toString(state.fingerPrint()));
@@ -58,19 +61,30 @@ public class DotLivenessStateWriter extends DotStateWriter implements ILivenessS
 		this.writer.append("\n");
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.liveness.ILivenessStateWriter#writeState(tlc2.tool.TLCState, tlc2.tool.liveness.TBGraphNode, tlc2.tool.TLCState, tlc2.tool.liveness.TBGraphNode, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.tool.liveness.ILivenessStateWriter#writeState(tlc2.tool.TLCState,
+	 * tlc2.tool.liveness.TBGraphNode, tlc2.tool.TLCState,
+	 * tlc2.tool.liveness.TBGraphNode, boolean)
 	 */
 	public void writeState(TLCState state, TBGraphNode tableauNode, TLCState successor,
 			TBGraphNode tableauNodeSuccessor, BitVector actionChecks, int from, int length, short stateFlags) {
-		writeState(state, tableauNode, successor, tableauNodeSuccessor, actionChecks, from, length, stateFlags, Visualization.DEFAULT);
+		writeState(state, tableauNode, successor, tableauNodeSuccessor, actionChecks, from, length, stateFlags,
+				Visualization.DEFAULT);
 	}
 
-	/* (non-Javadoc)
-	 * @see tlc2.tool.liveness.ILivenessStateWriter#writeState(tlc2.tool.TLCState, tlc2.tool.liveness.TBGraphNode, tlc2.tool.TLCState, tlc2.tool.liveness.TBGraphNode, boolean, tlc2.util.IStateWriter.Visualization)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see tlc2.tool.liveness.ILivenessStateWriter#writeState(tlc2.tool.TLCState,
+	 * tlc2.tool.liveness.TBGraphNode, tlc2.tool.TLCState,
+	 * tlc2.tool.liveness.TBGraphNode, boolean,
+	 * tlc2.util.IStateWriter.Visualization)
 	 */
 	public void writeState(TLCState state, TBGraphNode tableauNode, TLCState successor,
-			TBGraphNode tableauNodeSuccessor, BitVector actionChecks, int from, int length, short stateFlags, Visualization visualization) {
+			TBGraphNode tableauNodeSuccessor, BitVector actionChecks, int from, int length, short stateFlags,
+			Visualization visualization) {
 
 		final String successorsFP = Long.toString(successor.fingerPrint());
 
@@ -119,7 +133,7 @@ public class DotLivenessStateWriter extends DotStateWriter implements ILivenessS
 	}
 
 	protected static String tableauNode2dot(final TBGraphNode tableauNode) {
-		// Replace "\" with "\\" and """ with "\"".	
+		// Replace "\" with "\\" and """ with "\"".
 		return tableauNode.toString().replace("\\", "\\\\").replace("\"", "\\\"").trim();
 	}
 }

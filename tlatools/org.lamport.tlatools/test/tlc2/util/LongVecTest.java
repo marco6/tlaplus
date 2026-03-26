@@ -37,7 +37,7 @@ public class LongVecTest {
 		// default capacity
 		return new LongVec();
 	}
-	
+
 	@Test
 	public void testReadBeyondCapacity() {
 		final LongVec vec = getLongVec();
@@ -87,18 +87,18 @@ public class LongVecTest {
 		}
 		fail("Read beyond capacity");
 	}
-	
+
 	@Test
 	public void testRemoveAndGet() {
 		final LongVec vec = getLongVec();
 		vec.addElement(1L);
 		vec.addElement(2L);
 		vec.addElement(3L);
-		
+
 		assertEquals(1L, vec.elementAt(0));
 		assertEquals(2L, vec.elementAt(1));
 		assertEquals(3L, vec.elementAt(2));
-		
+
 		vec.removeElement(1);
 		assertEquals(1L, vec.elementAt(0));
 		assertEquals(3L, vec.elementAt(1));
@@ -110,16 +110,16 @@ public class LongVecTest {
 		}
 		fail("A new elements magically appeared in LongVec");
 	}
-	
+
 	@Test
 	public void testRemoveWrongOrder() {
 		final LongVec vec = getLongVec();
 		vec.addElement(1L);
 		vec.addElement(2L);
-		
+
 		assertEquals(1L, vec.elementAt(0));
 		assertEquals(2L, vec.elementAt(1));
-		
+
 		vec.removeElement(0);
 		try {
 			vec.removeElement(1);

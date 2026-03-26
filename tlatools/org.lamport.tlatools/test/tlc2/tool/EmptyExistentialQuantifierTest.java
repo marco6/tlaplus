@@ -40,7 +40,7 @@ public class EmptyExistentialQuantifierTest extends ModelCheckerTestCase {
 		super("EmptyExistentialQuantifier", "", new String[] { "-config", "EmptyExistentialQuantifier.tla" },
 				EC.ExitStatus.VIOLATION_DEADLOCK);
 	}
-	
+
 	@Override
 	protected boolean checkDeadLock() {
 		return true;

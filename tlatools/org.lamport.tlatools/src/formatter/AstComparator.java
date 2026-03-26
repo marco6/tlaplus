@@ -12,7 +12,8 @@ import java.util.List;
  */
 public final class AstComparator {
 
-    private AstComparator() {}
+    private AstComparator() {
+    }
 
     /**
      * Result of an AST comparison. Contains mismatch details if the trees differ.
@@ -49,13 +50,16 @@ public final class AstComparator {
             return description;
         }
 
-        /** Path from root to the mismatched node, e.g. ["Module", "OpDef", "InfixExpr"]. */
+        /**
+         * Path from root to the mismatched node, e.g. ["Module", "OpDef", "InfixExpr"].
+         */
         public List<String> getNodePath() {
             return Collections.unmodifiableList(nodePath);
         }
 
         public String formatDiagnostic() {
-            if (match) return "ASTs match.";
+            if (match)
+                return "ASTs match.";
             StringBuilder sb = new StringBuilder();
             sb.append("AST verification failed:\n");
             sb.append("  ").append(description).append("\n");

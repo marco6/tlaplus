@@ -42,37 +42,37 @@ import tlc2.tool.TLCStates;
 @State(Scope.Group)
 public class StateQueueBenachmark {
 
-	@Param({"1", "2", "4", "8", "16", "32", "64"})
-	public int size;
-	
-	private IStateQueue s;
+    @Param({ "1", "2", "4", "8", "16", "32", "64" })
+    public int size;
 
-	private TLCState[] batch;
+    private IStateQueue s;
+
+    private TLCState[] batch;
 
     @Setup
     public void up() throws IOException {
         s = new DiskStateQueue();
-        
-    	// balance off the costs for creating the TLCState[].
-    	this.batch = new TLCState[size];
-    	for (int i = 0; i < batch.length; i++) {
-			batch[i] = TLCStates.createDummyState();
-		}
+
+        // balance off the costs for creating the TLCState[].
+        this.batch = new TLCState[size];
+        for (int i = 0; i < batch.length; i++) {
+            batch[i] = TLCStates.createDummyState();
+        }
     }
-    
+
     @TearDown
     public void down() throws IOException {
-    	this.s.delete();
+        this.s.delete();
     }
-  
+
     @Benchmark
     @Group("single")
     @GroupThreads(2)
     public TLCState[] consumerSingle() {
-    	final TLCState[] res = new TLCState[batch.length];
-    	for (int i = 0; i < batch.length; i++) {
-    		res[i] = this.s.sDequeue();
-    	}
+        final TLCState[] res = new TLCState[batch.length];
+        for (int i = 0; i < batch.length; i++) {
+            res[i] = this.s.sDequeue();
+        }
         return res;
     }
 
@@ -80,22 +80,21 @@ public class StateQueueBenachmark {
     @Group("single")
     @GroupThreads(2)
     public void producerSingle() {
-    	for (int i = 0; i < batch.length; i++) {
-    		this.s.sEnqueue(batch[i]);
-		}
+        for (int i = 0; i < batch.length; i++) {
+            this.s.sEnqueue(batch[i]);
+        }
     }
 
-    
     /* Batches of enqueue only */
-    
+
     @Benchmark
     @Group("batchasym")
     @GroupThreads(2)
     public TLCState[] consumerBatch() {
-    	final TLCState[] res = new TLCState[batch.length];
-    	for (int i = 0; i < batch.length; i++) {
-    		res[i] = this.s.sDequeue();
-    	}
+        final TLCState[] res = new TLCState[batch.length];
+        for (int i = 0; i < batch.length; i++) {
+            res[i] = this.s.sDequeue();
+        }
         return res;
     }
 
@@ -103,12 +102,11 @@ public class StateQueueBenachmark {
     @Group("batchasym")
     @GroupThreads(2)
     public void producerBatch() {
-    	this.s.sEnqueue(batch);
+        this.s.sEnqueue(batch);
     }
 
-    
     /* Batches of dequeue & enqueue */
-    
+
     @Benchmark
     @Group("batchsym")
     @GroupThreads(2)
@@ -120,6 +118,6 @@ public class StateQueueBenachmark {
     @Group("batchsym")
     @GroupThreads(2)
     public void producerBatchSym() {
-    	this.s.sEnqueue(batch);
+        this.s.sEnqueue(batch);
     }
 }

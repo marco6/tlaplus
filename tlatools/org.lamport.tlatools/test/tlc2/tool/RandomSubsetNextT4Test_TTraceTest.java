@@ -53,10 +53,10 @@ public class RandomSubsetNextT4Test_TTraceTest extends TTraceModelCheckerTestCas
 		assertFalse(recorder.recorded(EC.TLC_BUG));
 
 		assertTrue(recorder.recorded(EC.TLC_BEHAVIOR_UP_TO_THIS_POINT));
-		
+
 		final List<Object> records = recorder.getRecords(EC.TLC_STATE_PRINT2);
 		assertEquals(11, records.size());
-		
+
 		int cnt = 0;
 		for (Object r : records) {
 			final Object[] objs = (Object[]) r;
@@ -65,15 +65,15 @@ public class RandomSubsetNextT4Test_TTraceTest extends TTraceModelCheckerTestCas
 
 			final IValue y = vals.get(UniqueString.uniqueStringOf("y"));
 			assertEquals(cnt++, ((IntValue) y).val);
-			
+
 			final IValue x = info.state.getVals().get(UniqueString.uniqueStringOf("x"));
 			assertTrue(1 <= ((IntValue) x).val && ((IntValue) x).val <= 1000);
-			
+
 			final int statenum = (int) objs[1];
 			assertEquals(cnt, statenum);
 		}
 	}
-	
+
 	protected int getNumberOfThreads() {
 		// With 4 threads the counter-examples is not predictable anymore because it
 		// depends on thread scheduling.

@@ -18,11 +18,12 @@ import util.TLCRuntime;
 public class FPSetFactoryTest {
 	// Has to be larger than util.TLCRuntime.MinFpMemSize. For off-heap/non-heap
 	// tests it should not exceed what the VM allocates by default (usually
-	// 64mb). 64mb is also the default used by util.TLCRuntime.getNonHeapPhysicalMemory().
+	// 64mb). 64mb is also the default used by
+	// util.TLCRuntime.getNonHeapPhysicalMemory().
 	private static final long MEMORY = 64L * 1024L * 1024L;
 
 	/* Test diskfpset subclasses which always require two instances */
-	
+
 	@Test
 	public void testGetDiskFPSet() {
 		assertTrue(FPSetFactory.isDiskFPSet(DiskFPSet.class.getName()));
@@ -33,18 +34,18 @@ public class FPSetFactoryTest {
 
 		assertFalse(FPSetFactory.isDiskFPSet(FPSet.class.getName()));
 		assertFalse(FPSetFactory.isDiskFPSet(FPSetRMI.class.getName()));
-		
+
 		assertFalse(FPSetFactory.isDiskFPSet(MultiFPSet.class.getName()));
-		
+
 		assertFalse(FPSetFactory.isDiskFPSet(MemFPSet.class.getName()));
 		assertFalse(FPSetFactory.isDiskFPSet(MemFPSet1.class.getName()));
 		assertFalse(FPSetFactory.isDiskFPSet(MemFPSet2.class.getName()));
-		
+
 		System.setProperty(FPSetFactory.IMPL_PROPERTY, MSBDiskFPSet.class.getName());
 		final FPSetConfiguration fpSetConfiguration = new FPSetConfiguration();
 		assertTrue(fpSetConfiguration.allowsNesting());
 	}
-	
+
 	/* Test single FPSet with default memory */
 
 	@Test
@@ -71,7 +72,7 @@ public class FPSetFactoryTest {
 	}
 
 	/* Test single FPSet with explicit memory */
-	
+
 	@Test
 	public void testGetFPSetMSBWithMem() throws RemoteException {
 		// Explicitly set MSBDiskFPSet to overwrite any previous setting (if any)
@@ -96,9 +97,9 @@ public class FPSetFactoryTest {
 
 		doTestNested(LSBDiskFPSet.class, fpSetConfiguration, (MultiFPSet) fpSet);
 	}
-	
+
 	/* Test single FPSet with explicit memory and ratio */
-	
+
 	@Test
 	public void testGetFPSetMSBWithMemAndRatio() throws RemoteException {
 		// Explicitly set MSBDiskFPSet to overwrite any previous setting (if any)
@@ -121,12 +122,11 @@ public class FPSetFactoryTest {
 		FPSet fpSet = doTestGetFPSet(LSBDiskFPSet.class, fpSetConfiguration);
 		assertEquals(MEMORY / 2, fpSet.getConfiguration().getMemoryInBytes());
 
-
 		doTestNested(LSBDiskFPSet.class, fpSetConfiguration, (MultiFPSet) fpSet);
 	}
-	
+
 	/* Test MultiFPSet with default memory */
-	
+
 	@Test
 	public void testGetFPSetMultiFPSet() throws RemoteException {
 		// Explicitly set MSBDiskFPSet to overwrite any previous setting (if any)
@@ -134,10 +134,10 @@ public class FPSetFactoryTest {
 		final FPSetConfiguration fpSetConfiguration = new FPSetConfiguration();
 		fpSetConfiguration.setFpBits(1);
 		final MultiFPSet mFPSet = (MultiFPSet) doTestGetFPSet(MultiFPSet.class, fpSetConfiguration);
-		
+
 		doTestNested(MSBDiskFPSet.class, fpSetConfiguration, mFPSet);
 	}
-	
+
 	@Test
 	public void testGetFPSetLSBMultiFPSet() throws RemoteException {
 		System.setProperty(FPSetFactory.IMPL_PROPERTY, LSBDiskFPSet.class.getName());
@@ -147,7 +147,7 @@ public class FPSetFactoryTest {
 
 		doTestNested(LSBDiskFPSet.class, fpSetConfiguration, mFPSet);
 	}
-	
+
 	@Test
 	public void testGetFPSetOffHeapMultiFPSet() throws RemoteException {
 		Assume.assumeTrue(TLCRuntime.getInstance().getArchitecture() == TLCRuntime.ARCH.BIT_64);
@@ -158,7 +158,7 @@ public class FPSetFactoryTest {
 
 		doTestNested(OffHeapDiskFPSet.class, fpSetConfiguration, mFPSet);
 	}
-	
+
 	/* Test MultiFPSet with explicit memory */
 
 	@Test
@@ -170,10 +170,10 @@ public class FPSetFactoryTest {
 		fpSetConfiguration.setFpBits(1);
 		fpSetConfiguration.setRatio(1.0d);
 		final MultiFPSet mFPSet = (MultiFPSet) doTestGetFPSet(MultiFPSet.class, fpSetConfiguration);
-		
+
 		doTestNested(MSBDiskFPSet.class, fpSetConfiguration, mFPSet);
 	}
-	
+
 	@Test
 	public void testGetFPSetLSBMultiFPSetWithMem() throws RemoteException {
 		System.setProperty(FPSetFactory.IMPL_PROPERTY, LSBDiskFPSet.class.getName());
@@ -185,7 +185,7 @@ public class FPSetFactoryTest {
 
 		doTestNested(LSBDiskFPSet.class, fpSetConfiguration, mFPSet);
 	}
-	
+
 	@Test
 	public void testGetFPSetOffHeapMultiFPSetWithMem() throws RemoteException {
 		Assume.assumeTrue(TLCRuntime.getInstance().getArchitecture() == TLCRuntime.ARCH.BIT_64);
@@ -202,9 +202,9 @@ public class FPSetFactoryTest {
 	@Test
 	public void testGetFPSetOffHeapMultiFPSet42() throws RemoteException {
 		System.setProperty(FPSetFactory.IMPL_PROPERTY, OffHeapDiskFPSet.class.getName());
-		
+
 		final long nonHeapPhysicalMemory = TLCRuntime.getInstance().getNonHeapPhysicalMemory();
-		
+
 		final FPSetConfiguration fpSetConfiguration = new FPSetConfiguration();
 		assertEquals(nonHeapPhysicalMemory, fpSetConfiguration.getMemoryInBytes());
 		assertEquals(nonHeapPhysicalMemory / FPSet.LongSize, fpSetConfiguration.getMemoryInFingerprintCnt());
@@ -217,10 +217,10 @@ public class FPSetFactoryTest {
 		assertEquals(2, multiConfig.getMultiFPSetCnt());
 		assertEquals(nonHeapPhysicalMemory, multiConfig.getMemoryInBytes());
 		assertEquals(nonHeapPhysicalMemory / FPSet.LongSize, multiConfig.getMemoryInFingerprintCnt());
-		
+
 		final FPSet[] fpSets = mFPSet.getFPSets();
 		assertEquals(2, fpSets.length);
-		
+
 		for (FPSet fpSet : fpSets) {
 			final OffHeapDiskFPSet offFPset = (OffHeapDiskFPSet) fpSet;
 			final FPSetConfiguration offConfig = offFPset.getConfiguration();
@@ -234,42 +234,43 @@ public class FPSetFactoryTest {
 	}
 
 	/* Helper methods */
-	
-	private FPSet doTestGetFPSet(final Class<? extends FPSet> class1, final FPSetConfiguration fpSetConfig) throws RemoteException, NoSuchObjectException {
+
+	private FPSet doTestGetFPSet(final Class<? extends FPSet> class1, final FPSetConfiguration fpSetConfig)
+			throws RemoteException, NoSuchObjectException {
 		final FPSet fpSet = FPSetFactory.getFPSet(fpSetConfig);
 		if (!FPSetFactory.isDiskFPSet(class1.getName())) {
 			assertTrue(class1.isAssignableFrom(fpSet.getClass()));
 		}
-		
+
 		return fpSet;
 	}
-	
+
 	private void doTestNested(final Class<? extends FPSet> clazz, final FPSetConfiguration fpSetConfiguration,
 			final MultiFPSet mFPSet) {
 		final FPSet[] fpSets = mFPSet.getFPSets();
 
 		// Check expected amount of fpSets created
 		assertEquals(fpSetConfiguration.getMultiFPSetCnt(), fpSets.length);
-		
+
 		long memoryInBytes = 0L;
 		for (FPSet fpSet : fpSets) {
 			// Check if all nested FPSets have proper type
 			assertTrue(clazz.isAssignableFrom(fpSet.getClass()));
-			
+
 			// Check if correct amount of memory allocated/dedicated
 			memoryInBytes += fpSet.getConfiguration().getMemoryInBytes();
-			
+
 			// Check correct memory again (this time via DiskFPSet stats)
 			if (fpSet instanceof FPSetStatistic) {
 				long maxTblCnt = ((FPSetStatistic) fpSet).getMaxTblCnt();
 				// make sure nested FPSets don't overallocate memory
 				assertTrue("Nested FPSet has over-allocated memory.", fpSet.getConfiguration()
 						.getMemoryInFingerprintCnt() >= maxTblCnt);
-				
+
 				assertTrue(fpSet.getConfiguration().getMemoryInFingerprintCnt() >= maxTblCnt);
 			}
 		}
-		
+
 		// All nested FPSets combined are supposed to use all FPSet memory
 		// dedicated to the MultiFPSet (unless the user decides to live with the
 		// implementation default)

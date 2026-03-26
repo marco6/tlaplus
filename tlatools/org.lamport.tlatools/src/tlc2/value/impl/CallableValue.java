@@ -42,7 +42,8 @@ import util.Assert;
 public class CallableValue extends EvaluatingValue {
 
 	public CallableValue(Method md, int minLevel, OpDefNode opDef) throws IllegalAccessException {
-		super(MethodHandles.publicLookup().unreflect(md).asSpreader(IValue[].class, md.getParameterCount()), md, minLevel, 100, opDef);
+		super(MethodHandles.publicLookup().unreflect(md).asSpreader(IValue[].class, md.getParameterCount()), md,
+				minLevel, 100, opDef);
 	}
 
 	@Override

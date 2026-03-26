@@ -47,11 +47,11 @@ public abstract class SuccessfulSimulationTestCase extends ModelCheckerTestCase 
 	public SuccessfulSimulationTestCase(String spec, String path, String[] extraArguments) {
 		super(spec, path, extraArguments);
 	}
-	
+
 	public SuccessfulSimulationTestCase(String spec, String path, String[] extraArguments, int exitStatus) {
 		super(spec, path, extraArguments, exitStatus);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		// Simulation must *NOT* show a counterexample. Regular model-checking

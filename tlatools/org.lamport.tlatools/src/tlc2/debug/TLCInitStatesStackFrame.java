@@ -84,7 +84,7 @@ public class TLCInitStatesStackFrame extends TLCStackFrame {
 	}
 
 	// Change the debugger's buttons and granularity when entering/exiting
-	
+
 	@Override
 	public boolean handle(final TLCDebugger debugger) {
 		return debugger.stack.size() == 1;
@@ -101,7 +101,7 @@ public class TLCInitStatesStackFrame extends TLCStackFrame {
 		debugger.sendCapabilities(TLCCapabilities.STEP_BACK);
 		debugger.setGranularity(Granularity.Formula);
 	}
-	
+
 	// Render the frame in the debugger's variables view.
 
 	@Override
@@ -131,7 +131,7 @@ public class TLCInitStatesStackFrame extends TLCStackFrame {
 		}
 		return super.getVariables(vr);
 	}
-	
+
 	// Handle user selecting a different initial state.
 
 	@Override
@@ -150,7 +150,7 @@ public class TLCInitStatesStackFrame extends TLCStackFrame {
 	Variable[] getStatesVariables() {
 		return getVariables(stateId);
 	}
-	
+
 	@Override
 	public boolean matches(final TLCSourceBreakpoint bp) {
 		if (super.matches(bp)) {

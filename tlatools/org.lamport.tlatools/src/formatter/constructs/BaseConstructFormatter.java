@@ -8,7 +8,8 @@ import java.util.function.Function;
 
 /**
  * Base class for construct formatters providing common formatting patterns.
- * This eliminates code duplication and provides consistent formatting strategies.
+ * This eliminates code duplication and provides consistent formatting
+ * strategies.
  *
  * @param <T> The type of items being formatted (e.g., String for module names)
  */
@@ -30,8 +31,8 @@ public abstract class BaseConstructFormatter<T> {
      * @return Doc object for the entire construct
      */
     protected Doc formatList(List<T> items, Doc prefix,
-                             Function<T, Doc> itemFormatter,
-                             ListFormatStrategy strategy) {
+            Function<T, Doc> itemFormatter,
+            ListFormatStrategy strategy) {
 
         if (items.isEmpty()) {
             return Doc.empty();
@@ -93,9 +94,8 @@ public abstract class BaseConstructFormatter<T> {
                     .appendLineOrSpace(itemFormatter.apply(items.get(i)));
         }
 
-        return
-                prefix
-                        .appendSpace(Doc.group(itemList).indent(lastLineLength(prefix) + 1));
+        return prefix
+                .appendSpace(Doc.group(itemList).indent(lastLineLength(prefix) + 1));
     }
 
     /**

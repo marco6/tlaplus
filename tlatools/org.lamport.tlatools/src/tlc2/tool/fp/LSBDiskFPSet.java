@@ -20,19 +20,23 @@ public class LSBDiskFPSet extends HeapBasedDiskFPSet {
 		super(fpSetConfig);
 		this.flusher = new LSBFlusher();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.DiskFPSet#getAuxiliaryStorageRequirement()
 	 */
 	protected double getAuxiliaryStorageRequirement() {
 		return 2.5d;
 	}
-	
+
 	public class LSBFlusher extends Flusher {
 
 		private long[] buff;
-		
-		/* (non-Javadoc)
+
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see tlc2.tool.fp.DiskFPSet.Flusher#prepareTable()
 		 */
 		@Override
@@ -40,7 +44,7 @@ public class LSBDiskFPSet extends HeapBasedDiskFPSet {
 			// Verify tblCnt is still within positive Integer.MAX_VALUE bounds
 			int cnt = (int) getTblCnt();
 			Assert.check(cnt > 0, EC.GENERAL);
-			
+
 			// Why not sort this.tbl in-place rather than doubling memory
 			// requirements by copying to clone array and subsequently sorting it?
 			// - disk written fps are marked disk written by changing msb to 1
@@ -49,11 +53,12 @@ public class LSBDiskFPSet extends HeapBasedDiskFPSet {
 			//
 			// - this.tbl bucket assignment (hashing) is done on least significant bits,
 			// which makes in-place sort with overlay index infeasible
-			// - erasing this.tbl means we will loose the in-memory cache completely until it fills up again
+			// - erasing this.tbl means we will loose the in-memory cache completely until
+			// it fills up again
 			// - new fps overwrite disk flushed fps in-memory
 			// see MSBDiskFPSet for an implementation that doesn't have the
 			// requirement to sort in a clone array.
-	
+
 			// copy table contents into a buffer array buff; do not erase tbl
 			buff = new long[cnt];
 			int idx = 0;
@@ -69,16 +74,20 @@ public class LSBDiskFPSet extends HeapBasedDiskFPSet {
 					}
 				}
 			}
-			
+
 			// sort in-memory entries
 			Arrays.sort(buff, 0, buff.length);
 		}
 
-		/* (non-Javadoc)
-		 * @see tlc2.tool.fp.DiskFPSet.Flusher#mergeNewEntries(java.io.RandomAccessFile, java.io.RandomAccessFile)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see tlc2.tool.fp.DiskFPSet.Flusher#mergeNewEntries(java.io.RandomAccessFile,
+		 * java.io.RandomAccessFile)
 		 */
 		@Override
-		protected void mergeNewEntries(BufferedRandomAccessFile[] inRAFs, BufferedRandomAccessFile outRAF) throws IOException {
+		protected void mergeNewEntries(BufferedRandomAccessFile[] inRAFs, BufferedRandomAccessFile outRAF)
+				throws IOException {
 			final int buffLen = buff.length;
 
 			// Precompute the maximum value of the new file
@@ -117,8 +126,9 @@ public class LSBDiskFPSet extends HeapBasedDiskFPSet {
 						eof = true;
 					}
 				} else {
-					// prevent converting every long to String when assertion holds (this is expensive)
-					if(value == buff[i]) {
+					// prevent converting every long to String when assertion holds (this is
+					// expensive)
+					if (value == buff[i]) {
 						Assert.check(false, EC.TLC_FP_VALUE_ALREADY_ON_DISK,
 								String.valueOf(value));
 					}

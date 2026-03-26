@@ -71,7 +71,7 @@ public class ExtendsConstructTest {
     private void assertNoExcessiveIndentation(String output) {
         for (String line : output.split("\n")) {
             assertTrue("Line has excessive indentation (" + line.length() + " chars): " +
-                            line.substring(0, Math.min(80, line.length())),
+                    line.substring(0, Math.min(80, line.length())),
                     line.length() <= 90);
         }
     }
@@ -79,8 +79,10 @@ public class ExtendsConstructTest {
     @Test
     public void testExtendsWithPreCommentAndManyModulesExceedingLineWidth() throws Exception {
         assumeTlapsAvailable();
-        // Quicksort.tla pattern: block comment before EXTENDS + >3 modules + line > 80 chars.
-        // The preComment on the EXTENDS keyword inflated prefix.render().length() causing
+        // Quicksort.tla pattern: block comment before EXTENDS + >3 modules + line > 80
+        // chars.
+        // The preComment on the EXTENDS keyword inflated prefix.render().length()
+        // causing
         // massive indentation when SMART_BREAK triggered line wrapping.
         String spec = "---- MODULE TestExtendsPreComment ----\n" +
                 "(***********************************************)\n" +

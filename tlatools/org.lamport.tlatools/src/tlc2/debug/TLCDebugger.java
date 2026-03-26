@@ -151,7 +151,8 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 		capabilities.setSupportsTerminateRequest(true);
 		// Don't support ExceptionInfo requests. The previous git commit of the one that
 		// introduces this message implements the request. We learned that EI are only
-		// useful if we wish to show the Java stack trace (which users don't care about).
+		// useful if we wish to show the Java stack trace (which users don't care
+		// about).
 		// In a nutshell, the debugger backend can return a ExceptionInfoResponse that
 		// has additional field compared to the generic exception handling mechanisms.
 		// These additional fields cause the VSCode zone widget (area dynamically made
@@ -172,26 +173,33 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 		capabilities.setSupportsConditionalBreakpoints(true);
 		capabilities.setSupportsLogPoints(false);
 		// TODO: Implement stepping back for model-checking.
-		// Stepping back would be hugely useful especially because TLC's evaluation behavior might be 
-		// surprising (non-determinism). This can cause users to miss the stack-frame they wish to see.
-		// Implementing arbitrary navigation along stack-frames is impossible unless one implements
-		// undo operations for each Tool action.  However, it should be good enough to reset Tool
-		// to e.g. the beginning of the evaluation of the next-state relation for state s, evaluation
-		// of the invariant for state s, evaluation of state- & action-constraints for s, ... by
+		// Stepping back would be hugely useful especially because TLC's evaluation
+		// behavior might be
+		// surprising (non-determinism). This can cause users to miss the stack-frame
+		// they wish to see.
+		// Implementing arbitrary navigation along stack-frames is impossible unless one
+		// implements
+		// undo operations for each Tool action. However, it should be good enough to
+		// reset Tool
+		// to e.g. the beginning of the evaluation of the next-state relation for state
+		// s, evaluation
+		// of the invariant for state s, evaluation of state- & action-constraints for
+		// s, ... by
 		// throwing a ResetEvalException.
 		// With support set to true, the debugger front-end shows two additional button
 		// "Step Back" and "Reverse", which are mapped to the methods stepBack and
 		// reverseContinue below.
 		capabilities.setSupportsStepBack(true);
-		
+
 		// https://github.com/Microsoft/vscode/issues/28025
 		// TODO: This seems to be the way to add commands to the front-end's variable
 		// view. Commands that could be useful are (Json) exporters for the trace, ...
 		capabilities.setSupportsValueFormattingOptions(false);
-		
+
 		// Stepping granularity changes the behavior of next, step-in, step-out, ...
 		// s.t. a step get re-defined from source-level to machine-instruction level. It
-		// is a recent addition to the DAP (1.41.x https://microsoft.github.io/debug-adapter-protocol/changelog).
+		// is a recent addition to the DAP (1.41.x
+		// https://microsoft.github.io/debug-adapter-protocol/changelog).
 		// While not being tailored to state-based formalism such as TLA+, it can
 		// probably be retrofitted for our purposes (think machine-instruction is
 		// instead defined to be a TLA+ state). However, the debugger front-end (VSCode)
@@ -207,10 +215,11 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 		// result of the Goto Target command.
 		// https://microsoft.github.io/debug-adapter-protocol/specification#Types_GotoTarget
 		capabilities.setSupportsGotoTargetsRequest(false);
-		
+
 		// When data breakpoints are supported, users can add breakpoints that fire when
 		// the value of a variable changes. To create data breakpoints, users
-		// right-click variables in the front-end's variable view and select data breakpoint
+		// right-click variables in the front-end's variable view and select data
+		// breakpoint
 		// from the context menu.
 		// If a debugger supports data breakpoints, they can be set from the VARIABLES
 		// view and will get hit when the value of the underlying variable changes. Data
@@ -229,21 +238,21 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 		// with a red triangle in the BREAKPOINTS section.
 		// https://code.visualstudio.com/docs/editor/debugging#_function-breakpoints
 		capabilities.setSupportsFunctionBreakpoints(false);
-		
+
 		// I couldn't figure out how instruction breakpoints work. Presumably, an
 		// instruction breakpoint is related to the DAP's assembly feature when the
 		// source code gets replaced with machine instructions or bytecode during
-		// debugging.  With TLA+, the semantic graph that is evaluated by TLC could
-		// be defined our assembly.  However, a graph is probably not too useful when
+		// debugging. With TLA+, the semantic graph that is evaluated by TLC could
+		// be defined our assembly. However, a graph is probably not too useful when
 		// shown in a text editor.
 		capabilities.setSupportsInstructionBreakpoints(false);
 		capabilities.setSupportsDisassembleRequest(false);
-		
+
 		// When Clipboard is supported, the evaluate method can be called with the
-		// EvaluateArgumentsContext.CLIPBOARD argument.  We could use it to re-format
+		// EvaluateArgumentsContext.CLIPBOARD argument. We could use it to re-format
 		// a variable to json, ...
 		capabilities.setSupportsClipboardContext(true);
-		
+
 		return CompletableFuture.completedFuture(capabilities);
 	}
 
@@ -271,7 +280,8 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 		spec.setFilter("SpecBreakpointsFilter");
 		spec.setLabel("Halt (break) after Init and Next");
 		spec.setDescription("TLC will halt after initial- and next-states have been generated.");
-		spec.setConditionDescription("Init: constant or state formula. Next: constant, state, or action-level formula.");
+		spec.setConditionDescription(
+				"Init: constant or state formula. Next: constant, state, or action-level formula.");
 		spec.setSupportsCondition(true);
 		baseFilters.add(spec);
 
@@ -312,8 +322,10 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 	}
 
 	@Override
-	public synchronized CompletableFuture<SetExceptionBreakpointsResponse> setExceptionBreakpoints(SetExceptionBreakpointsArguments args) {
-		final Set<String> asSet = Arrays.stream(args.getFilterOptions()).map(fo -> fo.getFilterId()).collect(Collectors.toSet());
+	public synchronized CompletableFuture<SetExceptionBreakpointsResponse> setExceptionBreakpoints(
+			SetExceptionBreakpointsArguments args) {
+		final Set<String> asSet = Arrays.stream(args.getFilterOptions()).map(fo -> fo.getFilterId())
+				.collect(Collectors.toSet());
 		this.haltExp = asSet.contains("ExceptionBreakpointsFilter");
 		this.haltInv = asSet.contains("InvariantBreakpointsFilter");
 
@@ -322,7 +334,6 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 				.map(fo -> new TLCSourceBreakpoint(tool.getSpecProcessor(),
 						fo.getCondition() != null && !fo.getCondition().isBlank() ? fo.getCondition() : "TRUE"))
 				.findAny().orElse(null);
-
 
 		this.haltUnsat = Arrays.stream(args.getFilterOptions())
 				.filter(fo -> fo.getFilterId().equals("UnsatisfiedBreakpointsFilter"))
@@ -350,7 +361,7 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 			// copy-to-clipboard requires a full front-end/back-end round-trip in the first
 			// place. I suspect that this is a side-effect of the
 			// setSupportsEvaluateForHovers capability that the back-end announces in
-			// initialize above. 
+			// initialize above.
 			// TODO Our version of LSP4J doesn't know the constant "variables" yet, which is
 			// why it's hard-coded here.
 			final EvaluateResponse response = new EvaluateResponse();
@@ -365,7 +376,7 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 		}
 		return CompletableFuture.completedFuture(new EvaluateResponse());
 	}
-	
+
 	// See setSupportsTerminateRequest above.
 	@Override
 	public synchronized CompletableFuture<Void> terminate(TerminateArguments args) {
@@ -378,7 +389,7 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 		if (TLCGlobals.simulator != null) {
 			TLCGlobals.simulator.stop();
 		}
-		
+
 		if (launcher != null) {
 			// Notify the front-end that the debugger has terminated. Do this before notify
 			// is called in disconnect to not create a race condition, i.e. failing to send
@@ -388,11 +399,11 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 
 		return disconnect(new DisconnectArguments());
 	}
-	
+
 	@Override
 	public synchronized CompletableFuture<Void> disconnect(DisconnectArguments args) {
 		LOGGER.finer("disconnect");
-		
+
 		// "Unlock" evaluation, i.e. set step to Continue and clear all breakpoints.
 		// Afterwards, resume TLC in case it's waiting for the debugger too.
 		breakpoints.clear();
@@ -403,7 +414,7 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 		haltSpec = null;
 		haltUnsat = null;
 		this.notify();
-		
+
 		return CompletableFuture.completedFuture(null);
 	}
 
@@ -417,23 +428,24 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 
 	@Override
 	public synchronized CompletableFuture<SetBreakpointsResponse> setBreakpoints(final SetBreakpointsArguments args) {
-		//TODO: Confirm breakpoint locations (see tlc2.debug.TLCDebugger.matches(SemanticNode))!!!
+		// TODO: Confirm breakpoint locations (see
+		// tlc2.debug.TLCDebugger.matches(SemanticNode))!!!
 		LOGGER.finer("setBreakpoints");
-		
+
 		final String module = args.getSource().getName().replaceFirst(".tla$", "");
-		
+
 		if (args.getBreakpoints() != null && args.getBreakpoints().length > 0) {
 			breakpoints.computeIfAbsent(module, key -> new ArrayList<TLCSourceBreakpoint>()).clear();
-			
+
 			final ModuleNode moduleNode = tool.getModule(module);
-			
+
 			final SourceBreakpoint[] sbps = args.getBreakpoints();
 			final Breakpoint[] bp = new Breakpoint[sbps.length];
 			for (int j = 0; j < sbps.length; j++) {
 				final TLCSourceBreakpoint sbp = new TLCSourceBreakpoint(tool.getSpecProcessor(), module, sbps[j],
 						moduleNode);
 				breakpoints.get(module).add(sbp);
-				
+
 				// Create the response that communicates the result of setting the breakpoint.
 				// We could try to verify the location of breakpoints.
 				final Breakpoint breakpoint = new Breakpoint();
@@ -442,15 +454,16 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 				breakpoint.setId(j);
 				// Verify breakpoints. However, we only get the beginLine and
 				// (optionally) beginColumn, but not endLine or endColumn, which
-				// makes this fuzzy.  This doesn't matter though, as we
+				// makes this fuzzy. This doesn't matter though, as we
 				// still create the breakpoint; only the user sees a visual cue.
 				// I considered only to walk tool.getActions, tool.getInvariants,
 				// getStateConstraints, getActionConstraionts, ..., but this causes
 				// breakpoints in a high-level spec (refinement mapping) to
 				// incorrectly show breakpoints as unverified.
 				breakpoint.setVerified(
-						// moduleNode is null if the front-end has a spec open (with breakpoints) that is
-						// not part of the debugged spec and its modules.  For example, this might be a
+						// moduleNode is null if the front-end has a spec open (with breakpoints) that
+						// is
+						// not part of the debugged spec and its modules. For example, this might be a
 						// module in the current folder that is neither extended nor instantiated.
 						moduleNode == null || moduleNode.walkChildren(new SemanticNode.ChildrenVisitor<Boolean>() {
 							private boolean verified = false;
@@ -475,7 +488,7 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 				// if a user tries to add a breakpoint at a temporal property such as the
 				// behavior spec. The Next relation is another candidate when TLC decomposes it
 				// into sub-actions s.t. a breakpoint on Next will never hit.
-				
+
 				final Action nextPred = tool.getSpecProcessor().getNextPred();
 				final Location loc = nextPred.getDefinition();
 				if (loc.includes(sbp.getLocation()) && sbp.getHits() > 0) {
@@ -483,13 +496,13 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 					breakpoint.setVerified(false);
 					breakpoint.setMessage("A Next breakpoint does not support a hit condition.");
 				}
-				
+
 				if (moduleNode != null && sbp.getCondition() != null && !sbp.getCondition().isEmpty()
 						&& sbp.getConditionException() != null) {
 					breakpoint.setVerified(false);
 					breakpoint.setMessage(sbp.getConditionException().getMessage());
 				}
-				
+
 				final Source source = args.getSource();
 				breakpoint.setSource(source);
 				bp[j] = breakpoint;
@@ -507,7 +520,7 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 	public synchronized CompletableFuture<StackTraceResponse> stackTrace(StackTraceArguments args) {
 		LOGGER.finer(String.format("stackTrace frame: %s, levels: %s\n", args.getStartFrame(), args.getLevels()));
 		final StackTraceResponse res = new StackTraceResponse();
-		
+
 		if (!executionIsHalted) {
 			// Returning the current stack frames to the front-end when execution is *not*
 			// halted causes the front-end to briefly jump to the location of the topmost
@@ -516,7 +529,7 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 			res.setTotalFrames(0);
 			return CompletableFuture.completedFuture(res);
 		}
-		
+
 		// TLCSyntheticStateStackFrame are pushed onto the stack to display the current
 		// execution trace in the frontend's Call Stack. The Call Stack begins with the
 		// initial state, continues through the current state, and is then followed by
@@ -529,9 +542,10 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 		// debugger's stack, they would be retained indefinitely, preventing eviction
 		// and causing unnecessary memory growth.
 		// Moreover, the TLCSyntheticStateStackFrame are only created when the frontend
-		// requests the Call Stack via this method. In other words, if the frontend never
+		// requests the Call Stack via this method. In other words, if the frontend
+		// never
 		// requests the stack frames, these stack frames are never created.
-		// Peeking the last frame makes stackTrace(..) idempotent. 
+		// Peeking the last frame makes stackTrace(..) idempotent.
 		if (!(stack.peekLast() instanceof TLCSyntheticStateStackFrame) && stack.peek() instanceof TLCStateStackFrame) {
 			// A TLCStateStackFrame gives us the current state from which we can obtain the
 			// trace.
@@ -557,7 +571,7 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 				to = from + req;
 			}
 		}
-		
+
 		final List<TLCStackFrame> frames = stack.subList(from, to);
 		res.setStackFrames(frames.toArray(new StackFrame[frames.size()]));
 		res.setTotalFrames(stack.size());
@@ -581,13 +595,13 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 		final int vr = args.getVariablesReference();
 
 		final VariablesResponse value = new VariablesResponse();
-		
-		final List<Variable> collect = new ArrayList<>(); 
+
+		final List<Variable> collect = new ArrayList<>();
 		for (TLCStackFrame frame : this.stack) {
 			collect.addAll(Arrays.asList(frame.getVariables(vr)));
 		}
 		value.setVariables(collect.toArray(new Variable[collect.size()]));
-		
+
 		return CompletableFuture.completedFuture(value);
 	}
 
@@ -611,7 +625,7 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 	@Override
 	public synchronized CompletableFuture<ContinueResponse> continue_(ContinueArguments args) {
 		LOGGER.finer("continue_");
-		
+
 		if (!stack.isEmpty() && stack.peek().handle(this)) {
 			return this.stack.peek().continue_(this);
 		}
@@ -625,7 +639,7 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 	@Override
 	public synchronized CompletableFuture<Void> next(NextArguments args) {
 		LOGGER.finer("next/stepOver");
-		
+
 		if (!stack.isEmpty() && stack.peek().handle(this)) {
 			return this.stack.peek().stepOver(this);
 		}
@@ -639,7 +653,7 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 	@Override
 	public synchronized CompletableFuture<Void> stepIn(StepInArguments args) {
 		LOGGER.finer("stepIn");
-		
+
 		if (!stack.isEmpty() && stack.peek().handle(this)) {
 			return this.stack.peek().stepIn(this);
 		}
@@ -660,7 +674,7 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 			sourceFrame = stack.peek().parent;
 			step = Step.Out;
 		}
-		
+
 		this.notify();
 		return CompletableFuture.completedFuture(null);
 	}
@@ -677,7 +691,7 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 		});
 		return CompletableFuture.completedFuture(null);
 	}
-	
+
 	@Override
 	public synchronized CompletableFuture<Void> stepBack(StepBackArguments args) {
 		LOGGER.finer("stepBack");
@@ -695,17 +709,17 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 	@Override
 	public synchronized CompletableFuture<Void> reverseContinue(ReverseContinueArguments args) {
 		LOGGER.finer("reverseContinue");
-		
+
 		if (!stack.isEmpty() && stack.peek().handle(this)) {
 			return this.stack.peek().reverseContinue(this);
 		}
-		
+
 		step = Step.Reset_Start;
 		this.notify();
 
 		return CompletableFuture.completedFuture(null);
 	}
-	
+
 	@Override
 	public synchronized CompletableFuture<Void> gotoState(GotoStateArgument args) {
 		LOGGER.finer("selectSuccessor");
@@ -720,26 +734,29 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 
 	// 8888888888888888888888888888888888888888888888888888888888888888888888888 //
 
-	//TODO: Instead of maintaining the stack here, we could evaluated with CallStackTool
+	// TODO: Instead of maintaining the stack here, we could evaluated with
+	// CallStackTool
 	// that will get the job done for us (tlc2.tool.impl.CallStackTool.callStack).
-	// However, CST only keeps the SemanticNode but skips the Context and the values. We
-	// would have to make CST take a function that applies a transformation for the debugger
+	// However, CST only keeps the SemanticNode but skips the Context and the
+	// values. We
+	// would have to make CST take a function that applies a transformation for the
+	// debugger
 	// and a different one when CST does its original job.
 	protected final LinkedList<TLCStackFrame> stack = new LinkedList<>();
-	
+
 	// Initialize the debugger to immediately halt on the first frame.
 	private volatile TLCStackFrame sourceFrame;
 	private volatile Step step = Step.In;
 	private volatile Granularity granularity = Granularity.Formula;
-	
+
 	private volatile boolean haltExp;
 	private volatile boolean haltInv;
-	
+
 	private volatile TLCSourceBreakpoint haltSpec;
 	private volatile TLCSourceBreakpoint haltUnsat;
 
 	private volatile boolean executionIsHalted = false;
-	
+
 	@Override
 	public synchronized IDebugTarget pushFrame(Tool tool, SemanticNode expr, Context c) {
 		final TLCStackFrame frame = new TLCStackFrame(stack.peek(), expr, c, tool);
@@ -771,7 +788,7 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 		final TLCStackFrame frame = this.stack.peek();
 		if (frame != null && matches(frame)) {
 			// Check if execution/evaluation should be halted even if fun#getStates is
-			// empty.  Users can set the hit count to >0 to ignore non-enabled actions
+			// empty. Users can set the hit count to >0 to ignore non-enabled actions
 			haltExecution(frame);
 		}
 		return popFrame(s);
@@ -796,12 +813,12 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 			LOGGER.finer(String.format("%s Call popFrame: [%s], level: %s\n",
 					new String(new char[this.stack.size()]).replace('\0', '#'), expr, this.stack.size()));
 		}
-		TLCStackFrame pop = stack.peek(); 
+		TLCStackFrame pop = stack.peek();
 		if (pop == sourceFrame) {
 			// Clear old step source/targets.
 			sourceFrame = null;
 			step = Step.In;
-			// Annotate the frame we are stepping out of/existing from as such. 
+			// Annotate the frame we are stepping out of/existing from as such.
 			pop.setName("Exit: " + pop.getName());
 			pop.setPresentationHint(StackFramePresentationHint.SUBTLE);
 			// Pause the debugger (triggers a call of stackFrames by the front-end).
@@ -821,21 +838,24 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 		popFrame(tool, expr, c);
 
 		// Attach value to the parent (peeked) frame iff it matches the SemanticNode
-		// from which v was evaluated.  It shouldn't be possible for peeked to be
+		// from which v was evaluated. It shouldn't be possible for peeked to be
 		// null, but better be safe than sorry.
 		final TLCStackFrame peeked = stack.peek();
 		if (peeked != null && peeked.node.myUID == expr.myUID) {
 			// Consider setting the value's source to expr iff it's null otherwise. However,
 			// make sure that this doesn't introduce a regression because TLC branches
-			// somewhere based on whether Value#hasSource is true.  If we are sure that
-			// Value#hasSource is an invariant, tlc2.debug.TLCStackFrame.getStackVariables(List<Variable>)
-			// could derive the variable's name via ((SyntaxTreeNode) v.getSource().getTreeNode()).getHumanReadableImage(),
-			// which - in turn - would allow to attach values even to nodes where peeked.node.myUID != expr.myUID.
+			// somewhere based on whether Value#hasSource is true. If we are sure that
+			// Value#hasSource is an invariant,
+			// tlc2.debug.TLCStackFrame.getStackVariables(List<Variable>)
+			// could derive the variable's name via ((SyntaxTreeNode)
+			// v.getSource().getTreeNode()).getHumanReadableImage(),
+			// which - in turn - would allow to attach values even to nodes where
+			// peeked.node.myUID != expr.myUID.
 			// Not sure, if this is ever necessary though.
-//			if (!v.hasSource()) {
-//				// TLC's test suite doesn't produce an error/failure with v.setSource(expr).
-//				v.setSource(expr);
-//			}
+			// if (!v.hasSource()) {
+			// // TLC's test suite doesn't produce an error/failure with v.setSource(expr).
+			// v.setSource(expr);
+			// }
 			stack.peek().setValue(v);
 		}
 		return this;
@@ -858,13 +878,15 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 	}
 
 	@Override
-	public synchronized IDebugTarget popFrame(Tool tool, SemanticNode expr, Context c, Value v, TLCState s, TLCState t) {
+	public synchronized IDebugTarget popFrame(Tool tool, SemanticNode expr, Context c, Value v, TLCState s,
+			TLCState t) {
 		popFrame(tool, expr, c, v);
 		return this;
 	}
 
 	@Override
-	public synchronized IDebugTarget popExceptionFrame(Tool tool, SemanticNode expr, Context c, Value v, StatefulRuntimeException e) {
+	public synchronized IDebugTarget popExceptionFrame(Tool tool, SemanticNode expr, Context c, Value v,
+			StatefulRuntimeException e) {
 		if (LOGGER.isLoggable(Level.FINER)) {
 			LOGGER.finer(String.format("%s Call popExceptionFrame: [%s], level: %s\n",
 					new String(new char[this.stack.size()]).replace('\0', '#'), expr, this.stack.size()));
@@ -875,34 +897,38 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 	}
 
 	@Override
-	public synchronized IDebugTarget popExceptionFrame(Tool tool, SemanticNode expr, Context c, Value v, TLCState s, StatefulRuntimeException e) {
+	public synchronized IDebugTarget popExceptionFrame(Tool tool, SemanticNode expr, Context c, Value v, TLCState s,
+			StatefulRuntimeException e) {
 		return popExceptionFrame(tool, expr, c, v, e);
 	}
 
 	@Override
-	public synchronized IDebugTarget popExceptionFrame(Tool tool, SemanticNode expr, Context c, Value v, TLCState s, TLCState t, StatefulRuntimeException e) {
+	public synchronized IDebugTarget popExceptionFrame(Tool tool, SemanticNode expr, Context c, Value v, TLCState s,
+			TLCState t, StatefulRuntimeException e) {
 		return popExceptionFrame(tool, expr, c, v, e);
 	}
-	
+
 	private boolean exceptionNotYetHandled(final StatefulRuntimeException e) {
 		// The debugger handles an exception such as
 		// EvalException/TLCRuntimeException/InvariantViolationException) (close to) the
 		// call-site in Tool to point users to the most specific location. However, the
 		// exception also gets re-thrown for TLC's generic exception handling to deal
 		// with it. Potentially, this causes the debugger to catch the same exception
-		// again when it travels up Tool's call-stack.  Here, we make sure that the debugger
+		// again when it travels up Tool's call-stack. Here, we make sure that the
+		// debugger
 		// handles an exception only once.
 		return !e.setKnown();
 	}
-	
+
 	@Override
-	public synchronized IDebugTarget pushExceptionFrame(Tool tool, SemanticNode expr, Context c, StatefulRuntimeException e) {
+	public synchronized IDebugTarget pushExceptionFrame(Tool tool, SemanticNode expr, Context c,
+			StatefulRuntimeException e) {
 		if (exceptionNotYetHandled(e)) {
 			return pushFrameAndHalt(haltExp, new TLCStackFrame(stack.peek(), expr, c, tool, e), e);
 		}
 		return this;
 	}
-	
+
 	@Override
 	public synchronized IDebugTarget pushExceptionFrame(Tool tool, SemanticNode expr, Context c,
 			TLCState state, StatefulRuntimeException e) {
@@ -911,7 +937,7 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 		}
 		return this;
 	}
-	
+
 	@Override
 	public synchronized IDebugTarget pushExceptionFrame(Tool tool, SemanticNode expr, Context c, TLCState s,
 			Action a, TLCState t, StatefulRuntimeException e) {
@@ -926,10 +952,11 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 			Action a, TLCState t, StatefulRuntimeException e) {
 		return popExceptionFrame(tool, expr, c, null, e);
 	}
-	
+
 	@Override
 	public synchronized IDebugTarget pushNextStatesFrame(Tool tool, INextStateFunctor functor, TLCState state) {
-		// getNextStateSpec returns null if there is no next-state, i.e., a spec without INIT/NEXT or SPEC.
+		// getNextStateSpec returns null if there is no next-state, i.e., a spec without
+		// INIT/NEXT or SPEC.
 		final Action next = tool.getNextStateSpec() == null ? Action.UNKNOWN : tool.getNextStateSpec();
 		final TLCStackFrame frame = new TLCNextStatesStackFrame(stack.peek(), next.pred, next.con, tool, state, functor,
 				next);
@@ -947,7 +974,7 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 		stack.pop();
 		return this;
 	}
-	
+
 	@Override
 	public synchronized IDebugTarget pushInitStatesFrame(Tool tool, IStateFunctor functor) {
 		// A spec with no INIT/NEXT or SPEC (just ASSUMEs) has no InitStateSpec. Use the
@@ -958,7 +985,7 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 		stack.push(frame);
 		return this;
 	}
-	
+
 	@Override
 	public synchronized IDebugTarget popInitStatesFrame(Tool tool, IStateFunctor functor) {
 		assert stack.peek() instanceof TLCInitStatesStackFrame;
@@ -974,7 +1001,7 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 		stack.pop();
 		return this;
 	}
-	
+
 	@Override
 	public synchronized IDebugTarget pushUnsatisfiedFrame(Tool tool, SemanticNode expr, Context c, TLCState state) {
 		final TLCStackFrame frame = new TLCStateStackFrame(stack.peek(), expr, c, tool, state);
@@ -984,9 +1011,10 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 		}
 		return this;
 	}
-	
+
 	@Override
-	public synchronized IDebugTarget pushUnsatisfiedFrame(Tool tool, SemanticNode expr, Context c, TLCState predecessor, Action a, TLCState state) {
+	public synchronized IDebugTarget pushUnsatisfiedFrame(Tool tool, SemanticNode expr, Context c, TLCState predecessor,
+			Action a, TLCState state) {
 		final TLCStackFrame frame = new TLCActionStackFrame(stack.peek(), expr, c, tool, predecessor, a, state);
 		stack.push(frame);
 		if (haltUnsat != null && frame.matches(haltUnsat)) {
@@ -996,9 +1024,11 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 	}
 
 	@Override
-	public synchronized IDebugTarget markInvariantViolatedFrame(Tool debugTool, SemanticNode expr, Context c, TLCState predecessor, Action a, TLCState state, StatefulRuntimeException e) {
+	public synchronized IDebugTarget markInvariantViolatedFrame(Tool debugTool, SemanticNode expr, Context c,
+			TLCState predecessor, Action a, TLCState state, StatefulRuntimeException e) {
 		if (exceptionNotYetHandled(e)) {
-			pushFrameAndHalt(haltInv, new TLCActionStackFrame(stack.peek(), expr, c, tool, predecessor, a, state, e), e);
+			pushFrameAndHalt(haltInv, new TLCActionStackFrame(stack.peek(), expr, c, tool, predecessor, a, state, e),
+					e);
 		}
 		return this;
 	}
@@ -1016,7 +1046,7 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 	private IDebugTarget pushFrameAndHalt(final boolean halt, final TLCStackFrame frame, final RuntimeException e) {
 		// Calling methods duplicate the top-most stack-frame with the exception causes
 		// the front-end to raise a corresponding error in the editor.
-		
+
 		stack.push(frame);
 
 		// Let the client print the exception in its debug output UI (Debug Console in
@@ -1034,17 +1064,18 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 			oea.setCategory(OutputEventArgumentsCategory.STDERR);
 			launcher.getRemoteProxy().output(oea);
 		}
-		
+
 		if (halt) {
 			haltExecution(frame);
 		}
-		
+
 		return this;
 	}
 
 	protected void haltExecution(final TLCStackFrame frame, final int level) {
 		if (LOGGER.isLoggable(Level.FINER)) {
-			LOGGER.finer(String.format("%s(%s): [%s]\n", new String(new char[level]).replace('\0', '#'), level, frame.getNode()));
+			LOGGER.finer(String.format("%s(%s): [%s]\n", new String(new char[level]).replace('\0', '#'), level,
+					frame.getNode()));
 		}
 		if (matches(step, sourceFrame, frame)) {
 			haltExecution(frame);
@@ -1071,18 +1102,19 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 			notExpectedToHappen.printStackTrace();
 			java.lang.Thread.currentThread().interrupt();
 		}
-		
+
 		// Remove all "virtual" frames that were added to show the trace of states (see
 		// stackTrace above).
 		while (!stack.isEmpty() && stack.peekLast() instanceof TLCSyntheticStateStackFrame) {
 			final TLCStackFrame f = stack.pollLast();
 			assert f instanceof TLCSyntheticStateStackFrame;
 		}
-		
+
 		if (Step.Reset == step) {
 			step = Step.In;
 			if (frame.parent != null) {
-				// If frame has no parent, there is nothing the debugger reset to--it marks the entry point of the evaluation.
+				// If frame has no parent, there is nothing the debugger reset to--it marks the
+				// entry point of the evaluation.
 				throw new ResetEvalException(frame.parent);
 			}
 		} else if (Step.Reset_Start == step) {
@@ -1092,7 +1124,7 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 			// user reverses an invariant. In this case, the debugger should reverse to the
 			// beginning of the invariant and not the beginning of the next-state relation.
 			// Idea: When creating stack frames, mark those that are meaningful targets to
-			// reverse back to.  Here, we would traverse the stack to find the first one of
+			// reverse back to. Here, we would traverse the stack to find the first one of
 			// those targets.
 			throw new ResetEvalException(stack.getLast());
 		}
@@ -1136,12 +1168,12 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 	}
 
 	private boolean matches(final TLCStackFrame frame) {
-		//TODO: Better match the location.  However, it shouldn't be done down here
+		// TODO: Better match the location. However, it shouldn't be done down here
 		// but in setBreakpoints above that lets the debuggee tell the front-end
 		// that a user-defined location is "corrected" to one that matches the bounds
-		// of an expression in the semantic graph that is evaluated.  In other words,
+		// of an expression in the semantic graph that is evaluated. In other words,
 		// setBreakpoints should traverse the semantic graph trying to find the smallest
-		// i.e. best match for the given editor location.  The code here should then
+		// i.e. best match for the given editor location. The code here should then
 		// simple compare the two location instances.
 		// If no breakpoints are set, stream over an empty list.
 		return breakpoints.getOrDefault(frame.getNode().getLocation().source(), new ArrayList<>(0)).stream()
@@ -1159,7 +1191,7 @@ public abstract class TLCDebugger extends AbstractDebugger implements IDebugTarg
 					return true;
 				});
 	}
-	
+
 	public static class Factory {
 
 		public static TLCDebugger OVERRIDE;

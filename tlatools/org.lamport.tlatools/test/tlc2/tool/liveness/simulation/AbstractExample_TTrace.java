@@ -43,20 +43,20 @@ public abstract class AbstractExample_TTrace extends TTraceModelCheckerTestCase 
 	public AbstractExample_TTrace(final Class<?> cfg) {
 		super(cfg, "simulation", ExitStatus.VIOLATION_LIVENESS);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		// ModelChecker has finished and generated the expected amount of states
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		// Assert it has found the temporal violation and also a counter example
 		assertTrue(recorder.recorded(EC.TLC_TEMPORAL_PROPERTY_VIOLATED));
 		assertTrue(recorder.recorded(EC.TLC_COUNTER_EXAMPLE));
-		
+
 		// Assert the error trace
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
-		
+
 		final List<String> expectedTrace = new ArrayList<String>(2);
 		expectedTrace.add("x = 0");
 		expectedTrace.add("x = 1");

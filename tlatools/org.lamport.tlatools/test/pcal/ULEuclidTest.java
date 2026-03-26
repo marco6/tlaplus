@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class ULEuclidTest extends PCalModelCheckerTestCase {
 
 	public ULEuclidTest() {
-		super("ULEuclid", "pcal", new String[] {"-wf", "-termination"});
+		super("ULEuclid", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test
@@ -47,6 +47,6 @@ public class ULEuclidTest extends PCalModelCheckerTestCase {
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "6752", "6352", "0"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "42"));
 
-	assertZeroUncovered();
+		assertZeroUncovered();
 	}
 }

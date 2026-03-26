@@ -55,7 +55,7 @@ public class FixedSizedBucketStatisticsTest {
 		this.bucketStatistic = (IBucketStatistics) bucketStatistic.getConstructor(String.class, int.class)
 				.newInstance("FixedSizedBucketStatisticsTest", 8);
 	}
-	
+
 	@Test
 	public void testMin() {
 		assertEquals(-1, bucketStatistic.getMin());

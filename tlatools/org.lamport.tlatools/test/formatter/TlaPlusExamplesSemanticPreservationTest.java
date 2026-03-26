@@ -35,8 +35,7 @@ public class TlaPlusExamplesSemanticPreservationTest {
     private static final AtomicInteger passedCount = new AtomicInteger(0);
     private static final AtomicInteger skippedCount = new AtomicInteger(0);
     private static final AtomicInteger failedCount = new AtomicInteger(0);
-    private static final List<String> failedFiles =
-            Collections.synchronizedList(new ArrayList<>());
+    private static final List<String> failedFiles = Collections.synchronizedList(new ArrayList<>());
 
     private final Path tlaFilePath;
 
@@ -70,7 +69,7 @@ public class TlaPlusExamplesSemanticPreservationTest {
         if (examplesPath == null || examplesPath.isEmpty()) {
             // Return a single placeholder so JUnit 4 Parameterized doesn't error out.
             // The @Test method will call Assume and skip gracefully.
-            return Collections.singletonList(new Object[]{"(skipped – examples path not configured)", null});
+            return Collections.singletonList(new Object[] { "(skipped – examples path not configured)", null });
         }
 
         Path examplesDir = Path.of(examplesPath);
@@ -106,7 +105,7 @@ public class TlaPlusExamplesSemanticPreservationTest {
 
         List<Object[]> params = new ArrayList<>();
         for (Path p : tlaFiles) {
-            params.add(new Object[]{examplesDir.relativize(p).toString(), p});
+            params.add(new Object[] { examplesDir.relativize(p).toString(), p });
         }
         return params;
     }
@@ -208,7 +207,8 @@ public class TlaPlusExamplesSemanticPreservationTest {
 
     private static String getShortError(Exception e) {
         String msg = e.getMessage();
-        if (msg == null) return e.getClass().getSimpleName();
+        if (msg == null)
+            return e.getClass().getSimpleName();
         if (msg.contains("Cannot find source file for module")) {
             int idx = msg.indexOf("Cannot find source file for module");
             int end = msg.indexOf("\n", idx);

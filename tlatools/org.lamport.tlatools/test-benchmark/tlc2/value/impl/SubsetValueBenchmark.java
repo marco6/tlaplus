@@ -141,7 +141,7 @@ public class SubsetValueBenchmark {
 		// 160k
 		return subset400.getRandomSetOfSubsets(k2, d);
 	}
-	
+
 	/* d2 */
 
 	@Benchmark
@@ -215,9 +215,9 @@ public class SubsetValueBenchmark {
 		// 160k
 		return subset400.getRandomSetOfSubsets(k2, d2);
 	}
-	
+
 	/* Exact getRandomSetOfSubsets */
-	
+
 	@Benchmark
 	public Enumerable exactN035K08() {
 		return subset35.getRandomSetOfSubsets(k, 8);
@@ -257,9 +257,9 @@ public class SubsetValueBenchmark {
 	public Enumerable exactN400K09() {
 		return subset400.getRandomSetOfSubsets(k, 9);
 	}
-	
+
 	/* k2 */
-	
+
 	@Benchmark
 	public Enumerable exactN035K208() {
 		return subset35.getRandomSetOfSubsets(k2, 8);

@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class ReallySimpleMultiProcTest extends PCalModelCheckerTestCase {
 
 	public ReallySimpleMultiProcTest() {
-		super("ReallySimpleMultiProc", "pcal", new String[] {"-wf", "-termination"});
+		super("ReallySimpleMultiProc", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test
@@ -47,6 +47,6 @@ public class ReallySimpleMultiProcTest extends PCalModelCheckerTestCase {
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "144", "76", "0"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "7"));
 
-	assertZeroUncovered();
+		assertZeroUncovered();
 	}
 }

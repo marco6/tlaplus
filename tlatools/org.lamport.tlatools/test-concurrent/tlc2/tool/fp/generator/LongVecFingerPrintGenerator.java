@@ -16,17 +16,20 @@ import tlc2.util.LongVec;
 public class LongVecFingerPrintGenerator extends FingerPrintGenerator {
 
 	private static final int batch = 1024;
-	
-	public LongVecFingerPrintGenerator(MultiThreadedFPSetTest test, int id, int numThreads, FPSet fpSet, CountDownLatch latch, long seed, long insertions, final CyclicBarrier barrier) {
+
+	public LongVecFingerPrintGenerator(MultiThreadedFPSetTest test, int id, int numThreads, FPSet fpSet,
+			CountDownLatch latch, long seed, long insertions, final CyclicBarrier barrier) {
 		super(test, id, numThreads, fpSet, latch, seed, insertions, barrier);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
 		waitForAllThreadsStarted();
-		
+
 		TestLongVec predecessors = new TestLongVec(batch);
 		boolean initialized = false;
 		// Reduce number of FPSet#size invocation by counting puts/collisions.
@@ -58,7 +61,7 @@ public class LongVecFingerPrintGenerator extends FingerPrintGenerator {
 		}
 		latch.countDown();
 	}
-	
+
 	// This implementation adds two methods that should be used with caution as
 	// they mess with the internal capacity checks of LongVec. We don't want to
 	// make them API.
@@ -73,7 +76,7 @@ public class LongVecFingerPrintGenerator extends FingerPrintGenerator {
 		public final void sort() {
 			Arrays.sort(elementData);
 		}
-		  
+
 		public final void setElement(int index, long x) {
 			this.elementData[index] = x;
 			this.elementCount = ++elementCount % elementData.length + 1;

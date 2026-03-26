@@ -40,7 +40,6 @@ import tla2sany.output.RecordedSanyOutput;
 import util.FilenameToStream;
 import util.SimpleFilenameToStream;
 
-
 /**
  * Currently, SANY's syntax parser level has its own error reporting
  * machinery distinct from the {@link tla2sany.semantic.Errors} class. Until
@@ -53,22 +52,24 @@ public class ParseErrorTests {
   public static class ParseErrorTest {
     public final String moduleBody;
     public final String error;
+
     public ParseErrorTest(String moduleBody, String error) {
       this.moduleBody = moduleBody;
       this.error = error;
     }
+
     @Override
     public String toString() {
       return this.moduleBody;
     }
   }
 
-	@Parameters(name = "{index}: {0}")
-	public static ParseErrorTest[] getTestCases() {
-	  return new ParseErrorTest[] {
-	      new ParseErrorTest("x = 0", "Was expecting \"==== or more Module body\"\nEncountered \"x\" at line")
-	  };
-	}
+  @Parameters(name = "{index}: {0}")
+  public static ParseErrorTest[] getTestCases() {
+    return new ParseErrorTest[] {
+        new ParseErrorTest("x = 0", "Was expecting \"==== or more Module body\"\nEncountered \"x\" at line")
+    };
+  }
 
   @Parameter
   public ParseErrorTest testCase;

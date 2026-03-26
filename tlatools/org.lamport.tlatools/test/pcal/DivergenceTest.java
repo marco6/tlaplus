@@ -34,7 +34,6 @@ import tla2sany.drivers.SANY;
 import util.TestPrintStream;
 import util.ToolIO;
 
-
 //TODO The asserts below could be strengthened if the error message about the divergence would include the actual hash mismatch.
 
 // Plz can haz https://openjdk.java.net/jeps/355 ?
@@ -44,35 +43,35 @@ public class DivergenceTest extends PCalTest {
 		final String filename = "divergenceTest001" + System.currentTimeMillis();
 		final String absolutePath = writeFile(System.getProperty("java.io.tmpdir") + File.separator + filename,
 				"---- MODULE " + filename + " ----\n" +
-				"\n" +
-				"(*\n" +
-				"--algorithm a\n" +
-				"begin\n" +
-				"  skip;\n" +
-				"end algorithm; *)\n" +
-				"\\* BEGIN TRANSLATION\n" +
-				"VARIABLE pc\n" +
-				"\n" +
-				"vars == << pc >>\n" +
-				"\n" +
-				"Init == /\\ pc = \"Lbl_1\"\n" +
-				"\n" +
-				"Lbl_1 == /\\ pc = \"Lbl_1\"\n" +
-				"         /\\ TRUE\n" +
-				"         /\\ pc' = \"Done\"\n" +
-				"\n" +
-				"(* Allow infinite stuttering to prevent deadlock on termination. *)\n" +
-				"Terminating == pc = \"Done\" /\\ UNCHANGED vars\n" +
-				"\n" +
-				"Next == Lbl_1\n" +
-				"           \\/ Terminating\n" +
-				"\n" +
-				"Spec == Init /\\ [][Next]_vars\n" +
-				"\n" +
-				"Termination == <>(pc = \"Done\")\n" +
-				"\n" +
-				"\\* END TRANSLATION\n" +
-				"\n=========================");
+						"\n" +
+						"(*\n" +
+						"--algorithm a\n" +
+						"begin\n" +
+						"  skip;\n" +
+						"end algorithm; *)\n" +
+						"\\* BEGIN TRANSLATION\n" +
+						"VARIABLE pc\n" +
+						"\n" +
+						"vars == << pc >>\n" +
+						"\n" +
+						"Init == /\\ pc = \"Lbl_1\"\n" +
+						"\n" +
+						"Lbl_1 == /\\ pc = \"Lbl_1\"\n" +
+						"         /\\ TRUE\n" +
+						"         /\\ pc' = \"Done\"\n" +
+						"\n" +
+						"(* Allow infinite stuttering to prevent deadlock on termination. *)\n" +
+						"Terminating == pc = \"Done\" /\\ UNCHANGED vars\n" +
+						"\n" +
+						"Next == Lbl_1\n" +
+						"           \\/ Terminating\n" +
+						"\n" +
+						"Spec == Init /\\ [][Next]_vars\n" +
+						"\n" +
+						"Termination == <>(pc = \"Done\")\n" +
+						"\n" +
+						"\\* END TRANSLATION\n" +
+						"\n=========================");
 		// Parse with SANY and check for errors (collects parse errors into ToolIO.out)
 		final TestPrintStream testPrintStream = new TestPrintStream();
 		ToolIO.out = testPrintStream;
@@ -87,35 +86,35 @@ public class DivergenceTest extends PCalTest {
 		final String filename = "divergenceTest01" + System.currentTimeMillis();
 		final String absolutePath = writeFile(System.getProperty("java.io.tmpdir") + File.separator + filename,
 				"---- MODULE " + filename + " ----\n" +
-				"\n" +
-				"(*\n" +
-				"--algorithm a\n" +
-				"begin\n" +
-				"  skip;\n" +
-				"end algorithm; *)\n" +
-				"\\* BEGIN TRANSLATION (chksum(PCal) \\in STRING /\\ chksum(TLA+) \\in STRING)\n" +
-				"VARIABLE pc\n" +
-				"\n" +
-				"vars == << pc >>\n" +
-				"\n" +
-				"Init == /\\ pc = \"Lbl_1\"\n" +
-				"\n" +
-				"Lbl_1 == /\\ pc = \"Lbl_1\"\n" +
-				"         /\\ TRUE\n" +
-				"         /\\ pc' = \"Done\"\n" +
-				"\n" +
-				"(* Allow infinite stuttering to prevent deadlock on termination. *)\n" +
-				"Terminating == pc = \"Done\" /\\ UNCHANGED vars\n" +
-				"\n" +
-				"Next == Lbl_1\n" +
-				"           \\/ Terminating\n" +
-				"\n" +
-				"Spec == Init /\\ [][Next]_vars\n" +
-				"\n" +
-				"Termination == <>(pc = \"Done\")\n" +
-				"\n" +
-				"\\* END TRANSLATION\n" +
-				"\n=========================");
+						"\n" +
+						"(*\n" +
+						"--algorithm a\n" +
+						"begin\n" +
+						"  skip;\n" +
+						"end algorithm; *)\n" +
+						"\\* BEGIN TRANSLATION (chksum(PCal) \\in STRING /\\ chksum(TLA+) \\in STRING)\n" +
+						"VARIABLE pc\n" +
+						"\n" +
+						"vars == << pc >>\n" +
+						"\n" +
+						"Init == /\\ pc = \"Lbl_1\"\n" +
+						"\n" +
+						"Lbl_1 == /\\ pc = \"Lbl_1\"\n" +
+						"         /\\ TRUE\n" +
+						"         /\\ pc' = \"Done\"\n" +
+						"\n" +
+						"(* Allow infinite stuttering to prevent deadlock on termination. *)\n" +
+						"Terminating == pc = \"Done\" /\\ UNCHANGED vars\n" +
+						"\n" +
+						"Next == Lbl_1\n" +
+						"           \\/ Terminating\n" +
+						"\n" +
+						"Spec == Init /\\ [][Next]_vars\n" +
+						"\n" +
+						"Termination == <>(pc = \"Done\")\n" +
+						"\n" +
+						"\\* END TRANSLATION\n" +
+						"\n=========================");
 		// Parse with SANY and check for errors (collects parse errors into ToolIO.out)
 		final TestPrintStream testPrintStream = new TestPrintStream();
 		ToolIO.out = testPrintStream;
@@ -130,15 +129,15 @@ public class DivergenceTest extends PCalTest {
 		final String filename = "divergenceTest01" + System.currentTimeMillis();
 		final String absolutePath = writeFile(System.getProperty("java.io.tmpdir") + File.separator + filename,
 				"---- MODULE " + filename + " ----\n" +
-				"\n" +
-				"(*\n" +
-				"--fair algorithm a\n" + // Divergence because "fair" was added after the translation.
-				"begin\n" +
-				"  skip;\n" +
-				"end algorithm; *)\n" +
-				"\\* BEGIN TRANSLATION (checksum(PlusCal) = \"4860ac97\" /\\ chksum(TLA+) \\in STRING)\n" +
-				"\\* END TRANSLATION\n" +
-				"\n=========================");
+						"\n" +
+						"(*\n" +
+						"--fair algorithm a\n" + // Divergence because "fair" was added after the translation.
+						"begin\n" +
+						"  skip;\n" +
+						"end algorithm; *)\n" +
+						"\\* BEGIN TRANSLATION (checksum(PlusCal) = \"4860ac97\" /\\ chksum(TLA+) \\in STRING)\n" +
+						"\\* END TRANSLATION\n" +
+						"\n=========================");
 		// Parse with SANY and check for errors (collects parse errors into ToolIO.out)
 		final TestPrintStream testPrintStream = new TestPrintStream();
 		ToolIO.out = testPrintStream;
@@ -149,21 +148,21 @@ public class DivergenceTest extends PCalTest {
 				"The PlusCal algorithm in module %s has changed since its last translation.",
 				filename));
 	}
-	
+
 	@Test
 	public void divergenceTest01unfair() throws IOException {
 		final String filename = "divergenceTest01" + System.currentTimeMillis();
 		final String absolutePath = writeFile(System.getProperty("java.io.tmpdir") + File.separator + filename,
 				"---- MODULE " + filename + " ----\n" +
-				"\n" +
-				"(*\n" +
-				"--algorithm a\n" + // Divergence because "fair" was removed after the translation.
-				"begin\n" +
-				"  skip;\n" +
-				"end algorithm; *)\n" +
-				"\\* BEGIN TRANSLATION (checksum(PlusCal) = \"7c28162a\" /\\ chksum(TLA+) \\in STRING)\n" +
-				"\\* END TRANSLATION\n" +
-				"\n=========================");
+						"\n" +
+						"(*\n" +
+						"--algorithm a\n" + // Divergence because "fair" was removed after the translation.
+						"begin\n" +
+						"  skip;\n" +
+						"end algorithm; *)\n" +
+						"\\* BEGIN TRANSLATION (checksum(PlusCal) = \"7c28162a\" /\\ chksum(TLA+) \\in STRING)\n" +
+						"\\* END TRANSLATION\n" +
+						"\n=========================");
 		// Parse with SANY and check for errors (collects parse errors into ToolIO.out)
 		final TestPrintStream testPrintStream = new TestPrintStream();
 		ToolIO.out = testPrintStream;
@@ -174,22 +173,22 @@ public class DivergenceTest extends PCalTest {
 				"The PlusCal algorithm in module %s has changed since its last translation.",
 				filename));
 	}
-	
+
 	@Test
 	public void divergenceTestIndentation() throws IOException {
 		final String filename = "divergenceTest01" + System.currentTimeMillis();
 		final String absolutePath = writeFile(System.getProperty("java.io.tmpdir") + File.separator + filename,
 				"---- MODULE " + filename + " ----\n" +
-				"\n" +
-				"(*\n" +
-				"--algorithm a\nvariable f;" + 
-				"begin\n" +
-				"  f := /\\ TRUE\n" + 
-				"    /\\ TRUE;\n" +  // Divergence because indentation was changed after the translation.
-				"end algorithm; *)\n" +
-				"\\* BEGIN TRANSLATION (checksum(PlusCal) = \"996afab0\" /\\ chksum(TLA+) \\in STRING)\n" +
-				"\\* END TRANSLATION\n" +
-				"\n=========================");
+						"\n" +
+						"(*\n" +
+						"--algorithm a\nvariable f;" +
+						"begin\n" +
+						"  f := /\\ TRUE\n" +
+						"    /\\ TRUE;\n" + // Divergence because indentation was changed after the translation.
+						"end algorithm; *)\n" +
+						"\\* BEGIN TRANSLATION (checksum(PlusCal) = \"996afab0\" /\\ chksum(TLA+) \\in STRING)\n" +
+						"\\* END TRANSLATION\n" +
+						"\n=========================");
 		// Parse with SANY and check for errors (collects parse errors into ToolIO.out)
 		final TestPrintStream testPrintStream = new TestPrintStream();
 		ToolIO.out = testPrintStream;
@@ -206,35 +205,35 @@ public class DivergenceTest extends PCalTest {
 		final String filename = "divergenceTest02" + System.currentTimeMillis();
 		final String absolutePath = writeFile(System.getProperty("java.io.tmpdir") + File.separator + filename,
 				"---- MODULE " + filename + " ----\n" +
-				"\n" +
-				"(*\n" +
-				"--algorithm a\n" +
-				"begin\n" +
-				"  print \"msg\";\n" + // PlusCal diverged
-				"end algorithm; *)\n" +
-				"\\* BEGIN TRANSLATION (chksum(PCal) = \"4860ac97\" /\\ chksum(TLA+) = \"af3d9146\")\n" +
-				"VARIABLE pc\n" +
-				"\n" +
-				"vars == << pc >>\n" +
-				"\n" +
-				"Init == /\\ pc = \"Lbl_1\"\n" +
-				"\n" +
-				"Lbl_1 == /\\ pc = \"Lbl_1\"\n" +
-				"         /\\ TRUE\n" +
-				"         /\\ pc' = \"Done\"\n" +
-				"\n" +
-				"(* Allow infinite stuttering to prevent deadlock on termination. *)\n" +
-				"Terminating == pc = \"Done\" /\\ UNCHANGED vars\n" +
-				"\n" +
-				"Next == Lbl_1\n" +
-				"           \\/ Terminating\n" +
-				"\n" +
-				"Spec == Init /\\ [][Next]_vars\n" +
-				"\n" +
-				"Termination == <>(pc = \"Done\")\n" +
-				"\n" +
-				"\\* END TRANSLATION\n" +
-				"\n=========================");
+						"\n" +
+						"(*\n" +
+						"--algorithm a\n" +
+						"begin\n" +
+						"  print \"msg\";\n" + // PlusCal diverged
+						"end algorithm; *)\n" +
+						"\\* BEGIN TRANSLATION (chksum(PCal) = \"4860ac97\" /\\ chksum(TLA+) = \"af3d9146\")\n" +
+						"VARIABLE pc\n" +
+						"\n" +
+						"vars == << pc >>\n" +
+						"\n" +
+						"Init == /\\ pc = \"Lbl_1\"\n" +
+						"\n" +
+						"Lbl_1 == /\\ pc = \"Lbl_1\"\n" +
+						"         /\\ TRUE\n" +
+						"         /\\ pc' = \"Done\"\n" +
+						"\n" +
+						"(* Allow infinite stuttering to prevent deadlock on termination. *)\n" +
+						"Terminating == pc = \"Done\" /\\ UNCHANGED vars\n" +
+						"\n" +
+						"Next == Lbl_1\n" +
+						"           \\/ Terminating\n" +
+						"\n" +
+						"Spec == Init /\\ [][Next]_vars\n" +
+						"\n" +
+						"Termination == <>(pc = \"Done\")\n" +
+						"\n" +
+						"\\* END TRANSLATION\n" +
+						"\n=========================");
 		// Parse with SANY and check for errors (collects parse errors into ToolIO.out)
 		final TestPrintStream testPrintStream = new TestPrintStream();
 		ToolIO.out = testPrintStream;
@@ -251,34 +250,34 @@ public class DivergenceTest extends PCalTest {
 		final String filename = "divergenceTest03" + System.currentTimeMillis();
 		final String absolutePath = writeFile(System.getProperty("java.io.tmpdir") + File.separator + filename,
 				"---- MODULE " + filename + " ----\n" +
-				"\n" +
-				"(*\n" +
-				"--algorithm a\n" +
-				"begin\n" +
-				"  skip;\n" +
-				"end algorithm; *)\n" +
-				"\\* BEGIN TRANSLATION (checksum(PlusCal) = \"4860ac97\" /\\ ChkSum(tla+) = \"af3d9146\")\n" +
-				"VARIABLE pc\n" +
-				"\n" +
-				"vars == << pc >>\n" +
-				"\n" +
-				"Init == /\\ pc = \"Lbl_1\"\n" +
-				"\n" +
-				"Lbl_1 == /\\ pc = \"Lbl_1\"\n" +
-				"         /\\ TRUE\n" +
-				"         /\\ pc' = \"Done\"\n" +
-				"\n" +
-				"(* Allow infinite stuttering to prevent deadlock on termination. *)\n" +
-				"Terminating == pc = \"Done\" /\\ UNCHANGED vars\n" +
-				"\n" +
-				"Next == Lbl_1\n" + // TLA+ diverged.
-				"\n" +
-				"Spec == Init /\\ [][Next]_vars\n" +
-				"\n" +
-				"Termination == <>(pc = \"Done\")\n" +
-				"\n" +
-				"\\* END TRANSLATION\n" +
-				"\n=========================");
+						"\n" +
+						"(*\n" +
+						"--algorithm a\n" +
+						"begin\n" +
+						"  skip;\n" +
+						"end algorithm; *)\n" +
+						"\\* BEGIN TRANSLATION (checksum(PlusCal) = \"4860ac97\" /\\ ChkSum(tla+) = \"af3d9146\")\n" +
+						"VARIABLE pc\n" +
+						"\n" +
+						"vars == << pc >>\n" +
+						"\n" +
+						"Init == /\\ pc = \"Lbl_1\"\n" +
+						"\n" +
+						"Lbl_1 == /\\ pc = \"Lbl_1\"\n" +
+						"         /\\ TRUE\n" +
+						"         /\\ pc' = \"Done\"\n" +
+						"\n" +
+						"(* Allow infinite stuttering to prevent deadlock on termination. *)\n" +
+						"Terminating == pc = \"Done\" /\\ UNCHANGED vars\n" +
+						"\n" +
+						"Next == Lbl_1\n" + // TLA+ diverged.
+						"\n" +
+						"Spec == Init /\\ [][Next]_vars\n" +
+						"\n" +
+						"Termination == <>(pc = \"Done\")\n" +
+						"\n" +
+						"\\* END TRANSLATION\n" +
+						"\n=========================");
 		// Parse with SANY and check for errors (collects parse errors into ToolIO.out)
 		final TestPrintStream testPrintStream = new TestPrintStream();
 		ToolIO.out = testPrintStream;
@@ -295,34 +294,35 @@ public class DivergenceTest extends PCalTest {
 		final String filename = "divergenceTest04" + System.currentTimeMillis();
 		final String absolutePath = writeFile(System.getProperty("java.io.tmpdir") + File.separator + filename,
 				"---- MODULE " + filename + " ----\n" +
-				"\n" +
-				"(*\n" +
-				"--algorithm a\n" +
-				"begin\n" +
-				"  print \"msg\";\n" + // PlusCal diverged
-				"end algorithm; *)\n" +
-				"\\* BEGIN TRANSLATION   (checksum(PlusCal) = \"4860ac97\" /\\ ChkSum(tla+) = \"af3d9146\")  \n" +
-				"VARIABLE pc\n" +
-				"\n" +
-				"vars == << pc >>\n" +
-				"\n" +
-				"Init == /\\ pc = \"Lbl_1\"\n" +
-				"\n" +
-				"Lbl_1 == /\\ pc = \"Lbl_1\"\n" +
-				"         /\\ TRUE\n" +
-				"         /\\ pc' = \"Done\"\n" +
-				"\n" +
-				"(* Allow infinite stuttering to prevent deadlock on termination. *)\n" +
-				"Terminating == pc = \"Done\" /\\ UNCHANGED vars\n" +
-				"\n" +
-				"Next == Lbl_1\n" + // TLA+ diverged.
-				"\n" +
-				"Spec == Init /\\ [][Next]_vars\n" +
-				"\n" +
-				"Termination == <>(pc = \"Done\")\n" +
-				"\n" +
-				"\\* END TRANSLATION\n" +
-				"\n=========================");
+						"\n" +
+						"(*\n" +
+						"--algorithm a\n" +
+						"begin\n" +
+						"  print \"msg\";\n" + // PlusCal diverged
+						"end algorithm; *)\n" +
+						"\\* BEGIN TRANSLATION   (checksum(PlusCal) = \"4860ac97\" /\\ ChkSum(tla+) = \"af3d9146\")  \n"
+						+
+						"VARIABLE pc\n" +
+						"\n" +
+						"vars == << pc >>\n" +
+						"\n" +
+						"Init == /\\ pc = \"Lbl_1\"\n" +
+						"\n" +
+						"Lbl_1 == /\\ pc = \"Lbl_1\"\n" +
+						"         /\\ TRUE\n" +
+						"         /\\ pc' = \"Done\"\n" +
+						"\n" +
+						"(* Allow infinite stuttering to prevent deadlock on termination. *)\n" +
+						"Terminating == pc = \"Done\" /\\ UNCHANGED vars\n" +
+						"\n" +
+						"Next == Lbl_1\n" + // TLA+ diverged.
+						"\n" +
+						"Spec == Init /\\ [][Next]_vars\n" +
+						"\n" +
+						"Termination == <>(pc = \"Done\")\n" +
+						"\n" +
+						"\\* END TRANSLATION\n" +
+						"\n=========================");
 		// Parse with SANY and check for errors (collects parse errors into ToolIO.out)
 		final TestPrintStream testPrintStream = new TestPrintStream();
 		ToolIO.out = testPrintStream;
@@ -333,39 +333,40 @@ public class DivergenceTest extends PCalTest {
 				"Both the PlusCal algorithm and its TLA+ translation in module %s have changed since the last translation.",
 				filename));
 	}
+
 	@Test
 	public void divergenceTest05() throws IOException {
 		final String filename = "divergenceTest04" + System.currentTimeMillis();
 		final String absolutePath = writeFile(System.getProperty("java.io.tmpdir") + File.separator + filename,
 				"---- MODULE " + filename + " ----\n" +
-				"\n" +
-				"(*\n" +
-				"--algorithm a\n" +
-				"begin\n" +
-				"  print \"msg\";\n" + // PlusCal diverged
-				"end algorithm; *)\n" +
-				"\\* BEGIN TRANSLATION   (checksum(PlusCal) \\in  STRING /\\ ChkSum(tla+) \\in STRING)  \n" +
-				"VARIABLE pc\n" +
-				"\n" +
-				"vars == << pc >>\n" +
-				"\n" +
-				"Init == /\\ pc = \"Lbl_1\"\n" +
-				"\n" +
-				"Lbl_1 == /\\ pc = \"Lbl_1\"\n" +
-				"         /\\ TRUE\n" +
-				"         /\\ pc' = \"Done\"\n" +
-				"\n" +
-				"(* Allow infinite stuttering to prevent deadlock on termination. *)\n" +
-				"Terminating == pc = \"Done\" /\\ UNCHANGED vars\n" +
-				"\n" +
-				"Next == Lbl_1\n" + // TLA+ diverged.
-				"\n" +
-				"Spec == Init /\\ [][Next]_vars\n" +
-				"\n" +
-				"Termination == <>(pc = \"Done\")\n" +
-				"\n" +
-				"\\* END TRANSLATION\n" +
-				"\n=========================");
+						"\n" +
+						"(*\n" +
+						"--algorithm a\n" +
+						"begin\n" +
+						"  print \"msg\";\n" + // PlusCal diverged
+						"end algorithm; *)\n" +
+						"\\* BEGIN TRANSLATION   (checksum(PlusCal) \\in  STRING /\\ ChkSum(tla+) \\in STRING)  \n" +
+						"VARIABLE pc\n" +
+						"\n" +
+						"vars == << pc >>\n" +
+						"\n" +
+						"Init == /\\ pc = \"Lbl_1\"\n" +
+						"\n" +
+						"Lbl_1 == /\\ pc = \"Lbl_1\"\n" +
+						"         /\\ TRUE\n" +
+						"         /\\ pc' = \"Done\"\n" +
+						"\n" +
+						"(* Allow infinite stuttering to prevent deadlock on termination. *)\n" +
+						"Terminating == pc = \"Done\" /\\ UNCHANGED vars\n" +
+						"\n" +
+						"Next == Lbl_1\n" + // TLA+ diverged.
+						"\n" +
+						"Spec == Init /\\ [][Next]_vars\n" +
+						"\n" +
+						"Termination == <>(pc = \"Done\")\n" +
+						"\n" +
+						"\\* END TRANSLATION\n" +
+						"\n=========================");
 		// Parse with SANY and check for errors (collects parse errors into ToolIO.out)
 		final TestPrintStream testPrintStream = new TestPrintStream();
 		ToolIO.out = testPrintStream;
@@ -382,13 +383,13 @@ public class DivergenceTest extends PCalTest {
 		final String filename = "divergenceTest05" + System.currentTimeMillis();
 		final String absolutePath = writeFile(System.getProperty("java.io.tmpdir") + File.separator + filename,
 				"---- MODULE " + filename + " ----\n" +
-				"\n" +
-				"(*\n" +
-				"--algorithm a\n" +
-				"begin\n" +
-				"  skip;\n" +
-				"end algorithm; *)\n" +
-				"\n=========================");
+						"\n" +
+						"(*\n" +
+						"--algorithm a\n" +
+						"begin\n" +
+						"  skip;\n" +
+						"end algorithm; *)\n" +
+						"\n=========================");
 		// Parse with SANY and check for errors (collects parse errors into ToolIO.out)
 		final TestPrintStream testPrintStream = new TestPrintStream();
 		ToolIO.out = testPrintStream;

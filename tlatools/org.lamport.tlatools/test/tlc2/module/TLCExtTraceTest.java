@@ -36,7 +36,7 @@ import tlc2.tool.liveness.ModelCheckerTestCase;
 public class TLCExtTraceTest extends ModelCheckerTestCase {
 
 	public TLCExtTraceTest() {
-		super("TLCExtTrace", new String[] {"-config", "TLCExtTrace.tla"});
+		super("TLCExtTrace", new String[] { "-config", "TLCExtTrace.tla" });
 	}
 
 	@Test

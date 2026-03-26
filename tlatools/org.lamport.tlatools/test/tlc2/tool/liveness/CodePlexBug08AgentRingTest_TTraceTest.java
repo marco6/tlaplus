@@ -45,7 +45,7 @@ public class CodePlexBug08AgentRingTest_TTraceTest extends TTraceModelCheckerTes
 	public CodePlexBug08AgentRingTest_TTraceTest() {
 		super(CodePlexBug08AgentRingTest.class, "CodePlexBug08", ExitStatus.VIOLATION_LIVENESS);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		// ModelChecker has finished and generated the expected amount of states
@@ -57,49 +57,49 @@ public class CodePlexBug08AgentRingTest_TTraceTest extends TTraceModelCheckerTes
 		assertTrue(recorder.recorded(EC.TLC_COUNTER_EXAMPLE));
 
 		assertNodeAndPtrSizes(380L, 208L);
-		
+
 		// Assert the error trace
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
 		final List<String> expectedTrace = new ArrayList<String>(13);
 		expectedTrace.add("/\\ Agent = [Loc |-> 0, LastLoad |-> 0, ReadyToMove |-> TRUE, Task |-> 0]\n"
-				   + "/\\ CanCreate = TRUE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 0] @@ 1 :> [Load |-> 0])");
+				+ "/\\ CanCreate = TRUE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 0] @@ 1 :> [Load |-> 0])");
 		expectedTrace.add("/\\ Agent = [Loc |-> 0, LastLoad |-> 0, ReadyToMove |-> TRUE, Task |-> 0]\n"
-				   + "/\\ CanCreate = TRUE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 0])");
+				+ "/\\ CanCreate = TRUE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 0])");
 		expectedTrace.add("/\\ Agent = [Loc |-> 1, LastLoad |-> 0, ReadyToMove |-> FALSE, Task |-> 0]\n"
-				   + "/\\ CanCreate = TRUE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 0])");
+				+ "/\\ CanCreate = TRUE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 0])");
 		expectedTrace.add("/\\ Agent = [Loc |-> 1, LastLoad |-> 0, ReadyToMove |-> FALSE, Task |-> 0]\n"
-				   + "/\\ CanCreate = TRUE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
+				+ "/\\ CanCreate = TRUE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
 		expectedTrace.add("/\\ Agent = [Loc |-> 1, LastLoad |-> 0, ReadyToMove |-> FALSE, Task |-> 0]\n"
-				   + "/\\ CanCreate = FALSE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
+				+ "/\\ CanCreate = FALSE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
 		expectedTrace.add("/\\ Agent = [Loc |-> 1, LastLoad |-> 1, ReadyToMove |-> TRUE, Task |-> 1]\n"
-				   + "/\\ CanCreate = FALSE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 1])");
+				+ "/\\ CanCreate = FALSE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 1])");
 		expectedTrace.add("/\\ Agent = [Loc |-> 0, LastLoad |-> 1, ReadyToMove |-> FALSE, Task |-> 1]\n"
-				   + "/\\ CanCreate = FALSE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 1])");
+				+ "/\\ CanCreate = FALSE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 1])");
 		expectedTrace.add("/\\ Agent = [Loc |-> 0, LastLoad |-> 2, ReadyToMove |-> TRUE, Task |-> 1]\n"
-				   + "/\\ CanCreate = FALSE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 1])");
+				+ "/\\ CanCreate = FALSE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 1])");
 		expectedTrace.add("/\\ Agent = [Loc |-> 1, LastLoad |-> 2, ReadyToMove |-> FALSE, Task |-> 1]\n"
-				   + "/\\ CanCreate = FALSE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 1])");
+				+ "/\\ CanCreate = FALSE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 1])");
 		expectedTrace.add("/\\ Agent = [Loc |-> 1, LastLoad |-> 2, ReadyToMove |-> TRUE, Task |-> 0]\n"
-				   + "/\\ CanCreate = FALSE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
+				+ "/\\ CanCreate = FALSE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
 		expectedTrace.add("/\\ Agent = [Loc |-> 0, LastLoad |-> 2, ReadyToMove |-> FALSE, Task |-> 0]\n"
-				   + "/\\ CanCreate = FALSE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
+				+ "/\\ CanCreate = FALSE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
 		expectedTrace.add("/\\ Agent = [Loc |-> 0, LastLoad |-> 2, ReadyToMove |-> TRUE, Task |-> 0]\n"
-				   + "/\\ CanCreate = FALSE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
+				+ "/\\ CanCreate = FALSE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
 		expectedTrace.add("/\\ Agent = [Loc |-> 1, LastLoad |-> 2, ReadyToMove |-> FALSE, Task |-> 0]\n"
-				   + "/\\ CanCreate = FALSE\n"
-				   + "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
+				+ "/\\ CanCreate = FALSE\n"
+				+ "/\\ Nodes = (0 :> [Load |-> 2] @@ 1 :> [Load |-> 2])");
 
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace);
 		assertBackToState(10);

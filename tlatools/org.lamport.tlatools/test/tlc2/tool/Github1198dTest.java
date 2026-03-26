@@ -40,7 +40,7 @@ import tlc2.tool.liveness.ModelCheckerTestCase;
 public class Github1198dTest extends ModelCheckerTestCase {
 
 	public Github1198dTest() {
-		super("Github1198", new String[] {"-config", "Github1198d.cfg"}, ExitStatus.SUCCESS);
+		super("Github1198", new String[] { "-config", "Github1198d.cfg" }, ExitStatus.SUCCESS);
 	}
 
 	@Test

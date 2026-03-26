@@ -19,28 +19,29 @@ import util.FileUtil;
 public final class MemStateQueue extends StateQueue {
   private final static int InitialSize = 4096;
 
-  /* Fields  */
+  /* Fields */
   private TLCState[] states;
   private int start = 0;
   private String diskdir;
-    
+
   /**
    * TESTING ONLY!
    */
   public MemStateQueue() throws IOException {
-	  this(Files.createTempDirectory("MemStateQueue").toFile().toString());
+    this(Files.createTempDirectory("MemStateQueue").toFile().toString());
   }
-  
+
   public MemStateQueue(String metadir) {
     this.states = new TLCState[InitialSize];
     this.start = 0;
     this.diskdir = metadir;
   }
-    
+
   final void enqueueInner(TLCState state) {
-	if (this.len > Integer.MAX_VALUE) {
-        Assert.fail(EC.SYSTEM_ERROR_WRITING_STATES, new String[]{"queue", "Amount of states exceeds internal storage"});
-	}
+    if (this.len > Integer.MAX_VALUE) {
+      Assert.fail(EC.SYSTEM_ERROR_WRITING_STATES,
+          new String[] { "queue", "Amount of states exceeds internal storage" });
+    }
     if (this.len == this.states.length) {
       // grow the array
       TLCState[] newStates = new TLCState[getNewLength(this.len)];
@@ -53,13 +54,13 @@ public final class MemStateQueue extends StateQueue {
     int last = (this.start + (int) this.len) % this.states.length;
     this.states[last] = state;
   }
-    
+
   /**
    * @param oldLength
    * @return The new capacity softly increased
    */
   private int getNewLength(final long oldLength) {
-      return (int) Math.max(1, ((oldLength * 4) / 3 + 1));
+    return (int) Math.max(1, ((oldLength * 4) / 3 + 1));
   }
 
   final TLCState dequeueInner() {
@@ -68,23 +69,26 @@ public final class MemStateQueue extends StateQueue {
     this.start = (this.start + 1) % this.states.length;
     return res;
   }
-  
-  /* (non-Javadoc)
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see tlc2.tool.queue.StateQueue#peekInner()
    */
   final TLCState peekInner() {
-	return this.states[this.start];
+    return this.states[this.start];
   }
 
   // Checkpoint.
   public final void beginChkpt() throws IOException {
     String filename = this.diskdir + FileUtil.separator + "queue.tmp";
     ValueOutputStream vos = new ValueOutputStream(filename);
-    vos.writeInt((int)this.len);
+    vos.writeInt((int) this.len);
     int index = this.start;
     for (int i = 0; i < this.len; i++) {
       this.states[index++].write(vos);
-      if (index == this.states.length) index = 0;
+      if (index == this.states.length)
+        index = 0;
     }
     vos.close();
   }
@@ -95,11 +99,11 @@ public final class MemStateQueue extends StateQueue {
     String newName = this.diskdir + FileUtil.separator + "queue.tmp";
     File newChkpt = new File(newName);
     if ((oldChkpt.exists() && !oldChkpt.delete()) ||
-	!newChkpt.renameTo(oldChkpt)) {
+        !newChkpt.renameTo(oldChkpt)) {
       throw new IOException("MemStateQueue.commitChkpt: cannot delete " + oldChkpt);
     }
   }
-  
+
   public final void recover() throws IOException {
     String filename = this.diskdir + FileUtil.separator + "queue.chkpt";
     ValueInputStream vis = new ValueInputStream(filename);

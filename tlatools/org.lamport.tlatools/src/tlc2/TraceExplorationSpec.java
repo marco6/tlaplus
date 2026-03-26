@@ -32,7 +32,7 @@ import util.TLAConstants;
  * Logic for generating a trace exploration (TE) spec.
  */
 public class TraceExplorationSpec {
-	
+
 	/**
 	 * Records TLC output as it runs, capturing the error trace if one is found.
 	 */
@@ -318,7 +318,8 @@ public class TraceExplorationSpec {
 		w.append(TLAConstants.CR);
 		w.addPrimer(teTraceName, originalSpecName, extendedModulesWithIOUtils);
 		w.append(TLAConstants.TraceExplore.SPEC_TETRACE_TRACE_DEF).append(TLAConstants.DEFINES)
-				.append(String.format("IODeserialize(\"%s%s\", TRUE)\n\n", teSpecModuleName, TLAConstants.Files.TLA_TRACE_EXTENSION));
+				.append(String.format("IODeserialize(\"%s%s\", TRUE)\n\n", teSpecModuleName,
+						TLAConstants.Files.TLA_TRACE_EXTENSION));
 		w.addFooter();
 		// Users can uncomment the module if they wish to read the serialized trace.
 		writer.append(TLAConstants.CR + w.getComment() + TLAConstants.CR + TLAConstants.CR);
@@ -346,7 +347,7 @@ public class TraceExplorationSpec {
 		}
 
 		writer.wrapConfig(teSpecModuleName);
-		
+
 		/**
 		 * Write to streams.
 		 */

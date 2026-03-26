@@ -5,7 +5,8 @@ import tla2sany.st.TreeNode;
 
 /**
  * Interface for all TLA+ language constructs that can be formatted.
- * This provides a plugin-like system for handling different TLA+ syntax elements.
+ * This provides a plugin-like system for handling different TLA+ syntax
+ * elements.
  */
 public interface TlaConstruct {
 

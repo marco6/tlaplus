@@ -20,12 +20,12 @@ public class SimpUtil implements ToolGlobals {
   public static Sx exists = Sx.Atom("EXISTS");
   public static Sx f_eq = Sx.Atom("F_EQ");
   public static Sx implies = Sx.Atom("IMPLIES");
-  public static Sx f_implies = Sx.Atom("F_IMPLIES");  
+  public static Sx f_implies = Sx.Atom("F_IMPLIES");
   public static Sx and = Sx.Atom("AND");
-  public static Sx f_and = Sx.Atom("F_AND");  
+  public static Sx f_and = Sx.Atom("F_AND");
   public static Sx or = Sx.Atom("OR");
   public static Sx f_or = Sx.Atom("F_OR");
-  public static Sx iff = Sx.Atom("IFF");  
+  public static Sx iff = Sx.Atom("IFF");
   public static Sx eq = Sx.Atom("EQ");
   public static Sx in = Sx.Atom("in");
   public static Sx empty = Sx.Atom("EMPTY");
@@ -34,8 +34,8 @@ public class SimpUtil implements ToolGlobals {
   public static Sx cond = Sx.Atom("cond");
   public static Sx cross2 = Sx.Atom("cross2");
   public static Sx bgPush = Sx.Atom("BG_PUSH");
-  public static Sx pats = Sx.Atom("PATS");  
-  
+  public static Sx pats = Sx.Atom("PATS");
+
   protected static Hashtable trop;
   public static Hashtable defns; // Maps operator name to translated defintions.
 
@@ -57,14 +57,14 @@ public class SimpUtil implements ToolGlobals {
     trop.put(OP_dotdot, "intv");
     trop.put(OP_leq, "F_LE");
     trop.put(OP_geq, "F_GE");
-    trop.put(OP_gt, "F_GT");    
+    trop.put(OP_gt, "F_GT");
     trop.put(OP_cp, "cross2");
 
     defns = new Hashtable();
   }
 
   public static UniqueString transOp(UniqueString name) {
-    UniqueString op = (UniqueString)trop.get(name);
+    UniqueString op = (UniqueString) trop.get(name);
     return (op == null) ? name : op;
   }
 
@@ -99,8 +99,8 @@ public class SimpUtil implements ToolGlobals {
   public static Sx mkIff(Sx x, Sx s) {
     return Sx.List(iff, x, s);
   }
-  
+
   public static Sx mkBgPush(Sx x) {
     return Sx.List(bgPush, x);
-  }  
+  }
 }

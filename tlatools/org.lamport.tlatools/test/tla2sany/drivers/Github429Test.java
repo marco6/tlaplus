@@ -23,12 +23,12 @@ public class Github429Test {
 
 	@Test
 	public void testForFailedParse() {
-        try {
+		try {
 			SANY.frontEndParse(moduleSpec, new SilentSanyOutput());
 			SANY.frontEndSemanticAnalysis(moduleSpec, new SilentSanyOutput(), false);
 		} catch (final Exception e) {
 			Assert.fail("No exception should occur during parse. Instead encountered [" + e.getClass()
-								+ "] with message: " + e.getMessage());
+					+ "] with message: " + e.getMessage());
 		}
 	}
 }

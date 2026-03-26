@@ -58,15 +58,17 @@ public final class FastTool extends Tool {
 		super(mainFile, configFile, resolver, mode, new HashMap<>());
 	}
 
-	public FastTool(String mainFile, String configFile, FilenameToStream resolver, Mode mode, Map<String, Object> params) {
+	public FastTool(String mainFile, String configFile, FilenameToStream resolver, Mode mode,
+			Map<String, Object> params) {
 		super(mainFile, configFile, resolver, mode, params);
 	}
-	
+
 	public FastTool(String specDir, String specFile, String configFile, FilenameToStream fts) {
 		super(specDir, specFile, configFile, fts, new HashMap<>());
 	}
-	
-	public FastTool(String specDir, String specFile, String configFile, FilenameToStream fts, Map<String, Object> params) {
+
+	public FastTool(String specDir, String specFile, String configFile, FilenameToStream fts,
+			Map<String, Object> params) {
 		super(specDir, specFile, configFile, fts, params);
 	}
 

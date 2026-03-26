@@ -43,7 +43,7 @@ public class Github361Test extends ModelCheckerTestCase {
 	public void testSpec() {
 		// This implicitly tests SpecProcessor#processConstantDefns(ModuleNode), which
 		// must not fully initialize (fingerprint) values because it is for some
-		// definitions (such as Partitions in Github361.tla) too expensive.  This is
+		// definitions (such as Partitions in Github361.tla) too expensive. This is
 		// the reason why it runs with multiple threads to make sure optimizations for
 		// single-threaded TLC hide bugs.
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));

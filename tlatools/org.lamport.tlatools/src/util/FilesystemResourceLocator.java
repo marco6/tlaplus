@@ -8,8 +8,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Searches a filesystem path.  The search is not recursive.  Note that this class may explore outside its prefix
- * if the target is an absolute path; the search behaves like {@link Path#resolve(Path)}.
+ * Searches a filesystem path. The search is not recursive. Note that this class
+ * may explore outside its prefix
+ * if the target is an absolute path; the search behaves like
+ * {@link Path#resolve(Path)}.
  */
 class FilesystemResourceLocator implements ResourceLocator {
 

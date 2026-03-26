@@ -36,18 +36,19 @@ public class StringDeserializeTLCTest extends ModelCheckerTestCase {
 	public StringDeserializeTLCTest() {
 		super("StringDeserialize");
 	}
-	
+
 	@Before
 	public void setUp() {
 		// Resolve the .vos file against BASE_PATH in Java. TLC's working directory
 		// varies depending on testing setup, so we can't reliably write a relative
-		// path in the TLA+ (normally we're resolving other specs, which works by default,
+		// path in the TLA+ (normally we're resolving other specs, which works by
+		// default,
 		// but resolving data files like this is much less common).
 		final String vosFileName = BASE_PATH + "StringDeserialize.vos";
 		System.setProperty("StringDeserializeTLCTest.vosFileName", vosFileName);
 		super.setUp();
 	}
-	
+
 	@Test
 	public void test() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));

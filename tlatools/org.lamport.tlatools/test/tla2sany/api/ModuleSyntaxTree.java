@@ -34,7 +34,7 @@ import tla2sany.parser.SyntaxTreeNode;
  * utility functions for querying basic information about it.
  *
  * TODO: These utility functions are definitely implemented elsewhere; they
- *       will need to be integrated with or replaced by the existing ones.
+ * will need to be integrated with or replaced by the existing ones.
  */
 public class ModuleSyntaxTree {
 
@@ -52,7 +52,7 @@ public class ModuleSyntaxTree {
    * Constructs a new instance of the {@link ModuleSyntaxTree} class.
    *
    * @param source Information about the module's source code.
-   * @param root The root node of the module's syntax tree.
+   * @param root   The root node of the module's syntax tree.
    */
   public ModuleSyntaxTree(ModuleSourceCode source, SyntaxTreeNode root) {
     this.source = source;

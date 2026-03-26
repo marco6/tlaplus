@@ -23,16 +23,15 @@ public final class MVPerm implements IMVPerm {
 
   public final boolean equals(Object obj) {
     if (obj instanceof MVPerm) {
-      MVPerm perm = (MVPerm)obj;
+      MVPerm perm = (MVPerm) obj;
       for (int i = 0; i < this.elems.length; i++) {
-	if (this.elems[i] == null) {
-	  if (perm.elems[i] != null) {
-	    return false;
-	  }
-	}
-	else if (!this.elems[i].equals(perm.elems[i])) {
-	  return false;
-	}
+        if (this.elems[i] == null) {
+          if (perm.elems[i] != null) {
+            return false;
+          }
+        } else if (!this.elems[i].equals(perm.elems[i])) {
+          return false;
+        }
       }
       return true;
     }
@@ -44,14 +43,16 @@ public final class MVPerm implements IMVPerm {
     for (int i = 0; i < this.elems.length; i++) {
       ModelValue mv = this.elems[i];
       if (mv != null) {
-	res = 31*res + mv.val.hashCode();
+        res = 31 * res + mv.val.hashCode();
       }
     }
     return res;
   }
-  
+
   @Override
-  public final int size() { return this.count; }
+  public final int size() {
+    return this.count;
+  }
 
   @Override
   public final IValue get(IValue k) {
@@ -60,8 +61,8 @@ public final class MVPerm implements IMVPerm {
 
   @Override
   public final void put(IModelValue m1, IModelValue m2) {
-	  ModelValue k = (ModelValue) m1;
-	  ModelValue elem = (ModelValue) m2;
+    ModelValue k = (ModelValue) m1;
+    ModelValue elem = (ModelValue) m2;
     if (!k.equals(elem) && this.elems[k.index] == null) {
       this.elems[k.index] = elem;
       this.count++;
@@ -74,44 +75,44 @@ public final class MVPerm implements IMVPerm {
       this.count++;
     }
   }
-  
+
   @Override
   public final IMVPerm compose(IMVPerm perm) {
-	  MVPerm res = new MVPerm();
+    MVPerm res = new MVPerm();
     for (int i = 0; i < this.elems.length; i++) {
       ModelValue mv = this.elems[i];
       if (mv == null) {
-	res.put(i, ((MVPerm) perm).elems[i]);
-      }
-      else {
-	ModelValue mv1 = ((MVPerm) perm).elems[mv.index];
-	if (mv1 == null) {
-	  res.put(i, mv);
-	}
-	else if (!ModelValue.mvs[i].equals(mv1)) {
-	  res.put(i, mv1);
-	}
+        res.put(i, ((MVPerm) perm).elems[i]);
+      } else {
+        ModelValue mv1 = ((MVPerm) perm).elems[mv.index];
+        if (mv1 == null) {
+          res.put(i, mv);
+        } else if (!ModelValue.mvs[i].equals(mv1)) {
+          res.put(i, mv1);
+        }
       }
     }
     return res;
   }
-  
+
   /**
-   * Consider caching if this method is used frequently; currently it is used once per instance per
-   * 	execution of TLC, during initial state setup / expansion.
+   * Consider caching if this method is used frequently; currently it is used once
+   * per instance per
+   * execution of TLC, during initial state setup / expansion.
    * 
-   * @return a {@code List} of all {@link ModelValue} instances held by this permutation.
+   * @return a {@code List} of all {@link ModelValue} instances held by this
+   *         permutation.
    */
   public List<ModelValue> getAllModelValues() {
-	  final List<ModelValue> values = new ArrayList<>();
-	  
-	  for (int i = 0; i < elems.length; i++) {
-		  if (elems[i] != null) {
-			  values.add(elems[i]);
-		  }
-	  }
-	  
-	  return values;
+    final List<ModelValue> values = new ArrayList<>();
+
+    for (int i = 0; i < elems.length; i++) {
+      if (elems[i] != null) {
+        values.add(elems[i]);
+      }
+    }
+
+    return values;
   }
 
   public final String toString() {
@@ -119,21 +120,21 @@ public final class MVPerm implements IMVPerm {
     int i = 0;
     for (i = 0; i < this.elems.length; i++) {
       if (this.elems[i] != null) {
-	sb.append(ModelValue.mvs[i].toString());
-	sb.append(" -> ");
-	sb.append(this.elems[i].toString());
-	break;
+        sb.append(ModelValue.mvs[i].toString());
+        sb.append(" -> ");
+        sb.append(this.elems[i].toString());
+        break;
       }
     }
-    for (int j = i+1; j < this.elems.length; j++) {
+    for (int j = i + 1; j < this.elems.length; j++) {
       if (this.elems[j] != null) {
-	sb.append(", ");
-	sb.append(ModelValue.mvs[j].toString());
-	sb.append(" -> ");
-	sb.append(this.elems[j].toString());
+        sb.append(", ");
+        sb.append(ModelValue.mvs[j].toString());
+        sb.append(" -> ");
+        sb.append(this.elems[j].toString());
       }
     }
-    sb.append("]");    
+    sb.append("]");
     return sb.toString();
   }
 

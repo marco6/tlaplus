@@ -34,7 +34,7 @@ public class ETest1 extends SuiteETestCase {
 	public ETest1() {
 		super(ExitStatus.ERROR_SPEC_PARSE);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		assertSubstring("*** Errors: 1\n");

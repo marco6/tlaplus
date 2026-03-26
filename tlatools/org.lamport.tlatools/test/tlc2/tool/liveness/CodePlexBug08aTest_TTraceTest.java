@@ -45,20 +45,20 @@ public class CodePlexBug08aTest_TTraceTest extends TTraceModelCheckerTestCase {
 	public CodePlexBug08aTest_TTraceTest() {
 		super(CodePlexBug08aTest.class, "CodePlexBug08", ExitStatus.VIOLATION_LIVENESS);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		// ModelChecker has finished and generated the expected amount of states
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "8", "8", "0"));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		// Assert it has found the temporal violation and also a counter example
 		assertTrue(recorder.recorded(EC.TLC_TEMPORAL_PROPERTY_VIOLATED));
 		assertTrue(recorder.recorded(EC.TLC_COUNTER_EXAMPLE));
-		
+
 		assertNodeAndPtrSizes(220L, 128L);
-		
+
 		// Assert the error trace
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
 		final List<String> expectedTrace = new ArrayList<String>(4);
@@ -71,10 +71,10 @@ public class CodePlexBug08aTest_TTraceTest extends TTraceModelCheckerTestCase {
 		expectedTrace.add("/\\ b = FALSE\n/\\ x = 4");
 		expectedTrace.add("/\\ b = TRUE\n/\\ x = 5");
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace);
-		
+
 		// Assert the error trace contains a stuttering step at position 5
 		assertStuttering(9);
 
-	assertZeroUncovered();
+		assertZeroUncovered();
 	}
 }

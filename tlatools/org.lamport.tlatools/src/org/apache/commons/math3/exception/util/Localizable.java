@@ -37,7 +37,7 @@ public interface Localizable extends Serializable {
      *
      * @param locale locale into which to get the string.
      * @return the localized string or the source string if no
-     * localized version is available.
+     *         localized version is available.
      */
     String getLocalizedString(Locale locale);
 }

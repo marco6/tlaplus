@@ -22,7 +22,8 @@ import util.Assert;
 public class MultiFPSet extends FPSet {
 
 	/**
-	 * Indicates that child {@link FPSet} should allocate the built-in amount of memory
+	 * Indicates that child {@link FPSet} should allocate the built-in amount of
+	 * memory
 	 */
 	private static final int MEM_DEFAULT = -1;
 
@@ -30,7 +31,7 @@ public class MultiFPSet extends FPSet {
 	public static final int MIN_FPBITS = 0;
 
 	/**
-	 * Contains all nested {@link FPSet}s 
+	 * Contains all nested {@link FPSet}s
 	 */
 	protected final List<FPSet> sets;
 
@@ -41,6 +42,7 @@ public class MultiFPSet extends FPSet {
 
 	/**
 	 * Create a MultiFPSet with 2^bits FPSets.
+	 * 
 	 * @param bits [1,30]
 	 */
 	public MultiFPSet(final FPSetConfiguration fpSetConfiguration) throws RemoteException {
@@ -48,10 +50,10 @@ public class MultiFPSet extends FPSet {
 
 		int bits = fpSetConfiguration.getFpBits();
 		long fpMemSize = fpSetConfiguration.getMemoryInBytes();
-		
-	    // LL modified error message on 7 April 2012
+
+		// LL modified error message on 7 April 2012
 		Assert.check(bits > 0 && bits <= MAX_FPBITS, "Illegal number of FPSets found.");
-		
+
 		if (fpMemSize == MEM_DEFAULT) {
 			fpMemSize = HeapBasedDiskFPSet.DefaultMaxTblCnt / 20;
 		}
@@ -68,7 +70,9 @@ public class MultiFPSet extends FPSet {
 		return s;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#init(int, java.lang.String, java.lang.String)
 	 */
 	public final FPSet init(final int numThreads, final String metadir, final String filename) throws IOException {
@@ -82,27 +86,29 @@ public class MultiFPSet extends FPSet {
 		return this;
 	}
 
-	
 	@Override
 	public void incWorkers(final int num) {
-		sets.stream().forEach(s -> s.incWorkers(num) );
+		sets.stream().forEach(s -> s.incWorkers(num));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#size()
 	 */
 	public final long size() {
 		/* Returns the number of fingerprints in this set. */
 		return sets.parallelStream().mapToLong(FPSet::size).sum();
 	}
-	
+
 	/**
 	 * @param fp
-	 * @return Partition given fp into the {@link FPSet} space 
+	 * @return Partition given fp into the {@link FPSet} space
 	 */
 	protected FPSet getFPSet(long fp) {
 		// determine corresponding fpset (using unsigned right shift)
-		// shifts a zero into the leftmost (msb) position of the first operand for right operand times
+		// shifts a zero into the leftmost (msb) position of the first operand for right
+		// operand times
 		// and cast it to int loosing the leftmost 32 bit
 		final int idx = (int) (fp >>> this.fpbits);
 		return this.sets.get(idx);
@@ -129,7 +135,9 @@ public class MultiFPSet extends FPSet {
 		return getFPSet(fp).contains(fp);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#close()
 	 */
 	public final void close() {
@@ -137,8 +145,10 @@ public class MultiFPSet extends FPSet {
 			fpSet.close();
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#unexportObject(boolean)
 	 */
 	public void unexportObject(boolean force) {
@@ -147,7 +157,9 @@ public class MultiFPSet extends FPSet {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#checkFPs()
 	 */
 	public final long checkFPs() throws IOException {
@@ -160,7 +172,9 @@ public class MultiFPSet extends FPSet {
 		}).min().orElse(Long.MAX_VALUE);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#checkInvariant()
 	 */
 	public boolean checkInvariant() throws IOException {
@@ -173,17 +187,21 @@ public class MultiFPSet extends FPSet {
 		});
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#exit(boolean)
 	 */
 	public final void exit(boolean cleanup) throws IOException {
-	    super.exit(cleanup);
+		super.exit(cleanup);
 		for (FPSet fpSet : sets) {
 			fpSet.exit(cleanup);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#beginChkpt()
 	 */
 	public final void beginChkpt() throws IOException {
@@ -192,7 +210,9 @@ public class MultiFPSet extends FPSet {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#commitChkpt()
 	 */
 	public final void commitChkpt() throws IOException {
@@ -201,7 +221,9 @@ public class MultiFPSet extends FPSet {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#recover()
 	 */
 	public final void recover(TLCTrace trace) throws IOException {
@@ -213,14 +235,18 @@ public class MultiFPSet extends FPSet {
 		elements.close();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#recoverFP(long)
 	 */
 	public final void recoverFP(long fp) throws IOException {
 		Assert.check(!this.put(fp), EC.TLC_FP_NOT_IN_SET);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#beginChkpt(java.lang.String)
 	 */
 	public final void beginChkpt(String filename) throws IOException {
@@ -233,7 +259,9 @@ public class MultiFPSet extends FPSet {
 		});
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#commitChkpt(java.lang.String)
 	 */
 	public final void commitChkpt(String filename) throws IOException {
@@ -246,7 +274,9 @@ public class MultiFPSet extends FPSet {
 		});
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSet#recover(java.lang.String)
 	 */
 	public final void recover(String filename) throws IOException {

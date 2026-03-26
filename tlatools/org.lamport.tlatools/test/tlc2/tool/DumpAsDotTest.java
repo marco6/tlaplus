@@ -50,7 +50,8 @@ public class DumpAsDotTest extends ModelCheckerTestCase {
 
 	public DumpAsDotTest() {
 		super("MCa", "CodePlexBug08", new String[] { "-dump", "dot,colorize,actionlabels,stuttering",
-				System.getProperty("java.io.tmpdir") + File.separator + "DumpAsDotTest" }, ExitStatus.VIOLATION_LIVENESS);
+				System.getProperty("java.io.tmpdir") + File.separator + "DumpAsDotTest" },
+				ExitStatus.VIOLATION_LIVENESS);
 	}
 
 	@Test
@@ -59,7 +60,7 @@ public class DumpAsDotTest extends ModelCheckerTestCase {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "18", "11", "0"));
-		
+
 		// Assert POSTCONDITION.
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_FALSE));
 		assertFalse(recorder.recorded(EC.TLC_ASSUMPTION_EVALUATION_ERROR));
@@ -69,18 +70,19 @@ public class DumpAsDotTest extends ModelCheckerTestCase {
 		final List<IValue> allValue = TLCGlobals.mainChecker.getAllValue(42);
 		assertTrue(!allValue.isEmpty());
 		assertEquals(IntValue.gen(18), allValue.get(0));
-	
+
 		// -dump appends the ".dump" extension to the file name
 		final File dumpFile = new File(System.getProperty("java.io.tmpdir") + File.separator + "DumpAsDotTest.dot");
 		assertTrue(dumpFile.exists());
-		
-		// If the file exist, simply compare it to a correct and manually checked version.
+
+		// If the file exist, simply compare it to a correct and manually checked
+		// version.
 		final InputStream master = getClass().getResourceAsStream("DumpAsDotTest.dot");
 		assertTrue(Arrays.equals(getBytes(master), getBytes(new FileInputStream(dumpFile))));
 
 		assertZeroUncovered();
 	}
-	
+
 	// http://stackoverflow.com/a/17861016
 	public static byte[] getBytes(InputStream is) throws IOException {
 		final ByteArrayOutputStream os = new ByteArrayOutputStream();

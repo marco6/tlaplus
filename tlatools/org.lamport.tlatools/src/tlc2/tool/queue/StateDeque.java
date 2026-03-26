@@ -32,9 +32,9 @@ import java.util.Deque;
 import tlc2.tool.TLCState;
 
 public class StateDeque extends StateQueue {
-	
+
 	private final Deque<TLCState> q;
-	
+
 	public StateDeque() {
 		this.q = new ArrayDeque<>();
 	}

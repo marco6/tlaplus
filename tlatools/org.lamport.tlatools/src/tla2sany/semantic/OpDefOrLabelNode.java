@@ -35,32 +35,36 @@ import util.UniqueString;
 
 interface OpDefOrLabelNode {
 
-public abstract void setLabels(Hashtable<UniqueString, LabelNode> ht) ;
-  /*************************************************************************
-  * Set the set of labels to ht.                                           *
-  *************************************************************************/
-  
-public abstract LabelNode getLabel(UniqueString us) ;
-  /*************************************************************************
-  * If the set contains an OpDefNode with name `us', then that OpDefNode   *
-  * is returned; otherwise null is returned.                               *
-  *************************************************************************/
+  public abstract void setLabels(Hashtable<UniqueString, LabelNode> ht);
 
-public abstract boolean addLabel(LabelNode odn) ;
   /*************************************************************************
-  * If the set contains no LabelNode with the same name as odn, then odn   *
-  * is added to the set and true is return; else the set is unchanged and  *
-  * false is returned.                                                     *
-  *************************************************************************/
-  
-public abstract LabelNode[] getLabels() ;
+   * Set the set of labels to ht. *
+   *************************************************************************/
+
+  public abstract LabelNode getLabel(UniqueString us);
+
   /*************************************************************************
-  * Returns an array containing the Label objects in the set.              *
-  *************************************************************************/
-  
-public abstract int getArity();
+   * If the set contains an OpDefNode with name `us', then that OpDefNode *
+   * is returned; otherwise null is returned. *
+   *************************************************************************/
+
+  public abstract boolean addLabel(LabelNode odn);
+
   /*************************************************************************
-  * Returns the arity of the label or operator.                            *
-  *************************************************************************/
-  
+   * If the set contains no LabelNode with the same name as odn, then odn *
+   * is added to the set and true is return; else the set is unchanged and *
+   * false is returned. *
+   *************************************************************************/
+
+  public abstract LabelNode[] getLabels();
+
+  /*************************************************************************
+   * Returns an array containing the Label objects in the set. *
+   *************************************************************************/
+
+  public abstract int getArity();
+  /*************************************************************************
+   * Returns the arity of the label or operator. *
+   *************************************************************************/
+
 }

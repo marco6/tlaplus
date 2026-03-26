@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class FastMutexWithGoto2Test extends PCalModelCheckerTestCase {
 
 	public FastMutexWithGoto2Test() {
-		super("FastMutexWithGoto2", "pcal", new String[] {"-wfNext"});
+		super("FastMutexWithGoto2", "pcal", new String[] { "-wfNext" });
 	}
 
 	@Test

@@ -70,7 +70,7 @@ public class Github858Test extends ModelCheckerTestCase {
 						+ "/\\ counter = (0 :> -1 @@ 1 :> 0 @@ 2 :> 1)\n"
 						+ "/\\ token = [pos |-> 1, q |-> 1, color |-> \"black\"]\n"
 						+ "/\\ TokenInits = 4\n"
-						+ "/\\ TokenPasses = 7\n" 
+						+ "/\\ TokenPasses = 7\n"
 						+ "/\\ Activations = (0 :> 6 @@ 1 :> 7 @@ 2 :> 9)\n"
 						+ "/\\ Activations2 = (0 :> 6 @@ 1 :> 7 @@ 2 :> 9)\n"
 						+ "/\\ Actives = { (0 :> FALSE @@ 1 :> FALSE @@ 2 :> TRUE),\n"

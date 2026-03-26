@@ -115,7 +115,7 @@ public class NodePtrTable {
 		grow(newLength);
 	}
 
-    private final void grow(final int newLength) {
+	private final void grow(final int newLength) {
 		try {
 			final long[] oldKeys = this.keys;
 			final long[] oldElems = this.elems;

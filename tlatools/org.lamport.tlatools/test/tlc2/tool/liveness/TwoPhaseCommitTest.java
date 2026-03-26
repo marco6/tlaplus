@@ -39,11 +39,11 @@ public class TwoPhaseCommitTest extends ModelCheckerTestCase {
 	public TwoPhaseCommitTest() {
 		super(TLAConstants.Files.MODEL_CHECK_FILE_BASENAME, "symmetry" + File.separator + "TwoPhaseCommit");
 	}
-	
+
 	@Test
 	public void testSpec() {
 		assertFalse(recorder.recorded(EC.GENERAL));
 
-	assertZeroUncovered();
+		assertZeroUncovered();
 	}
 }

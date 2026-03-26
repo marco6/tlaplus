@@ -40,7 +40,8 @@ import util.TLAConstants;
 
 public abstract class TTraceModelCheckerTestCase extends ModelCheckerTestCase {
 
-	// Make the generated stuff go into the target/ folder of the org.lamport.tlatools folder.
+	// Make the generated stuff go into the target/ folder of the
+	// org.lamport.tlatools folder.
 	private static final String GEN_SPEC_PATH = ".." + File.separator + "target" + File.separator + "GeneratedTESpecs";
 
 	public static String getPath(Class<? extends ModelCheckerTestCase> clazz) {
@@ -51,7 +52,7 @@ public abstract class TTraceModelCheckerTestCase extends ModelCheckerTestCase {
 		return clazz.getSimpleName() + TLAConstants.TraceExplore.TRACE_EXPRESSION_MODULE_NAME
 				+ TLAConstants.Files.TLA_EXTENSION;
 	}
-	
+
 	private final Class<?> clazz;
 	// Path to the original spec (not the trace spec)
 	private final String specPath;
@@ -59,15 +60,15 @@ public abstract class TTraceModelCheckerTestCase extends ModelCheckerTestCase {
 	public String getModuleName() {
 		return clazz.getSimpleName() + TLAConstants.TraceExplore.TRACE_EXPRESSION_MODULE_NAME;
 	}
-	
+
 	public TTraceModelCheckerTestCase(final Class<?> clazz, final String path, final int exitStatus) {
-		super(getSpecFileName(clazz), GEN_SPEC_PATH, new String[] {"-config", getSpecFileName(clazz)}, exitStatus);
+		super(getSpecFileName(clazz), GEN_SPEC_PATH, new String[] { "-config", getSpecFileName(clazz) }, exitStatus);
 		this.clazz = clazz;
 		this.specPath = BASE_PATH + path;
 	}
 
 	public TTraceModelCheckerTestCase(final Class<?> clazz, final int exitStatus) {
-		super(getSpecFileName(clazz), GEN_SPEC_PATH, new String[] {"-config", getSpecFileName(clazz)}, exitStatus);
+		super(getSpecFileName(clazz), GEN_SPEC_PATH, new String[] { "-config", getSpecFileName(clazz) }, exitStatus);
 		this.clazz = clazz;
 		this.specPath = BASE_PATH;
 	}
@@ -79,12 +80,12 @@ public abstract class TTraceModelCheckerTestCase extends ModelCheckerTestCase {
 		this.clazz = clazz;
 		this.specPath = BASE_PATH;
 	}
-	
+
 	@Before
 	public void setUp() {
 		beforeSetUp();
 
-		//TODO Assume that the generated file exist.
+		// TODO Assume that the generated file exist.
 		Path sourcePath = Paths
 				.get(BASE_PATH + path + File.separator + spec);
 		Assume.assumeTrue("No TE spec was generated, please run test with original spec", sourcePath.toFile().isFile());
@@ -96,7 +97,7 @@ public abstract class TTraceModelCheckerTestCase extends ModelCheckerTestCase {
 	protected boolean noGenerateSpec() {
 		return true;
 	}
-	
+
 	@Override
 	protected boolean doCoverage() {
 		// A trace evaluation spec (TESpec) usually shows many warnings related to
@@ -108,6 +109,6 @@ public abstract class TTraceModelCheckerTestCase extends ModelCheckerTestCase {
 
 	@Override
 	protected FilenameToStream getResolver() {
-		return new SimpleFilenameToStream(new String[] {specPath});
+		return new SimpleFilenameToStream(new String[] { specPath });
 	}
 }

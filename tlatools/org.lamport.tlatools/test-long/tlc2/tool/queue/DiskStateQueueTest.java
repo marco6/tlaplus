@@ -14,7 +14,9 @@ public class DiskStateQueueTest extends StateQueueTest {
 
 	private File file;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.queue.StateQueueTest#setUp()
 	 */
 	@Before
@@ -25,11 +27,13 @@ public class DiskStateQueueTest extends StateQueueTest {
 		file = new File(diskdir);
 		file.mkdirs();
 		file.deleteOnExit();
-		
+
 		sQueue = new DiskStateQueue(diskdir);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	@After
@@ -42,8 +46,8 @@ public class DiskStateQueueTest extends StateQueueTest {
 		}
 		file.delete();
 	}
-	
-	// add Integer.MAX_VALUE states and check growth of MultiStateQueue. 
+
+	// add Integer.MAX_VALUE states and check growth of MultiStateQueue.
 	// Reuse the same state to speed up instantiation and space requirements
 	@Test
 	public void testGrowBeyondIntMaxValue() {

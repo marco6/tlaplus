@@ -28,7 +28,8 @@ import util.FilenameToStream;
  * inefficient in the way that it requires the server to read the full file into
  * memory before it gets transferred to the client. The client too, will buffer
  * the full file in memory. This constraint is acceptable for TLA specifications
- * and configurations as they are usually small enough to fit into memory "easily".
+ * and configurations as they are usually small enough to fit into memory
+ * "easily".
  */
 public class RMIFilenameToStreamResolver implements FilenameToStream {
 
@@ -49,7 +50,9 @@ public class RMIFilenameToStreamResolver implements FilenameToStream {
 		this.server = aServer;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see util.FilenameToStream#resolve(java.lang.String, boolean)
 	 */
 	public File resolve(final String filename, final boolean isModule) {
@@ -60,7 +63,7 @@ public class RMIFilenameToStreamResolver implements FilenameToStream {
 
 		File file = fileCache.get(name);
 		// not in cache
-		if (file == null ||  !file.exists()) {
+		if (file == null || !file.exists()) {
 
 			// read bytes from server
 			byte[] bs = new byte[0];
@@ -71,7 +74,7 @@ public class RMIFilenameToStreamResolver implements FilenameToStream {
 			}
 
 			// write into temp file
-			file  = writeToNewTempFile(name, bs);
+			file = writeToNewTempFile(name, bs);
 
 			// add to local file cache
 			fileCache.put(name, file);
@@ -82,8 +85,8 @@ public class RMIFilenameToStreamResolver implements FilenameToStream {
 
 	/**
 	 * I am hoping that a resolver of this class is never used to parse
-	 * the spec.  If it is, then a module's isStandard field will always
-	 * be false in a run of distributed TLC.  This isn't a problem, since
+	 * the spec. If it is, then a module's isStandard field will always
+	 * be false in a run of distributed TLC. This isn't a problem, since
 	 * that field was added for use by a version of SANY called by TLAPS.
 	 *
 	 * Added by LL on 24 July 2013.
@@ -92,15 +95,16 @@ public class RMIFilenameToStreamResolver implements FilenameToStream {
 		// The following error message code should be uncommented
 		// if the parser should not be called with an object of
 		// this class.
-//		 String[] foo = new String[] {
-//	       "Parsing called with unexpected FileNameToString implementation."} ;
-//		 MP.printTLCBug(42, foo) ;
-		 return false ;
+		// String[] foo = new String[] {
+		// "Parsing called with unexpected FileNameToString implementation."} ;
+		// MP.printTLCBug(42, foo) ;
+		return false;
 	}
 
 	/**
-	 * Create a new empty directory owned by this process.  The returned directory
-	 * will be deleted when the JVM terminates as described by {@link File#deleteOnExit()}.
+	 * Create a new empty directory owned by this process. The returned directory
+	 * will be deleted when the JVM terminates as described by
+	 * {@link File#deleteOnExit()}.
 	 *
 	 * @return a new temporary directory
 	 */
@@ -123,7 +127,7 @@ public class RMIFilenameToStreamResolver implements FilenameToStream {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			if(outputStream != null) {
+			if (outputStream != null) {
 				try {
 					outputStream.close();
 				} catch (IOException e) {

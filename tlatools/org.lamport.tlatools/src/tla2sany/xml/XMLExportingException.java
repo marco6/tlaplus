@@ -2,6 +2,7 @@
 // Copyright (c) 2013 INRIA-MSR.  All rights reserved.
 
 package tla2sany.xml;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 

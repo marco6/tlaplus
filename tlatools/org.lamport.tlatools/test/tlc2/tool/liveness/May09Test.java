@@ -54,10 +54,11 @@ import tlc2.output.EC;
  * fails because the two specs (Spec & SpecD) under symmetry produce the same
  * state graph. Without symmetry, Spec does not satisfy []<>P(a) /\ []<>P(b),
  * only SpecD does. Under symmetry, a version of TLC that does not rewrite the
- * liveness property finds the bogus counterexample for SpecD.  
+ * liveness property finds the bogus counterexample for SpecD.
  * 
  * A yet unexplored research hypothesis is, that labeling all arcs with the
- * permutation that the to-state represents in the liveness graph. This information
+ * permutation that the to-state represents in the liveness graph. This
+ * information
  * would allow us to distinguish the graphs of May09 and May09d.
  */
 public class May09Test extends ModelCheckerTestCase {

@@ -38,14 +38,14 @@ public class SymmetryTableauModelCheckerTest extends ModelCheckerTestCase {
 	public SymmetryTableauModelCheckerTest() {
 		super("SymmetryLivenessTableauMC", "symmetry");
 	}
-	
+
 	@Test
 	@Ignore("Ignored for as long as symmetry is incorrectly handled by TLC with liveness checking.")
 	public void testSpec() {
 		// ModelChecker intends to check liveness
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_LIVE_IMPLIED, "2"));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_INIT_GENERATED2, "8", "s", "2"));
-		
+
 		// ModelChecker has finished and generated the expected amount of states
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "779", "168", "0"));
@@ -53,10 +53,10 @@ public class SymmetryTableauModelCheckerTest extends ModelCheckerTestCase {
 		// Assert it has found a temporal violation and a counter example
 		assertTrue(recorder.recorded(EC.TLC_TEMPORAL_PROPERTY_VIOLATED));
 		assertTrue(recorder.recorded(EC.TLC_COUNTER_EXAMPLE));
-		
+
 		// The spec's 'NoVal' value is what violates symmetry.
 		assertTrue(recorder.recordedWithStringValue(EC.GENERAL,
-				"TLC threw an unexpected exception.\n" 
+				"TLC threw an unexpected exception.\n"
 						+ "This was probably caused by an error in the spec or model.\n"
 						+ "The error occurred when TLC was checking liveness.\n"
 						+ "The exception was a tlc2.tool.EvalException\n"

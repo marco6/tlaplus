@@ -65,15 +65,15 @@ public class SANYWrapper {
         return paths.toArray(new String[0]);
     }
 
-    public static void loadSpecObject(SpecObj specObj, File file, StringWriter errBuf) throws IOException, SanyFrontendException {
+    public static void loadSpecObject(SpecObj specObj, File file, StringWriter errBuf)
+            throws IOException, SanyFrontendException {
         var baos = new ByteArrayOutputStream();
 
         try {
             SANY.frontEndMain(
                     specObj,
                     file.getAbsolutePath(),
-                    new SimpleSanyOutput(new PrintStream(baos, false, StandardCharsets.UTF_8), LogLevel.INFO)
-            );
+                    new SimpleSanyOutput(new PrintStream(baos, false, StandardCharsets.UTF_8), LogLevel.INFO));
         } catch (FrontEndException e) {
             throw new SanyFrontendException(e);
         }
@@ -83,7 +83,6 @@ public class SANYWrapper {
 
         ThrowOnError(specObj);
     }
-
 
     private static File sanyTempDir() throws IOException {
         var tmpDir = Files.createTempDirectory("sanyimp").toFile();
@@ -103,8 +102,7 @@ public class SANYWrapper {
         // the error level is above zero, so SANY failed for an unknown reason
         if (specObj.getErrorLevel() > 0) {
             throw new SanyException(
-                    String.format("Unknown SANY error (error level=%d)", specObj.getErrorLevel())
-            );
+                    String.format("Unknown SANY error (error level=%d)", specObj.getErrorLevel()));
         }
     }
 

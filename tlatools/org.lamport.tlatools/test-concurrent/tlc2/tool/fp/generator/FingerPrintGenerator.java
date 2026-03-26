@@ -41,12 +41,14 @@ public class FingerPrintGenerator implements Runnable {
 		this.perThreadInsertions = (long) Math.floor(totalInsertions / numThreads);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
 		waitForAllThreadsStarted();
-		
+
 		long predecessor = 0L;
 		// Reduce number of FPSet#size invocation by counting puts/collisions.
 		// FPSet#size can cause an FPSet to synchronize all its writers slowing
@@ -62,15 +64,15 @@ public class FingerPrintGenerator implements Runnable {
 
 				// Periodically verify the FPSet's content. This causes a
 				// drastic slow down.
-//				if (fpSet.size() % 10000 == 0) {
-//					final Random verify = new Random(seed);
-//					long fp = verify.nextLong();
-//					while (fp != predecessor) {
-//						Assert.assertTrue(fpSet.contains(fp));
-//						fp = verify.nextLong();
-//					}
-//				}
-//				
+				// if (fpSet.size() % 10000 == 0) {
+				// final Random verify = new Random(seed);
+				// long fp = verify.nextLong();
+				// while (fp != predecessor) {
+				// Assert.assertTrue(fpSet.contains(fp));
+				// fp = verify.nextLong();
+				// }
+				// }
+				//
 				boolean put = fpSet.put(predecessor);
 				if (put == false) {
 					puts++;

@@ -37,12 +37,14 @@ public class TestPrintStream extends PrintStream {
 
 	private final StringBuffer buf = new StringBuffer();
 	private final List<String> strings = new ArrayList<String>();
-	
+
 	public TestPrintStream() {
-        super(ToolIO.out);
+		super(ToolIO.out);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.io.PrintStream#println(java.lang.String)
 	 */
 	public void println(String x) {
@@ -50,15 +52,15 @@ public class TestPrintStream extends PrintStream {
 		buf.append(x + "\n");
 		super.println(x);
 	}
-	
+
 	public void assertEmpty() {
 		assertTrue(this.strings.isEmpty());
 	}
-	
+
 	public void assertContains(final String seq) {
 		assertTrue(buf.toString().contains(seq));
 	}
-	
+
 	public void assertSubstring(String substring) {
 		for (String string : strings) {
 			if (string.contains(substring)) {
@@ -70,14 +72,14 @@ public class TestPrintStream extends PrintStream {
 
 	public void assertRegex(String regex) {
 		Pattern pattern = Pattern.compile(regex);
-		for (String string : strings) {			
+		for (String string : strings) {
 			if (pattern.matcher(string).find()) {
 				return;
 			}
 		}
-		fail("Match not found for regex \"" + pattern.toString() + "\"");		
+		fail("Match not found for regex \"" + pattern.toString() + "\"");
 	}
-	
+
 	public void assertNoSubstring(String substring) {
 		for (String string : strings) {
 			if (string.contains(substring)) {

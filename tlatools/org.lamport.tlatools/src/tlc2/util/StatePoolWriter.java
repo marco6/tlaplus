@@ -18,17 +18,16 @@ import util.Assert;
 
 public class StatePoolWriter extends Thread {
 
-    private TLCState[] buf;     
-    private File poolFile;           // the file to be written
-    private StatePoolReader reader;  // the consumer if not null
+  private TLCState[] buf;
+  private File poolFile; // the file to be written
+  private StatePoolReader reader; // the consumer if not null
 
-    
   public StatePoolWriter(int bufSize) {
-	  this(bufSize, null);
+    this(bufSize, null);
   }
 
   public StatePoolWriter(int bufSize, StatePoolReader reader) {
-	  super("TLCStatePoolWriter");
+    super("TLCStatePoolWriter");
     this.buf = new TLCState[bufSize];
     this.poolFile = null;
     this.reader = reader;
@@ -37,14 +36,14 @@ public class StatePoolWriter extends Thread {
   /*
    * This method first completes the preceding write if not started.
    * It then notifies this writer to flush enqBuf to file. In practice,
-   * we expect the preceding write to have been completed. 
+   * we expect the preceding write to have been completed.
    */
   public final synchronized TLCState[] doWork(TLCState[] enqBuf, File file)
-  throws IOException {
+      throws IOException {
     if (this.poolFile != null) {
       ValueOutputStream vos = new ValueOutputStream(this.poolFile);
       for (int i = 0; i < this.buf.length; i++) {
-	this.buf[i].write(vos);
+        this.buf[i].write(vos);
       }
       vos.close();
     }
@@ -55,43 +54,40 @@ public class StatePoolWriter extends Thread {
     return res;
   }
 
-  /* Spin waiting for the write to complete.  */
+  /* Spin waiting for the write to complete. */
   public final void ensureWritten() throws InterruptedException {
-    synchronized(this) {
+    synchronized (this) {
       while (this.poolFile != null) {
-	this.wait();
+        this.wait();
       }
     }
   }
 
   public final synchronized void beginChkpt(ObjectOutputStream oos)
-  throws IOException {
+      throws IOException {
     boolean hasFile = (this.poolFile == null) ? false : true;
     oos.writeBoolean(hasFile);
     if (hasFile) {
       oos.writeObject(this.poolFile);
       for (int i = 0; i < this.buf.length; i++) {
-	oos.writeObject(this.buf[i]);
+        oos.writeObject(this.buf[i]);
       }
     }
   }
 
-  /* Note this method is not synchronized.  */
-  public final void recover(ObjectInputStream ois) throws IOException {    
+  /* Note this method is not synchronized. */
+  public final void recover(ObjectInputStream ois) throws IOException {
     boolean hasFile = ois.readBoolean();
     if (hasFile) {
       try {
-	this.poolFile = (File)ois.readObject();
-	for (int i = 0; i < this.buf.length; i++) {
-	  this.buf[i] = (TLCState)ois.readObject();
-	}
+        this.poolFile = (File) ois.readObject();
+        for (int i = 0; i < this.buf.length; i++) {
+          this.buf[i] = (TLCState) ois.readObject();
+        }
+      } catch (ClassNotFoundException e) {
+        Assert.fail(EC.SYSTEM_CHECKPOINT_RECOVERY_CORRUPT, e);
       }
-      catch (ClassNotFoundException e) 
-      {
-          Assert.fail(EC.SYSTEM_CHECKPOINT_RECOVERY_CORRUPT, e);
-      }
-    }
-    else {
+    } else {
       this.poolFile = null;
     }
   }
@@ -102,31 +98,31 @@ public class StatePoolWriter extends Thread {
    */
   public void run() {
     try {
-      synchronized(this) {
-	while (true) {
-	  while (this.poolFile == null) {
-	    this.wait();
-	    // we are done without ever receiving a pool file
-	    if(this.poolFile == null) {
-	    	return;
-	    }
-	  }
-	  ValueOutputStream vos = new ValueOutputStream(this.poolFile);
-	  for (int i = 0; i < this.buf.length; i++) {
-	    this.buf[i].write(vos);
-	  }
-	  vos.close();
-	  this.poolFile = null;
-	  this.notify();
-	  if (this.reader != null) this.reader.wakeup();
-	}
+      synchronized (this) {
+        while (true) {
+          while (this.poolFile == null) {
+            this.wait();
+            // we are done without ever receiving a pool file
+            if (this.poolFile == null) {
+              return;
+            }
+          }
+          ValueOutputStream vos = new ValueOutputStream(this.poolFile);
+          for (int i = 0; i < this.buf.length; i++) {
+            this.buf[i].write(vos);
+          }
+          vos.close();
+          this.poolFile = null;
+          this.notify();
+          if (this.reader != null)
+            this.reader.wakeup();
+        }
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       // Assert.printStack(e);
-        MP.printError(EC.SYSTEM_ERROR_WRITING_POOL, e.getMessage(), e);
+      MP.printError(EC.SYSTEM_ERROR_WRITING_POOL, e.getMessage(), e);
       System.exit(1);
     }
   }
-  
+
 }

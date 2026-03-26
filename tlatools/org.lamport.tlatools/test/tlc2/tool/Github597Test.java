@@ -45,11 +45,11 @@ public class Github597Test extends ModelCheckerTestCase {
 	protected boolean noRandomFPandSeed() {
 		return false;
 	}
-	
+
 	protected boolean doCoverage() {
 		return false;
 	}
-	
+
 	protected boolean doDump() {
 		return false;
 	}

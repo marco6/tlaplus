@@ -278,7 +278,7 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 				// if not in the symbol table and not "@", then it is an unresolved symbol
 				errors.addError(ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
 						treeNode.getLocation(), "Could not find declaration or definition of symbol '"
-						+ UniqueString.uniqueStringOf(compoundID.toString()) + "'.");
+								+ UniqueString.uniqueStringOf(compoundID.toString()) + "'.");
 			}
 		}
 
@@ -405,64 +405,62 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 				opsSTN[i] = stn;
 				opNames[i] = stn.getUS();
 				switch (stn.getKind()) {
-				case IDENTIFIER:
-				case N_InfixOp:
-				case N_NonExpPrefixOp:
-				case N_PostfixOp:
-				case N_PrefixOp:
-				case ProofStepLexeme:
-// xyz: following case added by LL on 13 Oct 2007
-//           
-				case ProofImplicitStepLexeme:
-					ops[i] = NameSel;
-					break;
+					case IDENTIFIER:
+					case N_InfixOp:
+					case N_NonExpPrefixOp:
+					case N_PostfixOp:
+					case N_PrefixOp:
+					case ProofStepLexeme:
+						// xyz: following case added by LL on 13 Oct 2007
+						//
+					case ProofImplicitStepLexeme:
+						ops[i] = NameSel;
+						break;
 
-				case N_StructOp:
-					if (stn.heirs().length > 0) {
-						/************************************************************
-						 * This is a number. *
-						 ************************************************************/
-						TreeNode numNode = stn.heirs()[0].heirs()[0];
-						ops[i] = Integer.parseInt(numNode.getImage());
-					} else {
-						/************************************************************
-						 * This is not a number, so it is ">>", "<<", "@", or ":". *
-						 ************************************************************/
-						UniqueString us = stn.getUS();
-						if (us == GGUS) {
-							ops[i] = GGSel;
-						} else if (us == LLUS) {
-							ops[i] = LLSel;
-						} else if (us == ColonUS) {
-							ops[i] = ColonSel;
-						} else if (us == AtUS) {
-							ops[i] = AtSel;
+					case N_StructOp:
+						if (stn.heirs().length > 0) {
+							/************************************************************
+							 * This is a number. *
+							 ************************************************************/
+							TreeNode numNode = stn.heirs()[0].heirs()[0];
+							ops[i] = Integer.parseInt(numNode.getImage());
 						} else {
-							throw errors.addError(
+							/************************************************************
+							 * This is not a number, so it is ">>", "<<", "@", or ":". *
+							 ************************************************************/
+							UniqueString us = stn.getUS();
+							if (us == GGUS) {
+								ops[i] = GGSel;
+							} else if (us == LLUS) {
+								ops[i] = LLSel;
+							} else if (us == ColonUS) {
+								ops[i] = ColonSel;
+							} else if (us == AtUS) {
+								ops[i] = AtSel;
+							} else {
+								throw errors.addError(
+										ErrorCode.INTERNAL_ERROR,
+										stn.getLocation(),
+										"Internal error: Unexpected selector `" + stn.getImage() + "'.");
+							}
+						} // if stn.heirs().length > 0
+						break;
+
+					case N_OpArgs:
+						ops[i] = NullSel;
+						break;
+
+					default:
+						/***************************************************************
+						 * This error occurs on silly input like * * USE DEF <<1, 2>> * * It therefore
+						 * seems better to report a mysterious error and * let processing continue in
+						 * the hopes that it will generate * a later, more useful error. *
+						 ***************************************************************/
+						errors.addError(
 								ErrorCode.INTERNAL_ERROR,
 								stn.getLocation(),
-								"Internal error: Unexpected selector `" + stn.getImage() + "'."
-							);
-						}
-					} // if stn.heirs().length > 0
-					break;
-
-				case N_OpArgs:
-					ops[i] = NullSel;
-					break;
-
-				default:
-					/***************************************************************
-					 * This error occurs on silly input like * * USE DEF <<1, 2>> * * It therefore
-					 * seems better to report a mysterious error and * let processing continue in
-					 * the hopes that it will generate * a later, more useful error. *
-					 ***************************************************************/
-					errors.addError(
-						ErrorCode.INTERNAL_ERROR,
-						stn.getLocation(),
-						"Unexpected token found."
-					);
-					break;
+								"Unexpected token found.");
+						break;
 				}
 				;
 			} // for
@@ -483,22 +481,22 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 
 	} // class Selector
 
-//  private ExprOrOpArgNode[] opArgsToArray(SyntaxTreeNode opArgNode) 
-//    /***********************************************************************
-//    * Converts an OpArgs node to the array of ExprOrOpArgNodes that it     *
-//    * specifies.                                                           *
-//    *                                                                      *
-//    * opArgNode should be of kind N_OpArgs.                                *
-//    ***********************************************************************/
-//    throws AbortException {
-//      SyntaxTreeNode[] heirs = opArgNode.heirs() ;
-//      int arity = (heirs.length - 1) / 2 ;
-//      ExprOrOpArgNode[] retval = new ExprOrOpArgNode[arity] ;
-//      for (i = 0 ; i < arity ; i++) {
-//        retval[i] = generateExprOrOpArg(
-//                     ) ;
-//       } // for      
-//   } //  opArgsToArray
+	// private ExprOrOpArgNode[] opArgsToArray(SyntaxTreeNode opArgNode)
+	// /***********************************************************************
+	// * Converts an OpArgs node to the array of ExprOrOpArgNodes that it *
+	// * specifies. *
+	// * *
+	// * opArgNode should be of kind N_OpArgs. *
+	// ***********************************************************************/
+	// throws AbortException {
+	// SyntaxTreeNode[] heirs = opArgNode.heirs() ;
+	// int arity = (heirs.length - 1) / 2 ;
+	// ExprOrOpArgNode[] retval = new ExprOrOpArgNode[arity] ;
+	// for (i = 0 ; i < arity ; i++) {
+	// retval[i] = generateExprOrOpArg(
+	// ) ;
+	// } // for
+	// } // opArgsToArray
 
 	private Selector genIdToSelector(SyntaxTreeNode genId) throws AbortException {
 		/***********************************************************************
@@ -525,42 +523,41 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			;
 			SyntaxTreeNode thisPrefix = (SyntaxTreeNode) pe[0];
 			switch (thisPrefix.getKind()) {
-			case N_OpArgs:
-				retval.addSelector(thisPrefix, thisPrefix);
-				break;
-			case N_StructOp:
-				retval.addSelector(thisPrefix, null);
-				break;
-			default:
-				/*****************************************************************
-				 * This must be an identifier or operator. It may or may not * have arguments. *
-				 *****************************************************************/
-				if (prefixElts[i].heirs().length == 2) {
-					/***************************************************************
-					 * There are no arguments (the 2nd heir is the "!"). *
-					 ***************************************************************/
+				case N_OpArgs:
+					retval.addSelector(thisPrefix, thisPrefix);
+					break;
+				case N_StructOp:
 					retval.addSelector(thisPrefix, null);
-				} else {
-					/***************************************************************
-					 * There are arguments, which are heirs()[1]. *
-					 ***************************************************************/
-					if (prefixElts[i].heirs().length != 3) {
-						// Note added 13 April 2015 by LL:
-						// This error is caused by the spurious "(x)" in the leaf proof
-						// BY ... DEF A!foo(x)
-						// It would be nice if this produced a more helpful error
-						// message, but I have no idea if there are other bad inputs
-						// that can cause it.
-						throw errors.addError(
-							ErrorCode.INTERNAL_ERROR,
-							prefixElts[i].getLocation(),
-							"Internal error: IdPrefixElement has other than 2 or 3 heirs."
-						);
-					}
-					;
-					retval.addSelector(thisPrefix, (SyntaxTreeNode) prefixElts[i].heirs()[1]);
-				} // if}
-				break;
+					break;
+				default:
+					/*****************************************************************
+					 * This must be an identifier or operator. It may or may not * have arguments. *
+					 *****************************************************************/
+					if (prefixElts[i].heirs().length == 2) {
+						/***************************************************************
+						 * There are no arguments (the 2nd heir is the "!"). *
+						 ***************************************************************/
+						retval.addSelector(thisPrefix, null);
+					} else {
+						/***************************************************************
+						 * There are arguments, which are heirs()[1]. *
+						 ***************************************************************/
+						if (prefixElts[i].heirs().length != 3) {
+							// Note added 13 April 2015 by LL:
+							// This error is caused by the spurious "(x)" in the leaf proof
+							// BY ... DEF A!foo(x)
+							// It would be nice if this produced a more helpful error
+							// message, but I have no idea if there are other bad inputs
+							// that can cause it.
+							throw errors.addError(
+									ErrorCode.INTERNAL_ERROR,
+									prefixElts[i].getLocation(),
+									"Internal error: IdPrefixElement has other than 2 or 3 heirs.");
+						}
+						;
+						retval.addSelector(thisPrefix, (SyntaxTreeNode) prefixElts[i].heirs()[1]);
+					} // if}
+					break;
 			} // switch
 		}
 		; // for i
@@ -707,855 +704,843 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			 *********************************************************************/
 			if ((sel.args[idx] != null) && (sel.args[idx].getKind() != N_OpArgs)) {
 				throw errors.addError(
-					ErrorCode.INTERNAL_ERROR,
-					sel.args[idx].getLocation(),
-					"Internal error: Unexpected syntax node kind."
-				);
+						ErrorCode.INTERNAL_ERROR,
+						sel.args[idx].getLocation(),
+						"Internal error: Unexpected syntax node kind.");
 			}
 			;
 
 			switch (mode) {
-			case FindingOpName:
-				// Following code changed on 23 Sep 2009 to fix bug, and corrected
-				// on 9 Nov 2009. See description in Subexpression.tla.
-				SymbolNode newSymbolNode = null;
-				final Vector<TreeNode> tempArgs = new Vector<>();
-				// a vector of SyntaxTreeNode objects, one for each argument
-				// found for an undefined operator name in the following loop
+				case FindingOpName:
+					// Following code changed on 23 Sep 2009 to fix bug, and corrected
+					// on 9 Nov 2009. See description in Subexpression.tla.
+					SymbolNode newSymbolNode = null;
+					final Vector<TreeNode> tempArgs = new Vector<>();
+					// a vector of SyntaxTreeNode objects, one for each argument
+					// found for an undefined operator name in the following loop
 
-				while (newSymbolNode == null && idx < sel.args.length) {
-					/******************************************************************
-					 * +cal: newName := IF IsName(ops[idx]) ... ELSE null ; *
-					 ******************************************************************/
-					if (sel.ops[idx] == NameSel) {
-						if (curName == null) {
-							newName = Operators.resolveSynonym(sel.opNames[idx]);
-							/************************************************************
-							 * Need to call resolveSynonym so things like (+), aka * \oplus, are handled
-							 * properly. *
-							 ************************************************************/
-						} else {
-							newName = UniqueString.uniqueStringOf(
-									curName.toString() + "!" + Operators.resolveSynonym(sel.opNames[idx]).toString());
-						}
-						;
-					} // if (sel.ops[idx] = NameSel)
-					else {
-						newName = null;
-					}
-					;
-
-					if ((curName == null) && (sel.ops[idx] != NameSel)) {
-						if (idx == 0) {
-							errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-									sel.opsSTN[idx].getLocation(),
-									"Need name or step number here, not `" + sel.opNames[idx] + "'.");
-							return nullOAN;
-						} else {
-							throw errors.addError(
-								ErrorCode.INTERNAL_ERROR,
-								sel.opsSTN[idx].getLocation(),
-								"Internal error: should have name here."
-							);
-						}
-					}
-					; // if (curName == null) ... ;
-					if (newName != null) {
-						if (letInContext == null) {
-							/***************************************************************
-							 * See the comments for the declaration of letInContext. *
-							 ***************************************************************/
-							newSymbolNode = symbolTable.resolveSymbol(newName);
-						} else {
-							newSymbolNode = letInContext.getSymbol(newName);
-						}
-						;
-					}
-					; // if (newName != null)
-					if (newSymbolNode == null) {
-						curName = newName;
-						if (sel.args[idx] != null) {
-							// sel.args[idx].heirs() is the array of SyntaxTreeNode objects
-							// representing:
-							// "(" "arg1" "," ... "," "arg_n" ")"
-							// We add these SyntaxTreeNode objects to tempArgs.
-							int numOfOpArgs = (sel.args[idx].heirs().length - 1) / 2;
-							for (int i = 0; i < numOfOpArgs; i++) {
-								tempArgs.addElement(sel.args[idx].heirs()[2 * i + 1]);
-							}
-						}
-						idx++;
-					}
-				} // while (newNode == null)
-
-				if (newSymbolNode == null) {
-					int eidx = (idx < sel.args.length) ? idx : (sel.args.length - 1);
-					errors.addError(ErrorCode.SYMBOL_UNDEFINED,
-							sel.opsSTN[eidx].getLocation(),
-							"Unknown operator: `" + selectorItemToString(sel, eidx) + "'.");
-					return nullOAN;
-				}
-				;
-
-				if (newSymbolNode.getKind() == ModuleKind) {
-					errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-							sel.opsSTN[idx].getLocation(),
-							"Module name (" + sel.opNames[idx].toString() + ") not allowed here.");
-					return nullOAN;
-				}
-				; // if
-
-				curNode = newSymbolNode;
-				SymbolNode curSymbolNode = newSymbolNode;
-				/****************************************************************
-				 * A version of curNode "cast" as a SymbolNode. *
-				 ****************************************************************/
-				curName = newName;
-				switch (curSymbolNode.getKind()) {
-				case ConstantDeclKind:
-				case VariableDeclKind:
-				case FormalParamKind:
-				case BuiltInKind:
-				case NewConstantKind:
-				case NewVariableKind:
-				case NewStateKind:
-				case NewActionKind:
-				case NewTemporalKind:
-				case NumberedProofStepKind:
-					/**************************************************************
-					 * This last case added by LL on 17 Aug 2007. I think it * fits in here nicely,
-					 * but I wouldn't swear to it. *
-					 **************************************************************/
-					if (idx != 0) {
-						throw errors.addError(
-							ErrorCode.INTERNAL_ERROR,
-							sel.selSTN.getLocation(),
-							"Internal error: impossible naming of declaration."
-						);
-					} else if (sel.ops.length != 1) {
-						errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-								sel.opsSTN[idx].getLocation(),
-								"Cannot take subexpression of `" + curName.toString() + "'.");
-						return nullOAN;
-					} // ;
-
-					/****************************************************************
-					 * Warning: horrible Java programming hack. There is * deliberately no break
-					 * here, so this case "joins" the * following case. *
-					 ****************************************************************/
-					//$FALL-THROUGH$
-				case UserDefinedOpKind:
-				case ThmOrAssumpDefKind:
-				case ModuleInstanceKind:
-					/**************************************************************
-					 * +cal: nodeArity := Arity(curNode) ; *
-					 **************************************************************/
-					int nodeArity = curSymbolNode.getArity();
-					/**************************************************************
-					 * +cal: if expectedArity = 0 *
-					 **************************************************************/
-					if (expectedArity == 0) {
-						SyntaxTreeNode opArgs = sel.args[idx];
-						int numOfOpArgs = 0;
-						if (opArgs != null) {
-							// if there are arguments, add them to tempArgs.
-							/**********************************************************
-							 * The heirs of an oparg node are * * "(" "arg1" "," ... "," "arg_n" ")" *
-							 **********************************************************/
-							numOfOpArgs = (opArgs.heirs().length - 1) / 2;
-							for (int i = 0; i < numOfOpArgs; i++) {
-								tempArgs.addElement(sel.args[idx].heirs()[2 * i + 1]);
-							}
-							;
-
-						}
-						;
-						/**************************************************************
-						 * +cal then if opDefArityFound + Len(tempArgs) # nodeArity *
-						 **************************************************************/
-						if (opDefArityFound + tempArgs.size() != nodeArity) {
-							errors.addError(ErrorCode.OPERATOR_GIVEN_INCORRECT_NUMBER_OF_ARGUMENTS,
-									(opArgs == null) ? sel.selSTN.getLocation() : sel.args[idx].getLocation(),
-									"The operator " + curName.toString() + " requires " + (nodeArity - opDefArityFound)
-											+ " arguments.");
-							return nullOAN;
-						}
-						; // if
-						ExprOrOpArgNode[] opArgNodes = new ExprOrOpArgNode[tempArgs.size()];
-						/**********************************************************
-						 * The array of semantic nodes generated by the arguments. *
-						 **********************************************************/
-						for (int i = 0; i < tempArgs.size(); i++) {
-							/**********************************************************
-							 * Call generateExprOrOpArg to generate the semantic * nodes for the arguments
-							 * and add them to the vector * opDefArgs. Note that curSymbolNode is used as
-							 * the * argument to generateExprOrOpArg that specifies the * operator to which
-							 * the arguments are being given. (The * comments for that method assumes that
-							 * the operator * arguments appear in an OpApplication node, but the * method
-							 * doesn't really care; it just uses that operator * to check the arity of the
-							 * arguments.) Note that * argument number i of sel.args[idx] represents
-							 * argument * number i + opDefArityFound of the operator described * by
-							 * curSymbolNode. *
-							 **********************************************************/
-							opDefArgs.addElement(generateExprOrOpArg(curSymbolNode, sel.opsSTN[idx],
-									i + opDefArityFound, tempArgs.elementAt(i), cm));
-						}
-						; // end for
-
-					} // if expectedArity = 0
-					/**************************************************************
-					 * +cal: else if expectedArity > 0) *
-					 **************************************************************/
-					else {
-						if (expectedArity > 0) {
-							/**********************************************************
-							 * Subexpression.tla has a test to report an error if a * higher-order operator
-							 * is specified, since such an * operator can't be used as an operator argument.
-							 * That * test is eliminated here because this error should be * caught by the
-							 * caller of the selectorToNode method. *
-							 **********************************************************/
-						}
-					}
-					; // else [expectedArity != 0]
-					opDefArityFound = nodeArity;
-
-					if (curNode.getKind() == ModuleInstanceKind) {
-						if ((idx == sel.ops.length - 1) && !(isDef || isFact)) {
-							errors.addError(ErrorCode.OPERATOR_NAME_INCOMPLETE,
-									sel.opsSTN[idx].getLocation(),
-									"Operator name " + curName.toString() + " is incomplete.");
-							return nullOAN;
-						}
-						;
-					} else {
-						/**************************************************************
-						 * curNode.getKind() \in * {UserDefinedOpKind, ThmOrAssumpDefKind, *
-						 * ConstantDeclKind, VariableDeclKind, FormalParamKind, * BuiltInKind,
-						 * BoundSymbolKind, NumberedProofStepKind} *
-						 **************************************************************/
-						/**************************************************************
-						 * +cal: then if /\ curNode.kind = UserDefinedOpKind ... *
-						 **************************************************************/
-						if ((curNode.getKind() == UserDefinedOpKind) && (!((OpDefNode) curNode).isDefined)
-								&& (sel.ops.length != 1)) {
-							errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-									sel.opsSTN[idx].getLocation(), "Subexpression of  `" + curName.toString()
-									+ "' used inside the operator's definition.");
-							return nullOAN;
-						}
-						;
-
-						/**************************************************************
-						 * +cal: if /\ firstFindingOpName ... *
-						 **************************************************************/
-						if (firstFindingOpName && ((curNode.getKind() == UserDefinedOpKind)
-								|| (curNode.getKind() == ThmOrAssumpDefKind))) {
-							subExprOf = (SymbolNode) curNode;
-						}
-						/**************************************************************
-						 * +cal: idx # Len(ops) *
-						 **************************************************************/
-						if (idx != sel.ops.length - 1) {
-							FormalParamNode[] opParams;
-							if (curNode.getKind() == UserDefinedOpKind) {
-								opParams = ((OpDefNode) curNode).getParams();
-								newNode = ((OpDefNode) curNode).getBody();
-							} // if
-							else { // curNode.getKind() == ThmOrAssumpDefKind
-								opParams = ((ThmOrAssumpDefNode) curNode).getParams();
-								newNode = ((ThmOrAssumpDefNode) curNode).getBody();
-							}
-							;
-							for (int i = 0; i < opParams.length; i++) {
-								params.addElement(opParams[i]);
-							}
-							; // for
-							curName = null;
-							if (sel.ops[idx + 1] == NameSel) {
-								mode = FollowingLabels;
+					while (newSymbolNode == null && idx < sel.args.length) {
+						/******************************************************************
+						 * +cal: newName := IF IsName(ops[idx]) ... ELSE null ; *
+						 ******************************************************************/
+						if (sel.ops[idx] == NameSel) {
+							if (curName == null) {
+								newName = Operators.resolveSynonym(sel.opNames[idx]);
+								/************************************************************
+								 * Need to call resolveSynonym so things like (+), aka * \oplus, are handled
+								 * properly. *
+								 ************************************************************/
 							} else {
-								mode = FindingSubExpr;
+								newName = UniqueString.uniqueStringOf(
+										curName.toString() + "!"
+												+ Operators.resolveSynonym(sel.opNames[idx]).toString());
 							}
 							;
-							for (int i = 0; i < opDefArgs.size(); i++) {
-								allArgs.addElement(opDefArgs.elementAt(i));
-							}
-							; // for
-							opDefArityFound = 0;
-							opDefArgs = new Vector<>();
+						} // if (sel.ops[idx] = NameSel)
+						else {
+							newName = null;
+						}
+						;
 
-							/************************************************************
-							 * If newNode = null, then I think there's an error. It * should be caught
-							 * later. *
-							 ************************************************************/
-							if (newNode != null) {
-								while (newNode.getKind() == SubstInKind) {
-									substInPrefix.addElement(newNode);
-									newNode = ((SubstInNode) newNode).getBody();
+						if ((curName == null) && (sel.ops[idx] != NameSel)) {
+							if (idx == 0) {
+								errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+										sel.opsSTN[idx].getLocation(),
+										"Need name or step number here, not `" + sel.opNames[idx] + "'.");
+								return nullOAN;
+							} else {
+								throw errors.addError(
+										ErrorCode.INTERNAL_ERROR,
+										sel.opsSTN[idx].getLocation(),
+										"Internal error: should have name here.");
+							}
+						}
+						; // if (curName == null) ... ;
+						if (newName != null) {
+							if (letInContext == null) {
+								/***************************************************************
+								 * See the comments for the declaration of letInContext. *
+								 ***************************************************************/
+								newSymbolNode = symbolTable.resolveSymbol(newName);
+							} else {
+								newSymbolNode = letInContext.getSymbol(newName);
+							}
+							;
+						}
+						; // if (newName != null)
+						if (newSymbolNode == null) {
+							curName = newName;
+							if (sel.args[idx] != null) {
+								// sel.args[idx].heirs() is the array of SyntaxTreeNode objects
+								// representing:
+								// "(" "arg1" "," ... "," "arg_n" ")"
+								// We add these SyntaxTreeNode objects to tempArgs.
+								int numOfOpArgs = (sel.args[idx].heirs().length - 1) / 2;
+								for (int i = 0; i < numOfOpArgs; i++) {
+									tempArgs.addElement(sel.args[idx].heirs()[2 * i + 1]);
 								}
-								; // while
-								while (newNode.getKind() == APSubstInKind) {
-									substInPrefix.addElement(newNode);
-									newNode = ((APSubstInNode) newNode).getBody();
-								}
-								; // while
 							}
-							;
-							if (mode == FindingSubExpr) {
-								curNode = newNode;
-							}
-							;
-						} // if (idx != sel.ops.length - 1)
-					} // else curNode.getKind() \in {UserDefinedOpKind, ...}
-					prevMode = FindingOpName;
-					break;
+							idx++;
+						}
+					} // while (newNode == null)
 
-				default:
-					throw errors.addError(
-						ErrorCode.INTERNAL_ERROR,
-						sel.opsSTN[idx].getLocation(),
-						"Internal error: unexpected node kind."
-					);
-				}
-				; // switch (curSymbolNode.getKind())
-
-				break; // case FindingOpName
-
-			case FollowingLabels:
-				/******************************************************************
-				 * Invariant: sel.ops[idx] = NameSel *
-				 ******************************************************************/
-				if (((prevMode == FindingOpName) && (curNode.getKind() != UserDefinedOpKind)
-						&& (curNode.getKind() != ThmOrAssumpDefKind))
-						|| ((prevMode != FindingOpName) && (curNode.getKind() != LabelKind))) {
-					throw errors.addError(
-						ErrorCode.INTERNAL_ERROR,
-						sel.selSTN.getLocation(),
-						"Unexpected node kind in FollowingLabels mode."
-					);
-				}
-				;
-
-				LabelNode newLabelNode = ((OpDefOrLabelNode) curNode).getLabel(sel.opNames[idx]);
-
-				if (newLabelNode == null) {
-					// This would be a general "unknown operator" error
-					errors.addError(ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
-							sel.opsSTN[idx].getLocation(),
-							"Cannot find label `" + sel.opNames[idx].toString() + "'.");
-					return nullOAN;
-				}
-				;
-
-				curNode = newLabelNode;
-
-				if (illegalLabelRef(newLabelNode, sel.opsSTN[idx])) {
-					errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-							sel.opsSTN[idx].getLocation(),
-							"Accessing subexpression labeled `" + sel.opNames[idx].toString()
-									+ "' of ASSUME/PROVE clause within the scope of "
-									+ "a declaration\n from outside that declaration's scope.");
-					return nullOAN;
-				}
-				;
-
-				if (expectedArity == 0) {
-
-					/****************************************************************
-					 * Check that label has right number of arguments. *
-					 ****************************************************************/
-					if (newLabelNode
-							.getArity() != ((sel.args[idx] == null) ? 0 : (sel.args[idx].heirs().length - 1) / 2)) {
-						errors.addError(ErrorCode.LABEL_GIVEN_INCORRECT_NUMBER_OF_ARGUMENTS,
-								sel.opsSTN[idx].getLocation(),
-								"Label `" + sel.opNames[idx].toString() + "' used with wrong number of arguments.");
+					if (newSymbolNode == null) {
+						int eidx = (idx < sel.args.length) ? idx : (sel.args.length - 1);
+						errors.addError(ErrorCode.SYMBOL_UNDEFINED,
+								sel.opsSTN[eidx].getLocation(),
+								"Unknown operator: `" + selectorItemToString(sel, eidx) + "'.");
 						return nullOAN;
 					}
 					;
-					for (int i = 0; i < newLabelNode.getArity(); i++) {
-						allArgs.addElement(generateExpression(sel.args[idx].heirs()[2 * i + 1], cm));
-					}
-					;
-				}
-				; // if (expectedArity == 0)
 
-				for (int i = 0; i < newLabelNode.getArity(); i++) {
-					FormalParamNode pdecl = newLabelNode.params[i];
-					params.addElement(pdecl);
-				}
-				;
-
-				if ((idx < sel.ops.length - 1) && (sel.ops[idx + 1] != NameSel)) {
-					mode = FindingSubExpr;
-				}
-				;
-
-				if ((mode == FindingSubExpr) || (idx == sel.ops.length)) {
-					curNode = newLabelNode.getBody();
-				}
-				;
-
-				prevMode = FollowingLabels;
-				break; // case FollowingLabels
-
-			case FindingSubExpr:
-				if (sel.ops[idx] == ColonSel) {
-					if ((prevMode == FindingSubExpr) || !(((idx == sel.ops.length - 1) && (prevMode == FindingOpName))
-							|| ((idx < sel.ops.length - 1) && (sel.ops[idx + 1] == NameSel)))) {
+					if (newSymbolNode.getKind() == ModuleKind) {
 						errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
 								sel.opsSTN[idx].getLocation(),
-								"`!:' can be used only after a name and either at the "
-										+ "end after an\noperator name or before an operator name.");
+								"Module name (" + sel.opNames[idx].toString() + ") not allowed here.");
 						return nullOAN;
-					} // if ( (prevMode == FindingSubExpr) ...)
-				} // if (sel.ops[idx] == ColonSel)
-				else if (curNode == null) {
-					errors.addError(
-						ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-						sel.opsSTN[idx].getLocation(),
-						"Subexpression selection failed, probably due to "
-						+ "an error in the selected expression."
-					);
-					return nullOAN;
-				} else if (curNode.getKind() == LetInKind) {
-					if (ArgNum(sel.ops[idx], 1) == 1) {
-						curNode = ((LetInNode) curNode).getBody();
-					} else {
-						errors.addError(
-							ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-							sel.opsSTN[idx].getLocation(),
-							"A LET/IN expression has only one operand."
-						);
+					}
+					; // if
+
+					curNode = newSymbolNode;
+					SymbolNode curSymbolNode = newSymbolNode;
+					/****************************************************************
+					 * A version of curNode "cast" as a SymbolNode. *
+					 ****************************************************************/
+					curName = newName;
+					switch (curSymbolNode.getKind()) {
+						case ConstantDeclKind:
+						case VariableDeclKind:
+						case FormalParamKind:
+						case BuiltInKind:
+						case NewConstantKind:
+						case NewVariableKind:
+						case NewStateKind:
+						case NewActionKind:
+						case NewTemporalKind:
+						case NumberedProofStepKind:
+							/**************************************************************
+							 * This last case added by LL on 17 Aug 2007. I think it * fits in here nicely,
+							 * but I wouldn't swear to it. *
+							 **************************************************************/
+							if (idx != 0) {
+								throw errors.addError(
+										ErrorCode.INTERNAL_ERROR,
+										sel.selSTN.getLocation(),
+										"Internal error: impossible naming of declaration.");
+							} else if (sel.ops.length != 1) {
+								errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+										sel.opsSTN[idx].getLocation(),
+										"Cannot take subexpression of `" + curName.toString() + "'.");
+								return nullOAN;
+							} // ;
+
+							/****************************************************************
+							 * Warning: horrible Java programming hack. There is * deliberately no break
+							 * here, so this case "joins" the * following case. *
+							 ****************************************************************/
+							//$FALL-THROUGH$
+						case UserDefinedOpKind:
+						case ThmOrAssumpDefKind:
+						case ModuleInstanceKind:
+							/**************************************************************
+							 * +cal: nodeArity := Arity(curNode) ; *
+							 **************************************************************/
+							int nodeArity = curSymbolNode.getArity();
+							/**************************************************************
+							 * +cal: if expectedArity = 0 *
+							 **************************************************************/
+							if (expectedArity == 0) {
+								SyntaxTreeNode opArgs = sel.args[idx];
+								int numOfOpArgs = 0;
+								if (opArgs != null) {
+									// if there are arguments, add them to tempArgs.
+									/**********************************************************
+									 * The heirs of an oparg node are * * "(" "arg1" "," ... "," "arg_n" ")" *
+									 **********************************************************/
+									numOfOpArgs = (opArgs.heirs().length - 1) / 2;
+									for (int i = 0; i < numOfOpArgs; i++) {
+										tempArgs.addElement(sel.args[idx].heirs()[2 * i + 1]);
+									}
+									;
+
+								}
+								;
+								/**************************************************************
+								 * +cal then if opDefArityFound + Len(tempArgs) # nodeArity *
+								 **************************************************************/
+								if (opDefArityFound + tempArgs.size() != nodeArity) {
+									errors.addError(ErrorCode.OPERATOR_GIVEN_INCORRECT_NUMBER_OF_ARGUMENTS,
+											(opArgs == null) ? sel.selSTN.getLocation() : sel.args[idx].getLocation(),
+											"The operator " + curName.toString() + " requires "
+													+ (nodeArity - opDefArityFound)
+													+ " arguments.");
+									return nullOAN;
+								}
+								; // if
+								ExprOrOpArgNode[] opArgNodes = new ExprOrOpArgNode[tempArgs.size()];
+								/**********************************************************
+								 * The array of semantic nodes generated by the arguments. *
+								 **********************************************************/
+								for (int i = 0; i < tempArgs.size(); i++) {
+									/**********************************************************
+									 * Call generateExprOrOpArg to generate the semantic * nodes for the arguments
+									 * and add them to the vector * opDefArgs. Note that curSymbolNode is used as
+									 * the * argument to generateExprOrOpArg that specifies the * operator to which
+									 * the arguments are being given. (The * comments for that method assumes that
+									 * the operator * arguments appear in an OpApplication node, but the * method
+									 * doesn't really care; it just uses that operator * to check the arity of the
+									 * arguments.) Note that * argument number i of sel.args[idx] represents
+									 * argument * number i + opDefArityFound of the operator described * by
+									 * curSymbolNode. *
+									 **********************************************************/
+									opDefArgs.addElement(generateExprOrOpArg(curSymbolNode, sel.opsSTN[idx],
+											i + opDefArityFound, tempArgs.elementAt(i), cm));
+								}
+								; // end for
+
+							} // if expectedArity = 0
+							/**************************************************************
+							 * +cal: else if expectedArity > 0) *
+							 **************************************************************/
+							else {
+								if (expectedArity > 0) {
+									/**********************************************************
+									 * Subexpression.tla has a test to report an error if a * higher-order operator
+									 * is specified, since such an * operator can't be used as an operator argument.
+									 * That * test is eliminated here because this error should be * caught by the
+									 * caller of the selectorToNode method. *
+									 **********************************************************/
+								}
+							}
+							; // else [expectedArity != 0]
+							opDefArityFound = nodeArity;
+
+							if (curNode.getKind() == ModuleInstanceKind) {
+								if ((idx == sel.ops.length - 1) && !(isDef || isFact)) {
+									errors.addError(ErrorCode.OPERATOR_NAME_INCOMPLETE,
+											sel.opsSTN[idx].getLocation(),
+											"Operator name " + curName.toString() + " is incomplete.");
+									return nullOAN;
+								}
+								;
+							} else {
+								/**************************************************************
+								 * curNode.getKind() \in * {UserDefinedOpKind, ThmOrAssumpDefKind, *
+								 * ConstantDeclKind, VariableDeclKind, FormalParamKind, * BuiltInKind,
+								 * BoundSymbolKind, NumberedProofStepKind} *
+								 **************************************************************/
+								/**************************************************************
+								 * +cal: then if /\ curNode.kind = UserDefinedOpKind ... *
+								 **************************************************************/
+								if ((curNode.getKind() == UserDefinedOpKind) && (!((OpDefNode) curNode).isDefined)
+										&& (sel.ops.length != 1)) {
+									errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+											sel.opsSTN[idx].getLocation(), "Subexpression of  `" + curName.toString()
+													+ "' used inside the operator's definition.");
+									return nullOAN;
+								}
+								;
+
+								/**************************************************************
+								 * +cal: if /\ firstFindingOpName ... *
+								 **************************************************************/
+								if (firstFindingOpName && ((curNode.getKind() == UserDefinedOpKind)
+										|| (curNode.getKind() == ThmOrAssumpDefKind))) {
+									subExprOf = (SymbolNode) curNode;
+								}
+								/**************************************************************
+								 * +cal: idx # Len(ops) *
+								 **************************************************************/
+								if (idx != sel.ops.length - 1) {
+									FormalParamNode[] opParams;
+									if (curNode.getKind() == UserDefinedOpKind) {
+										opParams = ((OpDefNode) curNode).getParams();
+										newNode = ((OpDefNode) curNode).getBody();
+									} // if
+									else { // curNode.getKind() == ThmOrAssumpDefKind
+										opParams = ((ThmOrAssumpDefNode) curNode).getParams();
+										newNode = ((ThmOrAssumpDefNode) curNode).getBody();
+									}
+									;
+									for (int i = 0; i < opParams.length; i++) {
+										params.addElement(opParams[i]);
+									}
+									; // for
+									curName = null;
+									if (sel.ops[idx + 1] == NameSel) {
+										mode = FollowingLabels;
+									} else {
+										mode = FindingSubExpr;
+									}
+									;
+									for (int i = 0; i < opDefArgs.size(); i++) {
+										allArgs.addElement(opDefArgs.elementAt(i));
+									}
+									; // for
+									opDefArityFound = 0;
+									opDefArgs = new Vector<>();
+
+									/************************************************************
+									 * If newNode = null, then I think there's an error. It * should be caught
+									 * later. *
+									 ************************************************************/
+									if (newNode != null) {
+										while (newNode.getKind() == SubstInKind) {
+											substInPrefix.addElement(newNode);
+											newNode = ((SubstInNode) newNode).getBody();
+										}
+										; // while
+										while (newNode.getKind() == APSubstInKind) {
+											substInPrefix.addElement(newNode);
+											newNode = ((APSubstInNode) newNode).getBody();
+										}
+										; // while
+									}
+									;
+									if (mode == FindingSubExpr) {
+										curNode = newNode;
+									}
+									;
+								} // if (idx != sel.ops.length - 1)
+							} // else curNode.getKind() \in {UserDefinedOpKind, ...}
+							prevMode = FindingOpName;
+							break;
+
+						default:
+							throw errors.addError(
+									ErrorCode.INTERNAL_ERROR,
+									sel.opsSTN[idx].getLocation(),
+									"Internal error: unexpected node kind.");
+					}
+					; // switch (curSymbolNode.getKind())
+
+					break; // case FindingOpName
+
+				case FollowingLabels:
+					/******************************************************************
+					 * Invariant: sel.ops[idx] = NameSel *
+					 ******************************************************************/
+					if (((prevMode == FindingOpName) && (curNode.getKind() != UserDefinedOpKind)
+							&& (curNode.getKind() != ThmOrAssumpDefKind))
+							|| ((prevMode != FindingOpName) && (curNode.getKind() != LabelKind))) {
+						throw errors.addError(
+								ErrorCode.INTERNAL_ERROR,
+								sel.selSTN.getLocation(),
+								"Unexpected node kind in FollowingLabels mode.");
+					}
+					;
+
+					LabelNode newLabelNode = ((OpDefOrLabelNode) curNode).getLabel(sel.opNames[idx]);
+
+					if (newLabelNode == null) {
+						// This would be a general "unknown operator" error
+						errors.addError(ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
+								sel.opsSTN[idx].getLocation(),
+								"Cannot find label `" + sel.opNames[idx].toString() + "'.");
 						return nullOAN;
 					}
 					;
-				} // else if (curNode.getKind() == LetInKind)
 
-				else if (curNode.getKind() == OpApplKind) {
-					OpApplNode curOpApplNode = (OpApplNode) curNode;
-					ExprOrOpArgNode[] curArgs = curOpApplNode.getArgs();
-					SymbolNode opNode = curOpApplNode.getOperator();
-					if ((opNode.getKind() == FormalParamKind) || (opNode.getKind() == ConstantDeclKind)
-							|| (opNode.getKind() == UserDefinedOpKind)) {
-						int temp = ArgNum(sel.ops[idx], opNode.getArity());
-						if (temp == -1) {
-							reportSelectorError(sel, idx);
-//               errors.addError(sel.opsSTN[idx].getLocation(),
-//                               "NoNexistent operand specified by `"
-//                                + sel.opNames[idx].toString() + "'.");
+					curNode = newLabelNode;
+
+					if (illegalLabelRef(newLabelNode, sel.opsSTN[idx])) {
+						errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+								sel.opsSTN[idx].getLocation(),
+								"Accessing subexpression labeled `" + sel.opNames[idx].toString()
+										+ "' of ASSUME/PROVE clause within the scope of "
+										+ "a declaration\n from outside that declaration's scope.");
+						return nullOAN;
+					}
+					;
+
+					if (expectedArity == 0) {
+
+						/****************************************************************
+						 * Check that label has right number of arguments. *
+						 ****************************************************************/
+						if (newLabelNode
+								.getArity() != ((sel.args[idx] == null) ? 0 : (sel.args[idx].heirs().length - 1) / 2)) {
+							errors.addError(ErrorCode.LABEL_GIVEN_INCORRECT_NUMBER_OF_ARGUMENTS,
+									sel.opsSTN[idx].getLocation(),
+									"Label `" + sel.opNames[idx].toString() + "' used with wrong number of arguments.");
 							return nullOAN;
 						}
 						;
-						curNode = curArgs[temp - 1];
-					} // if (opNode.getKind() == FormalParamKind) || ...
+						for (int i = 0; i < newLabelNode.getArity(); i++) {
+							allArgs.addElement(generateExpression(sel.args[idx].heirs()[2 * i + 1], cm));
+						}
+						;
+					}
+					; // if (expectedArity == 0)
 
-					else if (opNode.getKind() == BuiltInKind) {
-						if ((opNode.getName() == OP_rc) // $RcdConstructor
-								|| (opNode.getName() == OP_sor)) { // $SetOfRcds
+					for (int i = 0; i < newLabelNode.getArity(); i++) {
+						FormalParamNode pdecl = newLabelNode.params[i];
+						params.addElement(pdecl);
+					}
+					;
 
-							int temp = ArgNum(sel.ops[idx], curArgs.length);
-							if (temp == -1) {
-//                 errors.addError(sel.opsSTN[idx].getLocation(),
-//                                 "NonExistent operand specified by `"
-//                                  + sel.opNames[idx].toString() + "'.");
-								reportSelectorError(sel, idx);
-								return nullOAN;
-							}
-							;
-							curOpApplNode = (OpApplNode) curArgs[temp - 1];
-							if (curOpApplNode.getOperator().getName() != OP_pair) {
-								throw errors.addError(
-									ErrorCode.INTERNAL_ERROR,
+					if ((idx < sel.ops.length - 1) && (sel.ops[idx + 1] != NameSel)) {
+						mode = FindingSubExpr;
+					}
+					;
+
+					if ((mode == FindingSubExpr) || (idx == sel.ops.length)) {
+						curNode = newLabelNode.getBody();
+					}
+					;
+
+					prevMode = FollowingLabels;
+					break; // case FollowingLabels
+
+				case FindingSubExpr:
+					if (sel.ops[idx] == ColonSel) {
+						if ((prevMode == FindingSubExpr)
+								|| !(((idx == sel.ops.length - 1) && (prevMode == FindingOpName))
+										|| ((idx < sel.ops.length - 1) && (sel.ops[idx + 1] == NameSel)))) {
+							errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
 									sel.opsSTN[idx].getLocation(),
-									"Internal error: Expecting $Pair and didn't find it."
-								);
-							}
-							;
-							curNode = curOpApplNode.getArgs()[1];
-						} // if opNode.name == $RcdConstructor or $SetOfRcds
-
-						else if (opNode.getName() == OP_case) { // $Case
-							if (idx == sel.ops.length - 1) {
-								errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-										sel.opsSTN[idx].getLocation(),
-										"Subexpression of CASE must have form !i!j.");
-								return nullOAN;
-							}
-							;
-							int temp = ArgNum(sel.ops[idx], curArgs.length);
-							if (temp == -1) {
-								reportSelectorError(sel, idx);
-								return nullOAN;
-							}
-							;
-							curOpApplNode = (OpApplNode) curArgs[temp - 1];
-							if (curOpApplNode.getOperator().getName() != OP_pair) {
-								throw errors.addError(
-									ErrorCode.INTERNAL_ERROR,
-									sel.opsSTN[idx].getLocation(),
-									"Internal error: Expecting $Pair and didn't find it."
-								);
-							}
-							;
-							idx = idx + 1;
-							temp = ArgNum(sel.ops[idx], 2);
-							if (temp == -1) {
-								errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-										sel.opsSTN[idx].getLocation(),
-										"Second selector for CASE subexpression must specify "
-												+ " one of two operands.");
-								return nullOAN;
-							}
-							;
-							curNode = curOpApplNode.getArgs()[temp - 1];
-							if (curNode == null) {
-								errors.addError(
+									"`!:' can be used only after a name and either at the "
+											+ "end after an\noperator name or before an operator name.");
+							return nullOAN;
+						} // if ( (prevMode == FindingSubExpr) ...)
+					} // if (sel.ops[idx] == ColonSel)
+					else if (curNode == null) {
+						errors.addError(
+								ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+								sel.opsSTN[idx].getLocation(),
+								"Subexpression selection failed, probably due to "
+										+ "an error in the selected expression.");
+						return nullOAN;
+					} else if (curNode.getKind() == LetInKind) {
+						if (ArgNum(sel.ops[idx], 1) == 1) {
+							curNode = ((LetInNode) curNode).getBody();
+						} else {
+							errors.addError(
 									ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
 									sel.opsSTN[idx].getLocation(),
-									"Selecting OTHER in a CASE statement."
-								);
-								return nullOAN;
-							}
-							;
-						} // if opNode.name = $Case
+									"A LET/IN expression has only one operand.");
+							return nullOAN;
+						}
+						;
+					} // else if (curNode.getKind() == LetInKind)
 
-						else if (opNode.getName() == OP_exc) { // $Except
-							/************************************************************
-							 * In an $Except node representing * * [exp_1 ELSE !... = exp_2, ..., !... =
-							 * exp_n] * * operand i names exp_i. *
-							 ************************************************************/
-							int temp = ArgNum(sel.ops[idx], curArgs.length);
+					else if (curNode.getKind() == OpApplKind) {
+						OpApplNode curOpApplNode = (OpApplNode) curNode;
+						ExprOrOpArgNode[] curArgs = curOpApplNode.getArgs();
+						SymbolNode opNode = curOpApplNode.getOperator();
+						if ((opNode.getKind() == FormalParamKind) || (opNode.getKind() == ConstantDeclKind)
+								|| (opNode.getKind() == UserDefinedOpKind)) {
+							int temp = ArgNum(sel.ops[idx], opNode.getArity());
 							if (temp == -1) {
 								reportSelectorError(sel, idx);
-								return nullOAN;
-							}
-							;
-							/************************************************************
-							 * Selection of subexpressions of EXCEPT have been outlawed * because they may
-							 * contain a dangling "@". This doesn't * seem to be worth fixing because it's
-							 * unlikely that * anyone will actually want to refer to such a * subexpression.
-							 * * Change made 25 Oct 2007. *
-							 ************************************************************/
-							if (temp > 1) {
-								errors.addError(
-									ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-									sel.opsSTN[idx].getLocation(),
-									"Selecting subexpression of an EXCEPT not yet implemented."
-								);
+								// errors.addError(sel.opsSTN[idx].getLocation(),
+								// "NoNexistent operand specified by `"
+								// + sel.opNames[idx].toString() + "'.");
 								return nullOAN;
 							}
 							;
 							curNode = curArgs[temp - 1];
-							if (isNullSelection(curNode, sel, idx)) {
-								return nullOAN;
-							}
-							;
-							if (temp > 1) {
-								curOpApplNode = (OpApplNode) curNode;
+						} // if (opNode.getKind() == FormalParamKind) || ...
+
+						else if (opNode.getKind() == BuiltInKind) {
+							if ((opNode.getName() == OP_rc) // $RcdConstructor
+									|| (opNode.getName() == OP_sor)) { // $SetOfRcds
+
+								int temp = ArgNum(sel.ops[idx], curArgs.length);
+								if (temp == -1) {
+									// errors.addError(sel.opsSTN[idx].getLocation(),
+									// "NonExistent operand specified by `"
+									// + sel.opNames[idx].toString() + "'.");
+									reportSelectorError(sel, idx);
+									return nullOAN;
+								}
+								;
+								curOpApplNode = (OpApplNode) curArgs[temp - 1];
 								if (curOpApplNode.getOperator().getName() != OP_pair) {
 									throw errors.addError(
-										ErrorCode.INTERNAL_ERROR,
-										sel.opsSTN[idx].getLocation(),
-										"Internal error: Expecting $Pair and didn't find it."
-									);
+											ErrorCode.INTERNAL_ERROR,
+											sel.opsSTN[idx].getLocation(),
+											"Internal error: Expecting $Pair and didn't find it.");
 								}
 								;
 								curNode = curOpApplNode.getArgs()[1];
-							}
-							; // if (temp > 1)
-						} // if opNode.name = $Except
+							} // if opNode.name == $RcdConstructor or $SetOfRcds
 
-						else { // Handled by standard procedure
-							if ((curOpApplNode.getNumberOfBoundedBoundSymbols() == 0)
-									&& ((curOpApplNode.getUnbdedQuantSymbols() == null)
-											|| (curOpApplNode.getUnbdedQuantSymbols().length == 0))
-							/*****************************************************
-							 * I'm not sure getUnbdedQuantSymbols always returns * null if there are no such
-							 * symbols. *
-							 *****************************************************/
-							) {
-								/**********************************************************
-								 * Current subexpression has no bound variables. *
-								 **********************************************************/
-								int temp = ArgNum(sel.ops[idx], curOpApplNode.getArgs().length);
+							else if (opNode.getName() == OP_case) { // $Case
+								if (idx == sel.ops.length - 1) {
+									errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+											sel.opsSTN[idx].getLocation(),
+											"Subexpression of CASE must have form !i!j.");
+									return nullOAN;
+								}
+								;
+								int temp = ArgNum(sel.ops[idx], curArgs.length);
 								if (temp == -1) {
 									reportSelectorError(sel, idx);
 									return nullOAN;
 								}
 								;
+								curOpApplNode = (OpApplNode) curArgs[temp - 1];
+								if (curOpApplNode.getOperator().getName() != OP_pair) {
+									throw errors.addError(
+											ErrorCode.INTERNAL_ERROR,
+											sel.opsSTN[idx].getLocation(),
+											"Internal error: Expecting $Pair and didn't find it.");
+								}
+								;
+								idx = idx + 1;
+								temp = ArgNum(sel.ops[idx], 2);
+								if (temp == -1) {
+									errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+											sel.opsSTN[idx].getLocation(),
+											"Second selector for CASE subexpression must specify "
+													+ " one of two operands.");
+									return nullOAN;
+								}
+								;
 								curNode = curOpApplNode.getArgs()[temp - 1];
-							} // if current subexpression has no bound variables
-							else {
-								/**********************************************************
-								 * Current subexpression has bound variables. *
-								 **********************************************************/
-								if ((sel.ops[idx] == NullSel) || (sel.ops[idx] == AtSel)) {
-									/********************************************************
-									 * Set temp to the array of FormalParamNodes for the * parameters. *
-									 ********************************************************/
-									FormalParamNode[] temp;
-									if (curOpApplNode.getNumberOfBoundedBoundSymbols() > 0) {
-										FormalParamNode[][] symbs = curOpApplNode.getBdedQuantSymbolLists();
-										int numSymbs = 0;
-										for (int i = 0; i < symbs.length; i++) {
-											numSymbs = numSymbs + symbs[i].length;
-										}
-										; // for
-										temp = new FormalParamNode[numSymbs];
-										int k = 0;
-										for (int i = 0; i < symbs.length; i++) {
-											for (int j = 0; j < symbs[i].length; j++) {
-												temp[k] = symbs[i][j];
-												k++;
-											}
-											; // for j
-										}
-										; // for i
-									} // if (curOpApplNode.getNumberOf... > 0)
-									else {
-										temp = curOpApplNode.getUnbdedQuantSymbols();
-									}
-									; // else not (curOpApplNode.getNumberOf... > 0)
+								if (curNode == null) {
+									errors.addError(
+											ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+											sel.opsSTN[idx].getLocation(),
+											"Selecting OTHER in a CASE statement.");
+									return nullOAN;
+								}
+								;
+							} // if opNode.name = $Case
 
-									/*******************************************************
-									 * Add the elements of temp to the params vector. *
-									 *******************************************************/
-									for (int i = 0; i < temp.length; i++) {
-										params.addElement(temp[i]);
+							else if (opNode.getName() == OP_exc) { // $Except
+								/************************************************************
+								 * In an $Except node representing * * [exp_1 ELSE !... = exp_2, ..., !... =
+								 * exp_n] * * operand i names exp_i. *
+								 ************************************************************/
+								int temp = ArgNum(sel.ops[idx], curArgs.length);
+								if (temp == -1) {
+									reportSelectorError(sel, idx);
+									return nullOAN;
+								}
+								;
+								/************************************************************
+								 * Selection of subexpressions of EXCEPT have been outlawed * because they may
+								 * contain a dangling "@". This doesn't * seem to be worth fixing because it's
+								 * unlikely that * anyone will actually want to refer to such a * subexpression.
+								 * * Change made 25 Oct 2007. *
+								 ************************************************************/
+								if (temp > 1) {
+									errors.addError(
+											ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+											sel.opsSTN[idx].getLocation(),
+											"Selecting subexpression of an EXCEPT not yet implemented.");
+									return nullOAN;
+								}
+								;
+								curNode = curArgs[temp - 1];
+								if (isNullSelection(curNode, sel, idx)) {
+									return nullOAN;
+								}
+								;
+								if (temp > 1) {
+									curOpApplNode = (OpApplNode) curNode;
+									if (curOpApplNode.getOperator().getName() != OP_pair) {
+										throw errors.addError(
+												ErrorCode.INTERNAL_ERROR,
+												sel.opsSTN[idx].getLocation(),
+												"Internal error: Expecting $Pair and didn't find it.");
 									}
-									; // for i
+									;
+									curNode = curOpApplNode.getArgs()[1];
+								}
+								; // if (temp > 1)
+							} // if opNode.name = $Except
 
-									if (sel.ops[idx] == NullSel) {
-										/*****************************************************
-										 * Add the arguments to allArgs, checking if there * are the right number. *
-										 *****************************************************/
-										int numOfArgs = (sel.args[idx].heirs().length - 1) / 2;
-										if (temp.length != numOfArgs) {
-											errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-													sel.opsSTN[idx].getLocation(),
-													"Selector with " + numOfArgs
-															+ " argument(s) used for quantifier with " + temp.length
-															+ " bound identifier(s).");
-											return nullOAN;
-										}
-										;
-										for (int i = 0; i < numOfArgs; i++) {
-											allArgs.addElement(
-													generateExpression(sel.args[idx].heirs()[2 * i + 1], cm));
-										}
-										; // for i
-									}
-									; // if (sel.ops[idx] == NullSel)
-									curNode = curOpApplNode.getArgs()[0];
-								} // if (sel.ops[idx] == NullSel) || ...
-								else {
-									int temp = ArgNum(sel.ops[idx], curOpApplNode.getBdedQuantBounds().length);
+							else { // Handled by standard procedure
+								if ((curOpApplNode.getNumberOfBoundedBoundSymbols() == 0)
+										&& ((curOpApplNode.getUnbdedQuantSymbols() == null)
+												|| (curOpApplNode.getUnbdedQuantSymbols().length == 0))
+								/*****************************************************
+								 * I'm not sure getUnbdedQuantSymbols always returns * null if there are no such
+								 * symbols. *
+								 *****************************************************/
+								) {
+									/**********************************************************
+									 * Current subexpression has no bound variables. *
+									 **********************************************************/
+									int temp = ArgNum(sel.ops[idx], curOpApplNode.getArgs().length);
 									if (temp == -1) {
 										reportSelectorError(sel, idx);
 										return nullOAN;
 									}
 									;
-									curNode = curOpApplNode.getBdedQuantBounds()[temp - 1];
+									curNode = curOpApplNode.getArgs()[temp - 1];
+								} // if current subexpression has no bound variables
+								else {
+									/**********************************************************
+									 * Current subexpression has bound variables. *
+									 **********************************************************/
+									if ((sel.ops[idx] == NullSel) || (sel.ops[idx] == AtSel)) {
+										/********************************************************
+										 * Set temp to the array of FormalParamNodes for the * parameters. *
+										 ********************************************************/
+										FormalParamNode[] temp;
+										if (curOpApplNode.getNumberOfBoundedBoundSymbols() > 0) {
+											FormalParamNode[][] symbs = curOpApplNode.getBdedQuantSymbolLists();
+											int numSymbs = 0;
+											for (int i = 0; i < symbs.length; i++) {
+												numSymbs = numSymbs + symbs[i].length;
+											}
+											; // for
+											temp = new FormalParamNode[numSymbs];
+											int k = 0;
+											for (int i = 0; i < symbs.length; i++) {
+												for (int j = 0; j < symbs[i].length; j++) {
+													temp[k] = symbs[i][j];
+													k++;
+												}
+												; // for j
+											}
+											; // for i
+										} // if (curOpApplNode.getNumberOf... > 0)
+										else {
+											temp = curOpApplNode.getUnbdedQuantSymbols();
+										}
+										; // else not (curOpApplNode.getNumberOf... > 0)
+
+										/*******************************************************
+										 * Add the elements of temp to the params vector. *
+										 *******************************************************/
+										for (int i = 0; i < temp.length; i++) {
+											params.addElement(temp[i]);
+										}
+										; // for i
+
+										if (sel.ops[idx] == NullSel) {
+											/*****************************************************
+											 * Add the arguments to allArgs, checking if there * are the right number. *
+											 *****************************************************/
+											int numOfArgs = (sel.args[idx].heirs().length - 1) / 2;
+											if (temp.length != numOfArgs) {
+												errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+														sel.opsSTN[idx].getLocation(),
+														"Selector with " + numOfArgs
+																+ " argument(s) used for quantifier with " + temp.length
+																+ " bound identifier(s).");
+												return nullOAN;
+											}
+											;
+											for (int i = 0; i < numOfArgs; i++) {
+												allArgs.addElement(
+														generateExpression(sel.args[idx].heirs()[2 * i + 1], cm));
+											}
+											; // for i
+										}
+										; // if (sel.ops[idx] == NullSel)
+										curNode = curOpApplNode.getArgs()[0];
+									} // if (sel.ops[idx] == NullSel) || ...
+									else {
+										int temp = ArgNum(sel.ops[idx], curOpApplNode.getBdedQuantBounds().length);
+										if (temp == -1) {
+											reportSelectorError(sel, idx);
+											return nullOAN;
+										}
+										;
+										curNode = curOpApplNode.getBdedQuantBounds()[temp - 1];
+									}
+									; // else
 								}
-								; // else
+								; // else Current subexpression has bound variables
 							}
-							; // else Current subexpression has bound variables
-						}
-						; // Handled by standard procedure
-					} // else if (opNode.getKind() == BuiltInKind)
+							; // Handled by standard procedure
+						} // else if (opNode.getKind() == BuiltInKind)
 
-					else {
-						errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-								sel.opsSTN[idx].getLocation(), "Choosing operand `"
-								+ selectorItemToString(sel, idx) + "' of subexpression with no operands.");
-						return nullOAN;
-					}
-					;
-
-				} // else if ((curNode.getKind() == OpApplKind)
-
-				else if (curNode.getKind() == AssumeProveKind) {
-					AssumeProveNode curAPNode = (AssumeProveNode) curNode;
-
-					/****************************************************************
-					 * 16 Feb 2009: Case of curAPNode.suffices true added. *
-					 ****************************************************************/
-					if ((curAPNode.isSuffices()) && (!inAPsuffices)) {
-						/**************************************************************
-						 * In this case, the selector must be 1, and the curNode is * left equal to the
-						 * AssumeProve, but with inAPsuffices set * to true. *
-						 **************************************************************/
-						if (ArgNum(sel.ops[idx], 1) != 1) {
+						else {
 							errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-									sel.opsSTN[idx].getLocation(),
-									"Accessing non-existent subexpression of " + "a SUFFICES");
-							return nullOAN;
-						}
-						;
-						inAPsuffices = true;
-					} // if (curAPNode.isSuffices())
-					else {
-						inAPsuffices = false;
-						/************************************************************
-						 * Added 16 Feb 2009 by LL. *
-						 ************************************************************/
-						int temp = ArgNum(sel.ops[idx], 1 + curAPNode.getAssumes().length);
-						if (temp == -1) {
-							reportSelectorError(sel, idx);
+									sel.opsSTN[idx].getLocation(), "Choosing operand `"
+											+ selectorItemToString(sel, idx) + "' of subexpression with no operands.");
 							return nullOAN;
 						}
 						;
 
-						if (illegalAPPosRef(curAPNode, temp)) {
-							errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-									sel.opsSTN[idx].getLocation(),
-									"Accessing ASSUME/PROVE clause within the scope of "
-											+ "a declaration\n from outside that declaration's scope.");
-							return nullOAN;
-						}
-						;
-						if (temp <= curAPNode.getAssumes().length) {
-							curNode = curAPNode.getAssumes()[temp - 1];
-							if (isNullSelection(curNode, sel, idx)) {
-								return nullOAN;
-							}
-							;
-							if ((curNode.getKind() == NewSymbKind) && (idx != sel.args.length - 1)) {
-								/************************************************************
-								 * Extra conjunct added to if test to allow selection of a * NEW clause as a
-								 * fact. *
-								 ************************************************************/
+					} // else if ((curNode.getKind() == OpApplKind)
+
+					else if (curNode.getKind() == AssumeProveKind) {
+						AssumeProveNode curAPNode = (AssumeProveNode) curNode;
+
+						/****************************************************************
+						 * 16 Feb 2009: Case of curAPNode.suffices true added. *
+						 ****************************************************************/
+						if ((curAPNode.isSuffices()) && (!inAPsuffices)) {
+							/**************************************************************
+							 * In this case, the selector must be 1, and the curNode is * left equal to the
+							 * AssumeProve, but with inAPsuffices set * to true. *
+							 **************************************************************/
+							if (ArgNum(sel.ops[idx], 1) != 1) {
 								errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
 										sel.opsSTN[idx].getLocation(),
-										"Selected a subexpression of a NEW clause of an ASSUME.");
-								return nullOAN;
-							}
-						} else {
-							curNode = curAPNode.getProve();
-						}
-						;
-					} // else if (curAPNode.isSuffices())
-				} // else if (curNode.getKind() == AssumeProveKind)
-
-				else if (curNode.getKind() == OpArgKind) {
-					SymbolNode opNode = ((OpArgNode) curNode).getOp();
-					if ((opNode.getKind() != UserDefinedOpKind) || (opNode.getName() != S_lambda)) {
-						errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-								sel.opsSTN[idx].getLocation(),
-								"Trying to select subexpression of an operator argument.");
-						return nullOAN;
-					}
-					;
-					OpDefNode opDefOpNode = (OpDefNode) opNode;
-					if ((sel.ops[idx] != NullSel) && (sel.ops[idx] != AtSel)) {
-						errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-								sel.opsSTN[idx].getLocation(),
-								"Cannot use !" + sel.opNames[idx].toString() + " to select subexpression of a LAMBDA.");
-						return nullOAN;
-					}
-					;
-					if (sel.ops[idx] == NullSel) {
-						int numOfArgs = (sel.args[idx].heirs().length - 1) / 2;
-						if (opDefOpNode.getArity() != numOfArgs) {
-							errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-									sel.opsSTN[idx].getLocation(),
-									"Selector with " + numOfArgs + "arguments used for LAMBDA expression taking "
-											+ opDefOpNode.getArity() + " arguments.");
-							return nullOAN;
-						}
-						;
-						for (int i = 0; i < numOfArgs; i++) {
-							allArgs.addElement(generateExpression(sel.args[idx].heirs()[2 * i + 1], cm));
-						}
-						;
-					}
-					; // if (sel.ops[idx] == NullSel)
-					for (int i = 0; i < opDefOpNode.getArity(); i++) {
-						params.addElement(opDefOpNode.getParams()[i]);
-					}
-					;
-					curNode = opDefOpNode.getBody();
-				} // else if (curNode.getKind() == OpArgKind)
-
-				else if ((curNode.getKind() == UserDefinedOpKind) || (curNode.getKind() == BuiltInKind)
-						|| (curNode.getKind() == NumberedProofStepKind)) {
-					throw errors.addError(
-						ErrorCode.INTERNAL_ERROR,
-						sel.opsSTN[idx].getLocation(),
-						"Internal error: " + " Should not have been able to select this node."
-					);
-				} // else if (curNode.getKind() == UserDefinedOpKind) || ...
-
-				else if ((curNode.getKind() == AtNodeKind) || (curNode.getKind() == DecimalKind)
-						|| (curNode.getKind() == NumeralKind) || (curNode.getKind() == StringKind)
-						|| (curNode.getKind() == FormalParamKind) || (curNode.getKind() == ConstantDeclKind)
-						|| (curNode.getKind() == VariableDeclKind) || (curNode.getKind() == BoundSymbolKind)) {
-					errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-							sel.opsSTN[idx].getLocation(),
-							"Selecting subexpression of expression that has none.");
-					return nullOAN;
-				} // else if (curNode.getKind() == AtNodeKind) || ...
-
-				else if (curNode.getKind() == LabelKind) {
-					curNode = ((LabelNode) curNode).getBody();
-					idx = idx - 1;
-				} // else if (curNode.getKind() == LabelKind)
-
-				else {
-					throw errors.addError(
-						ErrorCode.INTERNAL_ERROR,
-						sel.opsSTN[idx].getLocation(),
-						"Internal error: Unknown node kind."
-					);
-				}
-				; // end last else of if sel.ops[idx] != ColonSel
-
-				if (isNullSelection(curNode, sel, idx)) {
-					return nullOAN;
-				}
-				;
-
-				if (idx != sel.ops.length - 1) {
-					if (sel.ops[idx + 1] == NameSel) {
-						while (curNode.getKind() == LabelKind) {
-							curNode = ((LabelNode) curNode).getBody();
-							if (isNullSelection(curNode, sel, idx)) {
+										"Accessing non-existent subexpression of " + "a SUFFICES");
 								return nullOAN;
 							}
 							;
-						}
-						; // while
-						if (curNode.getKind() == LetInKind) {
-							letInContext = ((LetInNode) curNode).context;
-							mode = FindingOpName;
-							firstFindingOpName = false;
-						} else {
+							inAPsuffices = true;
+						} // if (curAPNode.isSuffices())
+						else {
+							inAPsuffices = false;
+							/************************************************************
+							 * Added 16 Feb 2009 by LL. *
+							 ************************************************************/
+							int temp = ArgNum(sel.ops[idx], 1 + curAPNode.getAssumes().length);
+							if (temp == -1) {
+								reportSelectorError(sel, idx);
+								return nullOAN;
+							}
+							;
+
+							if (illegalAPPosRef(curAPNode, temp)) {
+								errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+										sel.opsSTN[idx].getLocation(),
+										"Accessing ASSUME/PROVE clause within the scope of "
+												+ "a declaration\n from outside that declaration's scope.");
+								return nullOAN;
+							}
+							;
+							if (temp <= curAPNode.getAssumes().length) {
+								curNode = curAPNode.getAssumes()[temp - 1];
+								if (isNullSelection(curNode, sel, idx)) {
+									return nullOAN;
+								}
+								;
+								if ((curNode.getKind() == NewSymbKind) && (idx != sel.args.length - 1)) {
+									/************************************************************
+									 * Extra conjunct added to if test to allow selection of a * NEW clause as a
+									 * fact. *
+									 ************************************************************/
+									errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+											sel.opsSTN[idx].getLocation(),
+											"Selected a subexpression of a NEW clause of an ASSUME.");
+									return nullOAN;
+								}
+							} else {
+								curNode = curAPNode.getProve();
+							}
+							;
+						} // else if (curAPNode.isSuffices())
+					} // else if (curNode.getKind() == AssumeProveKind)
+
+					else if (curNode.getKind() == OpArgKind) {
+						SymbolNode opNode = ((OpArgNode) curNode).getOp();
+						if ((opNode.getKind() != UserDefinedOpKind) || (opNode.getName() != S_lambda)) {
 							errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
 									sel.opsSTN[idx].getLocation(),
-									"A name selector here must be from a LET clause.");
+									"Trying to select subexpression of an operator argument.");
 							return nullOAN;
 						}
-					} // if (sel.ops[idx+1] == NameSel)
-					else if (sel.ops[idx + 1] == ColonSel) {
-						errors.addError(
-							ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-							sel.opsSTN[idx].getLocation(),
-							"!: should not follow an operand selector."
-						);
+						;
+						OpDefNode opDefOpNode = (OpDefNode) opNode;
+						if ((sel.ops[idx] != NullSel) && (sel.ops[idx] != AtSel)) {
+							errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+									sel.opsSTN[idx].getLocation(),
+									"Cannot use !" + sel.opNames[idx].toString()
+											+ " to select subexpression of a LAMBDA.");
+							return nullOAN;
+						}
+						;
+						if (sel.ops[idx] == NullSel) {
+							int numOfArgs = (sel.args[idx].heirs().length - 1) / 2;
+							if (opDefOpNode.getArity() != numOfArgs) {
+								errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+										sel.opsSTN[idx].getLocation(),
+										"Selector with " + numOfArgs + "arguments used for LAMBDA expression taking "
+												+ opDefOpNode.getArity() + " arguments.");
+								return nullOAN;
+							}
+							;
+							for (int i = 0; i < numOfArgs; i++) {
+								allArgs.addElement(generateExpression(sel.args[idx].heirs()[2 * i + 1], cm));
+							}
+							;
+						}
+						; // if (sel.ops[idx] == NullSel)
+						for (int i = 0; i < opDefOpNode.getArity(); i++) {
+							params.addElement(opDefOpNode.getParams()[i]);
+						}
+						;
+						curNode = opDefOpNode.getBody();
+					} // else if (curNode.getKind() == OpArgKind)
+
+					else if ((curNode.getKind() == UserDefinedOpKind) || (curNode.getKind() == BuiltInKind)
+							|| (curNode.getKind() == NumberedProofStepKind)) {
+						throw errors.addError(
+								ErrorCode.INTERNAL_ERROR,
+								sel.opsSTN[idx].getLocation(),
+								"Internal error: " + " Should not have been able to select this node.");
+					} // else if (curNode.getKind() == UserDefinedOpKind) || ...
+
+					else if ((curNode.getKind() == AtNodeKind) || (curNode.getKind() == DecimalKind)
+							|| (curNode.getKind() == NumeralKind) || (curNode.getKind() == StringKind)
+							|| (curNode.getKind() == FormalParamKind) || (curNode.getKind() == ConstantDeclKind)
+							|| (curNode.getKind() == VariableDeclKind) || (curNode.getKind() == BoundSymbolKind)) {
+						errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+								sel.opsSTN[idx].getLocation(),
+								"Selecting subexpression of expression that has none.");
+						return nullOAN;
+					} // else if (curNode.getKind() == AtNodeKind) || ...
+
+					else if (curNode.getKind() == LabelKind) {
+						curNode = ((LabelNode) curNode).getBody();
+						idx = idx - 1;
+					} // else if (curNode.getKind() == LabelKind)
+
+					else {
+						throw errors.addError(
+								ErrorCode.INTERNAL_ERROR,
+								sel.opsSTN[idx].getLocation(),
+								"Internal error: Unknown node kind.");
+					}
+					; // end last else of if sel.ops[idx] != ColonSel
+
+					if (isNullSelection(curNode, sel, idx)) {
 						return nullOAN;
 					}
-				}
-				; // if (idx != sel.ops.length - 1)
+					;
 
-				prevMode = FindingSubExpr;
-				break; // case FindingSubExpr
+					if (idx != sel.ops.length - 1) {
+						if (sel.ops[idx + 1] == NameSel) {
+							while (curNode.getKind() == LabelKind) {
+								curNode = ((LabelNode) curNode).getBody();
+								if (isNullSelection(curNode, sel, idx)) {
+									return nullOAN;
+								}
+								;
+							}
+							; // while
+							if (curNode.getKind() == LetInKind) {
+								letInContext = ((LetInNode) curNode).context;
+								mode = FindingOpName;
+								firstFindingOpName = false;
+							} else {
+								errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+										sel.opsSTN[idx].getLocation(),
+										"A name selector here must be from a LET clause.");
+								return nullOAN;
+							}
+						} // if (sel.ops[idx+1] == NameSel)
+						else if (sel.ops[idx + 1] == ColonSel) {
+							errors.addError(
+									ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+									sel.opsSTN[idx].getLocation(),
+									"!: should not follow an operand selector.");
+							return nullOAN;
+						}
+					}
+					; // if (idx != sel.ops.length - 1)
 
-			default:
-				throw errors.addError(
-					ErrorCode.INTERNAL_ERROR,
-					sel.selSTN.getLocation(),
-					"Internal error: Unexpected mode"
-				);
+					prevMode = FindingSubExpr;
+					break; // case FindingSubExpr
+
+				default:
+					throw errors.addError(
+							ErrorCode.INTERNAL_ERROR,
+							sel.selSTN.getLocation(),
+							"Internal error: Unexpected mode");
 			} // switch (mode)
 			idx++;
 		} // while idx <
@@ -1575,10 +1560,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			}
 			;
 			errors.addError(
-				ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-				sel.selSTN.getLocation(),
-				"Selected ASSUME/PROVE instead of expression."
-			);
+					ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+					sel.selSTN.getLocation(),
+					"Selected ASSUME/PROVE instead of expression.");
 			return nullOAN;
 		}
 		;
@@ -1593,10 +1577,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			}
 			;
 			errors.addError(
-				ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-				sel.selSTN.getLocation(),
-				"Selected a NEW declaration as an expression or operator."
-			);
+					ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+					sel.selSTN.getLocation(),
+					"Selected a NEW declaration as an expression or operator.");
 			return nullOAN;
 		}
 		;
@@ -1620,20 +1603,18 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 																													// code
 					((curNode.getKind() == ModuleInstanceKind) && isDef))) {
 				errors.addError(
-					ErrorCode.SYMBOL_UNDEFINED,
-					sel.selSTN.getLocation(),
-					"DEF clause entry should describe a defined operator."
-				);
+						ErrorCode.SYMBOL_UNDEFINED,
+						sel.selSTN.getLocation(),
+						"DEF clause entry should describe a defined operator.");
 				return nullOAN;
 			}
 			;
 			if ((curNode.getKind() == NumberedProofStepKind)
 					&& (((OpDefNode) curNode).getStepNode().getKind() != DefStepKind)) {
 				errors.addError(
-					ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
-					sel.selSTN.getLocation(),
-					"DEF clause entry refers to a non-definition step."
-				);
+						ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
+						sel.selSTN.getLocation(),
+						"DEF clause entry refers to a non-definition step.");
 				return nullOAN;
 			}
 			return (LevelNode) curNode;
@@ -1643,7 +1624,7 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		if (curNode.getKind() == NumberedProofStepKind) {
 			errors.addError(ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
 					sel.selSTN.getLocation(), isFact ? "Step number of non-fact used as a fact"
-					: "Step number of non-expression step used as an expression.");
+							: "Step number of non-expression step used as an expression.");
 			return nullOAN;
 		}
 
@@ -1693,10 +1674,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			} else {
 				if (curNode.getKind() != ThmOrAssumpDefKind) {
 					throw errors.addError(
-						ErrorCode.INTERNAL_ERROR,
-						sel.opsSTN[sel.opsSTN.length - 1].getLocation(),
-						"Internal Error: Found unexpected node kind after FindingOpName"
-					);
+							ErrorCode.INTERNAL_ERROR,
+							sel.opsSTN[sel.opsSTN.length - 1].getLocation(),
+							"Internal Error: Found unexpected node kind after FindingOpName");
 				}
 				;
 				nodeParams = ((ThmOrAssumpDefNode) curNode).getParams();
@@ -1755,10 +1735,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			 *********************************************************************/
 			if (expectedArity == 0) {
 				errors.addError(
-					ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-					sel.selSTN.getLocation(),
-					"Selected operator argument when expression expected."
-				);
+						ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+						sel.selSTN.getLocation(),
+						"Selected operator argument when expression expected.");
 				return nullOAN;
 			}
 			;
@@ -1770,7 +1749,7 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			if (expectedArity != temp) {
 				errors.addError(ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
 						sel.selSTN.getLocation(), "Expected operator of arity " + expectedArity
-						+ " but selected operator has arity " + temp + ".");
+								+ " but selected operator has arity " + temp + ".");
 				return nullOAN;
 			}
 			;
@@ -1814,10 +1793,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		 ***********************************************************/
 		) {
 			errors.addError(
-				ErrorCode.ASSUME_PROVE_USED_WHERE_EXPRESSION_REQUIRED,
-				sel.selSTN.getLocation(),
-				"ASSUME/PROVE used where an expression is required."
-			);
+					ErrorCode.ASSUME_PROVE_USED_WHERE_EXPRESSION_REQUIRED,
+					sel.selSTN.getLocation(),
+					"ASSUME/PROVE used where an expression is required.");
 			return nullOAN;
 		}
 		;
@@ -1851,10 +1829,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			 *******************************************************************/
 			if (exprType != null) {
 				errors.addError(
-					ErrorCode.PROOF_STEP_NON_EXPRESSION_USED_AS_EXPRESSION,
-					sel.selSTN.getLocation(),
-					exprType + " proof step selected instead of expression."
-				);
+						ErrorCode.PROOF_STEP_NON_EXPRESSION_USED_AS_EXPRESSION,
+						sel.selSTN.getLocation(),
+						exprType + " proof step selected instead of expression.");
 				return nullOAN;
 			}
 			;
@@ -1912,10 +1889,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			} else {
 				// This would be an "incomplete name" error.
 				errors.addError(
-					ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
-					sel.selSTN.getLocation(),
-					"Module instantiation selected instead of expression."
-				);
+						ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
+						sel.selSTN.getLocation(),
+						"Module instantiation selected instead of expression.");
 				return nullOAN;
 			}
 		}
@@ -1925,10 +1901,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		 ***********************************************************************/
 		if (!(curNode instanceof ExprNode)) {
 			throw errors.addError(
-				ErrorCode.INTERNAL_ERROR,
-				sel.selSTN.getLocation(),
-				"Internal error: Expected expression node."
-			);
+					ErrorCode.INTERNAL_ERROR,
+					sel.selSTN.getLocation(),
+					"Internal error: Expected expression node.");
 		}
 		;
 		ExprNode curExprNode = (ExprNode) curNode;
@@ -1987,7 +1962,7 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 				// Another duplicate arity check.
 				errors.addError(ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
 						sel.selSTN.getLocation(), "Expected operator argument with arity " + expectedArity
-						+ " but found one of arity " + paramsArray.length + ".");
+								+ " but found one of arity " + paramsArray.length + ".");
 				return nullOAN;
 			}
 			;
@@ -2072,7 +2047,7 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		if (val) {
 			errors.addError(ErrorCode.INTERNAL_ERROR,
 					sel.opsSTN[idx].getLocation(), "An unexpected null node specified by "
-					+ selectorItemToString(sel, idx) + "'." + "\nThis is probably due to a previous error.");
+							+ selectorItemToString(sel, idx) + "'." + "\nThis is probably due to a previous error.");
 		}
 		;
 		return val;
@@ -2098,10 +2073,10 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		/*************************************************************************
 		 * This is the method called to generate the semantic graph for a module. *
 		 *************************************************************************/
-//System.out.println("TRUE = " + symbolTable.resolveSymbol(
-//                      UniqueString.uniqueStringOf("TRUE"))) ;
-//System.out.println("$SetEnumerate = " + symbolTable.resolveSymbol(
-//                      UniqueString.uniqueStringOf("$SetEnumerate"))) ;
+		// System.out.println("TRUE = " + symbolTable.resolveSymbol(
+		// UniqueString.uniqueStringOf("TRUE"))) ;
+		// System.out.println("$SetEnumerate = " + symbolTable.resolveSymbol(
+		// UniqueString.uniqueStringOf("$SetEnumerate"))) ;
 
 		if (treeNode.isKind(N_Module)) {
 			this.context = symbolTable.getContext();
@@ -2153,115 +2128,113 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		// for each declaration, op definition, etc. in the body...
 		for (int lvi = 0; lvi < definitions.length; lvi++) {
 			switch (definitions[lvi].getKind()) {
-			case N_VariableDeclaration:
-				checkIfInRecursiveSection(definitions[lvi], "A VARIABLE declaration");
-				processVariables(definitions[lvi].heirs(), currentModule);
-				break;
+				case N_VariableDeclaration:
+					checkIfInRecursiveSection(definitions[lvi], "A VARIABLE declaration");
+					processVariables(definitions[lvi].heirs(), currentModule);
+					break;
 
-			case N_ParamDeclaration:
-				checkIfInRecursiveSection(definitions[lvi], "A declaration");
-				processParameters(definitions[lvi].heirs(), currentModule);
-				break;
+				case N_ParamDeclaration:
+					checkIfInRecursiveSection(definitions[lvi], "A declaration");
+					processParameters(definitions[lvi].heirs(), currentModule);
+					break;
 
-			case N_OperatorDefinition:
-			  currentModule.appendDef(processOperator(definitions[lvi], null, currentModule));
-				break;
+				case N_OperatorDefinition:
+					currentModule.appendDef(processOperator(definitions[lvi], null, currentModule));
+					break;
 
-			case N_FunctionDefinition:
-				processFunction(definitions[lvi], null, currentModule);
-				break;
+				case N_FunctionDefinition:
+					processFunction(definitions[lvi], null, currentModule);
+					break;
 
-			case N_ModuleDefinition:
-// We now allow INSTANCEs in recursive sections.
-//        checkIfInRecursiveSection(definitions[lvi], "An INSTANCE") ;
-				processModuleDefinition(definitions[lvi], null, null, currentModule);
-				break;
+				case N_ModuleDefinition:
+					// We now allow INSTANCEs in recursive sections.
+					// checkIfInRecursiveSection(definitions[lvi], "An INSTANCE") ;
+					processModuleDefinition(definitions[lvi], null, null, currentModule);
+					break;
 
-			case N_Module:
-				// Modules can be nested, but inner ones need to keep a
-				// separate SymbolTable of their own.
-				checkIfInRecursiveSection(definitions[lvi], "A MODULE ");
-				SymbolTable oldSt = symbolTable;
-				symbolTable = new SymbolTable(moduleTable, errors, oldSt);
-				context = new Context(moduleTable);
-				symbolTable.pushContext(context);
-				ModuleNode mn = generateModule(definitions[lvi], currentModule);
-				symbolTable.popContext();
-				symbolTable = oldSt;
+				case N_Module:
+					// Modules can be nested, but inner ones need to keep a
+					// separate SymbolTable of their own.
+					checkIfInRecursiveSection(definitions[lvi], "A MODULE ");
+					SymbolTable oldSt = symbolTable;
+					symbolTable = new SymbolTable(moduleTable, errors, oldSt);
+					context = new Context(moduleTable);
+					symbolTable.pushContext(context);
+					ModuleNode mn = generateModule(definitions[lvi], currentModule);
+					symbolTable.popContext();
+					symbolTable = oldSt;
 
-				// Add the inner module's name to the context of the outer module
-				symbolTable.addModule(mn.getName(), mn);
+					// Add the inner module's name to the context of the outer module
+					symbolTable.addModule(mn.getName(), mn);
 
-				/*******************************************************************
-				 * Append the opDefsInRecursiveSection field of the inner module * to that of
-				 * the current module. *
-				 *******************************************************************/
-				for (int i = 0; i < mn.opDefsInRecursiveSection.size(); i++) {
-					currentModule.opDefsInRecursiveSection.addElement(mn.opDefsInRecursiveSection.elementAt(i));
-				}
-				;
-				// System.err.println(mn.getName() + " added to SymbolTable for " +
-				// currentModule.getName());
-				break;
+					/*******************************************************************
+					 * Append the opDefsInRecursiveSection field of the inner module * to that of
+					 * the current module. *
+					 *******************************************************************/
+					for (int i = 0; i < mn.opDefsInRecursiveSection.size(); i++) {
+						currentModule.opDefsInRecursiveSection.addElement(mn.opDefsInRecursiveSection.elementAt(i));
+					}
+					;
+					// System.err.println(mn.getName() + " added to SymbolTable for " +
+					// currentModule.getName());
+					break;
 
-			case N_Instance:
-// We now allow INSTANCEs in recursive sections.
-//        checkIfInRecursiveSection(definitions[lvi], "An INSTANCE") ;
-				generateInstance(definitions[lvi], currentModule, true);
-				break;
+				case N_Instance:
+					// We now allow INSTANCEs in recursive sections.
+					// checkIfInRecursiveSection(definitions[lvi], "An INSTANCE") ;
+					generateInstance(definitions[lvi], currentModule, true);
+					break;
 
-			case N_Proof:
-				checkIfInRecursiveSection(definitions[lvi], "A proof");
-				break;
+				case N_Proof:
+					checkIfInRecursiveSection(definitions[lvi], "A proof");
+					break;
 
-			case N_Theorem:
-				checkIfInRecursiveSection(definitions[lvi], "A THEOREM");
-				processTheorem(definitions[lvi], currentModule);
-				break;
+				case N_Theorem:
+					checkIfInRecursiveSection(definitions[lvi], "A THEOREM");
+					processTheorem(definitions[lvi], currentModule);
+					break;
 
-			case N_Assumption:
-				checkIfInRecursiveSection(definitions[lvi], "An ASSUME");
-				processAssumption(definitions[lvi], currentModule);
-				break;
+				case N_Assumption:
+					checkIfInRecursiveSection(definitions[lvi], "An ASSUME");
+					processAssumption(definitions[lvi], currentModule);
+					break;
 
-			case N_UseOrHide:
-				checkIfInRecursiveSection(definitions[lvi], "A USE or HIDE");
-				UseOrHideNode uohn = generateUseOrHide(definitions[lvi], currentModule);
-				uohn.factCheck(errors);
-				// Added 4 Mar 2009.
-				if (uohn.facts.length + uohn.defs.length == 0) {
-					// This check should be moved to the syntax level.
-					errors.addError(
-						ErrorCode.INTERNAL_ERROR,
-						definitions[lvi].getLocation(),
-						"Empty USE or HIDE statement."
-					);
-				}
-				;
-				currentModule.addTopLevel(uohn);
-				break;
+				case N_UseOrHide:
+					checkIfInRecursiveSection(definitions[lvi], "A USE or HIDE");
+					UseOrHideNode uohn = generateUseOrHide(definitions[lvi], currentModule);
+					uohn.factCheck(errors);
+					// Added 4 Mar 2009.
+					if (uohn.facts.length + uohn.defs.length == 0) {
+						// This check should be moved to the syntax level.
+						errors.addError(
+								ErrorCode.INTERNAL_ERROR,
+								definitions[lvi].getLocation(),
+								"Empty USE or HIDE statement.");
+					}
+					;
+					currentModule.addTopLevel(uohn);
+					break;
 
-			case SEPARATOR:
-				/*******************************************************************
-				 * This code was originally * * case 35 * // Intended to handle "---------".
-				 * Kludge for a parser bug. * * I have no idea why 35 was used instead of
-				 * SEPARATOR, and what * kind of parser bug mentioned was encountered. The
-				 * original * code did not import parser.TLAplusParserConstants where *
-				 * SEPARATOR was used, so perhaps there was some reason why this * class could
-				 * not be imported. *
-				 *******************************************************************/
-				break;
+				case SEPARATOR:
+					/*******************************************************************
+					 * This code was originally * * case 35 * // Intended to handle "---------".
+					 * Kludge for a parser bug. * * I have no idea why 35 was used instead of
+					 * SEPARATOR, and what * kind of parser bug mentioned was encountered. The
+					 * original * code did not import parser.TLAplusParserConstants where *
+					 * SEPARATOR was used, so perhaps there was some reason why this * class could
+					 * not be imported. *
+					 *******************************************************************/
+					break;
 
-			case N_Recursive:
-				processRecursive(definitions[lvi], currentModule);
-				break;
-			default:
-				throw errors.addError(
-					ErrorCode.INTERNAL_ERROR,
-					definitions[lvi].getLocation(),
-					"Internal error: Syntax node of kind " + definitions[lvi].getKind()
-					+ " unsupported " + definitions[lvi].getImage()
-				);
+				case N_Recursive:
+					processRecursive(definitions[lvi], currentModule);
+					break;
+				default:
+					throw errors.addError(
+							ErrorCode.INTERNAL_ERROR,
+							definitions[lvi].getLocation(),
+							"Internal error: Syntax node of kind " + definitions[lvi].getKind()
+									+ " unsupported " + definitions[lvi].getImage());
 			}
 		}
 
@@ -2290,10 +2263,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 					extendee = moduleTable.getModuleNode(extendeeID);
 					if (extendee == null) {
 						throw errors.addError(
-							ErrorCode.INTERNAL_ERROR,
-							treeNodes[lvi].getLocation(),
-							"Could not find module " + extendeeID
-						);
+								ErrorCode.INTERNAL_ERROR,
+								treeNodes[lvi].getLocation(),
+								"Could not find module " + extendeeID);
 					}
 				}
 
@@ -2327,10 +2299,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			if (us == S_at) {
 				// Should be enforced at syntax level
 				errors.addError(
-					ErrorCode.FUNCTION_EXCEPT_AT_USED_WHERE_UNDEFINED,
-					treeNodes[lvi].getLocation(),
-					"Attempted to declare '@' as a variable."
-				);
+						ErrorCode.FUNCTION_EXCEPT_AT_USED_WHERE_UNDEFINED,
+						treeNodes[lvi].getLocation(),
+						"Attempted to declare '@' as a variable.");
 			}
 
 			// The next line has its side-effects in the constructor; in particular,
@@ -2378,11 +2349,10 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			// There isn't any sort of other *fix type in the language, so
 			// this check seems unreachable.
 			errors.addError(ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
-				treeNode.getLocation(),
-				"Unknown parameter declaration `" + treeNode.getUS() + "'."
-			);
+					treeNode.getLocation(),
+					"Unknown parameter declaration `" + treeNode.getUS() + "'.");
 		}
-//    SymbolNode symbolNode = 
+		// SymbolNode symbolNode =
 		SymbolTable st = null;
 		if (declare) {
 			st = symbolTable;
@@ -2402,10 +2372,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			if (treeNodes[lvi].getUS() == S_at) {
 				// Should be enforced at syntax level
 				errors.addError(
-					ErrorCode.FUNCTION_EXCEPT_AT_USED_WHERE_UNDEFINED,
-					treeNodes[lvi].getLocation(),
-					"Attempted to declare '@' as a constant."
-				);
+						ErrorCode.FUNCTION_EXCEPT_AT_USED_WHERE_UNDEFINED,
+						treeNodes[lvi].getLocation(),
+						"Attempted to declare '@' as a constant.");
 			}
 			;
 			OpDeclNode odn = buildParameter(treeNodes[lvi], ConstantDeclKind, ConstantLevel, cm, true);
@@ -2516,10 +2485,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			name = Operators.resolveSynonym(ss[1].getUS());
 		} else {
 			errors.addError(
-				ErrorCode.INTERNAL_ERROR,
-				children[0].getLocation(),
-				"Unknown parameter declaration `" + children[0].getUS() + "'."
-			);
+					ErrorCode.INTERNAL_ERROR,
+					children[0].getLocation(),
+					"Unknown parameter declaration `" + children[0].getUS() + "'.");
 		}
 
 		/***********************************************************************
@@ -2563,7 +2531,7 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 					if (!paramsMatch) {
 						errors.addError(ErrorCode.RECURSIVE_OPERATOR_DECLARATION_DEFINITION_ARITY_MISMATCH,
 								treeNode.getLocation(), "Definition of " + odn.getName()
-								+ " has different arity than " + "its RECURSIVE declaration.");
+										+ " has different arity than " + "its RECURSIVE declaration.");
 					}
 					;
 
@@ -2633,9 +2601,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		// defs is non-null iff this definition is in the Let part of a
 		// Let-In expression
 		if (defs != null)
-			defs.addElement((OpDefNode)symbolNode);
+			defs.addElement((OpDefNode) symbolNode);
 
-		return (OpDefNode)symbolNode;
+		return (OpDefNode) symbolNode;
 	} // processOperator
 
 	private final void processQuantBoundArgs(TreeNode[] treeNodeA, // node whose children include
@@ -2694,7 +2662,8 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 	}
 
 	// Process a function definition
-	private final void processFunction(TreeNode treeNode, final Vector<SemanticNode> defs, ModuleNode cm) throws AbortException {
+	private final void processFunction(TreeNode treeNode, final Vector<SemanticNode> defs, ModuleNode cm)
+			throws AbortException {
 		TreeNode syntaxTreeNode = treeNode;
 		boolean local = syntaxTreeNode.zero() != null;
 		TreeNode[] ss = syntaxTreeNode.one();
@@ -2791,7 +2760,7 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 						 *************************************************************/
 						errors.addError(ErrorCode.RECURSIVE_OPERATOR_DECLARATION_DEFINITION_ARITY_MISMATCH,
 								treeNode.getLocation(), "Function " + odn.getName()
-								+ " has operator arguments in " + "its RECURSIVE declaration.");
+										+ " has operator arguments in " + "its RECURSIVE declaration.");
 					}
 					;
 				} // if (odn.letInLevel == curLevel)
@@ -2900,10 +2869,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			curLevel++;
 		} else {
 			throw errors.addError(
-				ErrorCode.INTERNAL_ERROR,
-				treeNode.getLocation(),
-				"LETs nested more than " + MaxLetInLevel + " deep."
-			);
+					ErrorCode.INTERNAL_ERROR,
+					treeNode.getLocation(),
+					"LETs nested more than " + MaxLetInLevel + " deep.");
 		}
 		;
 		unresolvedCnt[curLevel] = 0;
@@ -2918,28 +2886,27 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			 * statement on 7 Apr 2007 when adding the N_Recursive case. *
 			 *********************************************************************/
 			switch (syntaxTreeNode[lvi].getKind()) {
-			case N_OperatorDefinition:
-			  cm.appendDef(processOperator(syntaxTreeNode[lvi], defVec, cm));
-				break;
+				case N_OperatorDefinition:
+					cm.appendDef(processOperator(syntaxTreeNode[lvi], defVec, cm));
+					break;
 
-			case N_FunctionDefinition:
-				processFunction(syntaxTreeNode[lvi], defVec, cm);
-				break;
+				case N_FunctionDefinition:
+					processFunction(syntaxTreeNode[lvi], defVec, cm);
+					break;
 
-			case N_ModuleDefinition:
-				processModuleDefinition(syntaxTreeNode[lvi], defVec, instVec, cm);
-				break;
+				case N_ModuleDefinition:
+					processModuleDefinition(syntaxTreeNode[lvi], defVec, instVec, cm);
+					break;
 
-			case N_Recursive:
-				processRecursive(syntaxTreeNode[lvi], cm);
-				break;
+				case N_Recursive:
+					processRecursive(syntaxTreeNode[lvi], cm);
+					break;
 
-			default:
-				throw errors.addError(
-					ErrorCode.INTERNAL_ERROR,
-					syntaxTreeNode[lvi].getLocation(),
-					"Internal error: found unexpected syntax tree node in LET."
-				);
+				default:
+					throw errors.addError(
+							ErrorCode.INTERNAL_ERROR,
+							syntaxTreeNode[lvi].getLocation(),
+							"Internal error: found unexpected syntax tree node in LET.");
 			} // switch
 		} // for
 
@@ -2962,7 +2929,7 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		 ***********************************************************************/
 		SymbolNode[] opDefs = new SymbolNode[defVec.size()];
 		for (int i = 0; i < opDefs.length; i++) {
-			opDefs[i] = (SymbolNode)defVec.elementAt(i);
+			opDefs[i] = (SymbolNode) defVec.elementAt(i);
 		}
 
 		InstanceNode[] insts = new InstanceNode[instVec.size()];
@@ -2997,437 +2964,435 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 
 		switch (treeNode.getKind()) {
 
-		case N_Real:
-			return new DecimalNode(children[0].getImage(), children[2].getImage(), treeNode);
+			case N_Real:
+				return new DecimalNode(children[0].getImage(), children[2].getImage(), treeNode);
 
-		case N_Number:
-			return new NumeralNode(children[0].getImage(), treeNode, errors);
+			case N_Number:
+				return new NumeralNode(children[0].getImage(), treeNode, errors);
 
-		case N_String:
-			return new StringNode(treeNode, true);
+			case N_String:
+				return new StringNode(treeNode, true);
 
-		case N_ParenExpr:
-			return generateExpression(children[1], cm);
+			case N_ParenExpr:
+				return generateExpression(children[1], cm);
 
-		case N_InfixExpr:
-			genID = generateGenID(children[1], cm);
+			case N_InfixExpr:
+				genID = generateGenID(children[1], cm);
 
-			sns = new ExprOrOpArgNode[2];
-			opn = symbolTable.resolveSymbol(Operators.resolveSynonym(genID.getCompoundIDUS()));
-			if (opn == null) {
-				// An unknown infix operator would have been caught at the
-				// syntax parser level. Check almost certainly unreachable.
-				errors.addError(ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
-						treeNode.getLocation(),
-						"Couldn't resolve infix operator symbol `" + genID.getCompoundIDUS() + "'.");
-				return null;
-			}
-
-			sns[0] = generateExpression(children[0], cm);
-			sns[1] = generateExpression(children[2], cm);
-			return new OpApplNode(opn, sns, treeNode, cm, errors);
-
-		case N_PrefixExpr:
-			// 1 get gen operator node
-			ss = children[0].heirs();
-
-			// 2 get rightmost part of the possibly compound Op itself;
-			op = ss[1];
-			genID = generateGenID(children[0], cm, true);
-			sns = new ExprOrOpArgNode[1];
-			opn = symbolTable.resolveSymbol(Operators.resolveSynonym(genID.getCompoundIDUS()));
-
-			if (opn == null) {
-				// An unknown prefix operator would have been caught at the
-				// syntax parser level. Check almost certainly unreachable.
-				errors.addError(ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
-						treeNode.getLocation(),
-						"Couldn't resolve prefix operator symbol `" + genID.getCompoundIDUS() + "'.");
-				return null;
-			}
-
-			sns[0] = generateExpression(children[1], cm);
-			return new OpApplNode(opn, sns, treeNode, cm, errors); // constructor 2
-
-		case N_PostfixExpr:
-			genID = generateGenID(children[1], cm);
-
-			sns = new ExprNode[1];
-			opn = symbolTable.resolveSymbol(Operators.resolveSynonym(genID.getCompoundIDUS()));
-			if (opn == null) {
-				// An unknown postfix operator would have been caught at the
-				// syntax parser level. Check almost certainly unreachable.
-				errors.addError(ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
-						treeNode.getLocation(),
-						"Couldn't resolve postfix " + "operator symbol `" + genID.getCompoundIDUS() + "'.");
-				return null;
-			}
-
-			sns[0] = generateExpression(children[0], cm);
-			return new OpApplNode(opn, sns, treeNode, cm, errors); // constructor 2
-
-		case N_Times: // or cartesian product
-			sns = new ExprNode[(children.length + 1) / 2];
-
-			for (int lvi = 0; lvi < sns.length; lvi++) {
-				sns[lvi] = generateExpression(children[2 * lvi], cm);
-			}
-			return new OpApplNode(OP_cp, sns, treeNode, cm); // constructor 3
-
-		case N_SetEnumerate:
-			int size = (children.length - 1) / 2;
-			sns = new ExprNode[size];
-			for (int lvi = 0; lvi < size; lvi++) {
-				sns[lvi] = generateExpression(children[2 * lvi + 1], cm);
-			}
-			return new OpApplNode(OP_se, sns, treeNode, cm); // constructor 3
-
-		case N_GeneralId:
-			// This is a zero-ary operator; it should show in the syntax
-			// tree as an OpApp, but it does not. Hence, an OpApplication
-			// node with zero arguments must be constructed for it
-			// if we get here, the GeneralID really is an OpApplication with 0
-			// primary arguments, but with any number of prefix arguments
-
-			// process the generalized identifier, complete with its
-			// embedded argument lists (if any)
-
-			/*********************************************************************
-			 * If the N_GeneralId represents the identifier "@", then check for * errors and
-			 * return an AtNode if none. *
-			 *********************************************************************/
-			SyntaxTreeNode sTreeNode = (SyntaxTreeNode) treeNode;
-			if ((sTreeNode.heirs()[1].getKind() == IDENTIFIER) && (sTreeNode.heirs()[1].getUS() == AtUS)
-					&& (((SyntaxTreeNode) sTreeNode.heirs()[0]).heirs().length == 0)) {
-				if (excStack.isEmpty() || excSpecStack.isEmpty()) {
-					// if either stack is empty, then @ used in improper EXCEPT context
-					errors.addError(
-						ErrorCode.FUNCTION_EXCEPT_AT_USED_WHERE_UNDEFINED,
-						sTreeNode.getLocation(),
-						"@ used where its meaning is not defined."
-					);
-					return nullOAN;
-				} else {
-					// So, the context for @ is proper, then construct the
-					// AtNode and return it
-					return new AtNode(excStack.peekFirst(), excSpecStack.peekFirst());
+				sns = new ExprOrOpArgNode[2];
+				opn = symbolTable.resolveSymbol(Operators.resolveSynonym(genID.getCompoundIDUS()));
+				if (opn == null) {
+					// An unknown infix operator would have been caught at the
+					// syntax parser level. Check almost certainly unreachable.
+					errors.addError(ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
+							treeNode.getLocation(),
+							"Couldn't resolve infix operator symbol `" + genID.getCompoundIDUS() + "'.");
+					return null;
 				}
-			}
-			;
 
-			ExprNode retVal = (ExprNode) selectorToNode(genIdToSelector(sTreeNode), 0, false, false, cm);
+				sns[0] = generateExpression(children[0], cm);
+				sns[1] = generateExpression(children[2], cm);
+				return new OpApplNode(opn, sns, treeNode, cm, errors);
 
-			/*********************************************************************
-			 * A function definition generates an OpDefNode whose body is an * OpApplNode
-			 * whose operator is either $RecursiveFcnSpec or * $NonRecursiveFcnSpec, the
-			 * latter when the definition is * recursive. However, in SANY1 the definition *
-			 * * f[x \in S] == ... * * was found to be recursive only if a subexpression
-			 * f[...] occurs * in the body. It was not marked as recursive if another
-			 * instance * of f occurs, such as Foo(f). To fix this, we need to check if *
-			 * this genID is actually the Identifier of a function currently * being
-			 * defined. The following call to functions.recursionCheck * does that. *
-			 *********************************************************************/
-			if (retVal.getKind() == OpApplKind) {
-				functions.recursionCheck(((OpApplNode) retVal).getOperator().getName());
-			}
-			;
+			case N_PrefixExpr:
+				// 1 get gen operator node
+				ss = children[0].heirs();
 
-			return retVal;
-		/**************************
-		 * old version genID = generateGenID(treeNode, cm);
-		 * 
-		 * // if the symbol is "@" then check for errors and // return an AtNode if
-		 * none. if (genID.getCompoundIDUS() == S_at) { if (excStack.empty() ||
-		 * excSpecStack.empty()) { // if either stack is empty, then @ used in improper
-		 * EXCEPT context errors.addError(treeNode.getLocation(), "@ used where its
-		 * meaning is not defined."); } else { // So, the context for @ is proper, then
-		 * construct the // AtNode and return it return new
-		 * AtNode((OpApplNode)excStack.peek(), (OpApplNode)excSpecStack.peek()); } }
-		 * else if (genID.getFullyQualifiedOp() == null || genID.getArgs() == null) { //
-		 * If it is not an "@" symbol, it may still be an unresolved symbol return
-		 * nullOAN; } else if (genID.getFullyQualifiedOp().getKind() == ModuleKind) {
-		 * errors.addError( treeNode.getLocation(), "Module name '" +
-		 * genID.getFullyQualifiedOp().getName() + "' used as operator."); return
-		 * nullOAN; } else { // but if there are no problems then we are in a situation
-		 * in // which return the appropriate OpApplNode an N_GenID node in // the
-		 * syntax tree really stands for an OpApplication
-		 * 
-		 * // ********************************************************************* // *
-		 * Modified on 20 Apr 2007 by LL to correct the following bug. * // * * // * A
-		 * function definition generates an OpDefNode whose body is an * // * OpApplNode
-		 * whose operator is either $RecursiveFcnSpec or * // * $NonRecursiveFcnSpec,
-		 * the latter when the definition is * // * recursive. However, the definition *
-		 * // * * // * f[x \in S] == ... * // * * // * was found to be recursive only if
-		 * a subexpression f[...] occurs * // * in the body. It was not marked as
-		 * recursive if another instance * // * of f occurs, such as Foo(f). To fix
-		 * this, we need to check if * // * this genID is actually the Identifier of a
-		 * function currently * // * being defined. The call to functions.recursionCheck
-		 * was added * // * here to do that. * //
-		 * *********************************************************************
-		 * SymbolNode symNode = genID.getFullyQualifiedOp() ;
-		 * 
-		 * if (symNode.getKind() == ThmOrAssumpDefKind) {
-		 * errors.addError(treeNode.getLocation(), "Theorem or Assumption name used as
-		 * expression.") ; }; OpApplNode retVal = // return new OpApplNode(symNode,
-		 * genID.getArgs(), treeNode, cm); functions.recursionCheck(symNode.getName());
-		 * return retVal ; }
-		 ******************************* 
-		 * old version
-		 ******************/
-		case N_OpApplication:
-			// for an operator with arguments
-			// Note: in neither case can this be an operator passed as an argument;
-			// the opAppl argument forces the return of an Operator application
-			// operators passed as arguments generate OpArg nodes, and that
-			// can happen only in certain contexts, not in every context where an
-			// expression can occur, which is the context we are in here
+				// 2 get rightmost part of the possibly compound Op itself;
+				op = ss[1];
+				genID = generateGenID(children[0], cm, true);
+				sns = new ExprOrOpArgNode[1];
+				opn = symbolTable.resolveSymbol(Operators.resolveSynonym(genID.getCompoundIDUS()));
 
-			SyntaxTreeNode genIdNode = (SyntaxTreeNode) treeNode.heirs()[0];
-			SyntaxTreeNode opApplNode = (SyntaxTreeNode) treeNode.heirs()[1];
+				if (opn == null) {
+					// An unknown prefix operator would have been caught at the
+					// syntax parser level. Check almost certainly unreachable.
+					errors.addError(ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
+							treeNode.getLocation(),
+							"Couldn't resolve prefix operator symbol `" + genID.getCompoundIDUS() + "'.");
+					return null;
+				}
 
-			/*********************************************************************
-			 * First a check. It appears that the children of an OpApplication * node must
-			 * be a GeneralId node and an OpArgs node, but let's be * sure. *
-			 *********************************************************************/
-			if ((genIdNode.getKind() != N_GeneralId) || (opApplNode.getKind() != N_OpArgs)) {
-				throw errors.addError(
-					ErrorCode.INTERNAL_ERROR,
-					treeNode.getLocation(),
-					"Internal error: OpAppl node with unexpected children."
-				);
-			}
-			;
+				sns[0] = generateExpression(children[1], cm);
+				return new OpApplNode(opn, sns, treeNode, cm, errors); // constructor 2
 
-			Selector sel = genIdToSelector(genIdNode);
-			sel.args[sel.args.length - 1] = opApplNode;
-			sel.selSTN = (SyntaxTreeNode) treeNode;
-			/*******************************************************************
-			 * For error reporting, make the syntax tree node of the selector * include both
-			 * the general ID node and its argument. *
-			 *******************************************************************/
-			return (ExprNode) selectorToNode(sel, 0, false, false, cm);
+			case N_PostfixExpr:
+				genID = generateGenID(children[1], cm);
 
-		/*****************
-		 * old version ********************* return generateOpAppl(treeNode, cm);
-		 ************************/
+				sns = new ExprNode[1];
+				opn = symbolTable.resolveSymbol(Operators.resolveSynonym(genID.getCompoundIDUS()));
+				if (opn == null) {
+					// An unknown postfix operator would have been caught at the
+					// syntax parser level. Check almost certainly unreachable.
+					errors.addError(ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
+							treeNode.getLocation(),
+							"Couldn't resolve postfix " + "operator symbol `" + genID.getCompoundIDUS() + "'.");
+					return null;
+				}
 
-		case N_Tuple:
-			size = (children.length - 1) / 2;
-			sns = new ExprNode[size];
-			for (int lvi = 0; lvi < size; lvi++) {
-				sns[lvi] = generateExpression(children[2 * lvi + 1], cm);
-			}
-			return new OpApplNode(OP_tup, sns, treeNode, cm); // Constructor 3
+				sns[0] = generateExpression(children[0], cm);
+				return new OpApplNode(opn, sns, treeNode, cm, errors); // constructor 2
 
-		case N_FcnAppl: // Apparent function application
-			// Number of arguments to the apparent func app
-			int numArgs = (children.length - 2) / 2;
+			case N_Times: // or cartesian product
+				sns = new ExprNode[(children.length + 1) / 2];
 
-			// Function appl involves two semantic nodes: 1 for function,
-			// and 1 for arg or args tuple.
-			sns = new ExprNode[2];
+				for (int lvi = 0; lvi < sns.length; lvi++) {
+					sns[lvi] = generateExpression(children[2 * lvi], cm);
+				}
+				return new OpApplNode(OP_cp, sns, treeNode, cm); // constructor 3
 
-			// Generate expression tree for the function itself
-			sns[0] = generateExpression(children[0], cm);
+			case N_SetEnumerate:
+				int size = (children.length - 1) / 2;
+				sns = new ExprNode[size];
+				for (int lvi = 0; lvi < size; lvi++) {
+					sns[lvi] = generateExpression(children[2 * lvi + 1], cm);
+				}
+				return new OpApplNode(OP_se, sns, treeNode, cm); // constructor 3
 
-			if (sns[0] == null) {
-				return null;
-			}
-			;
-			/*******************************************************************
-			 * sns[0] can be null if the parsing the function generates an * error (which is
-			 * the case if the function is missing). * Added by LL on 29 Feb 2008 *
-			 *******************************************************************/
+			case N_GeneralId:
+				// This is a zero-ary operator; it should show in the syntax
+				// tree as an OpApp, but it does not. Hence, an OpApplication
+				// node with zero arguments must be constructed for it
+				// if we get here, the GeneralID really is an OpApplication with 0
+				// primary arguments, but with any number of prefix arguments
 
-			// If the function is an OpApplNode (and could it be otherwise?)
-			if (sns[0].getKind() == OpApplKind) {
-				// Note if this is a recursive function, and change the top level
-				functions.recursionCheck(((OpApplNode) sns[0]).getOperator().getName());
-			}
+				// process the generalized identifier, complete with its
+				// embedded argument lists (if any)
 
-			// We next check that the number of arguments to a user-defined
-			// function is correct, if possible.
+				/*********************************************************************
+				 * If the N_GeneralId represents the identifier "@", then check for * errors and
+				 * return an AtNode if none. *
+				 *********************************************************************/
+				SyntaxTreeNode sTreeNode = (SyntaxTreeNode) treeNode;
+				if ((sTreeNode.heirs()[1].getKind() == IDENTIFIER) && (sTreeNode.heirs()[1].getUS() == AtUS)
+						&& (((SyntaxTreeNode) sTreeNode.heirs()[0]).heirs().length == 0)) {
+					if (excStack.isEmpty() || excSpecStack.isEmpty()) {
+						// if either stack is empty, then @ used in improper EXCEPT context
+						errors.addError(
+								ErrorCode.FUNCTION_EXCEPT_AT_USED_WHERE_UNDEFINED,
+								sTreeNode.getLocation(),
+								"@ used where its meaning is not defined.");
+						return nullOAN;
+					} else {
+						// So, the context for @ is proper, then construct the
+						// AtNode and return it
+						return new AtNode(excStack.peekFirst(), excSpecStack.peekFirst());
+					}
+				}
+				;
 
-			// Retrieve the expression that represents the function being
-			// applied, i.e. the 1st arg to $FcnApply
-			ExprOrOpArgNode fcn = sns[0];
+				ExprNode retVal = (ExprNode) selectorToNode(genIdToSelector(sTreeNode), 0, false, false, cm);
 
-			// The entire next conditional is for one purpose: to make sure
-			// that a function symbol is applied to the right number of
-			// arguments, when it is possible to do that during semantic
-			// analysis. This means that if a function is declared with,
-			// say, 3 parameters, e.g. "f[a,b,c] == {a,b,c}", then it is
-			// never used with 2 or 4 arguments. However, it can appear
-			// with zero arguments as the expression "f" (not as "f[]"), and
-			// it can appear with one argument, as in "f[e]", because e
-			// might be a 3-tuple value. (Whether it always is or not
-			// cannot be determined at the time of semantic analysis.)
-			// Furthermore a function declared with exactly one parameter
-			// can appear with any number of argument expressions because,
-			// e.g. f[1,2,3,4] is considered just an alternate way of
-			// writing f[<<1,2,3,4>>], so there is really just one argument
-			// value.
+				/*********************************************************************
+				 * A function definition generates an OpDefNode whose body is an * OpApplNode
+				 * whose operator is either $RecursiveFcnSpec or * $NonRecursiveFcnSpec, the
+				 * latter when the definition is * recursive. However, in SANY1 the definition *
+				 * * f[x \in S] == ... * * was found to be recursive only if a subexpression
+				 * f[...] occurs * in the body. It was not marked as recursive if another
+				 * instance * of f occurs, such as Foo(f). To fix this, we need to check if *
+				 * this genID is actually the Identifier of a function currently * being
+				 * defined. The following call to functions.recursionCheck * does that. *
+				 *********************************************************************/
+				if (retVal.getKind() == OpApplKind) {
+					functions.recursionCheck(((OpApplNode) retVal).getOperator().getName());
+				}
+				;
 
-			// If it is an OpApplNode (as opposed to, say, an OpDeclNode)
-			if (fcn instanceof OpApplNode) {
-				// Retrieve the function being applied
-				SymbolNode funcOperator = ((OpApplNode) fcn).getOperator();
+				return retVal;
+			/**************************
+			 * old version genID = generateGenID(treeNode, cm);
+			 * 
+			 * // if the symbol is "@" then check for errors and // return an AtNode if
+			 * none. if (genID.getCompoundIDUS() == S_at) { if (excStack.empty() ||
+			 * excSpecStack.empty()) { // if either stack is empty, then @ used in improper
+			 * EXCEPT context errors.addError(treeNode.getLocation(), "@ used where its
+			 * meaning is not defined."); } else { // So, the context for @ is proper, then
+			 * construct the // AtNode and return it return new
+			 * AtNode((OpApplNode)excStack.peek(), (OpApplNode)excSpecStack.peek()); } }
+			 * else if (genID.getFullyQualifiedOp() == null || genID.getArgs() == null) { //
+			 * If it is not an "@" symbol, it may still be an unresolved symbol return
+			 * nullOAN; } else if (genID.getFullyQualifiedOp().getKind() == ModuleKind) {
+			 * errors.addError( treeNode.getLocation(), "Module name '" +
+			 * genID.getFullyQualifiedOp().getName() + "' used as operator."); return
+			 * nullOAN; } else { // but if there are no problems then we are in a situation
+			 * in // which return the appropriate OpApplNode an N_GenID node in // the
+			 * syntax tree really stands for an OpApplication
+			 * 
+			 * // ********************************************************************* // *
+			 * Modified on 20 Apr 2007 by LL to correct the following bug. * // * * // * A
+			 * function definition generates an OpDefNode whose body is an * // * OpApplNode
+			 * whose operator is either $RecursiveFcnSpec or * // * $NonRecursiveFcnSpec,
+			 * the latter when the definition is * // * recursive. However, the definition *
+			 * // * * // * f[x \in S] == ... * // * * // * was found to be recursive only if
+			 * a subexpression f[...] occurs * // * in the body. It was not marked as
+			 * recursive if another instance * // * of f occurs, such as Foo(f). To fix
+			 * this, we need to check if * // * this genID is actually the Identifier of a
+			 * function currently * // * being defined. The call to functions.recursionCheck
+			 * was added * // * here to do that. * //
+			 * *********************************************************************
+			 * SymbolNode symNode = genID.getFullyQualifiedOp() ;
+			 * 
+			 * if (symNode.getKind() == ThmOrAssumpDefKind) {
+			 * errors.addError(treeNode.getLocation(), "Theorem or Assumption name used as
+			 * expression.") ; }; OpApplNode retVal = // return new OpApplNode(symNode,
+			 * genID.getArgs(), treeNode, cm); functions.recursionCheck(symNode.getName());
+			 * return retVal ; }
+			 ******************************* 
+			 * old version
+			 ******************/
+			case N_OpApplication:
+				// for an operator with arguments
+				// Note: in neither case can this be an operator passed as an argument;
+				// the opAppl argument forces the return of an Operator application
+				// operators passed as arguments generate OpArg nodes, and that
+				// can happen only in certain contexts, not in every context where an
+				// expression can occur, which is the context we are in here
 
-				// If the function being applied is a user-defined function
-				// (as opposed to OpDeclNode, FormalParamNode, builtin
-				// operator, or expression)
-				if (funcOperator instanceof OpDefNode && funcOperator.getKind() == UserDefinedOpKind) {
-					// Retrieve the function body expression
-					ExprOrOpArgNode funcBody = ((OpDefNode) funcOperator).getBody();
+				SyntaxTreeNode genIdNode = (SyntaxTreeNode) treeNode.heirs()[0];
+				SyntaxTreeNode opApplNode = (SyntaxTreeNode) treeNode.heirs()[1];
 
-					// if the function body is an OpApplNode (as opposed to,
-					// say, NumeralNode, DecimalNode, etc.)
-					if (funcBody instanceof OpApplNode && (((OpApplNode) funcBody).getOperator().getName() == OP_nrfs
-							|| ((OpApplNode) funcBody).getOperator().getName() == OP_rfs)) {
+				/*********************************************************************
+				 * First a check. It appears that the children of an OpApplication * node must
+				 * be a GeneralId node and an OpArgs node, but let's be * sure. *
+				 *********************************************************************/
+				if ((genIdNode.getKind() != N_GeneralId) || (opApplNode.getKind() != N_OpArgs)) {
+					throw errors.addError(
+							ErrorCode.INTERNAL_ERROR,
+							treeNode.getLocation(),
+							"Internal error: OpAppl node with unexpected children.");
+				}
+				;
 
-						// find out how many arguments it is SUPPOSED to have
-						int numParms = ((OpApplNode) funcBody).getNumberOfBoundedBoundSymbols();
+				Selector sel = genIdToSelector(genIdNode);
+				sel.args[sel.args.length - 1] = opApplNode;
+				sel.selSTN = (SyntaxTreeNode) treeNode;
+				/*******************************************************************
+				 * For error reporting, make the syntax tree node of the selector * include both
+				 * the general ID node and its argument. *
+				 *******************************************************************/
+				return (ExprNode) selectorToNode(sel, 0, false, false, cm);
 
-						// If the function appears with numArgs >= 2 argument
-						// expressions, it must be declared with exactly numArgs
-						// parameters; and a function with numParms parameters in
-						// its definition should be applied to exactly numParms
-						// expressions, or 1 expression (representing arguments in
-						// tuple form), or 0 expressions (representing the
-						// function itself). Note: one cannot define a function
-						// with 0 arguments in TLA+.
-						if (numArgs >= 2 && numParms != numArgs) {
-							errors.addError(ErrorCode.FUNCTION_GIVEN_INCORRECT_NUMBER_OF_ARGUMENTS,
-									treeNode.getLocation(),
-									"Function '" + ((OpApplNode) sns[0]).getOperator().getName() + "' is defined with "
-											+ numParms + " parameters, but is applied to " + numArgs + " arguments.");
-							return nullOAN;
+			/*****************
+			 * old version ********************* return generateOpAppl(treeNode, cm);
+			 ************************/
+
+			case N_Tuple:
+				size = (children.length - 1) / 2;
+				sns = new ExprNode[size];
+				for (int lvi = 0; lvi < size; lvi++) {
+					sns[lvi] = generateExpression(children[2 * lvi + 1], cm);
+				}
+				return new OpApplNode(OP_tup, sns, treeNode, cm); // Constructor 3
+
+			case N_FcnAppl: // Apparent function application
+				// Number of arguments to the apparent func app
+				int numArgs = (children.length - 2) / 2;
+
+				// Function appl involves two semantic nodes: 1 for function,
+				// and 1 for arg or args tuple.
+				sns = new ExprNode[2];
+
+				// Generate expression tree for the function itself
+				sns[0] = generateExpression(children[0], cm);
+
+				if (sns[0] == null) {
+					return null;
+				}
+				;
+				/*******************************************************************
+				 * sns[0] can be null if the parsing the function generates an * error (which is
+				 * the case if the function is missing). * Added by LL on 29 Feb 2008 *
+				 *******************************************************************/
+
+				// If the function is an OpApplNode (and could it be otherwise?)
+				if (sns[0].getKind() == OpApplKind) {
+					// Note if this is a recursive function, and change the top level
+					functions.recursionCheck(((OpApplNode) sns[0]).getOperator().getName());
+				}
+
+				// We next check that the number of arguments to a user-defined
+				// function is correct, if possible.
+
+				// Retrieve the expression that represents the function being
+				// applied, i.e. the 1st arg to $FcnApply
+				ExprOrOpArgNode fcn = sns[0];
+
+				// The entire next conditional is for one purpose: to make sure
+				// that a function symbol is applied to the right number of
+				// arguments, when it is possible to do that during semantic
+				// analysis. This means that if a function is declared with,
+				// say, 3 parameters, e.g. "f[a,b,c] == {a,b,c}", then it is
+				// never used with 2 or 4 arguments. However, it can appear
+				// with zero arguments as the expression "f" (not as "f[]"), and
+				// it can appear with one argument, as in "f[e]", because e
+				// might be a 3-tuple value. (Whether it always is or not
+				// cannot be determined at the time of semantic analysis.)
+				// Furthermore a function declared with exactly one parameter
+				// can appear with any number of argument expressions because,
+				// e.g. f[1,2,3,4] is considered just an alternate way of
+				// writing f[<<1,2,3,4>>], so there is really just one argument
+				// value.
+
+				// If it is an OpApplNode (as opposed to, say, an OpDeclNode)
+				if (fcn instanceof OpApplNode) {
+					// Retrieve the function being applied
+					SymbolNode funcOperator = ((OpApplNode) fcn).getOperator();
+
+					// If the function being applied is a user-defined function
+					// (as opposed to OpDeclNode, FormalParamNode, builtin
+					// operator, or expression)
+					if (funcOperator instanceof OpDefNode && funcOperator.getKind() == UserDefinedOpKind) {
+						// Retrieve the function body expression
+						ExprOrOpArgNode funcBody = ((OpDefNode) funcOperator).getBody();
+
+						// if the function body is an OpApplNode (as opposed to,
+						// say, NumeralNode, DecimalNode, etc.)
+						if (funcBody instanceof OpApplNode
+								&& (((OpApplNode) funcBody).getOperator().getName() == OP_nrfs
+										|| ((OpApplNode) funcBody).getOperator().getName() == OP_rfs)) {
+
+							// find out how many arguments it is SUPPOSED to have
+							int numParms = ((OpApplNode) funcBody).getNumberOfBoundedBoundSymbols();
+
+							// If the function appears with numArgs >= 2 argument
+							// expressions, it must be declared with exactly numArgs
+							// parameters; and a function with numParms parameters in
+							// its definition should be applied to exactly numParms
+							// expressions, or 1 expression (representing arguments in
+							// tuple form), or 0 expressions (representing the
+							// function itself). Note: one cannot define a function
+							// with 0 arguments in TLA+.
+							if (numArgs >= 2 && numParms != numArgs) {
+								errors.addError(ErrorCode.FUNCTION_GIVEN_INCORRECT_NUMBER_OF_ARGUMENTS,
+										treeNode.getLocation(),
+										"Function '" + ((OpApplNode) sns[0]).getOperator().getName()
+												+ "' is defined with "
+												+ numParms + " parameters, but is applied to " + numArgs
+												+ " arguments.");
+								return nullOAN;
+							} // end if
 						} // end if
 					} // end if
 				} // end if
-			} // end if
 
-			// Assert.check(numArgs > 0);
-			if (numArgs == 1) {
-				sns[1] = generateExpression(children[2], cm);
-			} else {
-				// If there is more than one arg we have to create a tuple for the arguments.
-				ExprOrOpArgNode[] exprs = new ExprNode[numArgs]; // One for each of the arguments
+				// Assert.check(numArgs > 0);
+				if (numArgs == 1) {
+					sns[1] = generateExpression(children[2], cm);
+				} else {
+					// If there is more than one arg we have to create a tuple for the arguments.
+					ExprOrOpArgNode[] exprs = new ExprNode[numArgs]; // One for each of the arguments
 
-				// For each argument...
-				for (int lvi = 0; lvi < numArgs; lvi++) {
-					// Create the expression for that argument
-					exprs[lvi] = generateExpression(children[2 + 2 * lvi], cm);
+					// For each argument...
+					for (int lvi = 0; lvi < numArgs; lvi++) {
+						// Create the expression for that argument
+						exprs[lvi] = generateExpression(children[2 + 2 * lvi], cm);
+					}
+					// Create an application of $Tuple
+					sns[1] = new OpApplNode(OP_tup, exprs, treeNode, cm);
 				}
-				// Create an application of $Tuple
-				sns[1] = new OpApplNode(OP_tup, exprs, treeNode, cm);
-			}
-			// Create the function application node.
-			return new OpApplNode(OP_fa, sns, treeNode, cm);
+				// Create the function application node.
+				return new OpApplNode(OP_fa, sns, treeNode, cm);
 
-		case N_UnboundOrBoundChoose:
-			return processChoose(treeNode, children, cm);
+			case N_UnboundOrBoundChoose:
+				return processChoose(treeNode, children, cm);
 
-		case N_BoundQuant:
-			return processBoundQuant(treeNode, children, cm);
+			case N_BoundQuant:
+				return processBoundQuant(treeNode, children, cm);
 
-		case N_UnboundQuant:
-			return processUnboundQuant(treeNode, children, cm);
+			case N_UnboundQuant:
+				return processUnboundQuant(treeNode, children, cm);
 
-		case N_IfThenElse:
-			sns = new ExprNode[3];
-			sns[0] = generateExpression(children[1], cm);
-			sns[1] = generateExpression(children[3], cm);
-			sns[2] = generateExpression(children[5], cm);
-			return new OpApplNode(OP_ite, sns, treeNode, cm);
+			case N_IfThenElse:
+				sns = new ExprNode[3];
+				sns[0] = generateExpression(children[1], cm);
+				sns[1] = generateExpression(children[3], cm);
+				sns[2] = generateExpression(children[5], cm);
+				return new OpApplNode(OP_ite, sns, treeNode, cm);
 
-		case N_Case:
-			return processCase(treeNode, children, cm);
+			case N_Case:
+				return processCase(treeNode, children, cm);
 
-		case N_DisjList:
-		case N_ConjList:
-			sns = new ExprNode[children.length];
-			for (int lvi = 0; lvi < sns.length; lvi++) {
-				sns[lvi] = generateExpression(children[lvi].heirs()[1], cm);
-			}
-			if (treeNode.isKind(N_DisjList))
-				return new OpApplNode(OP_dl, sns, treeNode, cm);
-			else
-				return new OpApplNode(OP_cl, sns, treeNode, cm);
+			case N_DisjList:
+			case N_ConjList:
+				sns = new ExprNode[children.length];
+				for (int lvi = 0; lvi < sns.length; lvi++) {
+					sns[lvi] = generateExpression(children[lvi].heirs()[1], cm);
+				}
+				if (treeNode.isKind(N_DisjList))
+					return new OpApplNode(OP_dl, sns, treeNode, cm);
+				else
+					return new OpApplNode(OP_cl, sns, treeNode, cm);
 
-		case N_RecordComponent: // really RcdSelect in the API
-			sns = new ExprNode[2];
-			sns[0] = generateExpression(children[0], cm);
-			sns[1] = new StringNode(children[2], false);
-			return new OpApplNode(OP_rs, sns, treeNode, cm);
+			case N_RecordComponent: // really RcdSelect in the API
+				sns = new ExprNode[2];
+				sns[0] = generateExpression(children[0], cm);
+				sns[1] = new StringNode(children[2], false);
+				return new OpApplNode(OP_rs, sns, treeNode, cm);
 
-		case N_SetOfFcns: /* [S -> T] */
-			sns = new ExprNode[2];
-			sns[0] = generateExpression(children[1], cm);
-			sns[1] = generateExpression(children[3], cm);
+			case N_SetOfFcns: /* [S -> T] */
+				sns = new ExprNode[2];
+				sns[0] = generateExpression(children[1], cm);
+				sns[1] = generateExpression(children[3], cm);
 
-			return new OpApplNode(OP_sof, sns, treeNode, cm);
+				return new OpApplNode(OP_sof, sns, treeNode, cm);
 
-		case N_SubsetOf:
-			return processSubsetOf(treeNode, children, cm);
+			case N_SubsetOf:
+				return processSubsetOf(treeNode, children, cm);
 
-		case N_SetOfAll:
-			return processSetOfAll(treeNode, children, cm);
+			case N_SetOfAll:
+				return processSetOfAll(treeNode, children, cm);
 
-		case N_RcdConstructor:
-			return processRcdForms(OP_rc, treeNode, children, cm);
+			case N_RcdConstructor:
+				return processRcdForms(OP_rc, treeNode, children, cm);
 
-		case N_SetOfRcds:
-			return processRcdForms(OP_sor, treeNode, children, cm);
+			case N_SetOfRcds:
+				return processRcdForms(OP_sor, treeNode, children, cm);
 
-		case N_FcnConst:
-			return processFcnConst(treeNode, children, cm);
+			case N_FcnConst:
+				return processFcnConst(treeNode, children, cm);
 
-		case N_ActionExpr:
-		case N_FairnessExpr:
-			return processAction(treeNode, children, cm);
+			case N_ActionExpr:
+			case N_FairnessExpr:
+				return processAction(treeNode, children, cm);
 
-		case N_Except:
-			return processExcept(treeNode, children, cm);
+			case N_Except:
+				return processExcept(treeNode, children, cm);
 
-		case N_LetIn:
-			return processLetIn(treeNode, children, cm);
+			case N_LetIn:
+				return processLetIn(treeNode, children, cm);
 
-		case N_Lambda:
-			errors.addError(
-				ErrorCode.LAMBDA_GIVEN_WHERE_EXPRESSION_REQUIRED,
-				treeNode.getLocation(),
-				"LAMBDA expression used where an expression is required."
-			);
-			return null;
-
-		case N_Label:
-			LabelNode ln = generateLabel(treeNode, cm);
-			if (ln.isAssumeProve && !allowLabeledAP) {
-				// This is likely unreachable because ASSUME/PROVE statements
-				// can be written only in a few contexts, enforced at the syntax
-				// checker level, and only in those contexts is this method
-				// called with allowLabeledAP set to true. It is possible that
-				// ASSUME/PROVE statements were at one time permitted in more
-				// places, and that is why this check (and some other related
-				// logic for processing USE/HIDE blocks) is present.
+			case N_Lambda:
 				errors.addError(
-					ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
-					treeNode.getLocation(),
-					"Labeled ASSUME/PROVE used where an expression is required."
-				);
-			}
-			return ln;
+						ErrorCode.LAMBDA_GIVEN_WHERE_EXPRESSION_REQUIRED,
+						treeNode.getLocation(),
+						"LAMBDA expression used where an expression is required.");
+				return null;
 
-		default:
-			// If new syntax constructs are added to the language but not yet
-			// implemented by the semantic checker, this will be triggered.
-			errors.addError(
-				ErrorCode.INTERNAL_ERROR,
-				treeNode.getLocation(),
-				"Unsupported expression type `" + treeNode.getImage() + "'."
-			);
-			return null;
+			case N_Label:
+				LabelNode ln = generateLabel(treeNode, cm);
+				if (ln.isAssumeProve && !allowLabeledAP) {
+					// This is likely unreachable because ASSUME/PROVE statements
+					// can be written only in a few contexts, enforced at the syntax
+					// checker level, and only in those contexts is this method
+					// called with allowLabeledAP set to true. It is possible that
+					// ASSUME/PROVE statements were at one time permitted in more
+					// places, and that is why this check (and some other related
+					// logic for processing USE/HIDE blocks) is present.
+					errors.addError(
+							ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
+							treeNode.getLocation(),
+							"Labeled ASSUME/PROVE used where an expression is required.");
+				}
+				return ln;
+
+			default:
+				// If new syntax constructs are added to the language but not yet
+				// implemented by the semantic checker, this will be triggered.
+				errors.addError(
+						ErrorCode.INTERNAL_ERROR,
+						treeNode.getLocation(),
+						"Unsupported expression type `" + treeNode.getImage() + "'.");
+				return null;
 
 		} // end switch
 
@@ -3502,10 +3467,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		;
 		if ((goal.getBody() == null) || (goal.getBody().getKind() != AssumeProveKind)) {
 			throw errors.addError(
-				ErrorCode.INTERNAL_ERROR,
-				stn.getLocation(),
-				"Internal error: Expecting label to be in AssumeProveNode, but it's not."
-			);
+					ErrorCode.INTERNAL_ERROR,
+					stn.getLocation(),
+					"Internal error: Expecting label to be in AssumeProveNode, but it's not.");
 		}
 		;
 		AssumeProveNode ap = (AssumeProveNode) goal.getBody();
@@ -3522,19 +3486,19 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		return ap.inScopeOfDecl[pos - 1] && ((ap.getGoal() == null) || (ap.getGoal().isSuffices() == ap.inProof));
 	}
 
-// XXXX Currently, this handles both label and positional subexpression
-// specifiers.  To handle positional ones, we need to know what
-// the position is.
-//  private final boolean withinScopeOf(SemanticNode goal) {
+	// XXXX Currently, this handles both label and positional subexpression
+	// specifiers. To handle positional ones, we need to know what
+	// the position is.
+	// private final boolean withinScopeOf(SemanticNode goal) {
 	/*************************************************************************
 	 * Returns true iff the node currently being processed lies within the * scope
 	 * of (the declarations made in the ASSUME clauses) of goal, which * will be a
 	 * TheoremNode or a proof-step node. * * XXXXX Dummy implementation for now. *
 	 *************************************************************************/
-//  return true;
-//    if (goal == null) {return true;} ;
-//    return false ;  
-//    }         
+	// return true;
+	// if (goal == null) {return true;} ;
+	// return false ;
+	// }
 
 	// The following objects added 10 Feb 2011 by LL are used to check that
 	// a []ASSUME does not lie within the scope of (the assumptions of)
@@ -3575,18 +3539,16 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			isBoxAssumeProve = true;
 			if (!proveString.equals("[]PROVE")) {
 				errors.addError(
-					ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-					children[0].getLocation(),
-					"[]ASSUME matched by PROVE instead of []PROVE"
-				);
+						ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+						children[0].getLocation(),
+						"[]ASSUME matched by PROVE instead of []PROVE");
 			}
 		} else {
 			if (!proveString.equals("PROVE")) {
 				errors.addError(
-					ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-					children[0].getLocation(),
-					"ASSUME matched by []PROVE instead of PROVE"
-				);
+						ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+						children[0].getLocation(),
+						"ASSUME matched by []PROVE instead of PROVE");
 			}
 		}
 		apn.setIsBoxAssumeProve(isBoxAssumeProve);
@@ -3636,23 +3598,23 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			apn.inScopeOfDecl[i + 1] = apn.inScopeOfDecl[i];
 			TreeNode tn = children[2 * i + 1];
 			switch (tn.getKind()) {
-			case N_AssumeProve:
-				apn.assumes[i] = generateAssumeProve(tn, cm);
-				break;
-			case N_NewSymb:
-				apn.assumes[i] = generateNewSymb(tn, cm);
-				apn.inScopeOfDecl[i + 1] = true;
-				inScopeOfAPDecl[assumeProveDepth] = true;
-				OpDeclNode[] odn = new OpDeclNode[1];
-				odn[0] = ((NewSymbNode) apn.assumes[i]).getOpDeclNode();
-				break;
-			default:
-				/**************************************************************
-				 * Should be an expression node or a labeled ASSUME/PROVE. *
-				 **************************************************************/
-//             apn.assumes[i] = generateExpression(tn, cm) ;
-				apn.assumes[i] = generateExpressionOrLAP(tn, cm, true);
-				break;
+				case N_AssumeProve:
+					apn.assumes[i] = generateAssumeProve(tn, cm);
+					break;
+				case N_NewSymb:
+					apn.assumes[i] = generateNewSymb(tn, cm);
+					apn.inScopeOfDecl[i + 1] = true;
+					inScopeOfAPDecl[assumeProveDepth] = true;
+					OpDeclNode[] odn = new OpDeclNode[1];
+					odn[0] = ((NewSymbNode) apn.assumes[i]).getOpDeclNode();
+					break;
+				default:
+					/**************************************************************
+					 * Should be an expression node or a labeled ASSUME/PROVE. *
+					 **************************************************************/
+					// apn.assumes[i] = generateExpression(tn, cm) ;
+					apn.assumes[i] = generateExpressionOrLAP(tn, cm, true);
+					break;
 			}
 			; // end switch
 			if (assumeProveDepth == 1) {
@@ -3716,30 +3678,30 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		 * set to 0. *
 		 *********************************************************************/
 		switch (children[i].getKind()) {
-		case CONSTANT:
-			declKind = NewConstantKind;
-			declLevel = ConstantLevel;
-			break;
-		case VARIABLE:
-			declKind = NewVariableKind;
-			declLevel = VariableLevel;
-			break;
-		case STATE:
-			declKind = NewStateKind;
-			declLevel = VariableLevel;
-			break;
-		case ACTION:
-			declKind = NewActionKind;
-			declLevel = ActionLevel;
-			break;
-		case TEMPORAL:
-			declKind = NewTemporalKind;
-			declLevel = TemporalLevel;
-			break;
-		default:
-			declKind = NewConstantKind;
-			declLevel = ConstantLevel;
-			i = 0;
+			case CONSTANT:
+				declKind = NewConstantKind;
+				declLevel = ConstantLevel;
+				break;
+			case VARIABLE:
+				declKind = NewVariableKind;
+				declLevel = VariableLevel;
+				break;
+			case STATE:
+				declKind = NewStateKind;
+				declLevel = VariableLevel;
+				break;
+			case ACTION:
+				declKind = NewActionKind;
+				declLevel = ActionLevel;
+				break;
+			case TEMPORAL:
+				declKind = NewTemporalKind;
+				declLevel = TemporalLevel;
+				break;
+			default:
+				declKind = NewConstantKind;
+				declLevel = ConstantLevel;
+				i = 0;
 		}
 		; // switch
 		return new NewSymbNode(buildParameter(children[i + 1], declKind, declLevel, cm, true), set, treeNode);
@@ -3873,12 +3835,10 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			}
 			default: {
 				throw new IllegalArgumentException(
-					String.format(
-						"Unknown unbound quantifier kind %d: %s",
-						kind,
-						children[0].getImage()
-					)
-				);
+						String.format(
+								"Unknown unbound quantifier kind %d: %s",
+								kind,
+								children[0].getImage()));
 			}
 		}
 
@@ -4040,10 +4000,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			for (int cmpIndex = 0; cmpIndex < lvi; cmpIndex++) {
 				if (labels[lvi].compareTo(labels[cmpIndex]) == 0) {
 					errors.addError(
-						ErrorCode.RECORD_CONSTRUCTOR_FIELD_REDEFINITION,
-						syntaxTreeNode[0].getLocation(),
-						"Non-unique fields in constructor."
-					);
+							ErrorCode.RECORD_CONSTRUCTOR_FIELD_REDEFINITION,
+							syntaxTreeNode[0].getLocation(),
+							"Non-unique fields in constructor.");
 				}
 			}
 
@@ -4065,23 +4024,25 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			case TLAplusParserConstants.LAB: { // <<expr>>_vars
 				match = OP_aa;
 				break;
-			} case TLAplusParserConstants.LSB: { // [expr]_vars
+			}
+			case TLAplusParserConstants.LSB: { // [expr]_vars
 				match = OP_sa;
 				break;
-			} case TLAplusParserConstants.SF: { // SF_vars(expr)
+			}
+			case TLAplusParserConstants.SF: { // SF_vars(expr)
 				match = OP_sf;
 				break;
-			} case TLAplusParserConstants.WF: { // WF_vars(expr)
+			}
+			case TLAplusParserConstants.WF: { // WF_vars(expr)
 				match = OP_wf;
 				break;
-			} default: {
+			}
+			default: {
 				throw new IllegalArgumentException(
-					String.format(
-						"Unknown action formula kind %d: %s",
-						children[0].getKind(),
-						children[0].getImage()
-					)
-				);
+						String.format(
+								"Unknown action formula kind %d: %s",
+								children[0].getKind(),
+								children[0].getImage()));
 			}
 		}
 
@@ -4206,11 +4167,10 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 
 		if (mainOp == null) {
 			errors.addError(
-				ErrorCode.INTERNAL_ERROR,
-				mainSTN.getLocation(),
-				"Unable to generate expression or operator argument; "
-				+ "this is probably because of previously reported errors."
-			);
+					ErrorCode.INTERNAL_ERROR,
+					mainSTN.getLocation(),
+					"Unable to generate expression or operator argument; "
+							+ "this is probably because of previously reported errors.");
 			return nullOAN;
 		}
 
@@ -4219,10 +4179,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			// Attempting to pass in a module node as an operator application
 			// would have already been caught by an "incomplete name" error.
 			errors.addError(
-				ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
-				mainSTN.getLocation(),
-				"Module name '" + mainOp.getName() + "' used as operator."
-			);
+					ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
+					mainSTN.getLocation(),
+					"Module name '" + mainOp.getName() + "' used as operator.");
 			return nullOAN;
 		}
 
@@ -4231,11 +4190,10 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			// One of many duplicate arity-matching checks that would have
 			// been caught long before this point.
 			errors.addError(
-				ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
-				mainSTN.getLocation(),
-				"Too many arguments for operator '" + mainOp.getName()
-				+ "'.  There should be only " + mainOp.getArity() + "."
-			);
+					ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
+					mainSTN.getLocation(),
+					"Too many arguments for operator '" + mainOp.getName()
+							+ "'.  There should be only " + mainOp.getArity() + ".");
 
 			return nullOAN;
 		}
@@ -4253,16 +4211,16 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		if ((mainOp.getKind() == UserDefinedOpKind) || (mainOp.getKind() == ModuleInstanceKind)) {
 			final OpDefNode opDefNode = (OpDefNode) mainOp;
 			FormalParamNode[] params = opDefNode.getParams();
-			
+
 			// MAK 07/2021: Added this check to prevent an ArrayIndexOutOfBoundsException
 			// that occurs if a RECURSIVE operator declaration has more arguments (higher
 			// arity) than its definition:
 			//
-			//  RECURSIVE ReachableFrom(_,_)                    \* 2-arity!
-            //  ReachableFrom(S) == LET R == SetNbrs(S)
-            //                      IN  IF R \subseteq S THEN S
-            //                          ELSE ReachableFrom(R \cup S)
-            //
+			// RECURSIVE ReachableFrom(_,_) \* 2-arity!
+			// ReachableFrom(S) == LET R == SetNbrs(S)
+			// IN IF R \subseteq S THEN S
+			// ELSE ReachableFrom(R \cup S)
+			//
 			// This check expects that code elsewhere (in case of RECURSIVE e.g.
 			// processOperator(..)) has already produced a corresponding error message,
 			// such as "Definition of ReachableFrom has different arity than its RECURSIVE
@@ -4510,20 +4468,20 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			argPos = argPos + 2;
 		} // for
 
-//    /***********************************************************************
-//    * Convert the FormalParamNode array params to the OpDeclNode array     *
-//    * odn.                                                                 *
-//    ***********************************************************************/
-//    OpDeclNode[] odn = new OpDeclNode[params.length] ;
-//    for (int i = 0; i < params.length; i++) {
-//      odn[i] = new OpDeclNode(params[i].getName(),
-//                              BoundSymbolKind,
-//                              ConstantLevel,
-//                              params.length,  // arity
-//                              cm,             // ModuleNode                     
-//                              null,           // SymbolTable
-//                              params[i].stn); // TreeNode
-//      }; // for
+		// /***********************************************************************
+		// * Convert the FormalParamNode array params to the OpDeclNode array *
+		// * odn. *
+		// ***********************************************************************/
+		// OpDeclNode[] odn = new OpDeclNode[params.length] ;
+		// for (int i = 0; i < params.length; i++) {
+		// odn[i] = new OpDeclNode(params[i].getName(),
+		// BoundSymbolKind,
+		// ConstantLevel,
+		// params.length, // arity
+		// cm, // ModuleNode
+		// null, // SymbolTable
+		// params[i].stn); // TreeNode
+		// }; // for
 		pushFormalParams(params);
 		/*******************************************************************
 		 * Push formal parameters on Last(LS).paramSeq for processing the * body
@@ -4711,10 +4669,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 					count = 1;
 				} else {
 					throw errors.addError(
-						ErrorCode.INTERNAL_ERROR,
-						treeNode.getLocation(),
-						"Internal error: Error in formal params part of parse tree."
-					);
+							ErrorCode.INTERNAL_ERROR,
+							treeNode.getLocation(),
+							"Internal error: Error in formal params part of parse tree.");
 				}
 
 				// If there was no error
@@ -4838,9 +4795,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 							symbolTable, treeNode, odn.getSource());
 				}
 				; // else
-				// defs is non-null iff this module definition is in the Let
-				// part of a Let-In expression. Add this newly created OpDef
-				// to either the LET list or the module cm's definition list.
+					// defs is non-null iff this module definition is in the Let
+					// part of a Let-In expression. Add this newly created OpDef
+					// to either the LET list or the module cm's definition list.
 				if (defs == null) {
 					cm.appendDef(newOdn);
 				} else {
@@ -4981,9 +4938,10 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		if (targetSymbol == null || !(targetSymbol instanceof OpDeclNode)) {
 			errors.addError(ErrorCode.INSTANCE_SUBSTITUTION_ILLEGAL_SYMBOL_REDEFINITION,
 					substTarget.getLocation(), "Identifier '" + substTarget.getUS() + "' is not a legal"
-					+ " target of a substitution. \nA legal target must be a declared"
-					+ " CONSTANT or VARIABLE in the module being instantiated."
-					+ " \n(Also, check for warnings about multiple declarations of" + " this same identifier.)");
+							+ " target of a substitution. \nA legal target must be a declared"
+							+ " CONSTANT or VARIABLE in the module being instantiated."
+							+ " \n(Also, check for warnings about multiple declarations of"
+							+ " this same identifier.)");
 			return nullOAN;
 		}
 
@@ -5007,11 +4965,13 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 	} // end generateSubst()
 
 	/**
-	 * Ensure that in a substitution <code>targetSymbol <- substValue</code>, the substituted value has
-	 * the same arity as the target symbol.  Adds to {@link #errors} if there is a mismatch.
+	 * Ensure that in a substitution <code>targetSymbol <- substValue</code>, the
+	 * substituted value has
+	 * the same arity as the target symbol. Adds to {@link #errors} if there is a
+	 * mismatch.
 	 *
 	 * @param targetSymbol the symbol being substituted
-	 * @param substValue the substitution
+	 * @param substValue   the substitution
 	 */
 	private void checkSubstitutionForCorrectArity(SymbolNode targetSymbol, ExprOrOpArgNode substValue) {
 		int expectedArity = targetSymbol.getArity();
@@ -5019,7 +4979,7 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		if (actualArity != expectedArity) {
 			errors.addError(ErrorCode.INSTANCE_SUBSTITUTION_OPERATOR_CONSTANT_INCORRECT_ARITY,
 					substValue.getLocation(), "An operator must be substituted for symbol '"
-					+ targetSymbol.getName() + "', and it must have arity " + expectedArity + ".");
+							+ targetSymbol.getName() + "', and it must have arity " + expectedArity + ".");
 		}
 	}
 
@@ -5068,10 +5028,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			 *********************************************************************/
 			if (targetSymbol.getArity() <= 0) {
 				throw errors.addError(
-					ErrorCode.INTERNAL_ERROR,
-					opArgSyntaxNode.getLocation(),
-					"Internal error: expected to find arity > 0."
-				);
+						ErrorCode.INTERNAL_ERROR,
+						opArgSyntaxNode.getLocation(),
+						"Internal error: expected to find arity > 0.");
 			}
 			;
 
@@ -5091,10 +5050,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 					return nullOpArg;
 				}
 				throw errors.addError(
-					ErrorCode.INTERNAL_ERROR,
-					opArgSyntaxNode.getLocation(),
-					"Internal error: Expected an operator argument but found something else."
-				);
+						ErrorCode.INTERNAL_ERROR,
+						opArgSyntaxNode.getLocation(),
+						"Internal error: Expected an operator argument but found something else.");
 			}
 			;
 			return (OpArgNode) ln;
@@ -5179,8 +5137,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			substIn.addExplicitSubstitute(instanceeCtxt, sc[0].getUS(), sc[2], substRHS, errors);
 		}
 
-		// Check that all remaining implicit substitutions have the correct arity.  The
-		// calls to `generateSubst` above have already checked the explicit substitutions.
+		// Check that all remaining implicit substitutions have the correct arity. The
+		// calls to `generateSubst` above have already checked the explicit
+		// substitutions.
 		for (Subst subst : substIn.getSubsts()) {
 			if (subst.isImplicit()) {
 				checkSubstitutionForCorrectArity(subst.getOp(), subst.getExpr());
@@ -5260,10 +5219,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		Context instanceeCtxt = this.getContext(moduleId);
 		if (instanceeCtxt == null) {
 			throw errors.addError(
-				ErrorCode.INTERNAL_ERROR,
-				children[1].getLocation(),
-				"Internal error: No context available for module `" + moduleId.toString() + "'."
-			);
+					ErrorCode.INTERNAL_ERROR,
+					children[1].getLocation(),
+					"Internal error: No context available for module `" + moduleId.toString() + "'.");
 		}
 		;
 		// Try to find the ModuleNode for the module being instanced in
@@ -5279,10 +5237,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 
 		if (instanceeModuleNode == null) {
 			throw errors.addError(
-				ErrorCode.INTERNAL_ERROR,
-				children[1].getLocation(),
-				"Could not find module " + moduleId.toString()
-			);
+					ErrorCode.INTERNAL_ERROR,
+					children[1].getLocation(),
+					"Could not find module " + moduleId.toString());
 		}
 
 		/*
@@ -5782,10 +5739,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 				if ((!oimage.equals(STN.image.toString()))
 						&& ((oimage.charAt(1) == '*') || (oimage.charAt(1) == '+'))) {
 					errors.addError(
-						ErrorCode.PROOF_STEP_WITH_IMPLICIT_LEVEL_CANNOT_HAVE_NAME,
-						stepNumSTN.getLocation(),
-						"<*> and <+> cannot be used for a named step."
-					);
+							ErrorCode.PROOF_STEP_WITH_IMPLICIT_LEVEL_CANNOT_HAVE_NAME,
+							stepNumSTN.getLocation(),
+							"<*> and <+> cannot be used for a named step.");
 				}
 			}
 
@@ -5794,22 +5750,22 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			 *********************************************************************/
 			UniqueString stepNum = null;
 			switch (stepNumSTN.getKind()) {
-			// LL: On 25 Feb 2010 I discovered the following comment here:
-			// XXXXXX xyz: need to add the following case
-			// The ProofImplicitStepLexeme case (something like <*>3) seems to be
-			// handled properly in tests. I presume that this is an obsolete
-			// comment that I didn't remove when I added the case to the code.
-			case TLAplusParserConstants.ProofImplicitStepLexeme:
-			case TLAplusParserConstants.ProofStepLexeme:
-				stepNum = stepNumSTN.getUS();
-				break;
-			case TLAplusParserConstants.ProofStepDotLexeme:
-				String stNum = stepNumSTN.getUS().toString();
-				stepNum = UniqueString.uniqueStringOf(stNum.substring(0, stNum.indexOf(".")));
-				break;
-			default:
-				makePfNumNode = false;
-				break;
+				// LL: On 25 Feb 2010 I discovered the following comment here:
+				// XXXXXX xyz: need to add the following case
+				// The ProofImplicitStepLexeme case (something like <*>3) seems to be
+				// handled properly in tests. I presume that this is an obsolete
+				// comment that I didn't remove when I added the case to the code.
+				case TLAplusParserConstants.ProofImplicitStepLexeme:
+				case TLAplusParserConstants.ProofStepLexeme:
+					stepNum = stepNumSTN.getUS();
+					break;
+				case TLAplusParserConstants.ProofStepDotLexeme:
+					String stNum = stepNumSTN.getUS().toString();
+					stepNum = UniqueString.uniqueStringOf(stNum.substring(0, stNum.indexOf(".")));
+					break;
+				default:
+					makePfNumNode = false;
+					break;
 			}
 			; // switch
 
@@ -5841,479 +5797,483 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 			;
 
 			switch (stepKind) {
-			case N_DefStep:
-				/*****************************************************************
-				 * Set defSTNs to the array of heirs, and defOffSet so that * defSTNs[defOffSet]
-				 * ... defSTNs[defSTNs.length-1] is the * sequence of definitions. *
-				 *****************************************************************/
-				TreeNode[] defSTNs = stepBodySTN.heirs();
-				int defOffSet = 0;
-				if (defSTNs[0].getKind() == DEFINE) {
-					defOffSet = 1;
-				}
-				;
-
-				OpDefNode[] defs = new OpDefNode[defSTNs.length - defOffSet];
-				/***************************************************************
-				 * Will be set to the sequence of OpDefNodes for the * definitions. *
-				 ***************************************************************/
-				for (int j = defOffSet; j < defSTNs.length; j++) {
-					TreeNode defSTN = defSTNs[j];
+				case N_DefStep:
+					/*****************************************************************
+					 * Set defSTNs to the array of heirs, and defOffSet so that * defSTNs[defOffSet]
+					 * ... defSTNs[defSTNs.length-1] is the * sequence of definitions. *
+					 *****************************************************************/
+					TreeNode[] defSTNs = stepBodySTN.heirs();
+					int defOffSet = 0;
+					if (defSTNs[0].getKind() == DEFINE) {
+						defOffSet = 1;
+					}
 					;
-					final Vector<SemanticNode> vec = new Vector<>();
-					switch (defSTN.getKind()) {
+
+					OpDefNode[] defs = new OpDefNode[defSTNs.length - defOffSet];
 					/***************************************************************
-					 * Need to check if it's an operator, function, or module * definition. *
+					 * Will be set to the sequence of OpDefNodes for the * definitions. *
 					 ***************************************************************/
-					case N_FunctionDefinition:
-						processFunction(defSTN, vec, cm);
-						break;
-					case N_ModuleDefinition:
-						/*************************************************************
-						 * The call to processModuleDefinition sets defsVec to a * vector of all the
-						 * definitions it makes, and adds the new * InstanceNode to iVec. For now, we're
-						 * just throwing * away defsVec. (If defsVec were null, then *
-						 * processModuleDefinition would add these definitions to to * the module's list
-						 * of top-level definitions.) *
-						 *************************************************************/
-						final Vector<SemanticNode> defsVec = new Vector<>();
-						vec.addElement(processModuleDefinition(defSTN, defsVec, iVec, cm));
-						break;
-					case N_OperatorDefinition:
-					  cm.appendDef(processOperator(defSTN, vec, cm));
-						
-						/*************************************************************
-						 * processOperator creates an OpDefNode, puts an entry for * it in symbolTable,
-						 * and adds the OpDefNode to vec. *
-						 *************************************************************/
-						break;
-					}
-					; // switch (def.getKind())
-					defs[j - defOffSet] = (OpDefNode)vec.elementAt(0);
-				}
-				; // for j
-				pfNumNode = new DefStepNode(stepBodySTN, stepNum, defs);
-				steps[i - offset] = pfNumNode;
-				break;
-
-			case N_UseOrHide:
-				UseOrHideNode uohn = generateUseOrHide(stepBodySTN, cm);
-
-				// Added by LL on 16 Jun 2010 so location returnedby getLocation() will
-				// include the step number.
-				uohn.stn = pfStepSTN;
-
-				uohn.setStepName(stepNum); // Added 6 June 2010 by LL.
-
-				if (uohn.facts.length + uohn.defs.length == 0) {
-					// Should be enforced at syntax level
-					errors.addError(ErrorCode.INTERNAL_ERROR, stepBodySTN.getLocation(), "Empty USE or HIDE statement.");
-				}
-				;
-				uohn.factCheck(errors);
-				// Added 4 Mar 2009.
-				pfNumNode = uohn;
-				steps[i - offset] = pfNumNode;
-				break;
-
-			case N_NonLocalInstance:
-				// Code to set step name added by LL on 6 June 2010
-				InstanceNode inst = generateInstance(stepBodySTN, cm, false);
-				inst.setStepName(stepNum);
-				pfNumNode = inst;
-				steps[i - offset] = pfNumNode;
-				break;
-
-			default:
-				makePfNumNode = false;
-				TreeNode[] bodyHeirs = stepBodySTN.heirs();
-				LevelNode body = null;
-				/***************************************************************
-				 * This will be set to the body of the TheoremNode or * ThmOrAssumpDefNode. *
-				 ***************************************************************/
-				UniqueString op = null;
-				ExprNode[] args;
-				/***************************************************************
-				 * For anything but an N_Assert node, body is set to an * OpApplNode having
-				 * these as its operator and arguments. *
-				 ***************************************************************/
-
-				switch (stepBodySTN.getKind()) {
-				case N_AssertStep:
-					int bodyNext = 0;
-					if (bodyHeirs[0].getKind() == TLAplusParserConstants.SUFFICES) {
-						bodyNext = 1;
-						isSuffices = true;
-						/************************************************************
-						 * We can't have an "@" in a SUFFICES step. *
-						 ************************************************************/
-					}
-					;
-					if (bodyHeirs[bodyNext].getKind() == N_AssumeProve) {
-						/************************************************************
-						 * This is an AssumeProve node. *
-						 ************************************************************/
-						isAssumeProve = true;
-
-						/************************************************************
-						 * For an ASSUME/PROVE, we need save the symbol * declarations from top-level
-						 * NEW statements in the ASSUME * to make them visible only in the statement's
-						 * proof for * an ordinary ASSUME/PROVE, and only after the statement's * proof
-						 * for a SUFFICES ASSUME/PROVE. *
-						 ************************************************************/
-						symbolTable.pushContext(new Context(moduleTable));
-
-						currentGoal = tadn;
-						/**********************************************************
-						 * Need to set currentGoal before generating the * AssumeProve node. *
-						 **********************************************************/
-						body = generateAssumeProve(bodyHeirs[bodyNext], cm);
-
-						if (isSuffices) {
-							((AssumeProveNode) body).setSuffices();
-						}
+					for (int j = defOffSet; j < defSTNs.length; j++) {
+						TreeNode defSTN = defSTNs[j];
 						;
-						/**********************************************************
-						 * Added 16 Feb 2009 by LL. *
-						 **********************************************************/
-						currentGoal = null;
-						assumeContext = symbolTable.getContext();
-						symbolTable.popContext();
-						prevIsInfix = false;
-					} else {
-						/************************************************************
-						 * This is an ordinary expression. *
-						 ************************************************************/
-						TreeNode curExpr = bodyHeirs[bodyNext];
+						final Vector<SemanticNode> vec = new Vector<>();
+						switch (defSTN.getKind()) {
+							/***************************************************************
+							 * Need to check if it's an operator, function, or module * definition. *
+							 ***************************************************************/
+							case N_FunctionDefinition:
+								processFunction(defSTN, vec, cm);
+								break;
+							case N_ModuleDefinition:
+								/*************************************************************
+								 * The call to processModuleDefinition sets defsVec to a * vector of all the
+								 * definitions it makes, and adds the new * InstanceNode to iVec. For now, we're
+								 * just throwing * away defsVec. (If defsVec were null, then *
+								 * processModuleDefinition would add these definitions to to * the module's list
+								 * of top-level definitions.) *
+								 *************************************************************/
+								final Vector<SemanticNode> defsVec = new Vector<>();
+								vec.addElement(processModuleDefinition(defSTN, defsVec, iVec, cm));
+								break;
+							case N_OperatorDefinition:
+								cm.appendDef(processOperator(defSTN, vec, cm));
 
-						/************************************************************
-						 * Special handling of SUFFICES added by LL 16 Feb 2009. *
-						 ************************************************************/
-						if (isSuffices) {
-							args = new ExprNode[1];
-							args[0] = generateExpression(curExpr, cm);
-							body = new OpApplNode(OP_suffices, args, stepBodySTN, cm);
-						} // if (isSuffices)
-						else {
-							/************************************************************
-							 * If the current expression is an infix expression, set * curLHS to its current
-							 * LHS, otherwise set it to null. *
-							 ************************************************************/
-							SyntaxTreeNode curLHS = null;
-							if (curExpr.getKind() == N_InfixExpr) {
-								curLHS = (SyntaxTreeNode) curExpr.heirs()[0];
-							}
-							;
-							/************************************************************
-							 * If prevIsInfix is true and curLHS is an "@", then * process it, using as the
-							 * right-hand side a new $Nop node * with prevRHS as its argument. *
-							 ************************************************************/
-							if (prevIsInfix && (curLHS != null) && (curLHS.heirs().length > 0)
-							/***************************************************
-							 * This test added 25 Feb 2010 because if curLHS * is a string, then
-							 * curLHS.heirs() is a * zero-length array, so the following test threw * an
-							 * out-of-bounds array index exception. Note * that curLHS.heirs() should never
-							 * be null, * because the heirs() method can never return * null. *
-							 ***************************************************/
-									&& (((SyntaxTreeNode) curLHS.heirs()[0]).heirs().length == 0)
-									&& (curLHS.heirs()).length > 1
-									/***************************************************
-									 * This test added 2 Mar 2009 to fix following * bug. When we are here and the
-									 * left-hand side * is something like a number, then curLHS.heirs() * seems to
-									 * have length 1 and the following test * causes an ArrayIndexOverflowException.
-									 * *
-									 ***************************************************/
-									&& (curLHS.heirs()[1].getKind() == IDENTIFIER)
-									&& (curLHS.heirs()[1].getUS() == AtUS)) {
-
-								/**********************************************************
-								 * The following code obtained by a simple modification * of the N_InfixExpr
-								 * case of generateExpression. *
-								 **********************************************************/
-								TreeNode[] children = curExpr.heirs();
-								GenID genID = generateGenID(children[1], cm);
-								ExprNode[] sns = new ExprNode[2];
-								SymbolNode opn = symbolTable
-										.resolveSymbol(Operators.resolveSynonym(genID.getCompoundIDUS()));
-								if (opn == null) {
-									// An unknown infix operator would have been caught at syntax level
-									errors.addError(
-										ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
-										curExpr.getLocation(),
-										"Couldn't resolve infix operator symbol `" + genID.getCompoundIDUS() + "'."
-									);
-									return null;
-								}
-								;
-								sns[1] = generateExpression(children[2], cm);
-								/**********************************************************
-								 * Set sns[1] to a new $Nop OpApplNode whose argument is * prevRHS. *
-								 **********************************************************/
-								ExprNode[] nopArgs = new ExprNode[1];
-								nopArgs[0] = prevRHS;
-								sns[0] = new OpApplNode(OP_nop, nopArgs, curLHS, cm);
-								body = new OpApplNode(opn, sns, curExpr, cm, errors);
-							} // if ( prevIsInfix ...)
-							else { // this is not an @-step
-								body = generateExpression(curExpr, cm);
-							}
-							;
-
-							/************************************************************
-							 * If this is an infix ioperator, set prevIsInfix true and * prevRHS equal to
-							 * its right-hand argument, else set * prevIsInfix false. *
-							 ************************************************************/
-							prevIsInfix = false;
-							if ((curLHS != null)
-									/*******************************************************
-									 * The following conjuncts should be true unless there * was an error in the
-									 * expression. *
-									 *******************************************************/
-									&& (body != null) && (body.getKind() == OpApplKind)
-									&& (((OpApplNode) body).getArgs().length > 1)) {
-								prevIsInfix = true;
-								prevRHS = (ExprNode) ((OpApplNode) body).getArgs()[1];
-							}
+								/*************************************************************
+								 * processOperator creates an OpDefNode, puts an entry for * it in symbolTable,
+								 * and adds the OpDefNode to vec. *
+								 *************************************************************/
+								break;
 						}
+						; // switch (def.getKind())
+						defs[j - defOffSet] = (OpDefNode) vec.elementAt(0);
 					}
-					; // else This is an ordinary expression.
+					; // for j
+					pfNumNode = new DefStepNode(stepBodySTN, stepNum, defs);
+					steps[i - offset] = pfNumNode;
 					break;
 
-				case N_HaveStep:
-				case N_CaseStep:
-					if (stepBodySTN.getKind() == N_HaveStep) {
-						op = OP_have;
-					} else {
-						op = OP_pfcase;
+				case N_UseOrHide:
+					UseOrHideNode uohn = generateUseOrHide(stepBodySTN, cm);
+
+					// Added by LL on 16 Jun 2010 so location returnedby getLocation() will
+					// include the step number.
+					uohn.stn = pfStepSTN;
+
+					uohn.setStepName(stepNum); // Added 6 June 2010 by LL.
+
+					if (uohn.facts.length + uohn.defs.length == 0) {
+						// Should be enforced at syntax level
+						errors.addError(ErrorCode.INTERNAL_ERROR, stepBodySTN.getLocation(),
+								"Empty USE or HIDE statement.");
 					}
 					;
-					args = new ExprNode[1];
-					args[0] = generateExpression(bodyHeirs[1], cm);
-					body = new OpApplNode(op, args, stepBodySTN, cm);
+					uohn.factCheck(errors);
+					// Added 4 Mar 2009.
+					pfNumNode = uohn;
+					steps[i - offset] = pfNumNode;
 					break;
 
-				case N_TakeStep:
-				case N_PickStep:
-					if (stepBodySTN.getKind() == N_TakeStep) {
-						op = OP_take;
-					} else {
-						op = OP_pick;
-						isPick = true;
-						/************************************************************
-						 * Push a new context onto the symbolTable stack to get the * declarations of
-						 * the PICK symbols. *
-						 ************************************************************/
-						symbolTable.pushContext(new Context(moduleTable));
-					}
-					;
-
-					if (bodyHeirs[1].getKind() == N_QuantBound) {
-						/************************************************************
-						 * The introduced identifiers are bounded--e.g., "TAKE id * \in Set". *
-						 ************************************************************/
-
-						/************************************************************
-						 * Set quants to the number of N_QuantBound nodes. *
-						 ************************************************************/
-						int quants = 1;
-						int nextTok = 2;
-						while ((nextTok < bodyHeirs.length)
-								&& (bodyHeirs[nextTok].getKind() == TLAplusParserConstants.COMMA)) {
-							quants++;
-							nextTok = nextTok + 2;
-						}
-						;
-						FormalParamNode[][] params = new FormalParamNode[quants][0];
-						boolean[] bt = new boolean[quants];
-						ExprNode[] paramBounds = new ExprNode[quants];
-						processQuantBoundArgs(bodyHeirs, 1, params, bt, paramBounds, cm);
-
-						if (isPick) {
-							/**********************************************************
-							 * Save the declarations in pickContext. *
-							 **********************************************************/
-							pickContext = symbolTable.getContext();
-							/**********************************************************
-							 * This is a PICK step; get the ": expr". *
-							 **********************************************************/
-							nextTok++; // Skip over the ":"
-							args = new ExprNode[1];
-							pushFormalParams(flattenParams(params));
-							/********************************************************
-							 * Push the bound variables on Last(LS).paramSeq and * process the body of the
-							 * PICK. *
-							 ********************************************************/
-							args[0] = generateExpression(bodyHeirs[nextTok], cm);
-							popFormalParams();
-							symbolTable.popContext();
-							/********************************************************
-							 * Remove the bound symbols from the symbol table so * they're undefined for the
-							 * proof of the PICK. *
-							 ********************************************************/
-						} else {
-							/**********************************************************
-							 * This is a TAKE step. *
-							 **********************************************************/
-							args = new ExprNode[0];
-						}
-						;
-						body = new OpApplNode(op, null, args, params, bt, paramBounds, stepBodySTN, cm);
-					} else {
-						/************************************************************
-						 * The introduced identifiers are unbounded--e.g., "TAKE * id1, id2". *
-						 ************************************************************/
-
-						/************************************************************
-						 * Set ids to the number of introduced identifiers. *
-						 ************************************************************/
-						int ids = 1;
-						while ((2 * ids < bodyHeirs.length)
-								&& (bodyHeirs[2 * ids].getKind() == TLAplusParserConstants.COMMA)) {
-							ids++;
-						}
-						;
-
-						/************************************************************
-						 * Set params to the array of new FormalParamNodes for the * identifiers. The
-						 * identifiers are added to the current * symbol table. *
-						 ************************************************************/
-						FormalParamNode[] params = new FormalParamNode[ids];
-						for (int j = 0; j < ids; j++) {
-							params[j] = new FormalParamNode(bodyHeirs[2 * j + 1].getUS(), 0, bodyHeirs[2 * j + 1],
-									symbolTable, cm);
-						}
-						;
-
-						if (isPick) {
-							/**********************************************************
-							 * Save the declarations in pickContext. *
-							 **********************************************************/
-							pickContext = symbolTable.getContext();
-
-							/**********************************************************
-							 * This is a PICK step; get the ": expr". *
-							 **********************************************************/
-							pushFormalParams(params);
-							/********************************************************
-							 * Push formal parameters on Last(LS).paramSeq for * processing the body. *
-							 ********************************************************/
-							args = new ExprNode[1];
-							args[0] = generateExpression(bodyHeirs[2 * ids + 1], cm);
-							popFormalParams();
-							symbolTable.popContext();
-							/********************************************************
-							 * Remove the bound symbols from the symbol table so * they're undefined for the
-							 * proof of the PICK. *
-							 ********************************************************/
-						} else {
-							/**********************************************************
-							 * This is a TAKE step. *
-							 **********************************************************/
-							args = new ExprNode[0];
-						}
-						;
-						body = new OpApplNode(op, args, params, stepBodySTN, cm);
-					}
-					;
-
-					break;
-
-				case N_WitnessStep:
-					/**************************************************************
-					 * Set ids to the number of expressions. *
-					 **************************************************************/
-					int ids = 1;
-					while ((2 * ids < bodyHeirs.length)
-							&& (bodyHeirs[2 * ids].getKind() == TLAplusParserConstants.COMMA)) {
-						ids++;
-					}
-					;
-
-					args = new ExprNode[ids];
-					for (int j = 0; j < ids; j++) {
-						args[j] = generateExpression(bodyHeirs[2 * j + 1], cm);
-					}
-					;
-					body = new OpApplNode(OP_witness, args, stepBodySTN, cm);
-					break;
-
-				case N_QEDStep:
-					args = new ExprNode[0];
-					body = new OpApplNode(OP_qed, args, stepBodySTN, cm);
+				case N_NonLocalInstance:
+					// Code to set step name added by LL on 6 June 2010
+					InstanceNode inst = generateInstance(stepBodySTN, cm, false);
+					inst.setStepName(stepNum);
+					pfNumNode = inst;
+					steps[i - offset] = pfNumNode;
 					break;
 
 				default:
-					throw errors.addError(
-						ErrorCode.INTERNAL_ERROR,
-						stn.getLocation(),
-						"Internal error: Unexpected SyntaxTreeNode kind: " + heirs[i].getKind()
-					);
-				}
-				; // switch
+					makePfNumNode = false;
+					TreeNode[] bodyHeirs = stepBodySTN.heirs();
+					LevelNode body = null;
+					/***************************************************************
+					 * This will be set to the body of the TheoremNode or * ThmOrAssumpDefNode. *
+					 ***************************************************************/
+					UniqueString op = null;
+					ExprNode[] args;
+					/***************************************************************
+					 * For anything but an N_Assert node, body is set to an * OpApplNode having
+					 * these as its operator and arguments. *
+					 ***************************************************************/
 
-				/********************************************************************
-				 * Set the fields of the ThmOrOpDefNode if there is one, including * the
-				 * suffices field. *
-				 ********************************************************************/
-				if (stepNum != null) {
-					tadn.construct(true, body, cm, symbolTable, null);
-					tadn.setLabels(popLabelNodeSet());
-					if (isSuffices) {
-						tadn.setSuffices();
+					switch (stepBodySTN.getKind()) {
+						case N_AssertStep:
+							int bodyNext = 0;
+							if (bodyHeirs[0].getKind() == TLAplusParserConstants.SUFFICES) {
+								bodyNext = 1;
+								isSuffices = true;
+								/************************************************************
+								 * We can't have an "@" in a SUFFICES step. *
+								 ************************************************************/
+							}
+							;
+							if (bodyHeirs[bodyNext].getKind() == N_AssumeProve) {
+								/************************************************************
+								 * This is an AssumeProve node. *
+								 ************************************************************/
+								isAssumeProve = true;
+
+								/************************************************************
+								 * For an ASSUME/PROVE, we need save the symbol * declarations from top-level
+								 * NEW statements in the ASSUME * to make them visible only in the statement's
+								 * proof for * an ordinary ASSUME/PROVE, and only after the statement's * proof
+								 * for a SUFFICES ASSUME/PROVE. *
+								 ************************************************************/
+								symbolTable.pushContext(new Context(moduleTable));
+
+								currentGoal = tadn;
+								/**********************************************************
+								 * Need to set currentGoal before generating the * AssumeProve node. *
+								 **********************************************************/
+								body = generateAssumeProve(bodyHeirs[bodyNext], cm);
+
+								if (isSuffices) {
+									((AssumeProveNode) body).setSuffices();
+								}
+								;
+								/**********************************************************
+								 * Added 16 Feb 2009 by LL. *
+								 **********************************************************/
+								currentGoal = null;
+								assumeContext = symbolTable.getContext();
+								symbolTable.popContext();
+								prevIsInfix = false;
+							} else {
+								/************************************************************
+								 * This is an ordinary expression. *
+								 ************************************************************/
+								TreeNode curExpr = bodyHeirs[bodyNext];
+
+								/************************************************************
+								 * Special handling of SUFFICES added by LL 16 Feb 2009. *
+								 ************************************************************/
+								if (isSuffices) {
+									args = new ExprNode[1];
+									args[0] = generateExpression(curExpr, cm);
+									body = new OpApplNode(OP_suffices, args, stepBodySTN, cm);
+								} // if (isSuffices)
+								else {
+									/************************************************************
+									 * If the current expression is an infix expression, set * curLHS to its current
+									 * LHS, otherwise set it to null. *
+									 ************************************************************/
+									SyntaxTreeNode curLHS = null;
+									if (curExpr.getKind() == N_InfixExpr) {
+										curLHS = (SyntaxTreeNode) curExpr.heirs()[0];
+									}
+									;
+									/************************************************************
+									 * If prevIsInfix is true and curLHS is an "@", then * process it, using as the
+									 * right-hand side a new $Nop node * with prevRHS as its argument. *
+									 ************************************************************/
+									if (prevIsInfix && (curLHS != null) && (curLHS.heirs().length > 0)
+									/***************************************************
+									 * This test added 25 Feb 2010 because if curLHS * is a string, then
+									 * curLHS.heirs() is a * zero-length array, so the following test threw * an
+									 * out-of-bounds array index exception. Note * that curLHS.heirs() should never
+									 * be null, * because the heirs() method can never return * null. *
+									 ***************************************************/
+											&& (((SyntaxTreeNode) curLHS.heirs()[0]).heirs().length == 0)
+											&& (curLHS.heirs()).length > 1
+											/***************************************************
+											 * This test added 2 Mar 2009 to fix following * bug. When we are here and
+											 * the
+											 * left-hand side * is something like a number, then curLHS.heirs() * seems
+											 * to
+											 * have length 1 and the following test * causes an
+											 * ArrayIndexOverflowException.
+											 * *
+											 ***************************************************/
+											&& (curLHS.heirs()[1].getKind() == IDENTIFIER)
+											&& (curLHS.heirs()[1].getUS() == AtUS)) {
+
+										/**********************************************************
+										 * The following code obtained by a simple modification * of the N_InfixExpr
+										 * case of generateExpression. *
+										 **********************************************************/
+										TreeNode[] children = curExpr.heirs();
+										GenID genID = generateGenID(children[1], cm);
+										ExprNode[] sns = new ExprNode[2];
+										SymbolNode opn = symbolTable
+												.resolveSymbol(Operators.resolveSynonym(genID.getCompoundIDUS()));
+										if (opn == null) {
+											// An unknown infix operator would have been caught at syntax level
+											errors.addError(
+													ErrorCode.SUSPECTED_UNREACHABLE_CHECK,
+													curExpr.getLocation(),
+													"Couldn't resolve infix operator symbol `" + genID.getCompoundIDUS()
+															+ "'.");
+											return null;
+										}
+										;
+										sns[1] = generateExpression(children[2], cm);
+										/**********************************************************
+										 * Set sns[1] to a new $Nop OpApplNode whose argument is * prevRHS. *
+										 **********************************************************/
+										ExprNode[] nopArgs = new ExprNode[1];
+										nopArgs[0] = prevRHS;
+										sns[0] = new OpApplNode(OP_nop, nopArgs, curLHS, cm);
+										body = new OpApplNode(opn, sns, curExpr, cm, errors);
+									} // if ( prevIsInfix ...)
+									else { // this is not an @-step
+										body = generateExpression(curExpr, cm);
+									}
+									;
+
+									/************************************************************
+									 * If this is an infix ioperator, set prevIsInfix true and * prevRHS equal to
+									 * its right-hand argument, else set * prevIsInfix false. *
+									 ************************************************************/
+									prevIsInfix = false;
+									if ((curLHS != null)
+											/*******************************************************
+											 * The following conjuncts should be true unless there * was an error in the
+											 * expression. *
+											 *******************************************************/
+											&& (body != null) && (body.getKind() == OpApplKind)
+											&& (((OpApplNode) body).getArgs().length > 1)) {
+										prevIsInfix = true;
+										prevRHS = (ExprNode) ((OpApplNode) body).getArgs()[1];
+									}
+								}
+							}
+							; // else This is an ordinary expression.
+							break;
+
+						case N_HaveStep:
+						case N_CaseStep:
+							if (stepBodySTN.getKind() == N_HaveStep) {
+								op = OP_have;
+							} else {
+								op = OP_pfcase;
+							}
+							;
+							args = new ExprNode[1];
+							args[0] = generateExpression(bodyHeirs[1], cm);
+							body = new OpApplNode(op, args, stepBodySTN, cm);
+							break;
+
+						case N_TakeStep:
+						case N_PickStep:
+							if (stepBodySTN.getKind() == N_TakeStep) {
+								op = OP_take;
+							} else {
+								op = OP_pick;
+								isPick = true;
+								/************************************************************
+								 * Push a new context onto the symbolTable stack to get the * declarations of
+								 * the PICK symbols. *
+								 ************************************************************/
+								symbolTable.pushContext(new Context(moduleTable));
+							}
+							;
+
+							if (bodyHeirs[1].getKind() == N_QuantBound) {
+								/************************************************************
+								 * The introduced identifiers are bounded--e.g., "TAKE id * \in Set". *
+								 ************************************************************/
+
+								/************************************************************
+								 * Set quants to the number of N_QuantBound nodes. *
+								 ************************************************************/
+								int quants = 1;
+								int nextTok = 2;
+								while ((nextTok < bodyHeirs.length)
+										&& (bodyHeirs[nextTok].getKind() == TLAplusParserConstants.COMMA)) {
+									quants++;
+									nextTok = nextTok + 2;
+								}
+								;
+								FormalParamNode[][] params = new FormalParamNode[quants][0];
+								boolean[] bt = new boolean[quants];
+								ExprNode[] paramBounds = new ExprNode[quants];
+								processQuantBoundArgs(bodyHeirs, 1, params, bt, paramBounds, cm);
+
+								if (isPick) {
+									/**********************************************************
+									 * Save the declarations in pickContext. *
+									 **********************************************************/
+									pickContext = symbolTable.getContext();
+									/**********************************************************
+									 * This is a PICK step; get the ": expr". *
+									 **********************************************************/
+									nextTok++; // Skip over the ":"
+									args = new ExprNode[1];
+									pushFormalParams(flattenParams(params));
+									/********************************************************
+									 * Push the bound variables on Last(LS).paramSeq and * process the body of the
+									 * PICK. *
+									 ********************************************************/
+									args[0] = generateExpression(bodyHeirs[nextTok], cm);
+									popFormalParams();
+									symbolTable.popContext();
+									/********************************************************
+									 * Remove the bound symbols from the symbol table so * they're undefined for the
+									 * proof of the PICK. *
+									 ********************************************************/
+								} else {
+									/**********************************************************
+									 * This is a TAKE step. *
+									 **********************************************************/
+									args = new ExprNode[0];
+								}
+								;
+								body = new OpApplNode(op, null, args, params, bt, paramBounds, stepBodySTN, cm);
+							} else {
+								/************************************************************
+								 * The introduced identifiers are unbounded--e.g., "TAKE * id1, id2". *
+								 ************************************************************/
+
+								/************************************************************
+								 * Set ids to the number of introduced identifiers. *
+								 ************************************************************/
+								int ids = 1;
+								while ((2 * ids < bodyHeirs.length)
+										&& (bodyHeirs[2 * ids].getKind() == TLAplusParserConstants.COMMA)) {
+									ids++;
+								}
+								;
+
+								/************************************************************
+								 * Set params to the array of new FormalParamNodes for the * identifiers. The
+								 * identifiers are added to the current * symbol table. *
+								 ************************************************************/
+								FormalParamNode[] params = new FormalParamNode[ids];
+								for (int j = 0; j < ids; j++) {
+									params[j] = new FormalParamNode(bodyHeirs[2 * j + 1].getUS(), 0,
+											bodyHeirs[2 * j + 1],
+											symbolTable, cm);
+								}
+								;
+
+								if (isPick) {
+									/**********************************************************
+									 * Save the declarations in pickContext. *
+									 **********************************************************/
+									pickContext = symbolTable.getContext();
+
+									/**********************************************************
+									 * This is a PICK step; get the ": expr". *
+									 **********************************************************/
+									pushFormalParams(params);
+									/********************************************************
+									 * Push formal parameters on Last(LS).paramSeq for * processing the body. *
+									 ********************************************************/
+									args = new ExprNode[1];
+									args[0] = generateExpression(bodyHeirs[2 * ids + 1], cm);
+									popFormalParams();
+									symbolTable.popContext();
+									/********************************************************
+									 * Remove the bound symbols from the symbol table so * they're undefined for the
+									 * proof of the PICK. *
+									 ********************************************************/
+								} else {
+									/**********************************************************
+									 * This is a TAKE step. *
+									 **********************************************************/
+									args = new ExprNode[0];
+								}
+								;
+								body = new OpApplNode(op, args, params, stepBodySTN, cm);
+							}
+							;
+
+							break;
+
+						case N_WitnessStep:
+							/**************************************************************
+							 * Set ids to the number of expressions. *
+							 **************************************************************/
+							int ids = 1;
+							while ((2 * ids < bodyHeirs.length)
+									&& (bodyHeirs[2 * ids].getKind() == TLAplusParserConstants.COMMA)) {
+								ids++;
+							}
+							;
+
+							args = new ExprNode[ids];
+							for (int j = 0; j < ids; j++) {
+								args[j] = generateExpression(bodyHeirs[2 * j + 1], cm);
+							}
+							;
+							body = new OpApplNode(OP_witness, args, stepBodySTN, cm);
+							break;
+
+						case N_QEDStep:
+							args = new ExprNode[0];
+							body = new OpApplNode(OP_qed, args, stepBodySTN, cm);
+							break;
+
+						default:
+							throw errors.addError(
+									ErrorCode.INTERNAL_ERROR,
+									stn.getLocation(),
+									"Internal error: Unexpected SyntaxTreeNode kind: " + heirs[i].getKind());
+					}
+					; // switch
+
+					/********************************************************************
+					 * Set the fields of the ThmOrOpDefNode if there is one, including * the
+					 * suffices field. *
+					 ********************************************************************/
+					if (stepNum != null) {
+						tadn.construct(true, body, cm, symbolTable, null);
+						tadn.setLabels(popLabelNodeSet());
+						if (isSuffices) {
+							tadn.setSuffices();
+						}
+						;
 					}
 					;
-				}
-				;
-				/***********************************************************************
-				 * Set proof to the proof, or to null if there is none. There is no * check made
-				 * to see if this is a kind of step that should have a * proof. Thus, adding a
-				 * proof to something like a WITNESS statement * requires changing only the
-				 * parsing phase (specified by tla+.jj). *
-				 ***********************************************************************/
-				ProofNode proof = null;
-				if (stepPfSTN != null) {
-					/******************************************************************
-					 * For an ordinary ASSUME/PROVE, must make the ASSUME's * declarations visible
-					 * in the statement's proof. *
-					 ******************************************************************/
-					if (isAssumeProve && !isSuffices) {
+					/***********************************************************************
+					 * Set proof to the proof, or to null if there is none. There is no * check made
+					 * to see if this is a kind of step that should have a * proof. Thus, adding a
+					 * proof to something like a WITNESS statement * requires changing only the
+					 * parsing phase (specified by tla+.jj). *
+					 ***********************************************************************/
+					ProofNode proof = null;
+					if (stepPfSTN != null) {
+						/******************************************************************
+						 * For an ordinary ASSUME/PROVE, must make the ASSUME's * declarations visible
+						 * in the statement's proof. *
+						 ******************************************************************/
+						if (isAssumeProve && !isSuffices) {
+							symbolTable.pushContext(assumeContext);
+						}
+						;
+						proof = generateProof(stepPfSTN, cm);
+						if (isAssumeProve && !isSuffices) {
+							symbolTable.popContext();
+						}
+						;
+					}
+					;
+
+					/********************************************************************
+					 * For a SUFFICES ASSUME/PROVE, must make the ASSUME's declarations * visible
+					 * after the proof. This is done by pushing assumeContext * onto the symbol
+					 * table and incrementing numberOfPops so it will * be popped at the end of the
+					 * proof. *
+					 ********************************************************************/
+					if (isAssumeProve && isSuffices) {
+						numberOfPops++;
 						symbolTable.pushContext(assumeContext);
 					}
 					;
-					proof = generateProof(stepPfSTN, cm);
-					if (isAssumeProve && !isSuffices) {
-						symbolTable.popContext();
+					if (isAssumeProve) {
+						((AssumeProveNode) body).inProof = false;
 					}
 					;
-				}
-				;
+					/******************************************************************
+					 * For an ASSUME/PROVE, set the inProof field to false. *
+					 ******************************************************************/
+					TheoremNode thm = new TheoremNode(stepBodySTN, body, cm, proof, tadn);
 
-				/********************************************************************
-				 * For a SUFFICES ASSUME/PROVE, must make the ASSUME's declarations * visible
-				 * after the proof. This is done by pushing assumeContext * onto the symbol
-				 * table and incrementing numberOfPops so it will * be popped at the end of the
-				 * proof. *
-				 ********************************************************************/
-				if (isAssumeProve && isSuffices) {
-					numberOfPops++;
-					symbolTable.pushContext(assumeContext);
-				}
-				;
-				if (isAssumeProve) {
-					((AssumeProveNode) body).inProof = false;
-				}
-				;
-				/******************************************************************
-				 * For an ASSUME/PROVE, set the inProof field to false. *
-				 ******************************************************************/
-				TheoremNode thm = new TheoremNode(stepBodySTN, body, cm, proof, tadn);
+					// Added by LL on 16 Jun 2010 so location returnedby getLocation() will
+					// include the step number.
+					thm.stn = pfStepSTN;
 
-				// Added by LL on 16 Jun 2010 so location returnedby getLocation() will
-				// include the step number.
-				thm.stn = pfStepSTN;
-
-				thm.suffices = isSuffices;
-				steps[i - offset] = thm;
+					thm.suffices = isSuffices;
+					steps[i - offset] = thm;
 			}
 			; // switch
 			if (makePfNumNode) {
@@ -6552,10 +6512,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 						// BY DEF MODULE Naturals syntax is likely to be removed:
 						// https://github.com/tlaplus/rfcs/issues/18
 						errors.addError(
-							ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
-							heirs[nextTok].getLocation(),
-							"Module `" + moduleId + "' used without being extended or instantiated."
-						);
+								ErrorCode.UNSUPPORTED_LANGUAGE_FEATURE,
+								heirs[nextTok].getLocation(),
+								"Module `" + moduleId + "' used without being extended or instantiated.");
 					}
 				} // if
 				else {
@@ -6691,20 +6650,18 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 
 		if (!inOpDefNode()) {
 			errors.addError(
-				ErrorCode.LABEL_NOT_IN_DEFINITION_OR_PROOF_STEP,
-				stn.getLocation(),
-				"Label not in definition or proof step."
-			);
+					ErrorCode.LABEL_NOT_IN_DEFINITION_OR_PROOF_STEP,
+					stn.getLocation(),
+					"Label not in definition or proof step.");
 			return nullLabelNode;
 		}
 		;
 
 		if (noLabelsAllowed()) {
 			errors.addError(
-				ErrorCode.LABEL_NOT_ALLOWED_IN_NESTED_ASSUME_PROVE_WITH_NEW,
-				stn.getLocation(),
-				"Label not allowed within scope of declaration in nested ASSUME/PROVE."
-			);
+					ErrorCode.LABEL_NOT_ALLOWED_IN_NESTED_ASSUME_PROVE_WITH_NEW,
+					stn.getLocation(),
+					"Label not allowed within scope of declaration in nested ASSUME/PROVE.");
 			return nullLabelNode;
 		}
 		;
@@ -6717,10 +6674,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		 ***********************************************************************/
 		if (!((excStack.isEmpty() || excSpecStack.isEmpty()))) {
 			errors.addError(
-				ErrorCode.LABEL_NOT_ALLOWED_IN_FUNCTION_EXCEPT,
-				stn.getLocation(),
-				"Labels inside EXCEPT clauses are not yet implemented."
-			);
+					ErrorCode.LABEL_NOT_ALLOWED_IN_FUNCTION_EXCEPT,
+					stn.getLocation(),
+					"Labels inside EXCEPT clauses are not yet implemented.");
 			return nullLabelNode;
 		}
 		;
@@ -6788,10 +6744,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 					// parameter is coincidentally the name of an existing
 					// definition such as an operator, constant, or variable.
 					errors.addError(
-						ErrorCode.LABEL_PARAMETER_UNNECESSARY,
-						argSyntaxNode.getLocation(),
-						"Illegal parameter " + argName.toString() + " of label `" + name.toString() + "'."
-					);
+							ErrorCode.LABEL_PARAMETER_UNNECESSARY,
+							argSyntaxNode.getLocation(),
+							"Illegal parameter " + argName.toString() + " of label `" + name.toString() + "'.");
 					arg = new FormalParamNode(argName, 0, argSyntaxNode, null, cm);
 					/**********************************************************
 					 * Create a dummy FormalParamNode to prevent a null * pointer exception in later
@@ -6817,10 +6772,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		 *********************************************************************/
 		if (!addLabelNodeToSet(retVal)) {
 			errors.addError(
-				ErrorCode.LABEL_REDEFINITION,
-				stn.getLocation(),
-				"Duplicate label `" + name.toString() + "'."
-			);
+					ErrorCode.LABEL_REDEFINITION,
+					stn.getLocation(),
+					"Duplicate label `" + name.toString() + "'.");
 		}
 		;
 		return retVal;
@@ -6945,7 +6899,7 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 				retVal = false;
 				errors.addError(ErrorCode.LABEL_PARAMETER_REPETITION,
 						ln.stn.getLocation(), "Repeated formal parameter " + odns[i].getName().toString()
-						+ " \nin label `" + ln.getName().toString() + "'.");
+								+ " \nin label `" + ln.getName().toString() + "'.");
 			}
 			;
 		} // for ;
@@ -6958,7 +6912,7 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 					retVal = false;
 					errors.addError(ErrorCode.LABEL_PARAMETER_MISSING,
 							ln.stn.getLocation(), "Label " + ln.getName().toString()
-							+ " must contain formal parameter `" + ops[j].getName().toString() + "'.");
+									+ " must contain formal parameter `" + ops[j].getName().toString() + "'.");
 				}
 				;
 			} // for j;
@@ -7066,35 +7020,35 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 	 * 1). *
 	 ***********************************************************************/
 
-//  Code to construct dependence graph removed by LL on 7 Apr 2007
-//  OpDefNode[] defStack = new OpDefNode[MaxLetInLevel] ;
-//  int defStackLen ;
-//    /***********************************************************************
-//    * The elements defStack[0] ... defStack[defStackLen-1] form the stack  *
-//    * of OpDefNode objects representing definitions being processed.  For  *
-//    * example, in                                                          *
-//    *                                                                      *
-//    *    Foo == LET Bar == LET FB == exp ..                                *
-//    *                                                                      *
-//    * while processing exp the stack will contain the OpDefNode objects    *
-//    * for Foo, Bar, and FB. This stack is used to construct the nbrs       *
-//    * field of the OpDefNode objects on the stack.                         *
-//    *                                                                      *
-//    * Note that defStackLen \leq curLevel.  It may be strictly less        *
-//    * because we could be in the IN clause of some of the nested LET/IN    *
-//    * statements.                                                          *
-//    ***********************************************************************/
+	// Code to construct dependence graph removed by LL on 7 Apr 2007
+	// OpDefNode[] defStack = new OpDefNode[MaxLetInLevel] ;
+	// int defStackLen ;
+	// /***********************************************************************
+	// * The elements defStack[0] ... defStack[defStackLen-1] form the stack *
+	// * of OpDefNode objects representing definitions being processed. For *
+	// * example, in *
+	// * *
+	// * Foo == LET Bar == LET FB == exp .. *
+	// * *
+	// * while processing exp the stack will contain the OpDefNode objects *
+	// * for Foo, Bar, and FB. This stack is used to construct the nbrs *
+	// * field of the OpDefNode objects on the stack. *
+	// * *
+	// * Note that defStackLen \leq curLevel. It may be strictly less *
+	// * because we could be in the IN clause of some of the nested LET/IN *
+	// * statements. *
+	// ***********************************************************************/
 
-// Was put into the ModuleNode object, since otherwise it would contain
-// nodes from all inner modules.
-//  Vector recursiveDecls = new Vector(100) ;
-//    /***********************************************************************
-//    * The set of OpDefNode objects that originally appeared in a           *
-//    * RECURSIVE declaration.  For now, it is used only to find operators   *
-//    * that were declared in a RECURSIVE declaration but never defined.     *
-//    * Perhaps some other use will be found for it, in which case it        *
-//    * should be put into the module's ModuleNode object.                   *
-//    ***********************************************************************/
+	// Was put into the ModuleNode object, since otherwise it would contain
+	// nodes from all inner modules.
+	// Vector recursiveDecls = new Vector(100) ;
+	// /***********************************************************************
+	// * The set of OpDefNode objects that originally appeared in a *
+	// * RECURSIVE declaration. For now, it is used only to find operators *
+	// * that were declared in a RECURSIVE declaration but never defined. *
+	// * Perhaps some other use will be found for it, in which case it *
+	// * should be put into the module's ModuleNode object. *
+	// ***********************************************************************/
 
 	int max_dfs = 0;
 	/***********************************************************************
@@ -7129,9 +7083,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		 ***********************************************************************/
 		OpDefNode odn = new OpDefNode(us, UserDefinedOpKind, params, localness, null, // the expression
 				oModNode, st, tn, false, null);
-//  was incrementing it twice
-//    unresolvedCnt[curLevel] ++ ;
-//    unresolvedSum = unresolvedSum ++ ;
+		// was incrementing it twice
+		// unresolvedCnt[curLevel] ++ ;
+		// unresolvedSum = unresolvedSum ++ ;
 
 		oModNode.recursiveDecls.addElement(odn);
 
@@ -7141,15 +7095,15 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		odn.recursiveSection = recursiveSectionCount;
 		oModNode.opDefsInRecursiveSection.addElement(odn);
 
-// the participating and nbrs field have been removed from OpDefNode objects
-//    odn.participating      = true ;
-//    odn.nbrs               = new Vector(10);
+		// the participating and nbrs field have been removed from OpDefNode objects
+		// odn.participating = true ;
+		// odn.nbrs = new Vector(10);
 
-//  Code to construct dependence graph removed by LL on 7 Apr 2007
-//      if (! recursive) {
-//        defStack[defStackLen] = odn ;
-//        defStackLen ++ ;
-//       } ;
+		// Code to construct dependence graph removed by LL on 7 Apr 2007
+		// if (! recursive) {
+		// defStack[defStackLen] = odn ;
+		// defStackLen ++ ;
+		// } ;
 		return odn;
 	}
 
@@ -7170,25 +7124,25 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		nd.setBody(exp);
 		nd.stn = stn;
 
-//  Code to construct dependence graph removed by LL on 7 Apr 2007
-//    if (unresolvedSum > 0) {
-//      /*********************************************************************
-//      * Pop OpDefNode off defStack.                                        *
-//      *********************************************************************/
-//      defStackLen -- ;
-//     } ;
+		// Code to construct dependence graph removed by LL on 7 Apr 2007
+		// if (unresolvedSum > 0) {
+		// /*********************************************************************
+		// * Pop OpDefNode off defStack. *
+		// *********************************************************************/
+		// defStackLen -- ;
+		// } ;
 
 		if (nd.inRecursive) {
 			unresolvedCnt[curLevel]--;
 			unresolvedSum--;
-//  Code to construct dependence graph removed by LL on 7 Apr 2007
-//      if (unresolvedSum == 0) {
-//        tarjan() ; 
-//        for (int i = 0 ; i < participants.size(); i++) {        
-//          ((OpDefNode) participants.elementAt(i)).participating = false ;
-//         } ; // for
-//        participants = new Vector(100) ;
-//       } // if (unresolvedSum == 0)
+			// Code to construct dependence graph removed by LL on 7 Apr 2007
+			// if (unresolvedSum == 0) {
+			// tarjan() ;
+			// for (int i = 0 ; i < participants.size(); i++) {
+			// ((OpDefNode) participants.elementAt(i)).participating = false ;
+			// } ; // for
+			// participants = new Vector(100) ;
+			// } // if (unresolvedSum == 0)
 			if (unresolvedSum < 0) {
 				throw new WrongInvocationException(
 						"Defined more recursive operators than were declared " + "in RECURSIVE statements.");
@@ -7197,44 +7151,44 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		} // if (nd.inRecursive)
 	}
 
-//  Code to construct dependence graph removed by LL on 7 Apr 2007
-//  void registerSymbolNode(SymbolNode nd) {
-//    /***********************************************************************
-//    * Called upon creating an OpApplNode whose operator has SymbolNode     *
-//    * nd.  If we are processing recursive definitions, and if nd is an     *
-//    * OpDefNode that is a participant, then nd is added to dfnd.nbrs, for  *
-//    * every node dfnd in defStack (if it's not already there).             *
-//    ***********************************************************************/
-//    if (   (unresolvedSum > 0)
-//        && (nd instanceof OpDefNode)) {
-//        OpDefNode odn = (OpDefNode) nd ;
-//        if (odn.participating) {
-//          for (int i = 0 ; i < defStackLen ; i++) {
-//            defStack[i].nbrs.addElement(odn) ;
-//           } ;
-//         } ; // if
-//     } ; // if
-//   }
+	// Code to construct dependence graph removed by LL on 7 Apr 2007
+	// void registerSymbolNode(SymbolNode nd) {
+	// /***********************************************************************
+	// * Called upon creating an OpApplNode whose operator has SymbolNode *
+	// * nd. If we are processing recursive definitions, and if nd is an *
+	// * OpDefNode that is a participant, then nd is added to dfnd.nbrs, for *
+	// * every node dfnd in defStack (if it's not already there). *
+	// ***********************************************************************/
+	// if ( (unresolvedSum > 0)
+	// && (nd instanceof OpDefNode)) {
+	// OpDefNode odn = (OpDefNode) nd ;
+	// if (odn.participating) {
+	// for (int i = 0 ; i < defStackLen ; i++) {
+	// defStack[i].nbrs.addElement(odn) ;
+	// } ;
+	// } ; // if
+	// } ; // if
+	// }
 
-//  Code to construct dependence graph removed by LL on 7 Apr 2007
-//  SymbolNode findSymbol(UniqueString name) {
-//    /***********************************************************************
-//    * To gather the data needed to compute the dependence graph, when      *
-//    * processing a definition, the operator being defined is put into the  *
-//    * symbol table before the body of the definition is processed.         *
-//    * However, if the operator is not declared in a RECURSIVE statement,   *
-//    * a use of it in the body must be reported as an error.  To do this,   *
-//    * calls that of symbolTable.resolveSymbol have been replaced by calls  *
-//    * to findSymbol, which checks if the found symbol is not defined or    *
-//    * declared at this point, and returns null if that is the case.        *
-//    ***********************************************************************/
-//    SymbolNode nd = symbolTable.resolveSymbol(name) ;
-//    if ((nd != null) && (nd instanceof OpDefNode)) {
-//      OpDefNode ond = (OpDefNode) nd ;
-//      if ((!ond.isDefined) && (!ond.inRecursive)) { nd = null; } ;
-//     };
-//    return nd ;
-//   } // findSymbol
+	// Code to construct dependence graph removed by LL on 7 Apr 2007
+	// SymbolNode findSymbol(UniqueString name) {
+	// /***********************************************************************
+	// * To gather the data needed to compute the dependence graph, when *
+	// * processing a definition, the operator being defined is put into the *
+	// * symbol table before the body of the definition is processed. *
+	// * However, if the operator is not declared in a RECURSIVE statement, *
+	// * a use of it in the body must be reported as an error. To do this, *
+	// * calls that of symbolTable.resolveSymbol have been replaced by calls *
+	// * to findSymbol, which checks if the found symbol is not defined or *
+	// * declared at this point, and returns null if that is the case. *
+	// ***********************************************************************/
+	// SymbolNode nd = symbolTable.resolveSymbol(name) ;
+	// if ((nd != null) && (nd instanceof OpDefNode)) {
+	// OpDefNode ond = (OpDefNode) nd ;
+	// if ((!ond.isDefined) && (!ond.inRecursive)) { nd = null; } ;
+	// };
+	// return nd ;
+	// } // findSymbol
 
 	void setOpDefNodeRecursionFields(OpDefNode odn, ModuleNode cm) {
 		/***********************************************************************
@@ -7258,10 +7212,9 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		 ***********************************************************************/
 		if (unresolvedSum > 0) {
 			errors.addError(
-				ErrorCode.RECURSIVE_SECTION_CONTAINS_ILLEGAL_DEFINITION,
-				tn.getLocation(),
-				type + " may not appear within " + "a recursive definition section."
-			);
+					ErrorCode.RECURSIVE_SECTION_CONTAINS_ILLEGAL_DEFINITION,
+					tn.getLocation(),
+					type + " may not appear within " + "a recursive definition section.");
 		}
 	}
 
@@ -7300,15 +7253,15 @@ public class Generator implements ASTConstants, SyntaxTreeConstants, LevelConsta
 		; // if (unresolvedCnt[curLevel] > 0)
 	}
 
-//  void tarjan() {
-//    /***********************************************************************
-//    * This is the Java version of the algorithm in the file Tarjan.tla, a  *
-//    * copy of which appears below.                                         *
-//    ***********************************************************************/
-///***************************************************************************
-//* XXXXXX: Not yet implemented.                                             *
-//***************************************************************************/
-//   }
+	// void tarjan() {
+	// /***********************************************************************
+	// * This is the Java version of the algorithm in the file Tarjan.tla, a *
+	// * copy of which appears below. *
+	// ***********************************************************************/
+	/// ***************************************************************************
+	// * XXXXXX: Not yet implemented. *
+	// ***************************************************************************/
+	// }
 
 }
 

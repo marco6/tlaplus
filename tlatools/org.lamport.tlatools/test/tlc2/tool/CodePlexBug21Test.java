@@ -42,7 +42,7 @@ public class CodePlexBug21Test extends ModelCheckerTestCase {
 	public CodePlexBug21Test() {
 		super("CodePlexBug21");
 	}
-	
+
 	@Test
 	public void testSpec() {
 		// ModelChecker has finished and generated the expected amount of states

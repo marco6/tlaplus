@@ -31,61 +31,64 @@ import util.WrongInvocationException;
 
 public abstract class Value implements ValueConstants, Serializable, IValue {
 
-	  private static final String[] ValueImage = {
-	    "a Boolean value",                     // "BoolValue",
-	    "an integer",                          // "IntValue",
-	    "a real",                              // "RealValue",
-	    "a string",                            // "StringValue",
-	    "a record",                            // "RecordValue",
-	    "a set of the form {e1, ... ,eN}",     // "SetEnumValue",
-	    "a set of the form {x \\in S : expr}", // "SetPredValue",
-	    "a tuple",                             // "TupleValue",
-	    "a function of the form  [x \\in S |-> expr]",           // "FcnLambdaValue",
-	    "a function  of the form (d1 :> e1 @@ ... @@ dN :> eN)", // "FcnRcdValue",
-	    "an operator",                                // "OpLambdaValue",
-	    "a constant operator",                        // "OpRcdValue",
-	    "a java method",                              // "MethodValue",    
-	    "a set of the form [S -> T]",                 // "SetOfFcnsValue",
-	    "a set of the form [d1 : S1, ... , dN : SN]", // "SetOfRcdsValue",
-	    "a cartesian product",                        // "SetOfTuplesValue",
-	    "a set of the form SUBSET S",                 // "SubsetValue",
-	    "a set of the form S \\ T",                   // "SetDiffValue",
-	    "a set of the form S \\cap T",                // "SetCapValue",
-	    "a set of the form S \\cup T",                // "SetCupValue",
-	    "a set of the form UNION  S",                 // "UnionValue",
-	    "a model value",                              // "ModelValue",
-	    "a special set constant",                     // "UserValue",
-	    "a set of the form i..j",                     // "IntervalValue",
-	    "an undefined value",                         // "UndefValue",
-	    "a value represented in lazy form",           // "LazyValue",
-	    "a dummy for not-a-value",                    // "DummyValue",    
-	  };
-	  
-	/**
-	 * @see See note on performance in CostModelCreator.
-	 */
-	protected static final boolean coverage = TLCGlobals.isCoverageEnabled();
+  private static final String[] ValueImage = {
+      "a Boolean value", // "BoolValue",
+      "an integer", // "IntValue",
+      "a real", // "RealValue",
+      "a string", // "StringValue",
+      "a record", // "RecordValue",
+      "a set of the form {e1, ... ,eN}", // "SetEnumValue",
+      "a set of the form {x \\in S : expr}", // "SetPredValue",
+      "a tuple", // "TupleValue",
+      "a function of the form  [x \\in S |-> expr]", // "FcnLambdaValue",
+      "a function  of the form (d1 :> e1 @@ ... @@ dN :> eN)", // "FcnRcdValue",
+      "an operator", // "OpLambdaValue",
+      "a constant operator", // "OpRcdValue",
+      "a java method", // "MethodValue",
+      "a set of the form [S -> T]", // "SetOfFcnsValue",
+      "a set of the form [d1 : S1, ... , dN : SN]", // "SetOfRcdsValue",
+      "a cartesian product", // "SetOfTuplesValue",
+      "a set of the form SUBSET S", // "SubsetValue",
+      "a set of the form S \\ T", // "SetDiffValue",
+      "a set of the form S \\cap T", // "SetCapValue",
+      "a set of the form S \\cup T", // "SetCupValue",
+      "a set of the form UNION  S", // "UnionValue",
+      "a model value", // "ModelValue",
+      "a special set constant", // "UserValue",
+      "a set of the form i..j", // "IntervalValue",
+      "an undefined value", // "UndefValue",
+      "a value represented in lazy form", // "LazyValue",
+      "a dummy for not-a-value", // "DummyValue",
+  };
+
+  /**
+   * @see See note on performance in CostModelCreator.
+   */
+  protected static final boolean coverage = TLCGlobals.isCoverageEnabled();
+
   /**
    * For each kind of value, we introduce a subclass of Value.
    * All the subclasses are given in this value package.
-	   * This method returns the value kind: an integer that represents
-	   * the kind of this value. See the interface ValueConstants.java.
-	   */
-	public abstract byte getKind();
+   * This method returns the value kind: an integer that represents
+   * the kind of this value. See the interface ValueConstants.java.
+   */
+  public abstract byte getKind();
 
   public String getKindString() {
     try {
       return ValueImage[this.getKind()];
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   /* This method returns true iff elem is a member of this. */
   public abstract boolean member(Value elem);
-  
+
   /* This method returns a new value after taking the except. */
   public abstract Value takeExcept(ValueExcept ex);
 
@@ -96,25 +99,26 @@ public abstract class Value implements ValueConstants, Serializable, IValue {
 
   @Override
   public void write(IValueOutputStream vos) throws IOException {
-		throw new WrongInvocationException("ValueOutputStream: Can not pickle the value\n" +
-			    Values.ppr(toString()));
+    throw new WrongInvocationException("ValueOutputStream: Can not pickle the value\n" +
+        Values.ppr(toString()));
   }
 
   public transient CostModel cm = CostModel.DO_NOT_RECORD;
-  
+
   @Override
   public IValue setCostModel(CostModel cm) {
-	  this.cm = cm;
-	  return this;
+    this.cm = cm;
+    return this;
   }
-  
+
   @Override
   public CostModel getCostModel() {
-	  return this.cm;
+    return this.cm;
   }
-  
+
   /**
-   * These methods allow storage and retrieval of the SemanticNode used to create the Value,
+   * These methods allow storage and retrieval of the SemanticNode used to create
+   * the Value,
    * which is helpful for FingerprintException.
    */
   private transient SemanticNode source = null;
@@ -128,93 +132,84 @@ public abstract class Value implements ValueConstants, Serializable, IValue {
   public SemanticNode getSource() {
     return source;
   }
-  
+
   @Override
   public boolean hasSource() {
-	  return source != null;
+    return source != null;
   }
-  
+
   public boolean hasData() {
-	  return false;
+    return false;
   }
-  
+
   public Object getData() {
-	  return null;
+    return null;
   }
-  
+
   public Object setData(final Object obj) {
-		throw new WrongInvocationException("Value: Can not set data\n" +
-			    Values.ppr(toString()));
+    throw new WrongInvocationException("Value: Can not set data\n" +
+        Values.ppr(toString()));
   }
 
   public final boolean isEmpty() {
     try {
 
       switch (this.getKind()) {
-        case SETENUMVALUE:
-          {
-            SetEnumValue set = (SetEnumValue)this;
-            return set.elems.size() == 0;
-          }
-        case INTERVALVALUE:
-          {
-            IntervalValue intv = (IntervalValue)this;
-            return intv.size() == 0;
-          }
-        case SETCAPVALUE:
-          {
-            SetCapValue cap = (SetCapValue)this;
-            return cap.elements().nextElement() == null;
-          }
-        case SETCUPVALUE:
-          {
-            SetCupValue cup = (SetCupValue)this;
-            return cup.elements().nextElement() == null;
-          }
-        case SETDIFFVALUE:
-          {
-            SetDiffValue diff = (SetDiffValue)this;
-            return diff.elements().nextElement() == null;
-          }
-        case SETOFFCNSVALUE:
-          {
-            SetOfFcnsValue fcns = (SetOfFcnsValue)this;
-            return fcns.elements().nextElement() == null;
-          }
-        case SETOFRCDSVALUE:
-          {
-            SetOfRcdsValue srv = (SetOfRcdsValue)this;
-            return srv.elements().nextElement() == null;
-          }
-        case SETOFTUPLESVALUE:
-          {
-            SetOfTuplesValue stv = (SetOfTuplesValue)this;
-            return stv.elements().nextElement() == null;
-          }
-        case SUBSETVALUE:
-          {
-            // SUBSET S is never empty.  (It always contains {}.)
-            return false;
-          }
-        case UNIONVALUE:
-          {
-            UnionValue uv = (UnionValue)this;
-            return uv.elements().nextElement() == null;
-          }
-        case SETPREDVALUE:
-          {
-            SetPredValue spv = (SetPredValue)this;
-            return spv.elements().nextElement() == null;
-          }
+        case SETENUMVALUE: {
+          SetEnumValue set = (SetEnumValue) this;
+          return set.elems.size() == 0;
+        }
+        case INTERVALVALUE: {
+          IntervalValue intv = (IntervalValue) this;
+          return intv.size() == 0;
+        }
+        case SETCAPVALUE: {
+          SetCapValue cap = (SetCapValue) this;
+          return cap.elements().nextElement() == null;
+        }
+        case SETCUPVALUE: {
+          SetCupValue cup = (SetCupValue) this;
+          return cup.elements().nextElement() == null;
+        }
+        case SETDIFFVALUE: {
+          SetDiffValue diff = (SetDiffValue) this;
+          return diff.elements().nextElement() == null;
+        }
+        case SETOFFCNSVALUE: {
+          SetOfFcnsValue fcns = (SetOfFcnsValue) this;
+          return fcns.elements().nextElement() == null;
+        }
+        case SETOFRCDSVALUE: {
+          SetOfRcdsValue srv = (SetOfRcdsValue) this;
+          return srv.elements().nextElement() == null;
+        }
+        case SETOFTUPLESVALUE: {
+          SetOfTuplesValue stv = (SetOfTuplesValue) this;
+          return stv.elements().nextElement() == null;
+        }
+        case SUBSETVALUE: {
+          // SUBSET S is never empty. (It always contains {}.)
+          return false;
+        }
+        case UNIONVALUE: {
+          UnionValue uv = (UnionValue) this;
+          return uv.elements().nextElement() == null;
+        }
+        case SETPREDVALUE: {
+          SetPredValue spv = (SetPredValue) this;
+          return spv.elements().nextElement() == null;
+        }
         default:
           Assert.fail("Shouldn't call isEmpty() on value " + Values.ppr(this.toString()), getSource());
           return false;
       }
 
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -228,12 +223,14 @@ public abstract class Value implements ValueConstants, Serializable, IValue {
   public long fingerPrint(long fp) {
     try {
       Assert.fail("TLC has found a state in which the value of a variable contains " +
-      Values.ppr(this.toString()), getSource()); // SZ Feb 24, 2009: changed to static access
-      return 0;      // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          Values.ppr(this.toString()), getSource()); // SZ Feb 24, 2009: changed to static access
+      return 0; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -245,12 +242,14 @@ public abstract class Value implements ValueConstants, Serializable, IValue {
   public IValue permute(IMVPerm perm) {
     try {
       Assert.fail("TLC has found a state in which the value of a variable contains " +
-      Values.ppr(this.toString()), getSource()); // SZ Feb 24, 2009: changed to static access
-      return null;   // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          Values.ppr(this.toString()), getSource()); // SZ Feb 24, 2009: changed to static access
+      return null; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -259,22 +258,26 @@ public abstract class Value implements ValueConstants, Serializable, IValue {
   public final int hashCode() {
     try {
       long fp = this.fingerPrint(FP64.New());
-      int high = (int)(fp >> 32);
-      int low = (int)fp;
+      int high = (int) (fp >> 32);
+      int low = (int) fp;
       return high ^ low;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   /**
    * This method selects the component of this value. The component is
-   * specified by <code>path</code>. For instance, <code>val.select([1, "a"])</code>
+   * specified by <code>path</code>. For instance,
+   * <code>val.select([1, "a"])</code>
    * is equivalent to the TLA+ <code>val[1].a</code>.
    *
-   * @return the selected value, or null if reading some component of the path cannot
+   * @return the selected value, or null if reading some component of the path
+   *         cannot
    *         be done because the value is not in the function's domain
    */
   public final Value select(Value[] path) {
@@ -283,23 +286,26 @@ public abstract class Value implements ValueConstants, Serializable, IValue {
       for (int i = 0; i < path.length; i++) {
         if (!(result instanceof FunctionValue)) {
           Assert.fail("Attempted to apply EXCEPT construct to the value " +
-                Values.ppr(result.toString()) + ".", getSource());
+              Values.ppr(result.toString()) + ".", getSource());
         }
         Value elem = path[i];
-        result = ((FunctionValue)result).select(elem);
-        if (result == null) return null;
+        result = ((FunctionValue) result).select(elem);
+        if (result == null)
+          return null;
       }
       return result;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
-  /* Convert val into a SetEnumValue.  Returns null if not possible. */
+  /* Convert val into a SetEnumValue. Returns null if not possible. */
   public Value toSetEnum() {
-	  return null;
+    return null;
   }
 
   /*
@@ -307,7 +313,7 @@ public abstract class Value implements ValueConstants, Serializable, IValue {
    * null if the conversion fails.
    */
   public Value toFcnRcd() {
-	  return null;
+    return null;
   }
 
   /*
@@ -315,7 +321,7 @@ public abstract class Value implements ValueConstants, Serializable, IValue {
    * null if the conversion fails.
    */
   public Value toRcd() {
-	  return null;
+    return null;
   }
 
   /*
@@ -323,85 +329,87 @@ public abstract class Value implements ValueConstants, Serializable, IValue {
    * null if the conversion fails.
    */
   public Value toTuple() {
-	  return null;
+    return null;
   }
-  
+
   public TLCState toState() {
-	  return null;
+    return null;
   }
-  
+
   /* The string representation of this value */
   @Override
   public final String toString() {
-	  return toStringImpl("", true);
+    return toStringImpl("", true);
   }
-  
+
   /* Same as toString except that nested exceptions won't be silently discarded */
   public final String toStringUnchecked() {
-	  return toStringImpl("", false);
+    return toStringImpl("", false);
   }
 
   /* Same as toString. */
   @Override
   public String toUnquotedString() {
-	  return toString();
+    return toString();
   }
 
   @Override
   public final String toString(final String delim) {
-	  return toStringImpl(delim, true);
+    return toStringImpl(delim, true);
   }
 
   public final String toStringUnchecked(final String delim) {
-	  return toStringImpl(delim, false);
+    return toStringImpl(delim, false);
   }
-  
+
   private final String toStringImpl(final String delim, final boolean checked) {
     try {
-        final StringBuffer sb = this.toString(new StringBuffer(), 0, checked);
-        sb.append(delim);
-        return sb.toString();
+      final StringBuffer sb = this.toString(new StringBuffer(), 0, checked);
+      sb.append(delim);
+      return sb.toString();
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
       }
-      catch (RuntimeException | OutOfMemoryError e) {
-        if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-        else { throw e; }
-      }
+    }
   }
-  
-	public TLCVariable toTLCVariable(final TLCVariable variable, Random rnd) {
-		variable.setInstance(this);
-		// TODO: Use Value#getKindString instead?
-//		if (hasSource()) {
-//			variable.setType(String.format("%s at %s", getTypeString(), getSource()));
-//		} else {
-			variable.setType(getTypeString());
-//		}
-		variable.setValue(toString());
-		if (this instanceof Enumerable || this instanceof FcnRcdValue || this instanceof RecordValue
-				|| this instanceof TupleValue) {
-			// Atomic values such as IntValue throw an exception on #isFinite.
-			if (this.isFinite()) {
-				variable.setVariablesReference(rnd.nextInt(Integer.MAX_VALUE - 1) + 1);
-			}
-		}
-		return variable;
-	}
 
-	public String getTypeString() {
-		return String.format("%s: %s", getClass().getSimpleName(), getKindString());
-	}
+  public TLCVariable toTLCVariable(final TLCVariable variable, Random rnd) {
+    variable.setInstance(this);
+    // TODO: Use Value#getKindString instead?
+    // if (hasSource()) {
+    // variable.setType(String.format("%s at %s", getTypeString(), getSource()));
+    // } else {
+    variable.setType(getTypeString());
+    // }
+    variable.setValue(toString());
+    if (this instanceof Enumerable || this instanceof FcnRcdValue || this instanceof RecordValue
+        || this instanceof TupleValue) {
+      // Atomic values such as IntValue throw an exception on #isFinite.
+      if (this.isFinite()) {
+        variable.setVariablesReference(rnd.nextInt(Integer.MAX_VALUE - 1) + 1);
+      }
+    }
+    return variable;
+  }
 
-	public List<TLCVariable> getTLCVariables(TLCVariable var, Random rnd) {
-		if (this instanceof Enumerable && this.isFinite()) {
-			Enumerable e = (Enumerable) this;
-			return e.elements().all().stream().map(value -> value.toTLCVariable(var.newInstance(value, rnd), rnd))
-					.collect(Collectors.toList());
-		}
-		return new ArrayList<>(0);
-	}
+  public String getTypeString() {
+    return String.format("%s: %s", getClass().getSimpleName(), getKindString());
+  }
 
-	public String getNonEnumerableErrorMsg(final ExprNode exprNode) {
-		return "TLC encountered a non-enumerable quantifier bound\n" +
-                Values.ppr(this.toString()) + ".\n" + exprNode.toString();
-	}
+  public List<TLCVariable> getTLCVariables(TLCVariable var, Random rnd) {
+    if (this instanceof Enumerable && this.isFinite()) {
+      Enumerable e = (Enumerable) this;
+      return e.elements().all().stream().map(value -> value.toTLCVariable(var.newInstance(value, rnd), rnd))
+          .collect(Collectors.toList());
+    }
+    return new ArrayList<>(0);
+  }
+
+  public String getNonEnumerableErrorMsg(final ExprNode exprNode) {
+    return "TLC encountered a non-enumerable quantifier bound\n" +
+        Values.ppr(this.toString()) + ".\n" + exprNode.toString();
+  }
 }

@@ -38,7 +38,7 @@ public class UnsymmetricModelCheckerTestB extends ModelCheckerTestCase {
 	public UnsymmetricModelCheckerTestB() {
 		super("UnsymmetricMCB", "symmetry");
 	}
-	
+
 	@Test
 	public void testSpec() {
 		// ModelChecker intends to check liveness
@@ -46,12 +46,12 @@ public class UnsymmetricModelCheckerTestB extends ModelCheckerTestCase {
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_INIT_GENERATED2, "2", "s", "1"));
 
 		assertNoTESpec();
-		
+
 		// ModelChecker has finished and generated the expected amount of states
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "5", "2", "0"));
-	
+
 		// Contrary to UMCTA, B doesn't find a counter-example. This is due to
 		// the CHOOSE on S and the selected initial state.
 

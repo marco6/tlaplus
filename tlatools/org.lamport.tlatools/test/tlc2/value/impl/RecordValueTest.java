@@ -48,22 +48,22 @@ public class RecordValueTest {
 		final InternTable internTable = new InternTable(2);
 		final UniqueString a = internTable.put("a");
 		final UniqueString b = internTable.put("b");
-		
+
 		final Value aVal = new StringValue("aVal");
 		final Value bVal = new StringValue("bVal");
-		
+
 		// Create the source to create a deep copy of
-		final RecordValue orig = new RecordValue(new UniqueString[] {b, a}, new Value[] {bVal, aVal}, false);
-		
+		final RecordValue orig = new RecordValue(new UniqueString[] { b, a }, new Value[] { bVal, aVal }, false);
+
 		// Verify the mappings in RecordValue are correct
 		assertTrue(orig.names[0].equals(b));
 		assertTrue(orig.names[1].equals(a));
 		assertTrue(orig.values[0].equals(bVal));
 		assertTrue(orig.values[1].equals(aVal));
-		
+
 		// Make a deep copy of te origina record value
 		final RecordValue deepCopy = (RecordValue) orig.deepCopy();
-		
+
 		// Normalize the original record value and check its mappings have been
 		// re-organized
 		orig.deepNormalize();
@@ -71,7 +71,7 @@ public class RecordValueTest {
 		assertTrue(orig.names[1].equals(b));
 		assertTrue(orig.values[0].equals(aVal));
 		assertTrue(orig.values[1].equals(bVal));
-		
+
 		// Check that the mappings in the deep copy didn't change.
 		assertTrue(deepCopy.names[0].equals(b));
 		assertTrue(deepCopy.names[1].equals(a));
@@ -84,21 +84,22 @@ public class RecordValueTest {
 		final Value aVal = new StringValue("aVal");
 		final RecordValue recVal = new RecordValue(UniqueString.of("a"), aVal);
 
-		try{
+		try {
 			recVal.apply(new StringValue("b"), 0);
-		} catch(util.Assert.TLCRuntimeException ex){
-			assertTrue(ex.getMessage().contains("Attempted to access nonexistent field 'b' of record\n[a |-> \"aVal\"]"));
+		} catch (util.Assert.TLCRuntimeException ex) {
+			assertTrue(
+					ex.getMessage().contains("Attempted to access nonexistent field 'b' of record\n[a |-> \"aVal\"]"));
 		}
 
-		try{
+		try {
 			recVal.apply(IntValue.gen(0), 0);
-		} catch(util.Assert.TLCRuntimeException ex){
+		} catch (util.Assert.TLCRuntimeException ex) {
 			assertTrue(ex.getMessage().contains("Attempted to access record by a non-string argument: 0"));
 		}
 
-		try{
+		try {
 			recVal.select(IntValue.gen(0));
-		} catch(util.Assert.TLCRuntimeException ex){
+		} catch (util.Assert.TLCRuntimeException ex) {
 			assertTrue(ex.getMessage().contains("Attempted to access record by a non-string argument: 0"));
 		}
 	}

@@ -58,12 +58,12 @@ import util.Assert.TLCRuntimeException;
 
 @SuppressWarnings("serial")
 public class DebugTool extends Tool {
-	
+
 	private static final Set<Integer> KINDS = new HashSet<>(
 			Arrays.asList(ASTConstants.NumeralKind, ASTConstants.DecimalKind, ASTConstants.StringKind));
-	
+
 	private final IDebugTarget target;
-	
+
 	/**
 	 * The debugger doesn't handle the evaluation of all expressions. For example,
 	 * it ignores the evaluation of expression related to liveness. Instead of
@@ -73,7 +73,7 @@ public class DebugTool extends Tool {
 	private final Tool fastTool;
 
 	private EvalMode mode = EvalMode.Const;
-	
+
 	/**
 	 * Contrary to EvalControl, EvalMode does *not* determine the control path in
 	 * Tool. Its purpose is to infer if the debugger should create a TLCStackFrame,
@@ -93,21 +93,21 @@ public class DebugTool extends Tool {
 		this.fastTool = tool;
 		this.target = target.setTool(this);
 	}
-	
+
 	// 88888888888888888888888888888888888888888888888888888888888888888888888888 //
 
 	@Override
 	public boolean isValidAssumption(final ExprNode assumption) {
-	    final boolean isValid = isValid(assumption);
-	    if (!isValid) {
-	    	try {
-	    		target.markAssumptionViolatedFrame(this, assumption, Context.Empty);
+		final boolean isValid = isValid(assumption);
+		if (!isValid) {
+			try {
+				target.markAssumptionViolatedFrame(this, assumption, Context.Empty);
 			} catch (ResetEvalException ree) {
 				target.popFrame(this, assumption, Context.Empty);
 				return isValidAssumption(assumption);
 			}
-	    }
-	    return isValid;
+		}
+		return isValid;
 	}
 
 	@Override
@@ -127,7 +127,7 @@ public class DebugTool extends Tool {
 			return this.isValid(act, state);
 		}
 	}
-	
+
 	public boolean isValid(ExprNode expr, Context ctxt) {
 		mode = EvalMode.Const;
 		return super.isValid(expr, ctxt);
@@ -139,7 +139,7 @@ public class DebugTool extends Tool {
 		return this.evalImpl(expr, Context.Empty, TLCState.Empty, TLCState.Empty, EvalControl.Clear,
 				CostModel.DO_NOT_RECORD);
 	}
-	
+
 	@Override
 	public final IValue eval(SemanticNode expr, Context c, TLCState s0) {
 		return this.eval(expr, c, s0, CostModel.DO_NOT_RECORD);
@@ -153,7 +153,8 @@ public class DebugTool extends Tool {
 
 	/**
 	 * s0 might be a fully or partially evaluated state including TLCState.Empty.
-	 * s1 might be a fully or partially evaluated state including TLCState.Empty, or null.
+	 * s1 might be a fully or partially evaluated state including TLCState.Empty, or
+	 * null.
 	 * control can be anything such as EvalControl.Init
 	 */
 	@Override
@@ -232,7 +233,8 @@ public class DebugTool extends Tool {
 
 	private boolean isLeaf(SemanticNode expr) {
 		// These nodes don't seem interesting to users. They are leaves and we don't
-		// care to see how TLC figures out that then token 1 evaluates to the IntValue 1.
+		// care to see how TLC figures out that then token 1 evaluates to the IntValue
+		// 1.
 		return KINDS.contains(expr.getKind());
 	}
 
@@ -245,15 +247,17 @@ public class DebugTool extends Tool {
 
 	private boolean isLiveness(int control, TLCState s0, TLCState s1) {
 		if (EvalControl.isEnabled(control) || EvalControl.isPrimed(control)) {
-			// If EvalControl is set to primed or enabled, TLC is evaluating an ENABLED expr.
+			// If EvalControl is set to primed or enabled, TLC is evaluating an ENABLED
+			// expr.
 			// TLCStateFun are passed in when enabled is evaluated. However, it is also
 			// possible for enabled to be replaced with primed. At any rate, there is no
 			// point evaluating ENABLED expr.
 			return true;
 		}
 		if (s0 instanceof TLCStateFun || s1 instanceof TLCStateFun) {
-			// If EvalControl is set to primed or enabled, TLC is evaluating an ENABLED expr.
-			// (see previous if branch).  However, if expr is built from an operator with a
+			// If EvalControl is set to primed or enabled, TLC is evaluating an ENABLED
+			// expr.
+			// (see previous if branch). However, if expr is built from an operator with a
 			// Java module override, control is cleared/reset and the only indicator that
 			// evaluation is in the scope of enabled, is TLCStateFunc.
 			return true;
@@ -262,26 +266,29 @@ public class DebugTool extends Tool {
 	}
 
 	private boolean isBoring(final SemanticNode expr, Context c) {
-//		if (c.isEmpty()) {
-//		// It is tempting to ignore also frames with an empty Context. However, ASSUMES
-//		// for example don't have a Context. Perhaps, we should track the level here and
-//		// ignore frames with empty Context for level greater than zero (or whatever the
-//		// base-level is).
-//			return true;
-//		}
+		// if (c.isEmpty()) {
+		// // It is tempting to ignore also frames with an empty Context. However,
+		// ASSUMES
+		// // for example don't have a Context. Perhaps, we should track the level here
+		// and
+		// // ignore frames with empty Context for level greater than zero (or whatever
+		// the
+		// // base-level is).
+		// return true;
+		// }
 		// Skips N and Nat in:
-		//     CONSTANT N
-		//     ASSUME N \in Nat
+		// CONSTANT N
+		// ASSUME N \in Nat
 		// or the S, the f, and the 1..3 of:
-		//     LET FS == INSTANCE FiniteSets
-        //              Perms(S, a, b) == 
-        //                { f \in [S -> S] :
-        //                      /\ S = { f[x] : x \in DOMAIN f }
-        //                      /\ \E n, m \in DOMAIN f: /\ f[n] = a
-        //                                  /\ f[m] = b
-        //                                  /\ n - m \in {1, -1}               
-        //                }
-        //     IN FS!Cardinality(Perms(1..3, 1, 2)) = 4
+		// LET FS == INSTANCE FiniteSets
+		// Perms(S, a, b) ==
+		// { f \in [S -> S] :
+		// /\ S = { f[x] : x \in DOMAIN f }
+		// /\ \E n, m \in DOMAIN f: /\ f[n] = a
+		// /\ f[m] = b
+		// /\ n - m \in {1, -1}
+		// }
+		// IN FS!Cardinality(Perms(1..3, 1, 2)) = 4
 		// TODO: For now, don't filter boring frames because we have not clear
 		// understanding of what constitutes a boring frame. Built-in operators
 		// are candidates, but for now I find this more confusing than helpful.'x'x
@@ -295,7 +302,9 @@ public class DebugTool extends Tool {
 			v = super.evalImpl(expr, c, s0, s1, control, cm);
 			return v;
 		} catch (TLCRuntimeException | EvalException e) {
-			if (e.isKnown()) {throw e;}
+			if (e.isKnown()) {
+				throw e;
+			}
 			try {
 				target.pushExceptionFrame(this, expr, c, s0, s1.getAction(), s1, e);
 			} finally {
@@ -314,7 +323,9 @@ public class DebugTool extends Tool {
 			v = super.evalImpl(expr, c, s0, s1, control, cm);
 			return v;
 		} catch (TLCRuntimeException | EvalException e) {
-			if (e.isKnown()) {throw e;}
+			if (e.isKnown()) {
+				throw e;
+			}
 			try {
 				target.pushExceptionFrame(this, expr, c, s0, e);
 			} finally {
@@ -333,7 +344,9 @@ public class DebugTool extends Tool {
 			v = super.evalImpl(expr, c, s0, s1, control, cm);
 			return v;
 		} catch (TLCRuntimeException | EvalException e) {
-			if (e.isKnown()) {throw e;}
+			if (e.isKnown()) {
+				throw e;
+			}
 			try {
 				target.pushExceptionFrame(this, expr, c, e);
 			} finally {
@@ -354,8 +367,8 @@ public class DebugTool extends Tool {
 	@Override
 	protected final Value setSource(final SemanticNode expr, final Value value) {
 		// Calling Value#setSource here causes Tool to wrap TLCRuntimExceptions as
-		// FingerprintExceptions, which alters error reporting.  This causes some
-		// tests to fail (Github179*Test) that expect a specific output.  Note that
+		// FingerprintExceptions, which alters error reporting. This causes some
+		// tests to fail (Github179*Test) that expect a specific output. Note that
 		// Value#setSource doesn't have to be called here for DebugTool to work.
 		return value;
 	}
@@ -420,9 +433,9 @@ public class DebugTool extends Tool {
 		mode = EvalMode.Action;
 		// In regular model-checking mode (no DebugTool), TLC sets the action and
 		// predecessor lazily, that is after the successor has been fully constructed
-		// and the state- and action-constraints evaluated.  With DebugTool present,
+		// and the state- and action-constraints evaluated. With DebugTool present,
 		// users want to see the trace from the initial to the current, partially
-		// evaluated state.  Thus, we set action and predecessor eagerly.
+		// evaluated state. Thus, we set action and predecessor eagerly.
 		try {
 			return getNextStatesImpl(action, expr, acts, c, s0, s1.setPredecessor(s0).setAction(action), nss, cm);
 		} catch (ResetEvalException ree) {
@@ -445,7 +458,9 @@ public class DebugTool extends Tool {
 			target.pushFrame(this, pred, c, s0, action, s1);
 			s = getNextStatesApplImpl(action, pred, acts, c, s0, s1, nss, cm);
 		} catch (TLCRuntimeException | EvalException e) {
-			if (e.isKnown()) {throw e;}
+			if (e.isKnown()) {
+				throw e;
+			}
 			try {
 				target.pushExceptionFrame(this, pred, c, e);
 			} finally {
@@ -453,7 +468,9 @@ public class DebugTool extends Tool {
 			}
 			throw e;
 		} catch (InvariantViolatedException e) {
-			if (e.isKnown()) {throw e;}
+			if (e.isKnown()) {
+				throw e;
+			}
 			try {
 				target.markInvariantViolatedFrame(this, pred, c, s0, action, s1, e);
 			} finally {
@@ -472,41 +489,46 @@ public class DebugTool extends Tool {
 		try {
 			return processUnchangedImpl(action, expr, acts, c, s0, s1, nss, cm);
 		} catch (TLCRuntimeException | EvalException e) {
-			if (e.isKnown()) {throw e;}
+			if (e.isKnown()) {
+				throw e;
+			}
 			try {
 				target.pushExceptionFrame(this, expr, c, s0, action, s1, e);
-			} finally{
+			} finally {
 				target.popExceptionFrame(this, expr, c, s0, action, s1, e);
 			}
 			throw e;
 		} catch (InvariantViolatedException e) {
-			if (e.isKnown()) {throw e;}
+			if (e.isKnown()) {
+				throw e;
+			}
 			try {
 				target.markInvariantViolatedFrame(this, expr, c, s0, action, s1, e);
 			} finally {
 				target.popExceptionFrame(this, expr, c, s0, action, s1, e);
 			}
 			throw e;
-		}		
+		}
 	}
 
-    @Override
-	protected TLCState processUnsatisfied(final TLCState state, final SemanticNode pred, final Context c, final IStateFunctor states, final CostModel cm) {
-    	target.pushUnsatisfiedFrame(this, pred, c, state);
-    	target.popFrame(this, pred, c, state);
+	@Override
+	protected TLCState processUnsatisfied(final TLCState state, final SemanticNode pred, final Context c,
+			final IStateFunctor states, final CostModel cm) {
+		target.pushUnsatisfiedFrame(this, pred, c, state);
+		target.popFrame(this, pred, c, state);
 		return states.addUnsatisfiedState(state, pred, c);
-    }
+	}
 
-    @Override
+	@Override
 	protected TLCState processUnsatisfied(final TLCState curState, final Action action, final TLCState succState,
 			final SemanticNode pred, final Context c, final INextStateFunctor nss, final CostModel cm) {
-    	succState.setAction(action).setPredecessor(curState);
-    	target.pushUnsatisfiedFrame(this, pred, c, curState, action, succState);
-    	target.popFrame(this, pred, c, curState, succState);
+		succState.setAction(action).setPredecessor(curState);
+		target.pushUnsatisfiedFrame(this, pred, c, curState, action, succState);
+		target.popFrame(this, pred, c, curState, succState);
 		return nss.addUnsatisfiedState(curState, action, succState, pred, c);
 	}
 
-    @Override
+	@Override
 	protected void getInitStates(SemanticNode init, ActionItemList acts, Context c, TLCState ps, IStateFunctor states,
 			CostModel cm) {
 		if (mode == EvalMode.Debugger) {
@@ -530,7 +552,7 @@ public class DebugTool extends Tool {
 			}
 		}
 	}
-		
+
 	@Override
 	protected void getInitStatesAppl(OpApplNode init, ActionItemList acts, Context c, TLCState ps, IStateFunctor states,
 			CostModel cm) {
@@ -559,7 +581,7 @@ public class DebugTool extends Tool {
 			// This catch block is the safeguard that a ResetEvalException is never
 			// populated up the call stack beyond this top-most call to getNextState(..);
 			// Callers of getNextState(..) such as SimulationWorker or Worker do not handle
-			// ResetEvalException.  Reversing from a TLCSuccessorStackFrame lands here
+			// ResetEvalException. Reversing from a TLCSuccessorStackFrame lands here
 			// because a TSSF's SemanticNode isn't the target of any expression of TLC's
 			// call graph; the TSSF is mapped to the declaration & definition in the
 			// semantic graph.
@@ -571,14 +593,16 @@ public class DebugTool extends Tool {
 			// In getNextState above, the predecessor state is set eagerly for
 			// TLCStateStackFrame#getTrace to function correctly in all cases. Here, we null
 			// the predecessor again. Otherwise, TLC would keep the list of predecessors up
-			// to the initial states (unless a TLCState is persisted to disk in the StateQueue).
+			// to the initial states (unless a TLCState is persisted to disk in the
+			// StateQueue).
 			if (this.toolMode == Mode.MC_DEBUG) {
-				// Do *not* unset the predecessor if running simulation that maintains the current behavior as a linked list of TLCStateMutExt.
+				// Do *not* unset the predecessor if running simulation that maintains the
+				// current behavior as a linked list of TLCStateMutExt.
 				state.unsetPredecessor();
 			}
 		}
 	}
-	
+
 	private static class WrapperStateFunctor implements IStateFunctor {
 		protected final IStateFunctor functor;
 		protected final IDebugTarget target;
@@ -587,7 +611,7 @@ public class DebugTool extends Tool {
 			this.functor = functor;
 			this.target = target;
 		}
-		
+
 		@Override
 		public Object addElement(TLCState state) {
 			try {
@@ -619,7 +643,7 @@ public class DebugTool extends Tool {
 			TLCStateMutExt.resetTool(oldTool);
 		}
 	}
-	
+
 	public EvalMode setDebugger() {
 		final EvalMode old = this.mode;
 		this.mode = EvalMode.Debugger;

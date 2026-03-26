@@ -56,7 +56,9 @@ public class DiameterTest extends ModelCheckerTestCase {
 		assertZeroUncovered();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.ModelCheckerTestCase#getNumberOfThreads()
 	 */
 	@Override

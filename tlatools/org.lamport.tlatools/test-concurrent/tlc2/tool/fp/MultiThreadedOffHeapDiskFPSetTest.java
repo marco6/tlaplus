@@ -10,7 +10,9 @@ import tlc2.tool.fp.generator.PartitionedFingerPrintGenerator;
 
 public class MultiThreadedOffHeapDiskFPSetTest extends MultiThreadedFPSetTest {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.AbstractFPSetTest#getFPSet(long)
 	 */
 	@Override
@@ -18,7 +20,9 @@ public class MultiThreadedOffHeapDiskFPSetTest extends MultiThreadedFPSetTest {
 		return new OffHeapDiskFPSet(new FPSetConfiguration(1.0d, OffHeapDiskFPSet.class.getName()));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.MultiThreadedFPSetTest#testMaxFPSetSizePartitioned()
 	 */
 	@Override
@@ -26,6 +30,7 @@ public class MultiThreadedOffHeapDiskFPSetTest extends MultiThreadedFPSetTest {
 			throws IOException, InterruptedException, NoSuchMethodException, SecurityException, InstantiationException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		final OffHeapDiskFPSet fpSet = (OffHeapDiskFPSet) doTest(PartitionedFingerPrintGenerator.class);
-		Assert.assertEquals(0, fpSet.getBucketCapacity()); // bucket capacity is actually reprobe which expected to be zero.
+		Assert.assertEquals(0, fpSet.getBucketCapacity()); // bucket capacity is actually reprobe which expected to be
+															// zero.
 	}
 }

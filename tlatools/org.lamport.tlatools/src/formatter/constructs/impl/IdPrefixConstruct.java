@@ -30,9 +30,10 @@ public class IdPrefixConstruct implements TlaConstruct {
     }
 
     private static Doc addDescendantComments(TreeNode node, Doc mainDoc) {
-        TreeNode[][] childArrays = {node.zero(), node.one()};
+        TreeNode[][] childArrays = { node.zero(), node.one() };
         for (TreeNode[] children : childArrays) {
-            if (children == null) continue;
+            if (children == null)
+                continue;
             for (TreeNode child : children) {
                 if (child.getPreComments() != null && child.getPreComments().length > 0) {
                     return ConstructContext.addComments(child, mainDoc);

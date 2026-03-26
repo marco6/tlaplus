@@ -70,26 +70,26 @@ package tlc2.tool.liveness;
  * 
  * Each int[] node has the following format:
  *
- *	+---------------------------------+
- *	| 32 high-order bits of key       | \
- *	+---------------------------------+  |  header
- *	| 32 low-order bits of key        | /
- *	+---------------------------------+
- *	| 32 bit tidx (\in Nat)           | \
- *	+---------------------------------+  |
- *	| 32 high-order bits of aux info  |  |  repeated 0..N times
- *	+---------------------------------+  |
- *	| 32 low-order bits of aux info   |  |
- *	+---------------------------------+ /
- *	
- *	The 64-bit auxiliary information is one of:
- *	
- *	    - UNDONE (a specific negative long with high-order bits equal to -2)
- *	    - DONE (a specific negative long with high-order bits equal to -3)
- *	    - a positive long representing an offset into the disk graph file
+ * +---------------------------------+
+ * | 32 high-order bits of key | \
+ * +---------------------------------+ | header
+ * | 32 low-order bits of key | /
+ * +---------------------------------+
+ * | 32 bit tidx (\in Nat) | \
+ * +---------------------------------+ |
+ * | 32 high-order bits of aux info | | repeated 0..N times
+ * +---------------------------------+ |
+ * | 32 low-order bits of aux info | |
+ * +---------------------------------+ /
+ * 
+ * The 64-bit auxiliary information is one of:
+ * 
+ * - UNDONE (a specific negative long with high-order bits equal to -2)
+ * - DONE (a specific negative long with high-order bits equal to -3)
+ * - a positive long representing an offset into the disk graph file
  *
- *  If setDone(fp) is called before any put for that fingerprint fp, only the
- *  header will be created.
+ * If setDone(fp) is called before any put for that fingerprint fp, only the
+ * header will be created.
  *
  */
 public class TableauNodePtrTable {
@@ -110,7 +110,7 @@ public class TableauNodePtrTable {
 	 */
 	static final long UNDONE = 0xFFFFFFFE00000000L;
 	static final long DONE = 0xFFFFFFFD00000000L;
-	
+
 	private int count;
 	private int length;
 	private int thresh;
@@ -160,15 +160,16 @@ public class TableauNodePtrTable {
 
 	public final void put(final long k, final int tidx) {
 		// Writing (long) UNDONE will result in node[3] = -2,
-		// and DONE will be node[3] = -3.  isDone is
-		// true if node[3] = -2.  Method setDone also sets
+		// and DONE will be node[3] = -3. isDone is
+		// true if node[3] = -2. Method setDone also sets
 		// node[3] = - 3 to mark the node as done.
 		put(k, tidx, UNDONE, DONE);
 	}
-	
+
 	/**
 	 * Add the triple <k, tidx, elem> into the table. If the table already contains
-	 * and entry with the composite key <k, tdix>, the old elem will be replaced with
+	 * and entry with the composite key <k, tdix>, the old elem will be replaced
+	 * with
 	 * the new one.
 	 */
 	public final void put(long k, int tidx, long elem) {
@@ -332,7 +333,7 @@ public class TableauNodePtrTable {
 			loc = (loc + 1) % this.length;
 		}
 	}
-	
+
 	/**
 	 * Clears the seen flag of all records set by static setSeen(..) calls
 	 * earlier.
@@ -343,7 +344,7 @@ public class TableauNodePtrTable {
 	 * @see TableauNodePtrTable#setSeen(int[], int)
 	 */
 	public final void resetElems() {
-		// Only called when the error trace is being printed. 
+		// Only called when the error trace is being printed.
 		for (int i = 0; i < this.nodes.length; i++) {
 			int[] node = this.nodes[i];
 			if (node != null) {
@@ -367,7 +368,7 @@ public class TableauNodePtrTable {
 			}
 		}
 	}
-	
+
 	/**
 	 * @return The length of an elem "record" in nodes[]
 	 */
@@ -411,7 +412,7 @@ public class TableauNodePtrTable {
 	/*
 	 * Static helper methods below
 	 */
-	
+
 	public static long getKey(int[] node) {
 		long high = node[0];
 		long low = node[1];
@@ -423,7 +424,6 @@ public class TableauNodePtrTable {
 		long low = node[loc + 2];
 		return (high << 32) | (low & 0xFFFFFFFFL);
 	}
-	
 
 	public final int getIdx(int[] node, int tidx) {
 		assert tidx >= -1;
@@ -435,7 +435,7 @@ public class TableauNodePtrTable {
 		}
 		return -1;
 	}
-	
+
 	public int getElemTidx(int[] node, int loc) {
 		// This implementation does not store the tableau index.
 		return -1;
@@ -463,7 +463,7 @@ public class TableauNodePtrTable {
 	 * instance only containing a single SCC.
 	 */
 	public static final int END_MARKER = -1;
-	
+
 	public static int startLoc(int[] node) {
 		return (node.length > 2) ? 2 : END_MARKER;
 	}
@@ -518,7 +518,7 @@ public class TableauNodePtrTable {
 	}
 
 	public static final int NO_PARENT = -1;
-	
+
 	public static int getParent(int[] nodes) {
 		return nodes[4];
 	}
@@ -528,64 +528,64 @@ public class TableauNodePtrTable {
 		nodes[4] = loc;
 	}
 
-  	/*
+	/*
 	 * The detailed formatter below can be activated in Eclipse's variable view
 	 * by choosing "New detailed formatter" from the nodePtrTable's context menu.
 	 * Insert "TableauNodePtrTable.DetailedFormatter.toString(this);".
 	 */
-  	public static class DetailedFormatter {
-  		public static String toString(final TableauNodePtrTable table) {
-  			final StringBuffer buf = new StringBuffer(table.count);
-  			for (int i = 0; i < table.nodes.length; i++) {
-  				if (table.nodes[i] != null) {
-  					final int[] node = table.nodes[i];
-  					
-  					// fingerprint
-  					final long fp = ((long) node[0] << 32) | ((long) node[1] & 0xFFFFFFFFL);
-  					buf.append("fp (key): " + fp);
-  					buf.append(" (idx: " + i + ")");
-  					buf.append(" isDone: " + (node.length == 2 || (node.length > 2 && node[3] != -2)));
-  					buf.append("\n");
-  					
+	public static class DetailedFormatter {
+		public static String toString(final TableauNodePtrTable table) {
+			final StringBuffer buf = new StringBuffer(table.count);
+			for (int i = 0; i < table.nodes.length; i++) {
+				if (table.nodes[i] != null) {
+					final int[] node = table.nodes[i];
+
+					// fingerprint
+					final long fp = ((long) node[0] << 32) | ((long) node[1] & 0xFFFFFFFFL);
+					buf.append("fp (key): " + fp);
+					buf.append(" (idx: " + i + ")");
+					buf.append(" isDone: " + (node.length == 2 || (node.length > 2 && node[3] != -2)));
+					buf.append("\n");
+
 					// A node maintains n records. Each record logically
 					// contains information - combined with the fingerprint -
 					// about the full tuple <<fp, tidx, loc>>.
-  					// Depending on the state of the record, the loc might
-  					// also be overwritten by the SCC link number. 
-  					int j = 2;
-  					for (; j < node.length - 1; j+=table.getElemLength()) { // don't miss the ptr at the end
-  						buf.append("\t");
-  						// tableau index
-  						final int tidx = node[j];
-  						buf.append(" tidx: " + tidx);
-  						// element
-  						final long elem = getElem(node, j);
-  						if (AbstractDiskGraph.isFilePointer(elem)) {
-  							if (elem == UNDONE) {
-  								buf.append("  ptr: undone");
-  							} else if (elem == DONE) {
-  								buf.append("  ptr: done");
-  							} else {
-  								buf.append("  ptr: " + elem);
-  							}
-  						} else if (AbstractDiskGraph.MAX_PTR == elem){
-  							buf.append(" elem: Init State");
-  						} else {
-  							final long offset = AbstractDiskGraph.MAX_PTR + 1;
-  							buf.append(" pred: " + (elem - offset));
-  						}
-  						final int predTidx = table.getElemTidx(node, j);
-  						if (predTidx != -1) {
-  							buf.append(" predtidx: " + predTidx);
-  						}
-  						buf.append(", isSeen: " + !isSeen(node, j));
-  						buf.append("\n");
-  					}
-  				}
-  			}
-  			return buf.toString();
-  		}
-  	}
+					// Depending on the state of the record, the loc might
+					// also be overwritten by the SCC link number.
+					int j = 2;
+					for (; j < node.length - 1; j += table.getElemLength()) { // don't miss the ptr at the end
+						buf.append("\t");
+						// tableau index
+						final int tidx = node[j];
+						buf.append(" tidx: " + tidx);
+						// element
+						final long elem = getElem(node, j);
+						if (AbstractDiskGraph.isFilePointer(elem)) {
+							if (elem == UNDONE) {
+								buf.append("  ptr: undone");
+							} else if (elem == DONE) {
+								buf.append("  ptr: done");
+							} else {
+								buf.append("  ptr: " + elem);
+							}
+						} else if (AbstractDiskGraph.MAX_PTR == elem) {
+							buf.append(" elem: Init State");
+						} else {
+							final long offset = AbstractDiskGraph.MAX_PTR + 1;
+							buf.append(" pred: " + (elem - offset));
+						}
+						final int predTidx = table.getElemTidx(node, j);
+						if (predTidx != -1) {
+							buf.append(" predtidx: " + predTidx);
+						}
+						buf.append(", isSeen: " + !isSeen(node, j));
+						buf.append("\n");
+					}
+				}
+			}
+			return buf.toString();
+		}
+	}
 
 	public String toDotViz() {
 		final StringBuffer sb = new StringBuffer();
@@ -593,7 +593,7 @@ public class TableauNodePtrTable {
 		sb.append("graph[style=bold];");
 		sb.append("label = \"NodePtrTable\" style=\"solid\"\n");
 		sb.append("node [ labeljust=\"l\",shape=record ]\n");
-		
+
 		sb.append("key [label=<<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\" cellborder=\"1\">\n");
 		sb.append("<tr> "
 				+ "<td BGCOLOR=\"lightblue\">fp</td> "
@@ -604,27 +604,26 @@ public class TableauNodePtrTable {
 				+ "<td BGCOLOR=\"lightblue\">ptr</td> "
 				+ "<td BGCOLOR=\"lightblue\">pred tid</td> "
 				+ "</tr>\n");
-		
+
 		for (int i = 0; i < nodes.length; i++) {
 			if (nodes[i] != null) {
 				final int[] node = nodes[i];
-				
+
 				final long fp = ((long) node[0] << 32) | ((long) node[1] & 0xFFFFFFFFL);
-				
-				
+
 				int j = 2;
 				if (j == node.length - 1) {
 					sb.append(String.format(
 							"<tr> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> </tr>\n",
 							Long.toString(fp).substring(0, 6), "NA", i, isDone(fp), "NA", "NA", "NA"));
 				}
-				for (; j < node.length - 1; j+= getElemLength()) { // don't miss the ptr at the end
+				for (; j < node.length - 1; j += getElemLength()) { // don't miss the ptr at the end
 
 					// tableau index
 					final int tidx = node[j];
 
 					// element
-					final String ptr; 
+					final String ptr;
 					final long elem = getElem(node, j);
 					if (AbstractDiskGraph.isFilePointer(elem)) {
 						if (elem == UNDONE) {
@@ -634,14 +633,13 @@ public class TableauNodePtrTable {
 						} else {
 							ptr = Long.toString(elem);
 						}
-					} else if (AbstractDiskGraph.MAX_PTR == elem){
+					} else if (AbstractDiskGraph.MAX_PTR == elem) {
 						ptr = "Initial";
 					} else {
 						final long offset = AbstractDiskGraph.MAX_PTR + 1;
 						ptr = Long.toString(elem - offset);
 					}
 
-					
 					final int predTidx = getElemTidx(node, j);
 					final String predTid;
 					if (predTidx != -1) {
@@ -649,7 +647,7 @@ public class TableauNodePtrTable {
 					} else {
 						predTid = "-";
 					}
-					
+
 					sb.append(String.format(
 							"<tr> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> <td>%s</td> </tr>\n",
 							Long.toString(fp).substring(0, 6), tidx, i, isDone(fp), !isSeen(node, j), ptr, predTid));
@@ -659,7 +657,7 @@ public class TableauNodePtrTable {
 		sb.append("</table>>]\n");
 
 		sb.append("}");
-		
+
 		return sb.toString();
 	}
 }

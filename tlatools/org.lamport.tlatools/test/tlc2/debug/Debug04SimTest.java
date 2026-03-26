@@ -116,7 +116,7 @@ public class Debug04SimTest extends TLCDebuggerTestCase {
 			assertEquals("A", debugger.evaluate(ea).get().getResult());
 			ea.setExpression("x'"); // Action-level
 			assertEquals("A", debugger.evaluate(ea).get().getResult());
-			
+
 			ea.setExpression("TLCGet(\"level\")");
 			assertEquals(Integer.toString(i + 1), debugger.evaluate(ea).get().getResult());
 
@@ -134,7 +134,7 @@ public class Debug04SimTest extends TLCDebuggerTestCase {
 				assertEquals(new StringValue("A"), f.getS().getVals().get(UniqueString.of("x")));
 			}
 
-			stackFrames= debugger.stepIn();
+			stackFrames = debugger.stepIn();
 		}
 
 		// Reverse direction: back to the initial state.
@@ -179,7 +179,7 @@ public class Debug04SimTest extends TLCDebuggerTestCase {
 
 				// Check that the TLC state variable 'x' has the expected value.
 				assertEquals(new StringValue("A"), f.getS().getVals().get(UniqueString.of("x")));
-				
+
 				// Debug Expressions (action level)
 				ea = new EvaluateArguments();
 				ea.setFrameId(frame.getId());
@@ -196,10 +196,10 @@ public class Debug04SimTest extends TLCDebuggerTestCase {
 		}
 
 		// 88888888888888888888888888888 Step Over 8888888888888888888888888888 //
-		
+
 		// Construct a trace x=A, x=B, ..., x=A (no variable values are identical in
 		// consecutive states) by stepping over.
-		
+
 		stackFrames = debugger.stepOut();
 		assertEquals(1, stackFrames.length);
 		assertTLCInitStatesFrame(stackFrames[0], 6, 9, 6, 29, RM, Context.Empty, 3);
@@ -232,13 +232,13 @@ public class Debug04SimTest extends TLCDebuggerTestCase {
 				.setVariablesReference(init.getStatesVariables()[0].getVariablesReference()))
 				.whenComplete((a, b) -> phase.arriveAndAwaitAdvance());
 		stackFrames = debugger.stackTrace();
-		
+
 		// idempotence check
 		assertArrayEquals(stackFrames, debugger.stackTrace());
 
 		assertTrue(stackFrames[0] instanceof TLCStateStackFrame);
 		StringValue oldVal = null;
-		
+
 		for (int i = 0; i < 8; i++) {
 
 			// i is number of states in the trace.
@@ -251,7 +251,7 @@ public class Debug04SimTest extends TLCDebuggerTestCase {
 			// Check that the TLC state variable 'x' has the expected value.
 			assertNotEquals(oldVal, next.getS().getVals().get(UniqueString.of("x")));
 			oldVal = (StringValue) ((TLCStateStackFrame) stackFrames[0]).getS().getVals().get(UniqueString.of("x"));
-			
+
 			// Debug Expressions next frame (no action level)
 			ea = new EvaluateArguments();
 			ea.setFrameId(stackFrames[0].getId());
@@ -273,12 +273,13 @@ public class Debug04SimTest extends TLCDebuggerTestCase {
 
 			stackFrames = debugger.next();
 		}
-		
+
 		// Back to the initial states
 		stackFrames = debugger.stepOut(8);
 
-		// 8888888888888888888888888 Action-Level Breakpoint Condition 888888888888888888888 //
-	
+		// 8888888888888888888888888 Action-Level Breakpoint Condition
+		// 888888888888888888888 //
+
 		debugger.setSpecBreakpoint("x = \"A\" /\\ x' = \"B\"");
 		stackFrames = debugger.continue_();
 		assertTLCNextStatesFrame(stackFrames[0], 16, 20, 16, 23, RM, Context.Empty, 3);
@@ -294,7 +295,7 @@ public class Debug04SimTest extends TLCDebuggerTestCase {
 		debugger.setSpecBreakpoint("~ENABLED Next");
 		stackFrames = debugger.continue_();
 		assertTLCNextStatesFrame(stackFrames[0], 16, 20, 16, 23, RM, Context.Empty, 0);
-		
+
 		// 88888888888888888 ENABLED Next = FALSE with no condition 88888888888888 //
 		debugger.unsetBreakpoints();
 		debugger.setSpecBreakpoint();

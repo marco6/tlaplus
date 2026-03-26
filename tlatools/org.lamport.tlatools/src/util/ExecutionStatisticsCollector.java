@@ -51,7 +51,7 @@ public class ExecutionStatisticsCollector {
 
 	static final String RND_ID_STR = "RANDOM_IDENTIFIER";
 	static final String NO_ESC_STR = "NO_STATISTICS";
-	
+
 	public enum Selection {
 		ON, RANDOM_IDENTIFIER, NO_ESC;
 
@@ -66,29 +66,32 @@ public class ExecutionStatisticsCollector {
 			}
 		}
 	}
-	
-	private static final String PATH = System.getProperty("user.home", "") + File.separator + ".tlaplus" + File.separator + "esc.txt";
-	
-	private static final String HOSTNAME = System.getProperty(ExecutionStatisticsCollector.class.getName() + ".domain", "tlaplus-execution-stats-collection01");
+
+	private static final String PATH = System.getProperty("user.home", "") + File.separator + ".tlaplus"
+			+ File.separator + "esc.txt";
+
+	private static final String HOSTNAME = System.getProperty(ExecutionStatisticsCollector.class.getName() + ".domain",
+			"tlaplus-execution-stats-collection01");
 
 	public static final String PROP = ExecutionStatisticsCollector.class.getName() + ".id";
-	
+
 	private final String pathname;
 	private final String hostname;
 
 	public ExecutionStatisticsCollector() {
 		this(PATH, HOSTNAME);
 	}
+
 	ExecutionStatisticsCollector(String path) {
 		this.pathname = path;
 		this.hostname = HOSTNAME;
 	}
-	
+
 	ExecutionStatisticsCollector(String path, final String hostname) {
 		this.pathname = path;
 		this.hostname = hostname;
 	}
-	
+
 	public void collect(final Map<String, String> parameters) {
 		// Execution statistics reporting is designed to be minimally invasive and
 		// should not interfere with model checking. However, if model checking
@@ -101,7 +104,8 @@ public class ExecutionStatisticsCollector {
 		// statistics have been fully reported, i.e., until the URL connection has
 		// completed. This behavior only applies if execution statistics reporting is
 		// enabled.
-		collectAsync(parameters, Boolean.getBoolean(ExecutionStatisticsCollector.class.getName() + ".waitForCompletion"));
+		collectAsync(parameters,
+				Boolean.getBoolean(ExecutionStatisticsCollector.class.getName() + ".waitForCompletion"));
 	}
 
 	protected void collectAsync(final Map<String, String> parameters, final boolean waitForCompletion) {
@@ -125,17 +129,20 @@ public class ExecutionStatisticsCollector {
 			}, "TLC Execution Statistics Collector Shutdown Hook"));
 		}
 	}
-	
+
 	protected void collect0(final Map<String, String> parameters) {
 		/*
-		 * | `esc.txt`               | DNS Query | DNS Query Succeeds (Private Reporting) | DNS Query NXDOMAIN (Public Reporting) |
-		 * |-------------------------|-----------|----------------------------------------|---------------------------------------|
-		 * | `NO_STATISTICS`         | n         | N/A                                    | N/A                                   |
-		 * | Unreadable `esc.txt`    | n         | N/A                                    | N/A                                   |
-		 * | No `esc.txt` or empty   | y         | UUIDv1                                 | N/A                                   |
-		 * | `RANDOM_IDENTIFIER`     | y         | UUIDv4                                 | UUIDv4                                |
-		 * | Some string `S`         | y         | `S`                                    | `S`                                   |
-		 * |-------------------------|-----------|----------------------------------------|---------------------------------------|
+		 * | `esc.txt` | DNS Query | DNS Query Succeeds (Private Reporting) | DNS Query
+		 * NXDOMAIN (Public Reporting) |
+		 * |-------------------------|-----------|--------------------------------------
+		 * --|---------------------------------------|
+		 * | `NO_STATISTICS` | n | N/A | N/A |
+		 * | Unreadable `esc.txt` | n | N/A | N/A |
+		 * | No `esc.txt` or empty | y | UUIDv1 | N/A |
+		 * | `RANDOM_IDENTIFIER` | y | UUIDv4 | UUIDv4 |
+		 * | Some string `S` | y | `S` | `S` |
+		 * |-------------------------|-----------|--------------------------------------
+		 * --|---------------------------------------|
 		 */
 		String line = null;
 
@@ -149,17 +156,18 @@ public class ExecutionStatisticsCollector {
 					return;
 				}
 			} catch (FileNotFoundException | NoSuchFileException swallow) {
-			    // file does not exist; continue because the user has not expressed a preference.
+				// file does not exist; continue because the user has not expressed a
+				// preference.
 			} catch (IOException diableExecStatsSilently) {
-			    return;
+				return;
 			}
 		}
-        
+
 		// The installation has not opted out. Check whether the installation's
 		// corporate owner (if any) wants to receive execution statistics.
 		// See: https://github.com/tlaplus/tlaplus/issues/1170
 		final InetAddress optIn = getOptInDNSRecord();
-        
+
 		if (optIn == null) {
 			final String id = getIdentifier(line);
 			if (id != null) {
@@ -217,8 +225,9 @@ public class ExecutionStatisticsCollector {
 		} else if (RND_ID_STR.equals(identifier.trim())) {
 			identifier = getRandomIdentifier();
 		}
-		
-		// truncate the identifier no matter what, but first remove leading and trailing whitespaces.
+
+		// truncate the identifier no matter what, but first remove leading and trailing
+		// whitespaces.
 		final String trimmed = identifier.trim();
 		return trimmed.substring(0, Math.min(trimmed.length(), 32));
 	}
@@ -255,7 +264,7 @@ public class ExecutionStatisticsCollector {
 		// isEnabled. In that specific case, it was considered acceptable for the UI
 		// thread to potentially be blocked. If isEnabled doesn't take getOptInDNSRecord
 		// into account, a user cannot explicitly opt-out of company-level execution
-		// statistics because the dialog's opt-out button is only clickable if 
+		// statistics because the dialog's opt-out button is only clickable if
 		// execution statistics are currently enabled.
 		return getIdentifier() != null || getOptInDNSRecord() != null;
 	}
@@ -267,14 +276,14 @@ public class ExecutionStatisticsCollector {
 		// inside Eclipse with a workspace location ("-data") other than ~/.tlaplus/ .
 		udcFile.getParentFile().mkdirs();
 		udcFile.createNewFile();
-		
+
 		try (BufferedWriter br = new BufferedWriter(new FileWriter(udcFile))) {
 			br.write(c.toString() + "\n");
 		} catch (IOException e) {
 			throw e;
 		}
 	}
-	
+
 	public Selection get() {
 		if (isEnabled()) {
 			try (BufferedReader br = new BufferedReader(new FileReader(new File(pathname)))) {
@@ -289,7 +298,7 @@ public class ExecutionStatisticsCollector {
 		}
 		return Selection.NO_ESC;
 	}
-	
+
 	public static boolean promptUser() {
 		return !(new ExecutionStatisticsCollector().escFileExists());
 	}
@@ -303,10 +312,11 @@ public class ExecutionStatisticsCollector {
 		// Include a timestamp to cause HEAD to be un-cachable.
 		parameters.put("ts", Long.toString(System.currentTimeMillis()));
 		parameters.put("optout", Boolean.FALSE.toString());
-		
+
 		try {
-			final URL url = new URL((Boolean.getBoolean(ExecutionStatisticsCollector.class.getName() + ".nossl") ? "http"
-					: "https") + "://" + hostname + "/?" + encode(parameters));
+			final URL url = new URL(
+					(Boolean.getBoolean(ExecutionStatisticsCollector.class.getName() + ".nossl") ? "http"
+							: "https") + "://" + hostname + "/?" + encode(parameters));
 
 			final HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("HEAD");
@@ -315,8 +325,8 @@ public class ExecutionStatisticsCollector {
 		} catch (Exception ignoreCompletely) {
 			// A TLC user doesn't care if execution statistics collection doesn't work.
 		}
-	}	
-	
+	}
+
 	private static String encode(final Map<String, String> parameters) throws UnsupportedEncodingException {
 		final StringBuffer buf = new StringBuffer();
 
@@ -327,10 +337,10 @@ public class ExecutionStatisticsCollector {
 			buf.append(URLEncoder.encode(value, "UTF-8"));
 			buf.append(",");
 		}
-		
+
 		return buf.toString().replaceFirst(",$", "");
 	}
-	
+
 	private static byte[] getMacAddress() {
 		try {
 			final Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces();
@@ -351,7 +361,7 @@ public class ExecutionStatisticsCollector {
 		}
 		return null;
 	}
-	
+
 	private String getUUIDv1() {
 		final byte[] mac = getMacAddress();
 		if (mac == null) {
@@ -379,7 +389,7 @@ public class ExecutionStatisticsCollector {
 	}
 
 	// for manual testing //
-	
+
 	public static void main(String[] args) {
 		new ExecutionStatisticsCollector().collect0(new HashMap<>());
 	}

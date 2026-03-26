@@ -36,9 +36,9 @@ import tlc2.output.EC;
 public class Github607Test extends ModelCheckerTestCase {
 
 	public Github607Test() {
-		super("Github607", new String[] { "-config", "Github607.tla"});
+		super("Github607", new String[] { "-config", "Github607.tla" });
 	}
-	
+
 	@Override
 	protected boolean doCoverage() {
 		return false;

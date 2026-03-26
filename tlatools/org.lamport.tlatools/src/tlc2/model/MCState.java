@@ -17,42 +17,43 @@ import util.UniqueString;
  * Encapsulates information about a TLC state.
  */
 public class MCState {
-	
+
 	private static final String BACK_TO_STATE = " " + TLAConstants.BACK_TO_STATE;
-	
+
 	/**
 	 * The variables captured by this state.
 	 */
 	private final MCVariable[] variables;
-	
+
 	/**
 	 * The name of the next-state-relation taken to arrive in this state.
 	 */
 	private final String name;
-	
+
 	/**
 	 * The state label; takes form of <$name $location>
 	 */
 	private final String label;
-	
+
 	/**
-	 * The location of the next-state-relation, a parsed representation of (for example):
+	 * The location of the next-state-relation, a parsed representation of (for
+	 * example):
 	 * line 7, col 9 to line 11, col 23 of module Alias
 	 */
 	private final Location location;
-	
+
 	/**
 	 * Whether this state was reached by stuttering.
 	 * Found in behaviors witnessing a liveness property violation.
 	 */
 	private final boolean isStuttering;
-	
+
 	/**
 	 * Whether this state returns to a previous state in the behavior.
 	 * Found in behaviors witnessing a liveness property violation.
 	 */
 	private final boolean isBackToState;
-	
+
 	/**
 	 * The depth of this state in the behavior, counting from 1.
 	 */
@@ -91,7 +92,7 @@ public class MCState {
 			// string from which the variables can be parsed
 			final String variableInputString = stateInputString.substring(index2 + 1);
 			vars = parseVariables(variableInputString);
-			
+
 			// The format of states in the output of depth-first (iterative deepening)
 			// obviously differs from BFS (why use one implementation when we can have 2 and
 			// more). Thus, take care of states that lack a label.
@@ -118,15 +119,17 @@ public class MCState {
 
 		return new MCState(vars, name, label, location, isStuttering, isBackToState, stateNumber);
 	}
-	
+
 	/**
-	 * @param vars            variables in this state.
-	 * @param stateName       the name for this state
-	 * @param stateLabel      the display label, usually including line location and module
-	 * @param moduleLocation  the name of this module whose checking this state is from
-	 * @param stuttering      whether this is a stuttering state or not
-	 * @param backToState     whether this is a back to state or not
-	 * @param ordinal         number of the state in the trace
+	 * @param vars           variables in this state.
+	 * @param stateName      the name for this state
+	 * @param stateLabel     the display label, usually including line location and
+	 *                       module
+	 * @param moduleLocation the name of this module whose checking this state is
+	 *                       from
+	 * @param stuttering     whether this is a stuttering state or not
+	 * @param backToState    whether this is a back to state or not
+	 * @param ordinal        number of the state in the trace
 	 */
 	public MCState(
 			final MCVariable[] vars,
@@ -144,11 +147,12 @@ public class MCState {
 		isBackToState = backToState;
 		stateNumber = ordinal;
 	}
-	
+
 	/**
 	 * Initializes a new instance of this class.
-	 * @param other The state from which to copy values.
-	 * @param isStuttering Whether to mark this state as stuttering.
+	 * 
+	 * @param other         The state from which to copy values.
+	 * @param isStuttering  Whether to mark this state as stuttering.
 	 * @param isBackToState Whether to mark this state as the end of a lasso.
 	 */
 	public MCState(final MCState other, boolean isStuttering, boolean isBackToState) {
@@ -160,14 +164,14 @@ public class MCState {
 		this.isStuttering = isStuttering;
 		this.isBackToState = isBackToState;
 	}
-	
+
 	public MCState(TLCStateInfo tlcState) {
 		this.name = "";
 		this.label = "";
 		this.location = null;
 		this.isStuttering = false;
 		this.isBackToState = false;
-		this.stateNumber = (int)tlcState.stateNumber;
+		this.stateNumber = (int) tlcState.stateNumber;
 
 		Map<UniqueString, IValue> variableMap = tlcState.getOriginalState().getVals();
 		List<MCVariable> variableList = new ArrayList<MCVariable>();
@@ -178,7 +182,7 @@ public class MCState {
 			MCVariable variable = new MCVariable(key.toString(), value);
 			variableList.add(variable);
 		}
-		
+
 		this.variables = variableList.toArray(new MCVariable[variableList.size()]);
 		this.record = new RecordValue(tlcState.getOriginalState());
 	}
@@ -186,11 +190,11 @@ public class MCState {
 	public MCVariable[] getVariables() {
 		return this.variables;
 	}
-	
+
 	public String getLabel() {
-		 return this.label;
+		return this.label;
 	}
-	
+
 	public String getName() {
 		return this.name;
 	}
@@ -206,44 +210,44 @@ public class MCState {
 	public int getStateNumber() {
 		return this.stateNumber;
 	}
-	
+
 	public Location getLocation() {
 		return this.location;
 	}
-	
+
 	public String asRecord(final boolean includeHeader) {
 		final StringBuilder result = new StringBuilder();
 		result.append(TLAConstants.L_SQUARE_BRACKET);
 		result.append(TLAConstants.CR);
-		
+
 		if (includeHeader) {
 			result.append(TLAConstants.SPACE);
 			result.append(TLAConstants.TraceExplore.ACTION);
 			result.append(TLAConstants.RECORD_ARROW);
-			
+
 			result.append(TLAConstants.L_SQUARE_BRACKET);
 			result.append(TLAConstants.CR);
 			result.append(TLAConstants.SPACE).append(TLAConstants.SPACE).append(TLAConstants.SPACE);
-				result.append("position");
-				result.append(TLAConstants.RECORD_ARROW);
-				result.append(getStateNumber());
-				result.append(TLAConstants.COMMA).append(TLAConstants.CR);
-			
-				result.append(TLAConstants.SPACE).append(TLAConstants.SPACE).append(TLAConstants.SPACE);
-				result.append("name");
-				result.append(TLAConstants.RECORD_ARROW);
-				result.append(TLAConstants.QUOTE);
-				result.append(name);
-				result.append(TLAConstants.QUOTE);
-				result.append(TLAConstants.COMMA).append(TLAConstants.CR);
-				
-				result.append(TLAConstants.SPACE).append(TLAConstants.SPACE).append(TLAConstants.SPACE);
-				result.append("location");
-				result.append(TLAConstants.RECORD_ARROW);
-				result.append(TLAConstants.QUOTE);
-				result.append(location);
-				result.append(TLAConstants.QUOTE);
-				
+			result.append("position");
+			result.append(TLAConstants.RECORD_ARROW);
+			result.append(getStateNumber());
+			result.append(TLAConstants.COMMA).append(TLAConstants.CR);
+
+			result.append(TLAConstants.SPACE).append(TLAConstants.SPACE).append(TLAConstants.SPACE);
+			result.append("name");
+			result.append(TLAConstants.RECORD_ARROW);
+			result.append(TLAConstants.QUOTE);
+			result.append(name);
+			result.append(TLAConstants.QUOTE);
+			result.append(TLAConstants.COMMA).append(TLAConstants.CR);
+
+			result.append(TLAConstants.SPACE).append(TLAConstants.SPACE).append(TLAConstants.SPACE);
+			result.append("location");
+			result.append(TLAConstants.RECORD_ARROW);
+			result.append(TLAConstants.QUOTE);
+			result.append(location);
+			result.append(TLAConstants.QUOTE);
+
 			result.append(TLAConstants.CR);
 			result.append(TLAConstants.SPACE).append(TLAConstants.R_SQUARE_BRACKET);
 			if (variables.length != 0) {
@@ -252,7 +256,7 @@ public class MCState {
 				result.append(TLAConstants.COMMA).append(TLAConstants.CR);
 			}
 		}
-		
+
 		for (int i = 0; i < variables.length; i++) {
 			final MCVariable variable = variables[i];
 			if (variable.isTraceExplorerExpression()) {
@@ -264,12 +268,12 @@ public class MCState {
 			result.append(TLAConstants.RECORD_ARROW);
 
 			result.append(variable.getValueAsString());
-			
+
 			if (i < (variables.length - 1)) {
 				result.append(TLAConstants.COMMA).append(TLAConstants.CR);
 			}
 		}
-		
+
 		result.append(TLAConstants.CR).append(TLAConstants.R_SQUARE_BRACKET);
 		return result.toString();
 	}
@@ -292,85 +296,92 @@ public class MCState {
 		return buf.toString();
 	}
 
-    /**
-     * The returns a conjunction list of variables.
-     * 
-     * For variables representing trace explorer expressions, if {@code includeTraceExpressions} is true,
-     * the returned string has:
-     * 
-     * /\ expr = value
-     * 
-     * where expr is the single line form of the trace explorer expression as shown in the Name column of
-     * the trace viewer.
-     *  
-     * For all other variables, this method attempts to display them as TLC does.
-     * 
-     * @param includeTraceExpressions whether trace expressions should be included.
-     * @param indent if non-null, this will be prepended to each line
-     * @return
-     */
-    public String getConjunctiveDescription(final boolean includeTraceExpressions, final String indent) {
-        return getConjunctiveDescription(includeTraceExpressions, indent, false);
-    }
+	/**
+	 * The returns a conjunction list of variables.
+	 * 
+	 * For variables representing trace explorer expressions, if
+	 * {@code includeTraceExpressions} is true,
+	 * the returned string has:
+	 * 
+	 * /\ expr = value
+	 * 
+	 * where expr is the single line form of the trace explorer expression as shown
+	 * in the Name column of
+	 * the trace viewer.
+	 * 
+	 * For all other variables, this method attempts to display them as TLC does.
+	 * 
+	 * @param includeTraceExpressions whether trace expressions should be included.
+	 * @param indent                  if non-null, this will be prepended to each
+	 *                                line
+	 * @return
+	 */
+	public String getConjunctiveDescription(final boolean includeTraceExpressions, final String indent) {
+		return getConjunctiveDescription(includeTraceExpressions, indent, false);
+	}
 
-    /**
-     * The returns a conjunction list of variables.
-     * 
-     * For variables representing trace explorer expressions, if {@code includeTraceExpressions} is true,
-     * the returned string has:
-     * 
-     * /\ expr = value
-     * 
-     * where expr is the single line form of the trace explorer expression as shown in the Name column of
-     * the trace viewer.
-     *  
-     * For all other variables, this method attempts to display them as TLC does.
-     * 
-     * @param includeTraceExpressions whether trace expressions should be included.
-     * @param indent if non-null, this will be prepended to each line
-     * @param ansiMarkup if true, the String will include ANSI markup for trace expressions; this is currently ignored
-     * 							if includeTraceExpressions is false
-     * @return
-     */
-    public String getConjunctiveDescription(final boolean includeTraceExpressions, final String indent,
-    										final boolean ansiMarkup) {
-        final StringBuilder result = new StringBuilder();
-        
+	/**
+	 * The returns a conjunction list of variables.
+	 * 
+	 * For variables representing trace explorer expressions, if
+	 * {@code includeTraceExpressions} is true,
+	 * the returned string has:
+	 * 
+	 * /\ expr = value
+	 * 
+	 * where expr is the single line form of the trace explorer expression as shown
+	 * in the Name column of
+	 * the trace viewer.
+	 * 
+	 * For all other variables, this method attempts to display them as TLC does.
+	 * 
+	 * @param includeTraceExpressions whether trace expressions should be included.
+	 * @param indent                  if non-null, this will be prepended to each
+	 *                                line
+	 * @param ansiMarkup              if true, the String will include ANSI markup
+	 *                                for trace expressions; this is currently
+	 *                                ignored
+	 *                                if includeTraceExpressions is false
+	 * @return
+	 */
+	public String getConjunctiveDescription(final boolean includeTraceExpressions, final String indent,
+			final boolean ansiMarkup) {
+		final StringBuilder result = new StringBuilder();
+
 		for (int i = 0; i < variables.length; i++) {
 			final MCVariable var = variables[i];
-			
+
 			if (var.isTraceExplorerExpression() && !includeTraceExpressions) {
 				continue;
 			}
-			
+
 			if (indent != null) {
 				result.append(indent);
 			}
-			
-            result.append("/\\ ");
+
+			result.append("/\\ ");
 			if (var.isTraceExplorerExpression()) {
 				if (ansiMarkup) {
 					result.append(TLAConstants.ANSI.BOLD_CODE);
 				}
-				
+
 				result.append(var.getSingleLineDisplayName());
 			} else {
 				result.append(var.getName());
 			}
 
-            result.append(" = ").append(var.getValueAsString());
+			result.append(" = ").append(var.getValueAsString());
 
 			if (var.isTraceExplorerExpression() && ansiMarkup) {
 				result.append(TLAConstants.ANSI.RESET_CODE);
 			}
-			
-            result.append('\n');
-        }
-		
-        return result.toString();
-    }
 
-	
+			result.append('\n');
+		}
+
+		return result.toString();
+	}
+
 	private static MCVariable[] parseVariables(final String variableInputString) {
 		String[] lines = variableInputString.split(TLAConstants.CR);
 		ArrayList<MCVariable> vars = new ArrayList<>();

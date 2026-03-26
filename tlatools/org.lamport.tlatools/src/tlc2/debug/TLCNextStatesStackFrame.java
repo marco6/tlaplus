@@ -97,7 +97,7 @@ public class TLCNextStatesStackFrame extends TLCStateStackFrame {
 	public boolean handle(final TLCDebugger debugger) {
 		return true;
 	}
-	
+
 	@Override
 	protected boolean hasScope() {
 		return !getSuccessors().isEmpty();
@@ -106,7 +106,7 @@ public class TLCNextStatesStackFrame extends TLCStateStackFrame {
 	protected Set<TLCState> getSuccessors() {
 		return fun.getStates().toSet();
 	}
-	
+
 	@Override
 	public void preHalt(final TLCDebugger debugger) {
 		debugger.sendCapabilities(TLCCapabilities.NO_STEP_BACK);
@@ -155,10 +155,10 @@ public class TLCNextStatesStackFrame extends TLCStateStackFrame {
 		}
 		if (vr == stateId + 1) {
 			if (TLCGlobals.simulator != null) {
-				return tool.eval(() -> {					
+				return tool.eval(() -> {
 					// A) Last state of the trace s_f.
 					final TLCState t = getT();
-					
+
 					// Filtering allAssigned is expected to remove only the final state from the
 					// trace, which is the state equal to 't'. If other states are also removed, it
 					// indicates an issue, but it is likely preferable to crashing.
@@ -166,7 +166,7 @@ public class TLCNextStatesStackFrame extends TLCStateStackFrame {
 					prefix = TLCGlobals.simulator.getUncompressedTrace(t).stream().filter(s -> s.allAssigned())
 							.map(s -> new TLCStateInfo(s)).collect(Collectors.toList())
 							.toArray(TLCStateInfo[]::new);
-					
+
 					// Combine and convert the trace into debugger Variables. It's in
 					// reverse order because the variable view shows the current state in the
 					// "State" node (SCOPE) above Trace; if a user ignores the "State" and "Trace"
@@ -184,18 +184,18 @@ public class TLCNextStatesStackFrame extends TLCStateStackFrame {
 						idToStateMap.put(stateAsVariable.getVariablesReference(), ti.state);
 						trace.add(stateAsVariable);
 					}
-					
+
 					return trace.toArray(new Variable[trace.size()]);
 				});
 			}
 		}
 		return super.getVariables(vr);
 	}
-	
+
 	Variable[] getTraceVariables() {
 		return getVariables(stateId + 1);
 	}
-	
+
 	Variable[] getSuccessorVariables() {
 		return getVariables(stateId);
 	}
@@ -212,24 +212,25 @@ public class TLCNextStatesStackFrame extends TLCStateStackFrame {
 	 * states.
 	 */
 	private static int hammingDistance(TLCState s1, TLCState s2) {
-	    final char[] a = s1.toString().toCharArray();
-	    final char[] b = s2.toString().toCharArray();
+		final char[] a = s1.toString().toCharArray();
+		final char[] b = s2.toString().toCharArray();
 
-	    final int minLen = Math.min(a.length, b.length);
-	    int distance = Math.abs(a.length - b.length);
+		final int minLen = Math.min(a.length, b.length);
+		int distance = Math.abs(a.length - b.length);
 
-	    for (int i = 0; i < minLen; i++) {
-	        distance += (a[i] ^ b[i]) == 0 ? 0 : 1;
-	    }
-	    return distance;
+		for (int i = 0; i < minLen; i++) {
+			distance += (a[i] ^ b[i]) == 0 ? 0 : 1;
+		}
+		return distance;
 	}
 
 	@Override
 	public synchronized CompletableFuture<Void> stepIn(TLCDebugger debugger) {
-		// Select a successor state whose Hamming distance to the current state is minimal.
+		// Select a successor state whose Hamming distance to the current state is
+		// minimal.
 		fun.setElement(fun.getStates().toSet().stream().min(Comparator.comparingInt(s -> hammingDistance(getS(), s)))
 				.orElseThrow());
-		
+
 		debugger.setGranularity(Granularity.Formula);
 		debugger.notify();
 		return CompletableFuture.completedFuture(null);
@@ -237,10 +238,11 @@ public class TLCNextStatesStackFrame extends TLCStateStackFrame {
 
 	@Override
 	public synchronized CompletableFuture<Void> stepOver(TLCDebugger debugger) {
-		// Select a successor state whose Hamming distance to the current state is maximal.
+		// Select a successor state whose Hamming distance to the current state is
+		// maximal.
 		fun.setElement(fun.getStates().toSet().stream().max(Comparator.comparingInt(s -> hammingDistance(getS(), s)))
 				.orElseThrow());
-		
+
 		debugger.setGranularity(Granularity.Formula);
 		debugger.notify();
 		return CompletableFuture.completedFuture(null);
@@ -254,7 +256,7 @@ public class TLCNextStatesStackFrame extends TLCStateStackFrame {
 		} else {
 			fun.setElement(predecessor);
 		}
-		
+
 		debugger.setGranularity(Granularity.Formula);
 		debugger.notify();
 		return CompletableFuture.completedFuture(null);

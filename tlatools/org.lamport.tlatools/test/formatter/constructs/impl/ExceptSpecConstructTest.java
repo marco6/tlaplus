@@ -18,7 +18,8 @@ public class ExceptSpecConstructTest {
     @Test
     public void testChainedExceptComponents() {
         // Regression test for bug where chained EXCEPT components (e.g., ![r].smoking)
-        // would lose the value (FALSE) because ExceptSpecConstruct assumed exactly 4 children.
+        // would lose the value (FALSE) because ExceptSpecConstruct assumed exactly 4
+        // children.
         var s = "----- MODULE ExceptChained -----\n" +
                 "VARIABLE smokers, r\n" +
                 "Test == smokers' = [smokers EXCEPT ![r].smoking = FALSE]\n" +

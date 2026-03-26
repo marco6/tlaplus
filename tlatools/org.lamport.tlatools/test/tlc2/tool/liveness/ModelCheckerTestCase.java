@@ -71,24 +71,24 @@ public abstract class ModelCheckerTestCase extends CommonTestCase {
 	public ModelCheckerTestCase(String spec, String path) {
 		this(spec, path, ExitStatus.SUCCESS);
 	}
-	
+
 	public ModelCheckerTestCase(String spec, String[] extraArguments) {
 		this(spec, "", extraArguments, ExitStatus.SUCCESS);
 	}
-	
+
 	public ModelCheckerTestCase(String spec, String[] extraArguments, final int exitStatus) {
 		this(spec, "", extraArguments, exitStatus);
 	}
-	
+
 	public ModelCheckerTestCase(String spec, String path, String[] extraArguments) {
 		this(spec, path, extraArguments, ExitStatus.SUCCESS);
 	}
-	
+
 	public ModelCheckerTestCase(String spec, String path, String[] extraArguments, final int exitStatus) {
 		this(spec, path, exitStatus);
-		this.extraArguments  = extraArguments; 
+		this.extraArguments = extraArguments;
 	}
-	
+
 	public ModelCheckerTestCase(final String spec, final String path, final int exitStatus) {
 		super(new TestMPRecorder());
 		this.spec = spec;
@@ -100,13 +100,15 @@ public abstract class ModelCheckerTestCase extends CommonTestCase {
 		// No-op
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Before
 	public void setUp() {
-		beforeSetUp();		
-		
+		beforeSetUp();
+
 		// some tests might want to access the liveness graph after model
 		// checking completed. Thus, prevent the liveness graph from being
 		// closed too earlier.
@@ -115,16 +117,16 @@ public abstract class ModelCheckerTestCase extends CommonTestCase {
 		try {
 			// TEST_MODEL is where TLC should look for user defined .tla files
 			ToolIO.setUserDir(BASE_PATH + path);
-			
+
 			MP.setRecorder(recorder);
-			
+
 			// Increase the liveness checking threshold to prevent liveness
-			// checking of an incomplete graph. Most tests check that the 
-			// state queue is empty and fail if not. This is only given 
+			// checking of an incomplete graph. Most tests check that the
+			// state queue is empty and fail if not. This is only given
 			// when liveness checking is executed when all states have been
 			// generated.
 			TLCGlobals.livenessThreshold = getLivenessThreshold();
-			
+
 			tlc = new TLC();
 			tlc.setResolver(getResolver());
 			// * We want *no* deadlock checking to find the violation of the
@@ -134,22 +136,22 @@ public abstract class ModelCheckerTestCase extends CommonTestCase {
 			// * MC is the name of the TLA+ specification to be checked (the file
 			// is placed in TEST_MODEL
 			final List<String> args = new ArrayList<String>(6);
-			
+
 			args.add("-metadir");
 			args.add(getMetaDir());
-			
+
 			// *Don't* check for deadlocks. All tests are interested in liveness
 			// checks which are shielded away by deadlock checking. TLC finds a
 			// deadlock (if it exists) before it finds most liveness violations.
 			if (!checkDeadLock()) {
 				args.add("-deadlock");
 			}
-			
+
 			if (getNumberOfThreads() == 1 && runWithDebugger()) {
 				args.add("-debugger");
 				args.add(String.format("nosuspend,port=%s,nohalt", 1025 + new Random().nextInt(64540)));
 			}
-			
+
 			if (noGenerateSpec()) {
 				args.add("-noGenerateSpecTE");
 			} else {
@@ -158,7 +160,7 @@ public abstract class ModelCheckerTestCase extends CommonTestCase {
 				args.add("-teSpecOutDir");
 				args.add(getTESpecOutDir());
 			}
-			
+
 			if (noRandomFPandSeed()) {
 				args.add("-fp");
 				args.add("0");
@@ -166,12 +168,12 @@ public abstract class ModelCheckerTestCase extends CommonTestCase {
 				args.add("-seed");
 				args.add("1");
 			}
-			
+
 			if (doCoverage()) {
 				args.add("-coverage");
 				args.add("1");
 			}
-			
+
 			// Some tests require a large number of threads to successfully
 			// test their desired property. They request this by overriding
 			// the getNumberOfThreads() method. This can lead to over-
@@ -181,12 +183,12 @@ public abstract class ModelCheckerTestCase extends CommonTestCase {
 			// then it should be run sequentially instead of in parallel.
 			args.add("-workers");
 			args.add(Integer.toString(this.getNumberOfThreads()));
-			
+
 			// Never create checkpoints. They distort performance tests and are
 			// of no use anyway.
 			args.add("-checkpoint");
 			args.add(Integer.toString(doCheckpoint()));
-			
+
 			// Always print the state graph in dot file notation.
 			if (doDump()) {
 				args.add("-dump");
@@ -194,7 +196,6 @@ public abstract class ModelCheckerTestCase extends CommonTestCase {
 				args.add("${metadir}" + FileUtil.separator + getClass().getCanonicalName() + ".dot");
 			}
 
-			
 			if (doDumpTrace()) {
 				args.add("-dumpTrace");
 				args.add("json");
@@ -202,7 +203,7 @@ public abstract class ModelCheckerTestCase extends CommonTestCase {
 			}
 
 			args.addAll(Arrays.asList(extraArguments));
-			
+
 			args.add(spec);
 			tlc.handleParameters(args.toArray(new String[args.size()]));
 
@@ -210,16 +211,16 @@ public abstract class ModelCheckerTestCase extends CommonTestCase {
 			// overriding the getStateWriter method.
 			// This is a no-op by default.
 			tlc.setStateWriter(getStateWriter(tlc.getStateWriter()));
-		
+
 			// Run the ModelChecker
 			final int errorCode = tlc.process();
 			actualExitStatus = EC.ExitStatus.errorConstantToExitStatus(errorCode);
-			
+
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	protected IStateWriter getStateWriter(final IStateWriter sw) {
 		return sw;
 	}
@@ -227,7 +228,7 @@ public abstract class ModelCheckerTestCase extends CommonTestCase {
 	protected String getMetaDir() {
 		return TLCGlobals.metaRoot + FileUtil.separator + getClass().getCanonicalName();
 	}
-	
+
 	protected boolean noRandomFPandSeed() {
 		return true;
 	}
@@ -246,8 +247,8 @@ public abstract class ModelCheckerTestCase extends CommonTestCase {
 
 	protected boolean noGenerateSpec() {
 		return false;
-	}	
-	
+	}
+
 	protected String getTESpecOutDir() {
 		return TTraceModelCheckerTestCase.getPath(getClass());
 	}
@@ -259,25 +260,25 @@ public abstract class ModelCheckerTestCase extends CommonTestCase {
 	@After
 	public void tearDown() {
 		beforeTearDown();
-		
+
 		assertExitStatus();
 	}
-	
+
 	protected void assertExitStatus() {
 		assertEquals(expectedExitStatus, actualExitStatus);
 	}
-	
+
 	protected boolean doCoverage() {
 		return true;
 	}
-	
+
 	/**
 	 * @return True if TLC is to be called with "-deadlock".
 	 */
 	protected boolean checkDeadLock() {
 		return false;
 	}
-	
+
 	protected boolean doDump() {
 		return true;
 	}
@@ -296,15 +297,16 @@ public abstract class ModelCheckerTestCase extends CommonTestCase {
 	protected int getNumberOfThreads() {
 		return 1;
 	}
-	
+
 	protected void setExitStatus(final int exitStatus) {
 		this.expectedExitStatus = exitStatus;
 	}
-	
+
 	/**
-	 * E.g. 
-	 * ILiveCheck liveCheck = (ILiveCheck) getField(AbstractChecker.class, "liveCheck",
-	 * 				getField(TLC.class, "instance", tlc));
+	 * E.g.
+	 * ILiveCheck liveCheck = (ILiveCheck) getField(AbstractChecker.class,
+	 * "liveCheck",
+	 * getField(TLC.class, "instance", tlc));
 	 */
 	protected Object getField(Class<?> targetClass, String fieldName, Object instance) {
 		try {

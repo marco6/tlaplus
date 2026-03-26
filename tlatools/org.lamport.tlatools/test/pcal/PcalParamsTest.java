@@ -60,33 +60,34 @@ public class PcalParamsTest {
 	@Test
 	public void testLabelRootValid() throws IOException {
 		String[] validCases = {
-			"validName",     // standard identifier with letters
-			"a1",           // letter followed by number
-			"A_1",          // letter followed by underscore and number
-			"abc123_456"    // complex mix of letters, numbers, and underscores
+				"validName", // standard identifier with letters
+				"a1", // letter followed by number
+				"A_1", // letter followed by underscore and number
+				"abc123_456" // complex mix of letters, numbers, and underscores
 		};
 
 		for (String valid : validCases) {
 			assertEquals("Valid identifier should be accepted: " + valid,
-				trans.STATUS_OK,
-				trans.parseAndProcessArguments(new String[] {"-labelRoot", valid, testFile.getAbsolutePath()}));
+					trans.STATUS_OK,
+					trans.parseAndProcessArguments(new String[] { "-labelRoot", valid, testFile.getAbsolutePath() }));
 		}
 	}
 
 	@Test
 	public void testLabelRootInvalid() throws IOException {
 		String[] invalidCases = {
-			"1abc",    // starts with number
-			"_abc",    // starts with underscore
-			"123",     // only numbers
-			"_",       // only underscore
-			""        // empty string
+				"1abc", // starts with number
+				"_abc", // starts with underscore
+				"123", // only numbers
+				"_", // only underscore
+				"" // empty string
 		};
 
 		for (String invalid : invalidCases) {
-			int result = trans.parseAndProcessArguments(new String[] {"-labelRoot", invalid, testFile.getAbsolutePath()});
+			int result = trans
+					.parseAndProcessArguments(new String[] { "-labelRoot", invalid, testFile.getAbsolutePath() });
 			assertEquals("Invalid identifier should be rejected: " + invalid,
-				trans.STATUS_EXIT_WITH_ERRORS, result);
+					trans.STATUS_EXIT_WITH_ERRORS, result);
 		}
 	}
 }

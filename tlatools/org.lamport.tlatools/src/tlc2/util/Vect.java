@@ -12,21 +12,21 @@ import java.util.Vector;
 import java.util.stream.Stream;
 
 /**
- * TODO it's unclear why we've written our own list implementation; we should consider using existing framework code for this;
- * 		we've also written our own "Vector" class in SANY...
+ * TODO it's unclear why we've written our own list implementation; we should
+ * consider using existing framework code for this;
+ * we've also written our own "Vector" class in SANY...
  */
 @SuppressWarnings("unchecked")
 public class Vect<E> implements Serializable {
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	
   private E[] elementData;
   private int elementCount;
-         
+
   final class Enumerator implements Enumeration<E> {
     int index = 0;
 
-    public final boolean hasMoreElements () {
+    public final boolean hasMoreElements() {
       return (this.index < elementCount);
     }
 
@@ -35,21 +35,22 @@ public class Vect<E> implements Serializable {
     }
   }
 
-  public Vect() { this(10); }
+  public Vect() {
+    this(10);
+  }
 
   public Vect(int initialCapacity) {
     this.elementCount = 0;
     if (initialCapacity == 0) {
       this.elementData = (E[]) new Object[0];
-    }
-    else {
+    } else {
       this.elementData = (E[]) new Object[initialCapacity];
     }
   }
 
   public Vect(final E[] array) {
     this(array.length);
-    int sz = array.length;    
+    int sz = array.length;
     for (int i = 0; i < sz; i++) {
       this.addElement(array[i]);
     }
@@ -57,7 +58,7 @@ public class Vect<E> implements Serializable {
 
   public Vect(Vector<E> v) {
     this(v.size());
-    int sz = v.size();    
+    int sz = v.size();
     for (int i = 0; i < sz; i++) {
       this.addElement(v.elementAt(i));
     }
@@ -65,7 +66,7 @@ public class Vect<E> implements Serializable {
 
   public final void addElement(E obj) {
     if (this.elementCount == this.elementData.length) {
-      this.ensureCapacity(this.elementCount+1);
+      this.ensureCapacity(this.elementCount + 1);
     }
     this.elementData[this.elementCount++] = obj;
   }
@@ -81,7 +82,9 @@ public class Vect<E> implements Serializable {
     return v;
   }
 
-  public int capacity() { return this.elementData.length; }
+  public int capacity() {
+    return this.elementData.length;
+  }
 
   public final boolean contains(Object elem) {
     return (this.indexOf(elem) != -1);
@@ -96,17 +99,19 @@ public class Vect<E> implements Serializable {
   }
 
   @SuppressWarnings("rawtypes")
-  public Enumeration<E> elements() { return new Vect.Enumerator(); }
+  public Enumeration<E> elements() {
+    return new Vect.Enumerator();
+  }
 
-  public final void ensureCapacity(int minCapacity) { 
+  public final void ensureCapacity(int minCapacity) {
     if (this.elementData.length < minCapacity) {
       int newCapacity = elementData.length + elementData.length;
       if (newCapacity < minCapacity) {
-	newCapacity = minCapacity;
+        newCapacity = minCapacity;
       }
       Object oldBuffer[] = elementData;
       elementData = (E[]) new Object[newCapacity];
-      System.arraycopy( oldBuffer, 0, elementData, 0, elementCount);
+      System.arraycopy(oldBuffer, 0, elementData, 0, elementCount);
     }
   }
 
@@ -114,34 +119,38 @@ public class Vect<E> implements Serializable {
     return this.elementData[0];
   }
 
-  public final int indexOf(Object elem) { return this.indexOf(elem, 0); }
+  public final int indexOf(Object elem) {
+    return this.indexOf(elem, 0);
+  }
 
   public final int indexOf(Object elem, int index) {
     for (int pos = index; pos < elementCount; pos++) {
-      if (elem.equals(elementData[pos])) return pos;
+      if (elem.equals(elementData[pos]))
+        return pos;
     }
     return -1;
   }
 
   public final void insertElementAt(E obj, int index) {
     if (elementCount == elementData.length)
-      ensureCapacity(elementCount+1);
+      ensureCapacity(elementCount + 1);
 
     if ((index > elementCount) || (index < 0)) {
       throw new ArrayIndexOutOfBoundsException();
-    }
-    else if (index < elementCount) {
-      System.arraycopy(elementData, index, elementData, index+1, elementCount-index);
+    } else if (index < elementCount) {
+      System.arraycopy(elementData, index, elementData, index + 1, elementCount - index);
     }
 
     elementData[index] = obj;
     elementCount++;
   }
 
-  public final boolean isEmpty() { return (this.elementCount == 0); }
+  public final boolean isEmpty() {
+    return (this.elementCount == 0);
+  }
 
   public final Object lastElement() {
-    return this.elementData[this.elementCount-1];
+    return this.elementData[this.elementCount - 1];
   }
 
   public final void removeLastElement() {
@@ -151,24 +160,24 @@ public class Vect<E> implements Serializable {
     this.elementCount--;
     this.elementData[this.elementCount] = null;
   }
-  
-  public final void setElementAt(E obj, int index)	{
+
+  public final void setElementAt(E obj, int index) {
     this.elementData[index] = obj;
   }
 
   public final void removeElementAt(int index) {
-    for (int i = index+1; i < this.elementCount; i++) {
-      this.elementData[i-1] = this.elementData[i];
+    for (int i = index + 1; i < this.elementCount; i++) {
+      this.elementData[i - 1] = this.elementData[i];
     }
     this.elementCount--;
     this.elementData[this.elementCount] = null;
   }
 
-  /* Remove all elements except the first cnt elements.  */
+  /* Remove all elements except the first cnt elements. */
   public final void removeAll(int cnt) {
     this.elementCount = cnt;
   }
-  
+
   public final Object pop() {
     Object elem = this.lastElement();
     this.removeLastElement();
@@ -178,8 +187,10 @@ public class Vect<E> implements Serializable {
   public final void push(E elem) {
     this.addElement(elem);
   }
-  
-  public final int size() { return this.elementCount; }
+
+  public final int size() {
+    return this.elementCount;
+  }
 
   public final int hashCode() {
     int code = 0;
@@ -190,16 +201,19 @@ public class Vect<E> implements Serializable {
   }
 
   public final boolean equals(Object obj) {
-    if (!(obj instanceof Vect)) return false;
-    Vect<E> v = (Vect<E>)obj;
-    if (v.size() != this.elementCount) return false;
+    if (!(obj instanceof Vect))
+      return false;
+    Vect<E> v = (Vect<E>) obj;
+    if (v.size() != this.elementCount)
+      return false;
     for (int i = 0; i < this.elementCount; i++) {
-      if (!this.elementData[i].equals(v.elementAt(i))) return false;
+      if (!this.elementData[i].equals(v.elementAt(i)))
+        return false;
     }
     return true;
   }
-  
-  public String toString() {  
+
+  public String toString() {
     StringBuffer buf = new StringBuffer("{");
     if (this.size() != 0) {
       buf.append(this.elementAt(0).toString());
@@ -213,7 +227,7 @@ public class Vect<E> implements Serializable {
   }
 
   public Stream<E> stream() {
-	  return Arrays.stream(elementData, 0, elementCount);
+    return Arrays.stream(elementData, 0, elementCount);
   }
-  
+
 }

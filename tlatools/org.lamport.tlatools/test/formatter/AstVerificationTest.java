@@ -15,8 +15,7 @@ import static org.junit.Assert.*;
 
 public class AstVerificationTest {
 
-    private static final String SIMPLE_SPEC =
-            "---- MODULE Spec ----\nVARIABLE x\nInit == x = 0\n====\n";
+    private static final String SIMPLE_SPEC = "---- MODULE Spec ----\nVARIABLE x\nInit == x = 0\n====\n";
 
     @Rule
     public TemporaryFolder tempDir = new TemporaryFolder();
@@ -86,7 +85,7 @@ public class AstVerificationTest {
             System.setOut(new PrintStream(outContent, false, StandardCharsets.UTF_8));
             System.setErr(new PrintStream(errContent, false, StandardCharsets.UTF_8));
 
-            int exitCode = Main.mainWrapper(new String[]{
+            int exitCode = Main.mainWrapper(new String[] {
                     "--skip-ast-verification", inputFile.toString()
             });
 
@@ -113,7 +112,7 @@ public class AstVerificationTest {
             System.setErr(new PrintStream(errContent, false, StandardCharsets.UTF_8));
 
             // No --skip-ast-verification flag -- verification is enabled by default
-            int exitCode = Main.mainWrapper(new String[]{inputFile.toString()});
+            int exitCode = Main.mainWrapper(new String[] { inputFile.toString() });
 
             assertEquals("Exit code should be 0 when verification passes", 0, exitCode);
             String stdout = outContent.toString(StandardCharsets.UTF_8);

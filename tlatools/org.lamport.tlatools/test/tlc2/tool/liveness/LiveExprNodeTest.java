@@ -39,7 +39,7 @@ public class LiveExprNodeTest {
 		// Rewriting rules page 452.
 		final LiveExprNode p = new LNBool(true);
 		final LiveExprNode q = new LNBool(true);
-		
+
 		// ~~T -> T
 		LiveExprNode tf = new LNNeg(new LNNeg(p));
 		assertFalse(tf.isPositiveForm());
@@ -59,21 +59,21 @@ public class LiveExprNodeTest {
 		assertTrue(new LNEven(new LNBool(false)).equals(tf.toDNF()));
 
 		// ~()T -> ()F
-		//TODO: pushNeg causes a StackOverflow, see LiveExprNode#pushNeg
+		// TODO: pushNeg causes a StackOverflow, see LiveExprNode#pushNeg
 		tf = new LNNeg(new LNNext(p));
 		assertFalse(tf.isPositiveForm());
-//		assertTrue(tf.pushNeg().isPositiveForm());
-//		assertTrue(new LNNext(new LNBool(false)).equals(tf.toDNF()));
+		// assertTrue(tf.pushNeg().isPositiveForm());
+		// assertTrue(new LNNext(new LNBool(false)).equals(tf.toDNF()));
 
 		// ~(T /\ T) -> F \/ F
-		//TODO: Rewrite F\/F to F in toDNF? Probably not worth it.
+		// TODO: Rewrite F\/F to F in toDNF? Probably not worth it.
 		tf = new LNNeg(new LNConj(p, q));
 		assertFalse(tf.isPositiveForm());
 		assertTrue(tf.pushNeg().isPositiveForm());
 		assertTrue(new LNDisj(new LNBool(false), new LNBool(false)).equals(tf.toDNF()));
 
 		// ~(T \/ T) -> F /\ F
-		//TODO: Rewrite F/\F to F in toDNF? Probably not worth it.
+		// TODO: Rewrite F/\F to F in toDNF? Probably not worth it.
 		tf = new LNNeg(new LNDisj(p, q));
 		assertFalse(tf.isPositiveForm());
 		assertTrue(tf.pushNeg().isPositiveForm());
@@ -104,11 +104,11 @@ public class LiveExprNodeTest {
 		assertTrue(new LNEven(new LNNeg(p)).equals(tf.toDNF()));
 
 		// ~()p -> ()~p
-		//TODO: pushNeg causes a StackOverflow, see LiveExprNode#pushNeg
+		// TODO: pushNeg causes a StackOverflow, see LiveExprNode#pushNeg
 		tf = new LNNeg(new LNNext(p));
 		assertFalse(tf.isPositiveForm());
-//		assertTrue(tf.pushNeg().isPositiveForm());
-//		assertTrue(new LNNext(new LNNeg(p)).equals(tf.toDNF()));
+		// assertTrue(tf.pushNeg().isPositiveForm());
+		// assertTrue(new LNNext(new LNNeg(p)).equals(tf.toDNF()));
 
 		// ~(p /\ q) -> ~p \/ ~q
 		tf = new LNNeg(new LNConj(p, q));

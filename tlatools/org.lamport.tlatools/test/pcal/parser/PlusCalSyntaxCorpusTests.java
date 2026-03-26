@@ -25,7 +25,8 @@ import org.junit.Test;
 import org.junit.Ignore;
 
 /**
- * Runs all corpus tests through the PlusCal parser, checking its syntax parsing.
+ * Runs all corpus tests through the PlusCal parser, checking its syntax
+ * parsing.
  */
 @RunWith(Parameterized.class)
 public class PlusCalSyntaxCorpusTests {
@@ -33,7 +34,7 @@ public class PlusCalSyntaxCorpusTests {
 	/**
 	 * Loads all corpus test files.
 	 *
-	 * @throws IOException If corpus test file cannot be found or read.
+	 * @throws IOException    If corpus test file cannot be found or read.
 	 * @throws ParseException If corpus test file fails to parse.
 	 */
 	@Parameters(name = "{index}: {0}")
@@ -78,11 +79,10 @@ public class PlusCalSyntaxCorpusTests {
 	public void testAll() throws ParseException {
 		PlusCalParserTestTarget parser = new PlusCalParserTestTarget();
 		SyntaxCorpusRunner.run(
-			test,
-			parser,
-			SyntaxCorpusRunner::runAllTests,
-			SyntaxCorpusRunner::expectNoFailures
-		);
+				test,
+				parser,
+				SyntaxCorpusRunner::runAllTests,
+				SyntaxCorpusRunner::expectNoFailures);
 	}
 
 	/**

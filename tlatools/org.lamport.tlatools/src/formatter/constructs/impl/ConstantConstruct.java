@@ -8,7 +8,8 @@ import tla2sany.st.TreeNode;
 
 /**
  * This is the actual "CONSTANT" or "CONSTANTS" keyword in the spec.
- * it has a single child which is the actual CONSTANT keyword along with comments.
+ * it has a single child which is the actual CONSTANT keyword along with
+ * comments.
  */
 public class ConstantConstruct implements TlaConstruct {
     @Override

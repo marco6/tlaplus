@@ -17,7 +17,10 @@ import util.WrongInvocationException;
 /**
  * An operator defined as a finite map from inputs to outputs.
  *
- * <p>Today (2022/8/22), this class is only used to represent CONSTANT definitions in configuration files of the form
+ * <p>
+ * Today (2022/8/22), this class is only used to represent CONSTANT definitions
+ * in configuration files of the form
+ * 
  * <pre>
  *     CONSTANT
  *         op(1, 1) = "a"
@@ -42,46 +45,52 @@ public class OpRcdValue extends OpValue {
   @Override
   public IValue initialize() {
     // The default implementation initializes by calling fingerPrint, which has no
-    // meaningful definition for this class.  So, we'll initialize all contained
+    // meaningful definition for this class. So, we'll initialize all contained
     // values by hand.
 
     for (int i = 0; i < domain.size(); ++i) {
       Value[] args = domain.elementAt(i);
       for (int j = 0; j < args.length; ++j) {
-        args[j] = (Value)args[j].initialize();
+        args[j] = (Value) args[j].initialize();
       }
 
       Value output = values.elementAt(i);
-      values.setElementAt((Value)output.initialize(), i);
+      values.setElementAt((Value) output.initialize(), i);
     }
     return this;
   }
 
   @Override
-  public final byte getKind() { return OPRCDVALUE; }
+  public final byte getKind() {
+    return OPRCDVALUE;
+  }
 
   @Override
   public final int compareTo(Object obj) {
     try {
       Assert.fail("Attempted to compare operator " + Values.ppr(this.toString()) +
-      " with value:\n" + Values.ppr(obj.toString()), getSource());
-      return 0;         // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          " with value:\n" + Values.ppr(obj.toString()), getSource());
+      return 0; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   public final boolean equals(Object obj) {
     try {
       Assert.fail("Attempted to check equality of operator " + Values.ppr(this.toString()) +
-      " with value:\n" + Values.ppr(obj.toString()), getSource());
-      return false;     // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          " with value:\n" + Values.ppr(obj.toString()), getSource());
+      return false; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -89,12 +98,14 @@ public class OpRcdValue extends OpValue {
   public final boolean member(Value elem) {
     try {
       Assert.fail("Attempted to check if the value:\n" + Values.ppr(elem.toString()) +
-      "\nis an element of operator " + Values.ppr(this.toString()), getSource());
-      return false;     // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          "\nis an element of operator " + Values.ppr(this.toString()), getSource());
+      return false; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -102,28 +113,32 @@ public class OpRcdValue extends OpValue {
   public final boolean isFinite() {
     try {
       Assert.fail("Attempted to check if the operator " + Values.ppr(this.toString()) +
-      " is a finite set.", getSource());
-      return false;     // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          " is a finite set.", getSource());
+      return false; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   public final void addLine(Vect vs) {
     try {
       int len = vs.size();
-      Value[] args = new Value[len-2];
-      for (int i = 0; i < len-2; i++) {
-        args[i] = (Value)vs.elementAt(i+1);
+      Value[] args = new Value[len - 2];
+      for (int i = 0; i < len - 2; i++) {
+        args[i] = (Value) vs.elementAt(i + 1);
       }
       this.domain.addElement(args);
-      this.values.addElement((Value)vs.elementAt(len-1));
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+      this.values.addElement((Value) vs.elementAt(len - 1));
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -132,33 +147,37 @@ public class OpRcdValue extends OpValue {
     try {
       int sz = this.domain.size();
       for (int i = 0; i < sz; i++) {
-        Value[] vals = (Value[])this.domain.elementAt(i);
+        Value[] vals = (Value[]) this.domain.elementAt(i);
         if (args.length != vals.length) {
           Assert.fail("Attempted to apply the operator " + Values.ppr(this.toString()) +
-          "\nwith wrong number of arguments.", getSource());
+              "\nwith wrong number of arguments.", getSource());
         }
         boolean matched = true;
         for (int j = 0; j < vals.length; j++) {
           matched = vals[j].equals(args[j]);
-          if (!matched) break;
+          if (!matched)
+            break;
         }
         if (matched) {
-          return (Value)this.values.elementAt(i);
+          return (Value) this.values.elementAt(i);
         }
       }
       // Generate the error message:
       String msg = "Attempted to apply operator:\n" + Values.ppr(this.toString()) +
-        "\nto arguments (";
-      if (args.length > 0) msg += args[0];
+          "\nto arguments (";
+      if (args.length > 0)
+        msg += args[0];
       for (int i = 1; i < args.length; i++) {
         msg += ", " + args[i];
       }
-      Assert.fail(msg +  "), which is undefined.", getSource());
-      return null;     // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+      Assert.fail(msg + "), which is undefined.", getSource());
+      return null; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -166,12 +185,14 @@ public class OpRcdValue extends OpValue {
   public final Value takeExcept(ValueExcept ex) {
     try {
       Assert.fail("Attempted to appy EXCEPT construct to the operator " +
-      Values.ppr(this.toString()) + ".", getSource());
-      return null;     // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          Values.ppr(this.toString()) + ".", getSource());
+      return null; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -179,12 +200,14 @@ public class OpRcdValue extends OpValue {
   public final Value takeExcept(ValueExcept[] exs) {
     try {
       Assert.fail("Attempted to apply EXCEPT construct to the operator " +
-      Values.ppr(this.toString()) + ".", getSource());
-      return null;     // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          Values.ppr(this.toString()) + ".", getSource());
+      return null; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -192,12 +215,14 @@ public class OpRcdValue extends OpValue {
   public final int size() {
     try {
       Assert.fail("Attempted to compute the number of elements in the operator " +
-      Values.ppr(this.toString()) + ".", getSource());
-      return 0;         // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          Values.ppr(this.toString()) + ".", getSource());
+      return 0; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -206,10 +231,12 @@ public class OpRcdValue extends OpValue {
   public final boolean isNormalized() {
     try {
       throw new WrongInvocationException("Should not normalize an operator.");
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -217,10 +244,12 @@ public class OpRcdValue extends OpValue {
   public final Value normalize() {
     try {
       throw new WrongInvocationException("Should not normalize an operator.");
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -232,17 +261,21 @@ public class OpRcdValue extends OpValue {
         defined = defined && this.values.elementAt(i).isDefined();
       }
       return defined;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   @Override
-  public final IValue deepCopy() { return this; }
+  public final IValue deepCopy() {
+    return this;
+  }
 
-  /* Pretty-printing  */
+  /* Pretty-printing */
   @Override
   public final StringBuffer toString(StringBuffer sb, int offset, boolean swallow) {
     try {
@@ -268,10 +301,12 @@ public class OpRcdValue extends OpValue {
         sb.append(">");
       }
       return sb.append("}");
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 

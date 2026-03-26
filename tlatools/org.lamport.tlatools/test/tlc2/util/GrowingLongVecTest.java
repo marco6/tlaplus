@@ -37,7 +37,7 @@ public class GrowingLongVecTest extends LongVecTest {
 	protected LongVec getLongVec() {
 		return new LongVec(0);
 	}
-	
+
 	@Test
 	public void testGrowAndShrink() {
 		// Zero capacity, LongVec has to grow
@@ -50,9 +50,9 @@ public class GrowingLongVecTest extends LongVecTest {
 		// Remove in reverse order
 		vec.removeElement(1);
 		vec.removeElement(0);
-		
+
 		assertEquals(0, vec.size());
-		
+
 		try {
 			vec.removeElement(0);
 		} catch (Exception e) {

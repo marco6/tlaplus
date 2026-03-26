@@ -47,7 +47,7 @@ public abstract class RandomSubset extends ModelCheckerTestCase {
 		// Initial seed with a randomly chosen but fixed value for x and y to be
 		// predictable. The two subclasses chose different values to test that different
 		// seeds result in different values.
-		super("RandomSubset", new String[] {"-seed", Long.toString(seed)}, ExitStatus.VIOLATION_SAFETY);
+		super("RandomSubset", new String[] { "-seed", Long.toString(seed) }, ExitStatus.VIOLATION_SAFETY);
 		this.x = x;
 		this.y = y;
 	}
@@ -56,7 +56,7 @@ public abstract class RandomSubset extends ModelCheckerTestCase {
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_INIT_GENERATED1, "2002"));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "2003", "2003", "2001"));
 		assertEquals(2, recorder.getRecordAsInt(EC.TLC_SEARCH_DEPTH));

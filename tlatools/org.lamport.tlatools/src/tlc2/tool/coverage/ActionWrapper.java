@@ -38,16 +38,18 @@ public final class ActionWrapper extends CostModelNode {
 	public enum Relation {
 		INIT, NEXT, PROP, CONSTRAINT;
 	}
-	
+
 	private final Action action;
 	private final Relation relation;
-	
+
 	public ActionWrapper(final Action action, Relation rel) {
 		this.action = action;
 		this.relation = rel;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.coverage.CostModelNode#getLocation()
 	 */
 	@Override
@@ -66,18 +68,19 @@ public final class ActionWrapper extends CostModelNode {
 		// Determine if the mapping from the action's name/identifier/declaration to the
 		// action's definition is 1:1 or 1:N.
 		//
-		// Act == /\ x  = 23
-		//        /\ x' = 42
+		// Act == /\ x = 23
+		// /\ x' = 42
 		// vs
-		// Act == \/ /\ x  = 23
-		//           /\ x' = 42
-		//        \/ /\ x  = 123
-		//           /\ x' = 4711
+		// Act == \/ /\ x = 23
+		// /\ x' = 42
+		// \/ /\ x = 123
+		// /\ x' = 4711
 		// or
-		// Act == (x  = 23 /\ x' = 42) \/ (x  = 123 /\ x' = 4711)
+		// Act == (x = 23 /\ x' = 42) \/ (x = 123 /\ x' = 4711)
 		//
 		// For a 1:1 mapping this prints just the location of Act. For a 1:N mapping it
-		// prints the location of Act _and_ the location (in shortened form) of the actual
+		// prints the location of Act _and_ the location (in shortened form) of the
+		// actual
 		// disjunct.
 		final Location declaration = this.action.getDeclaration();
 		final Location definition = this.action.getOpDef().getBody().getLocation();
@@ -92,15 +95,19 @@ public final class ActionWrapper extends CostModelNode {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.coverage.CostModelNode#getRoot()
 	 */
 	@Override
 	public CostModelNode getRoot() {
 		return this;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.CostModel#get(tla2sany.semantic.SemanticNode)
 	 */
 	@Override
@@ -117,7 +124,9 @@ public final class ActionWrapper extends CostModelNode {
 		return this.children.getOrDefault(eon, this);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.coverage.CostModelNode#getNode()
 	 */
 	@Override
@@ -125,7 +134,9 @@ public final class ActionWrapper extends CostModelNode {
 		return action.pred;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.coverage.CostModelNode#isRoot()
 	 */
 	@Override
@@ -133,7 +144,9 @@ public final class ActionWrapper extends CostModelNode {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.coverage.CostModel#report()
 	 */
 	public CostModel report() {
@@ -156,7 +169,8 @@ public final class ActionWrapper extends CostModelNode {
 		}
 
 		// An action has single child which is the OpApplNodeWrapper with the OpApplNode
-		// for this OpDefNode unless the action's pred is a substitution or a let/in expr.
+		// for this OpDefNode unless the action's pred is a substitution or a let/in
+		// expr.
 		assert !(this.action.pred instanceof SubstInNode || this.action.pred instanceof LetInNode)
 				? this.children.size() == 1
 				: !this.children.isEmpty();

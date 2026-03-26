@@ -101,14 +101,14 @@ public abstract class OffHeapIndexerParameterizedTest {
 		final long highFP = Long.MAX_VALUE >>> fpBits;
 		Assert.assertEquals((positions / 2L) - 1L, getIndexer().getIdx(highFP));
 	}
-	
+
 	@Test
 	public void testSome() {
 		// Check N fps uniformly distributed in the range [lower,upper].
 		final long upper = Long.MAX_VALUE >>> fpBits;
 		final int N = 1 << 10;
 		final long step = upper / N;
-		
+
 		long l = 0;
 		for (int i = 0; i < Math.min(N, upper); i++) {
 			final long h = i * step;

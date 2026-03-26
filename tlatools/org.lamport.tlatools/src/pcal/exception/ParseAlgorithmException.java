@@ -6,14 +6,12 @@ import pcal.AST;
  * @author Simon Zambrovski
  * @version $Id$
  */
-public class ParseAlgorithmException extends UnrecoverablePositionedException
-{
+public class ParseAlgorithmException extends UnrecoverablePositionedException {
 
     /**
      * @param message
      */
-    public ParseAlgorithmException(String message)
-    {
+    public ParseAlgorithmException(String message) {
         super(message);
     }
 
@@ -21,8 +19,7 @@ public class ParseAlgorithmException extends UnrecoverablePositionedException
      * @param string
      * @param elementAt
      */
-    public ParseAlgorithmException(String message, AST elementAt)
-    {
+    public ParseAlgorithmException(String message, AST elementAt) {
         super(message, elementAt);
     }
 }

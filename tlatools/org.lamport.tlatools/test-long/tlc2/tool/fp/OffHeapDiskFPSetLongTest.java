@@ -12,7 +12,7 @@ import org.junit.Test;
 import util.TLCRuntime;
 
 public class OffHeapDiskFPSetLongTest extends FPSetTest {
-	
+
 	private static final int FLUSHES = 4;
 
 	@Test
@@ -21,8 +21,8 @@ public class OffHeapDiskFPSetLongTest extends FPSetTest {
 		fpSet.init(1, tmpdir, filename);
 
 		for (int i = 0; i < DiskFPSet.InitialBucketCapacity + 1; i++) {
-			assertFalse(fpSet.put(i+1L));
-			assertTrue(fpSet.contains(i+1L));
+			assertFalse(fpSet.put(i + 1L));
+			assertTrue(fpSet.contains(i + 1L));
 		}
 	}
 
@@ -34,12 +34,12 @@ public class OffHeapDiskFPSetLongTest extends FPSetTest {
 		// max expected to cause highest position
 		assertFalse(fpSet.put(Long.MAX_VALUE));
 		assertTrue(fpSet.contains(Long.MAX_VALUE));
-		
+
 		// min expected to cause lowest position
 		assertFalse(fpSet.put(1L));
 		assertTrue(fpSet.contains(1L));
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -47,9 +47,9 @@ public class OffHeapDiskFPSetLongTest extends FPSetTest {
 	public void testMultipleFlushes() throws IOException {
 		final FPSet fpSet = getFPSet(new FPSetConfiguration());
 		fpSet.init(1, tmpdir, filename);
-		
+
 		final Random rnd = new Random(RNG_SEED);
-		
+
 		// Divide the allocated memory to approximate how many fingerprints will
 		// have to inserted into the fpset before it starts flushing to disk.
 		long freeMemoryInFPs = TLCRuntime.getInstance()
@@ -65,7 +65,9 @@ public class OffHeapDiskFPSetLongTest extends FPSetTest {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.AbstractFPSetTest#getFPSet(long)
 	 */
 	@Override

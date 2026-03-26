@@ -45,14 +45,16 @@ public class ActionItemListExt extends ActionItemList {
 
 	@Override
 	public IActionItemList cons(SemanticNode pred, Context con, CostModel cm, int kind) {
-		ActionItemListExt actionItemListExt = new ActionItemListExt(pred, con, kind, this, coverage ? cm.get(pred) : cm);
+		ActionItemListExt actionItemListExt = new ActionItemListExt(pred, con, kind, this,
+				coverage ? cm.get(pred) : cm);
 		actionItemListExt.action = getAction();
 		return actionItemListExt;
 	}
 
 	@Override
 	public ActionItemList cons(final Action act, final int kind) {
-		final ActionItemListExt actionItemListExt = new ActionItemListExt(act.pred, act.con, kind, this, coverage ? act.cm.get(pred) : act.cm);
+		final ActionItemListExt actionItemListExt = new ActionItemListExt(act.pred, act.con, kind, this,
+				coverage ? act.cm.get(pred) : act.cm);
 		actionItemListExt.action = act;
 		return actionItemListExt;
 	}

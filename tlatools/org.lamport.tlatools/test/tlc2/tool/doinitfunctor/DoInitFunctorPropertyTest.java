@@ -36,7 +36,7 @@ import tlc2.output.EC.ExitStatus;
 import tlc2.tool.liveness.ModelCheckerTestCase;
 
 public class DoInitFunctorPropertyTest extends ModelCheckerTestCase {
-	
+
 	public DoInitFunctorPropertyTest() {
 		super("DoInitFunctorProperty", "DoInitFunctor", ExitStatus.VIOLATION_LIVENESS);
 	}

@@ -37,21 +37,21 @@ import tlc2.tool.liveness.TTraceModelCheckerTestCase;
 
 public class EvalExceptionTest_TTraceTest extends TTraceModelCheckerTestCase {
 
-    public EvalExceptionTest_TTraceTest() {
-        super(EvalExceptionTest.class, EC.ExitStatus.VIOLATION_SAFETY);
-    }
+	public EvalExceptionTest_TTraceTest() {
+		super(EvalExceptionTest.class, EC.ExitStatus.VIOLATION_SAFETY);
+	}
 
-    @Override
+	@Override
 	protected boolean doCoverage() {
 		return false;
 	}
 
 	@Test
-    public void testSpec() {
-        assertTrue(recorder.recorded(EC.TLC_FINISHED));
-        assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "6", "6", "0"));
+	public void testSpec() {
+		assertTrue(recorder.recorded(EC.TLC_FINISHED));
+		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "6", "6", "0"));
 
-        final List<String> expectedTrace = new ArrayList<String>(6);
+		final List<String> expectedTrace = new ArrayList<String>(6);
 		expectedTrace.add("/\\ num = (-2 :> 0 @@ -1 :> 0)\n"
 				+ "/\\ rnum = (-2 :> (-1 :> 0) @@ -1 :> (-2 :> 0))\n"
 				+ "/\\ net = (-2 :> (-1 :> <<>>) @@ -1 :> (-2 :> <<>>))\n"

@@ -44,6 +44,6 @@ public class SANYExitException extends Exception {
     }
 
     public SanyExitCode getEnumeratedExitCode() {
-      return this.exitCode;
+        return this.exitCode;
     }
 }

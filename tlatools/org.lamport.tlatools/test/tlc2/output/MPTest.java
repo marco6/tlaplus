@@ -8,15 +8,15 @@ import org.junit.Test;
 
 import util.ToolIO;
 
-public class MPTest
-{
+public class MPTest {
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see junit.framework.TestCase#setUp()
      */
     @Before
-	public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         ToolIO.setMode(ToolIO.TOOL);
         ToolIO.reset();
     }
@@ -25,8 +25,7 @@ public class MPTest
      * Test method for {@link tlc2.output.MP#printError(int)}.
      */
     @Test
-	public void testPrintErrorInt()
-    {
+    public void testPrintErrorInt() {
         MP.printError(EC.UNIT_TEST);
         String[] allMessages = ToolIO.getAllMessages();
         assertEquals(1, allMessages.length);
@@ -37,8 +36,7 @@ public class MPTest
      * Test method for {@link tlc2.output.MP#printError(int, java.lang.String)}.
      */
     @Test
-	public void testPrintErrorIntString()
-    {
+    public void testPrintErrorIntString() {
         String parameter = "EXPECTED";
         MP.printError(EC.UNIT_TEST, parameter);
         String[] allMessages = ToolIO.getAllMessages();
@@ -50,8 +48,7 @@ public class MPTest
      * Test method for {@link tlc2.output.MP#printError(int, java.lang.String[])}.
      */
     @Test
-	public void testPrintErrorIntStringArray()
-    {
+    public void testPrintErrorIntStringArray() {
         String[] parameters = new String[] { "EXPECTED", "EXPECTED2", "TOO MANY" };
         MP.printError(EC.UNIT_TEST, parameters);
         String[] allMessages = ToolIO.getAllMessages();
@@ -72,9 +69,9 @@ public class MPTest
         MP.printMessage(EC.TLC_PROGRESS_STATS, parameters);
         String[] allMessages = ToolIO.getAllMessages();
         assertEquals(1, allMessages.length);
-		assertTrue(allMessages[0], allMessages[0].contains(
-				"3,000,000 states generated (10,000 s/min), 5,000 distinct states found (1,234 ds/min), 1,222,333,444 states left on queue.")
-				|| allMessages[0].contains(
-						"3.000.000 states generated (10.000 s/min), 5.000 distinct states found (1.234 ds/min), 1.222.333.444 states left on queue."));
+        assertTrue(allMessages[0], allMessages[0].contains(
+                "3,000,000 states generated (10,000 s/min), 5,000 distinct states found (1,234 ds/min), 1,222,333,444 states left on queue.")
+                || allMessages[0].contains(
+                        "3.000.000 states generated (10.000 s/min), 5.000 distinct states found (1.234 ds/min), 1.222.333.444 states left on queue."));
     }
 }

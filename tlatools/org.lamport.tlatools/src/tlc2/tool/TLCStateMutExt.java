@@ -37,151 +37,153 @@ import util.WrongInvocationException;
  * predecessor and action.
  */
 public final class TLCStateMutExt extends TLCState implements Serializable {
-  private IValue values[];
-  private static ITool mytool = null;
+	private IValue values[];
+	private static ITool mytool = null;
 
-  /**
-   * If non-null, viewMap denotes the function to be applied to
-   * a state before its fingerprint is computed.
-   */
-  private static SemanticNode viewMap = null;
+	/**
+	 * If non-null, viewMap denotes the function to be applied to
+	 * a state before its fingerprint is computed.
+	 */
+	private static SemanticNode viewMap = null;
 
-  /**
-   * If non-null, perms denotes the set of permutations under the
-   * symmetry assumption.
-   */
-  private static IMVPerm[] perms = null;
+	/**
+	 * If non-null, perms denotes the set of permutations under the
+	 * symmetry assumption.
+	 */
+	private static IMVPerm[] perms = null;
 
-  private TLCStateMutExt(IValue[] vals) { this.values = vals; }
-  
-  public static void setVariables(OpDeclNode[] variables) 
-  {
-      vars = variables;
-      IValue[] vals = new IValue[vars.length];
-      Empty = new TLCStateMutExt(vals);
-
-      // SZ 10.04.2009: since this method is called exactly one from Spec#processSpec
-      // moved the call of UniqueString#setVariables to that place
-      
-      // UniqueString[] varNames = new UniqueString[variables.length];
-      // for (int i = 0; i < varNames.length; i++)
-      // {
-      //  varNames[i] = variables[i].getName();
-      //}
-      //UniqueString.setVariables(varNames);
-  }
-
-  public static void setTool(ITool tool) {
-    mytool = tool;
-    viewMap = tool.getViewSpec();
-    perms = tool.getSymmetryPerms();
-  }
-  
-  public static ITool resetTool(final ITool tool) {
-	  final ITool old = mytool;
-	  mytool = tool;
-	  return old;
-  }
-
-  public final TLCState createEmpty() {
-	  IValue[] vals = new IValue[vars.length];
-    return new TLCStateMutExt(vals);
-  }
-
-  //TODO equals without hashcode!
-  public final boolean equals(Object obj) {
-    if (obj instanceof TLCStateMutExt) {
-      TLCStateMutExt state = (TLCStateMutExt)obj;
-      for (int i = 0; i < this.values.length; i++) {
-	if (this.values[i] == null) {
-	  if (state.values[i] != null) return false;
+	private TLCStateMutExt(IValue[] vals) {
+		this.values = vals;
 	}
-	else if (state.values[i] == null ||
-		 !this.values[i].equals(state.values[i])) {
-	  return false;
+
+	public static void setVariables(OpDeclNode[] variables) {
+		vars = variables;
+		IValue[] vals = new IValue[vars.length];
+		Empty = new TLCStateMutExt(vals);
+
+		// SZ 10.04.2009: since this method is called exactly one from Spec#processSpec
+		// moved the call of UniqueString#setVariables to that place
+
+		// UniqueString[] varNames = new UniqueString[variables.length];
+		// for (int i = 0; i < varNames.length; i++)
+		// {
+		// varNames[i] = variables[i].getName();
+		// }
+		// UniqueString.setVariables(varNames);
 	}
-      }
-      return true;
-    }
-    return false;
-  }
-  
-  public final TLCState bind(UniqueString name, IValue value) {
-	  // Note, tla2sany.semantic.OpApplNode.toString(Value) relies on this ordering.
-    int loc = name.getVarLoc();
-    this.values[loc] = value;
-    return this;
-  }
 
-  public final TLCState bind(SymbolNode id, IValue value) {
-    throw new WrongInvocationException("TLCStateMut.bind: This is a TLC bug.");
-  }
-  
-  public final TLCState unbind(UniqueString name) {
-    int loc = name.getVarLoc();
-    this.values[loc] = null;
-    return this;
-  }
+	public static void setTool(ITool tool) {
+		mytool = tool;
+		viewMap = tool.getViewSpec();
+		perms = tool.getSymmetryPerms();
+	}
 
-  public final IValue lookup(UniqueString var) {
-    int loc = var.getVarLoc();
-    if (loc < 0) return null;
-    return this.values[loc];
-  }
+	public static ITool resetTool(final ITool tool) {
+		final ITool old = mytool;
+		mytool = tool;
+		return old;
+	}
 
-  public final boolean containsKey(UniqueString var) {
-    return (this.lookup(var) != null);
-  }
+	public final TLCState createEmpty() {
+		IValue[] vals = new IValue[vars.length];
+		return new TLCStateMutExt(vals);
+	}
 
-  public final TLCState copy() {
-    int len = this.values.length;
-    IValue[] vals = new IValue[len];
-    System.arraycopy(this.values, 0, vals, 0, len);
-    return copyExt(new TLCStateMutExt(vals));
-  }
+	// TODO equals without hashcode!
+	public final boolean equals(Object obj) {
+		if (obj instanceof TLCStateMutExt) {
+			TLCStateMutExt state = (TLCStateMutExt) obj;
+			for (int i = 0; i < this.values.length; i++) {
+				if (this.values[i] == null) {
+					if (state.values[i] != null)
+						return false;
+				} else if (state.values[i] == null ||
+						!this.values[i].equals(state.values[i])) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
 
-  public final TLCState deepCopy() {
-    int len = this.values.length;
-    IValue[] vals = new IValue[len];
-    for (int i = 0; i < len; i++) {
-      IValue val = this.values[i];
-      if (val != null) {
-	vals[i] = val.deepCopy();
-      }
-    }
-	return deepCopy(new TLCStateMutExt(vals));
-  }
+	public final TLCState bind(UniqueString name, IValue value) {
+		// Note, tla2sany.semantic.OpApplNode.toString(Value) relies on this ordering.
+		int loc = name.getVarLoc();
+		this.values[loc] = value;
+		return this;
+	}
 
-  public final StateVec addToVec(StateVec states) {
-    return states.addElement(this.copy());
-  }
-  
-  public final void deepNormalize() {
-    for (int i = 0; i < this.values.length; i++) {
-      IValue val = this.values[i];
-      if (val != null) {
-	val.deepNormalize();
-      }
-    }
-  }
+	public final TLCState bind(SymbolNode id, IValue value) {
+		throw new WrongInvocationException("TLCStateMut.bind: This is a TLC bug.");
+	}
 
-  /**
-   * This method returns the fingerprint of this state. We fingerprint
-   * the values in the state according to the order given by vars.
-   * This guarantees the same state has the same fingerprint.
-   *
-   * Since the values in this state can be shared by multiple threads
-   * via the state queue. They have to be normalized before adding to
-   * the state queue.  We do that here.
-   */
-    @Override
+	public final TLCState unbind(UniqueString name) {
+		int loc = name.getVarLoc();
+		this.values[loc] = null;
+		return this;
+	}
+
+	public final IValue lookup(UniqueString var) {
+		int loc = var.getVarLoc();
+		if (loc < 0)
+			return null;
+		return this.values[loc];
+	}
+
+	public final boolean containsKey(UniqueString var) {
+		return (this.lookup(var) != null);
+	}
+
+	public final TLCState copy() {
+		int len = this.values.length;
+		IValue[] vals = new IValue[len];
+		System.arraycopy(this.values, 0, vals, 0, len);
+		return copyExt(new TLCStateMutExt(vals));
+	}
+
+	public final TLCState deepCopy() {
+		int len = this.values.length;
+		IValue[] vals = new IValue[len];
+		for (int i = 0; i < len; i++) {
+			IValue val = this.values[i];
+			if (val != null) {
+				vals[i] = val.deepCopy();
+			}
+		}
+		return deepCopy(new TLCStateMutExt(vals));
+	}
+
+	public final StateVec addToVec(StateVec states) {
+		return states.addElement(this.copy());
+	}
+
+	public final void deepNormalize() {
+		for (int i = 0; i < this.values.length; i++) {
+			IValue val = this.values[i];
+			if (val != null) {
+				val.deepNormalize();
+			}
+		}
+	}
+
+	/**
+	 * This method returns the fingerprint of this state. We fingerprint
+	 * the values in the state according to the order given by vars.
+	 * This guarantees the same state has the same fingerprint.
+	 *
+	 * Since the values in this state can be shared by multiple threads
+	 * via the state queue. They have to be normalized before adding to
+	 * the state queue. We do that here.
+	 */
+	@Override
 	public final long fingerPrint() {
 		return fingerPrint(mytool);
 	}
 
-    @Override
+	@Override
 	public final long fingerPrint(final ITool tool) {
-			int sz = this.values.length;
+		int sz = this.values.length;
 		// TLC supports symmetry reduction. Symmetry reduction works by defining classes
 		// of symmetrically equivalent states for which TLC only checks a
 		// single representative of the equivalence class (orbit). E.g. in a two
@@ -195,7 +197,7 @@ public final class TLCStateMutExt extends TLCState implements Serializable {
 		// to the representatives. With respect to the corresponding Kripke structure M,
 		// the resulting Kripke M' is called the "quotient structure" (see "Exploiting
 		// Symmetry in Temporal Logic Model Checking" by Clarke et al).
-		// 
+		//
 		// The definition of equivalence classes (orbits) is provided manually by the
 		// user at startup by defining 1 to n symmetry sets. Thus TLC has to find
 		// representative at runtime only which happens below. Given any state s, TLC
@@ -205,9 +207,11 @@ public final class TLCStateMutExt extends TLCState implements Serializable {
 		//
 		// Evaluating rep(s) - to reduce s to ss - requires to apply all permutations in
 		// the group this.perms (derived from the user-defined orbit). This is known as
-		// the constructive orbit problem and is NP-hard. The loop has O(|perms| * |this.values|)
-		// with |prems| = |symmetry set 1|! * |symmetry set 2|! * ... * |symmetry set n|. 
-        //		
+		// the constructive orbit problem and is NP-hard. The loop has O(|perms| *
+		// |this.values|)
+		// with |prems| = |symmetry set 1|! * |symmetry set 2|! * ... * |symmetry set
+		// n|.
+		//
 		// minVals is what is used to calculate/generate the fingerprint below.
 		// If this state is not the lexicographically smallest state ss, its current
 		// minVals will be replaced temporarily with the values of ss for the
@@ -282,15 +286,16 @@ public final class TLCStateMutExt extends TLCState implements Serializable {
 		return fp;
 	}
 
-  public final boolean allAssigned() {
-    int len = this.values.length;    
-    for (int i = 0; i < len; i++) {
-      if (values[i] == null) return false;
-    }
-    return true;
-  }
+	public final boolean allAssigned() {
+		int len = this.values.length;
+		for (int i = 0; i < len; i++) {
+			if (values[i] == null)
+				return false;
+		}
+		return true;
+	}
 
-    @Override
+	@Override
 	public boolean noneAssigned() {
 		int len = this.values.length;
 		for (int i = 0; i < len; i++) {
@@ -300,8 +305,8 @@ public final class TLCStateMutExt extends TLCState implements Serializable {
 		}
 		return true;
 	}
- 
-    @Override
+
+	@Override
 	public final Set<OpDeclNode> getUnassigned() {
 		// Return sorted set (lexicographical).
 		final Set<OpDeclNode> unassignedVars = new TreeSet<OpDeclNode>(new Comparator<OpDeclNode>() {
@@ -319,88 +324,86 @@ public final class TLCStateMutExt extends TLCState implements Serializable {
 		return unassignedVars;
 	}
 
-  public final void read(IValueInputStream vis) throws IOException {
-    super.read(vis);
-    int len = this.values.length;
-    for (int i = 0; i < len; i++) {
-      this.values[i] = vis.read();
-    }
-  }
+	public final void read(IValueInputStream vis) throws IOException {
+		super.read(vis);
+		int len = this.values.length;
+		for (int i = 0; i < len; i++) {
+			this.values[i] = vis.read();
+		}
+	}
 
-  public final void write(IValueOutputStream vos) throws IOException {
-    super.write(vos);
-    int len = this.values.length;
-    for (int i = 0; i < len; i++) {
-    	this.values[i].write(vos);
-    }
-  }
-  
-  /* Returns a string representation of this state.  */
-  public final String toString() {
-    if (TLCGlobals.useView && viewMap != null) {
-      IValue val = mytool.eval(viewMap, Context.Empty, this);
-      return viewMap.toString(val);
-    }
-    StringBuffer result = new StringBuffer();
-    int vlen = vars.length;
-    if (vlen == 1) {
-      UniqueString key = vars[0].getName();
-      IValue val = this.lookup(key);
-      result.append(key.toString());
-      result.append(" = ");
-      result.append(Values.ppr(val));
-      result.append("\n");
-    }
-    else {
-      for (int i = 0; i < vlen; i++) {
-	UniqueString key = vars[i].getName();
-	IValue val = this.lookup(key);
-	result.append("/\\ ");
-	result.append(key.toString());
-    result.append(" = ");
-    result.append(Values.ppr(val));
-    result.append("\n");
-      }
-    }
-    return result.toString();
-  }
-  
-  /* Returns a string representation of this state.  */
-  public final String toString(TLCState lastState) {
+	public final void write(IValueOutputStream vos) throws IOException {
+		super.write(vos);
+		int len = this.values.length;
+		for (int i = 0; i < len; i++) {
+			this.values[i].write(vos);
+		}
+	}
+
+	/* Returns a string representation of this state. */
+	public final String toString() {
+		if (TLCGlobals.useView && viewMap != null) {
+			IValue val = mytool.eval(viewMap, Context.Empty, this);
+			return viewMap.toString(val);
+		}
+		StringBuffer result = new StringBuffer();
+		int vlen = vars.length;
+		if (vlen == 1) {
+			UniqueString key = vars[0].getName();
+			IValue val = this.lookup(key);
+			result.append(key.toString());
+			result.append(" = ");
+			result.append(Values.ppr(val));
+			result.append("\n");
+		} else {
+			for (int i = 0; i < vlen; i++) {
+				UniqueString key = vars[i].getName();
+				IValue val = this.lookup(key);
+				result.append("/\\ ");
+				result.append(key.toString());
+				result.append(" = ");
+				result.append(Values.ppr(val));
+				result.append("\n");
+			}
+		}
+		return result.toString();
+	}
+
+	/* Returns a string representation of this state. */
+	public final String toString(TLCState lastState) {
 		return toString(
 				Arrays.stream(vars).map(o -> o.getName()).collect(Collectors.toList()).toArray(UniqueString[]::new),
 				lastState);
-  }
-  
-  /* Returns a string representation of this state.  */
-  public final String toString(UniqueString[] vars, TLCState lastState) {
-    StringBuffer result = new StringBuffer();
-    TLCStateMutExt lstate = (TLCStateMutExt)lastState;
-
-    int vlen = vars.length;
-    if (vlen == 1) {
-      UniqueString key = vars[0];
-      IValue val = this.lookup(key);
-      IValue lstateVal = lstate.lookup(key);
-      if (!lstateVal.equals(val)) {
-	result.append(key.toString());
-	result.append(" = " + Values.ppr(val) + "\n");
-      }
-    }
-    else {
-      for (int i = 0; i < vlen; i++) {
-	UniqueString key = vars[i];
-	IValue val = this.lookup(key);
-	IValue lstateVal = lstate.lookup(key);
-	if (!lstateVal.equals(val)) {
-	  result.append("/\\ ");
-	  result.append(key.toString());
-	  result.append(" = " + Values.ppr(val) + "\n");
 	}
-      }
-    }
-    return result.toString();
-  }
+
+	/* Returns a string representation of this state. */
+	public final String toString(UniqueString[] vars, TLCState lastState) {
+		StringBuffer result = new StringBuffer();
+		TLCStateMutExt lstate = (TLCStateMutExt) lastState;
+
+		int vlen = vars.length;
+		if (vlen == 1) {
+			UniqueString key = vars[0];
+			IValue val = this.lookup(key);
+			IValue lstateVal = lstate.lookup(key);
+			if (!lstateVal.equals(val)) {
+				result.append(key.toString());
+				result.append(" = " + Values.ppr(val) + "\n");
+			}
+		} else {
+			for (int i = 0; i < vlen; i++) {
+				UniqueString key = vars[i];
+				IValue val = this.lookup(key);
+				IValue lstateVal = lstate.lookup(key);
+				if (!lstateVal.equals(val)) {
+					result.append("/\\ ");
+					result.append(key.toString());
+					result.append(" = " + Values.ppr(val) + "\n");
+				}
+			}
+		}
+		return result.toString();
+	}
 
 	// *********//
 
@@ -469,28 +472,28 @@ public final class TLCStateMutExt extends TLCState implements Serializable {
 		this.callable = f;
 	}
 
-	  private Map<Integer, Value> cache = new HashMap<>(0);
-	  
-		public Value getCached(final int key) {
-			if (cache == null) {
-				return null;
-			}
-			return cache.get(key);
-		}
+	private Map<Integer, Value> cache = new HashMap<>(0);
 
-		public Value setCached(final int key, final Value value) {
-			if (cache == null) {
-				cache = new HashMap<>(0);
-			}
-			cache.put(key, value);
-			return value;
+	public Value getCached(final int key) {
+		if (cache == null) {
+			return null;
 		}
+		return cache.get(key);
+	}
 
-		@Override
-		public TLCState evalStateLevelAlias() {
-			// We are passing TLCState.Empty to the evalAlias method, which will result in
-			// evalAlias returning this if the alias is an action-level formula, without
-			// raising an error.
-			return mytool.evalAlias(this, TLCState.Empty);
+	public Value setCached(final int key, final Value value) {
+		if (cache == null) {
+			cache = new HashMap<>(0);
 		}
+		cache.put(key, value);
+		return value;
+	}
+
+	@Override
+	public TLCState evalStateLevelAlias() {
+		// We are passing TLCState.Empty to the evalAlias method, which will result in
+		// evalAlias returning this if the alias is an action-level formula, without
+		// raising an error.
+		return mytool.evalAlias(this, TLCState.Empty);
+	}
 }

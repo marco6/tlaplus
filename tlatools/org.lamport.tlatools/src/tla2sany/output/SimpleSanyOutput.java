@@ -45,7 +45,7 @@ public class SimpleSanyOutput implements SanyOutput {
    * routes all output of sufficient level to the given {@link PrintStream}
    * instance.
    *
-   * @param out The stream receiving non-silenced output.
+   * @param out      The stream receiving non-silenced output.
    * @param logLevel Output below this level is silenced.
    */
   public SimpleSanyOutput(PrintStream out, LogLevel logLevel) {
@@ -64,8 +64,8 @@ public class SimpleSanyOutput implements SanyOutput {
 
   @Override
   public PrintStream getStream(LogLevel level) {
-    return
-        level.ordinal() >= this.logLevel.ordinal()
-        ? this.out : SilentSanyOutput.NullOutputStream;
+    return level.ordinal() >= this.logLevel.ordinal()
+        ? this.out
+        : SilentSanyOutput.NullOutputStream;
   }
 }

@@ -37,7 +37,7 @@ public class LivenessSymmetryWarning extends ModelCheckerTestCase {
 	public LivenessSymmetryWarning() {
 		super("April25MC", "symmetry");
 	}
-	
+
 	@Test
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));

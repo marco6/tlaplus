@@ -51,25 +51,25 @@ public class PrintTraceRaceTest_TTraceTest extends TTraceModelCheckerTestCase {
 		assertFalse(recorder.recorded(EC.GENERAL));
 
 		assertTrue(recorder.recorded(EC.TLC_BEHAVIOR_UP_TO_THIS_POINT));
-		
+
 		final List<Object> records = recorder.getRecords(EC.TLC_STATE_PRINT2);
 
 		int i = 0; // State's position in records
 		Object[] objs = (Object[]) records.get(i++);
 		TLCStateInfo stateInfo = (TLCStateInfo) objs[0];
-		assertEquals("S = [q |-> <<>>, i |-> 1]", 
-				   stateInfo.toString().trim()); // trimmed to remove any newlines or whitespace
+		assertEquals("S = [q |-> <<>>, i |-> 1]",
+				stateInfo.toString().trim()); // trimmed to remove any newlines or whitespace
 		assertEquals(i, objs[1]);
-		
+
 		objs = (Object[]) records.get(i++);
 		stateInfo = (TLCStateInfo) objs[0];
-		assertEquals("S = [q |-> <<1>>, i |-> 2]", 
-				   stateInfo.toString().trim()); // trimmed to remove any newlines or whitespace
+		assertEquals("S = [q |-> <<1>>, i |-> 2]",
+				stateInfo.toString().trim()); // trimmed to remove any newlines or whitespace
 		assertEquals(i, objs[1]);
-		
+
 		assertEquals(2, objs.length);
 	}
-	
+
 	protected int getNumberOfThreads() {
 		// This bug only shows up with multiple threads.
 		return 4;

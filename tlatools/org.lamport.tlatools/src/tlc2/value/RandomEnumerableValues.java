@@ -35,15 +35,15 @@ import tlc2.tool.TLCState;
 import tlc2.util.IdThread;
 
 public abstract class RandomEnumerableValues {
-	
+
 	/* Randomization for sets */
-		
-	private static long randomSeed; 
-	
+
+	private static long randomSeed;
+
 	public static long getSeed() {
 		return randomSeed;
 	}
-	
+
 	/**
 	 * Initialize Random with the given seed value.
 	 **/
@@ -51,7 +51,7 @@ public abstract class RandomEnumerableValues {
 		randomSeed = seed;
 		reset();
 	}
-	
+
 	/**
 	 * Re-Initialize Random with the recorded seed value.
 	 * 
@@ -69,11 +69,11 @@ public abstract class RandomEnumerableValues {
 		RANDOMS.set(random);
 		return old;
 	}
-	
+
 	public static Random get() {
 		return RANDOMS.get();
 	}
-	
+
 	private static final ThreadLocal<Random> RANDOMS = new ThreadLocal<Random>() {
 		@Override
 		protected Random initialValue() {
@@ -106,7 +106,7 @@ public abstract class RandomEnumerableValues {
 			return ((EnumerableValueRandom) super.get()).initialize();
 		}
 	};
-		
+
 	private interface EnumerableValueRandom {
 		Random initialize();
 	}
@@ -157,7 +157,8 @@ public abstract class RandomEnumerableValues {
 			// Do not re-initialize random for the same TLCState twice to produce two
 			// distinct values with high probability with a next-state such as:
 			// Next == x' = RandomElement(0..2) /\ y' = RandomElement(0..2)
-			// If random was to be re-initialized/re-seeded, RandomElement(0..2) for x' and y'
+			// If random was to be re-initialized/re-seeded, RandomElement(0..2) for x' and
+			// y'
 			// would be identical values (also see tlc2.tool.RandomElementXandYTest).
 			if (state != null && !isInitializedFor(state)) {
 				initializedFor(state);

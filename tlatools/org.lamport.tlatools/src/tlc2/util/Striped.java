@@ -34,7 +34,7 @@ public final class Striped {
 	}
 
 	public final void acquireAllLocks() {
-		//TODO find way to do this more efficiently
+		// TODO find way to do this more efficiently
 		for (int i = 0; i < size(); i++) {
 			this.locks[i].writeLock().lock();
 		}

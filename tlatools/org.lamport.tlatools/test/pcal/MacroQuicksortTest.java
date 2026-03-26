@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class MacroQuicksortTest extends PCalModelCheckerTestCase {
 
 	public MacroQuicksortTest() {
-		super("MacroQuicksort", "pcal", new String[] {"-wf", "-termination"});
+		super("MacroQuicksort", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test

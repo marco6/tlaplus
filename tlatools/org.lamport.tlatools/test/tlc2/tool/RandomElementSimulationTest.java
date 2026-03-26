@@ -59,7 +59,7 @@ public class RandomElementSimulationTest extends ModelCheckerTestCase {
 		assertFalse(recorder.recorded(EC.TLC_BUG));
 
 		assertTrue(recorder.recorded(EC.TLC_BEHAVIOR_UP_TO_THIS_POINT));
-		
+
 		final List<String> expectedTrace = new ArrayList<String>(11);
 		expectedTrace.add("/\\ x = 843\n/\\ y = 0");
 		expectedTrace.add("/\\ x = 843\n/\\ y = 1");

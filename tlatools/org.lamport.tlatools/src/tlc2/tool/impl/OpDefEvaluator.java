@@ -11,11 +11,13 @@ import tlc2.value.impl.Enumerable.Ordering;
 
 public interface OpDefEvaluator {
 	IValue eval(SemanticNode body, Context c, TLCState s, CostModel doNotRecord);
-	
-	ContextEnumerator contexts(Ordering ordering, OpApplNode appl, Context c, TLCState s0, TLCState s1, final int control,
+
+	ContextEnumerator contexts(Ordering ordering, OpApplNode appl, Context c, TLCState s0, TLCState s1,
+			final int control,
 			CostModel cm);
 
 	default ContextEnumerator contexts(OpApplNode appl, Context c) {
-		return contexts(Ordering.UNDEFINED, appl, c, TLCState.Empty, TLCState.Empty, EvalControl.Const, CostModel.DO_NOT_RECORD);
+		return contexts(Ordering.UNDEFINED, appl, c, TLCState.Empty, TLCState.Empty, EvalControl.Const,
+				CostModel.DO_NOT_RECORD);
 	}
 }

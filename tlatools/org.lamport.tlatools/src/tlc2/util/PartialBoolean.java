@@ -3,7 +3,8 @@
 package tlc2.util;
 
 /**
- * An enum for {@link #YES}, {@link #NO}, or {@link #MAYBE} (not all questions have definite answers).
+ * An enum for {@link #YES}, {@link #NO}, or {@link #MAYBE} (not all questions
+ * have definite answers).
  */
 public enum PartialBoolean {
     YES,
@@ -12,9 +13,12 @@ public enum PartialBoolean {
 
     public boolean isDefinitely(boolean value) {
         switch (this) {
-            case YES:   return value;
-            case NO:    return !value;
-            case MAYBE: return false;
+            case YES:
+                return value;
+            case NO:
+                return !value;
+            case MAYBE:
+                return false;
             default:
                 // unreachable; necessary to satisfy javac
                 throw new UnsupportedOperationException(this.toString());

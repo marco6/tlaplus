@@ -38,7 +38,7 @@ public class TLCGetNamedUndefinedTest extends ModelCheckerTestCase {
 	public TLCGetNamedUndefinedTest() {
 		super("TLCGetNamedUndefined", ExitStatus.ERROR_CONFIG_PARSE);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));

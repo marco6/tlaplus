@@ -63,7 +63,7 @@ public class SubsetValueTest {
 
 	@BeforeClass
 	public static void setup() {
-		// Make test repeatable by setting random seed always to same value. 
+		// Make test repeatable by setting random seed always to same value.
 		RandomEnumerableValues.setSeed(15041980L);
 		// Needed to insert elements into java.util.Set (because of hashcode) later to
 		// detect duplicates.
@@ -91,10 +91,10 @@ public class SubsetValueTest {
 				return o1.compareTo(o2);
 			}
 		});
-		
+
 		final ValueEnumeration elements = subsetValue.elements(expectedElements);
 		assertTrue(elements instanceof SubsetEnumerator);
-		
+
 		SetEnumValue next = null;
 		while ((next = (SetEnumValue) elements.nextElement()) != null) {
 			final int size = next.elems.size();
@@ -169,7 +169,8 @@ public class SubsetValueTest {
 		}
 
 		CoinTossingSubsetEnumerator tossingEnumerator = (CoinTossingSubsetEnumerator) elements;
-		assertTrue(tossingEnumerator.getNumOfPicks() - 100 <= s.size() && s.size() <= tossingEnumerator.getNumOfPicks());
+		assertTrue(
+				tossingEnumerator.getNumOfPicks() - 100 <= s.size() && s.size() <= tossingEnumerator.getNumOfPicks());
 	}
 
 	@Test
@@ -270,12 +271,12 @@ public class SubsetValueTest {
 			assertEquals(2148, s.size());
 		}
 	}
-	
+
 	@Test
 	public void testKSubsetEnumerator() {
 		final SetEnumValue innerSet = new SetEnumValue(getValue("a", "b", "c", "d"), true);
 		final SubsetValue subset = new SubsetValue(innerSet);
-		
+
 		assertEquals(1, subset.numberOfKElements(0));
 		assertEquals(4, subset.numberOfKElements(1));
 		assertEquals(6, subset.numberOfKElements(2));
@@ -285,7 +286,7 @@ public class SubsetValueTest {
 		ValueEnumeration enumerator = subset.kElements(0);
 		assertEquals(new SetEnumValue(), enumerator.nextElement());
 		assertNull(enumerator.nextElement());
-		
+
 		// Need to sort KElementEnumerator to be able to predict the order in which
 		// elements get returned.
 		enumerator = ((KElementEnumerator) subset.kElements(1)).sort();
@@ -294,7 +295,7 @@ public class SubsetValueTest {
 		assertEquals(new SetEnumValue(getValue("c"), false), enumerator.nextElement());
 		assertEquals(new SetEnumValue(getValue("d"), false), enumerator.nextElement());
 		assertNull(enumerator.nextElement());
-		
+
 		enumerator = ((KElementEnumerator) subset.kElements(2)).sort();
 		assertEquals(new SetEnumValue(getValue("a", "b"), false), enumerator.nextElement());
 		assertEquals(new SetEnumValue(getValue("a", "c"), false), enumerator.nextElement());
@@ -310,12 +311,12 @@ public class SubsetValueTest {
 		assertEquals(new SetEnumValue(getValue("a", "c", "d"), false), enumerator.nextElement());
 		assertEquals(new SetEnumValue(getValue("b", "c", "d"), false), enumerator.nextElement());
 		assertNull(enumerator.nextElement());
-		
+
 		enumerator = ((KElementEnumerator) subset.kElements(4)).sort();
 		assertEquals(new SetEnumValue(getValue("a", "b", "c", "d"), false), enumerator.nextElement());
 		assertNull(enumerator.nextElement());
 	}
-	
+
 	@Test
 	public void testKSubsetEnumeratorNegative() {
 		final SetEnumValue innerSet = new SetEnumValue(getValue("a", "b", "c", "d"), true);
@@ -327,7 +328,7 @@ public class SubsetValueTest {
 		}
 		fail();
 	}
-	
+
 	@Test
 	public void testKSubsetEnumeratorGTCapacity() {
 		final SetEnumValue innerSet = new SetEnumValue(getValue("a", "b", "c", "d"), true);
@@ -339,7 +340,7 @@ public class SubsetValueTest {
 		}
 		fail();
 	}
-	
+
 	@Test
 	public void testNumKSubset() {
 		final SetEnumValue innerSet = new SetEnumValue(getValue("a", "b", "c", "d", "e"), true);
@@ -364,7 +365,7 @@ public class SubsetValueTest {
 		}
 		assertEquals(1 << innerSet.size(), sum);
 	}
-	
+
 	@Test
 	public void testNumKSubsetNeg() {
 		final SetEnumValue innerSet = new SetEnumValue(getValue("a", "b", "c", "d", "e"), true);
@@ -377,7 +378,7 @@ public class SubsetValueTest {
 		}
 		fail();
 	}
-	
+
 	@Test
 	public void testNumKSubsetKGTN() {
 		final SetEnumValue innerSet = new SetEnumValue(getValue("a", "b", "c", "d", "e"), true);
@@ -390,7 +391,7 @@ public class SubsetValueTest {
 		}
 		fail();
 	}
-	
+
 	@Test
 	public void testNumKSubsetUpTo62() {
 		for (int i = 1; i < 62; i++) {
@@ -402,7 +403,7 @@ public class SubsetValueTest {
 			assertEquals(1L << i, sum);
 		}
 	}
-	
+
 	@Test
 	public void testNumKSubsetPreventsOverflow() {
 		final IntervalValue innerSet = new IntervalValue(1, 64);
@@ -416,12 +417,12 @@ public class SubsetValueTest {
 			fail();
 		}
 	}
-	
+
 	@Test
 	public void testUnrankKSubsets() {
 		final SetEnumValue innerSet = new SetEnumValue(getValue("a", "b", "c", "d", "e"), true);
 		final SubsetValue subset = new SubsetValue(innerSet);
-		
+
 		final int sizeS = innerSet.size();
 		for (int k = 0; k < sizeS; k++) {
 			final Unrank unranker = subset.getUnrank(k);
@@ -443,12 +444,12 @@ public class SubsetValueTest {
 	public void testUnrank16viaRank() {
 		final IntervalValue innerSet = new IntervalValue(1, 16);
 		final SubsetValue subset = new SubsetValue(innerSet);
-		
+
 		int size = innerSet.size();
-		
+
 		final long sizeS = 1L << size; // 2^innerSet.size()
-		final Set<Value> unranked = new HashSet<>((int)sizeS);
-		
+		final Set<Value> unranked = new HashSet<>((int) sizeS);
+
 		for (int k = 0; k <= size; k++) {
 			final Unrank unranker = subset.getUnrank(k);
 			// for each k-subset...
@@ -466,12 +467,12 @@ public class SubsetValueTest {
 	public void testRandomSetOfSubsets() {
 		final IntervalValue innerSet = new IntervalValue(1, 22);
 		final SubsetValue subset = new SubsetValue(innerSet);
-		
+
 		final int maxLength = 10;
 		final int k = 23131;
 		final SetEnumValue setOfSubsets = (SetEnumValue) subset.getRandomSetOfSubsets(k, maxLength);
 		assertEquals(k, setOfSubsets.size());
-		
+
 		final ValueEnumeration elements = setOfSubsets.elements();
 		Value val = null;
 		while ((val = elements.nextElement()) != null) {
@@ -485,12 +486,12 @@ public class SubsetValueTest {
 	public void testRandomSetOfSubsets300() {
 		final IntervalValue innerSet = new IntervalValue(1, 300);
 		final SubsetValue subset = new SubsetValue(innerSet);
-		
+
 		final int maxLength = 9;
 		final int k = 23071;
 		final SetEnumValue setOfSubsets = (SetEnumValue) subset.getRandomSetOfSubsets(k, maxLength);
 		assertEquals(k, setOfSubsets.size());
-		
+
 		final ValueEnumeration elements = setOfSubsets.elements();
 		Value val = null;
 		while ((val = elements.nextElement()) != null) {
@@ -504,12 +505,12 @@ public class SubsetValueTest {
 	public void testRandomSetOfSubsets400() {
 		final IntervalValue innerSet = new IntervalValue(1, 400);
 		final SubsetValue subset = new SubsetValue(innerSet);
-		
+
 		final int maxLength = 9;
 		final int k = 23077;
 		final SetEnumValue setOfSubsets = (SetEnumValue) subset.getRandomSetOfSubsets(k, maxLength);
 		assertEquals(k, setOfSubsets.size());
-		
+
 		final ValueEnumeration elements = setOfSubsets.elements();
 		Value val = null;
 		while ((val = elements.nextElement()) != null) {
@@ -518,7 +519,7 @@ public class SubsetValueTest {
 		setOfSubsets.normalize();
 		assertEquals(k, setOfSubsets.size());
 	}
-	
+
 	@Test
 	public void testSubsetNeedsNormalization() {
 		final IntervalValue inner = new IntervalValue(1, 5);
@@ -529,13 +530,13 @@ public class SubsetValueTest {
 			List<Value> kElements = subset.kElements(i).all();
 			kElements.forEach(e -> vec.addElement(e));
 		}
-        final Value unnormalized = new SetEnumValue(vec, false);
-        
-        final Value normalized = subset.toSetEnum().normalize();
-        
-        assertEquals(normalized, unnormalized);
+		final Value unnormalized = new SetEnumValue(vec, false);
+
+		final Value normalized = subset.toSetEnum().normalize();
+
+		assertEquals(normalized, unnormalized);
 	}
-	
+
 	@Test
 	public void testSubsetNeedsNormalization2() {
 		final IntervalValue inner = new IntervalValue(1, 6);
@@ -544,11 +545,11 @@ public class SubsetValueTest {
 		final ValueVec vec = new ValueVec(subset.size());
 		final ValueEnumeration bElements = subset.elementsNormalized();
 		bElements.forEach(e -> vec.addElement(e));
-        final Value unnormalized = new SetEnumValue(vec, true);
-        
-        final Value normalized = subset.toSetEnum().normalize();
-        
-        assertEquals(normalized, unnormalized);
+		final Value unnormalized = new SetEnumValue(vec, true);
+
+		final Value normalized = subset.toSetEnum().normalize();
+
+		assertEquals(normalized, unnormalized);
 	}
 
 	@Test
@@ -560,9 +561,9 @@ public class SubsetValueTest {
 			final Value nextElement = elements.nextElement();
 			values.add(nextElement);
 		}
-		assertEquals(1, values.size()); //empty set
+		assertEquals(1, values.size()); // empty set
 	}
-	
+
 	@Test
 	public void testRandomSubsetGeneratorKNegative() {
 		try {
@@ -572,7 +573,7 @@ public class SubsetValueTest {
 		}
 		fail("Expected an IllegalArgumentException");
 	}
-	
+
 	@Test
 	public void testRandomSubsetGeneratorKNplus1() {
 		try {
@@ -582,7 +583,7 @@ public class SubsetValueTest {
 		}
 		fail("Expected an IllegalArgumentException");
 	}
-	
+
 	@Test
 	public void testRandomSubsetGeneratorN10() {
 		final Set<Value> values = new HashSet<>();
@@ -613,54 +614,56 @@ public class SubsetValueTest {
 }
 
 /*
-
-A spec by Jack Vanlightly as an eyeball test to empirically measures the distributions. 
-
----- CONFIG ksubsets_ex_quant ----
-SPECIFICATION Spec
-=====
-
------------------------------- MODULE ksubsets_ex_quant ------------------------------
-EXTENDS Naturals, Randomization, FiniteSets, TLC, FiniteSetsExt
-
-Elements == 1..500
-Limit == 1000
-
-VARIABLES counts,
-          total
-
-vars == <<counts, total >>
-
-AddSubset ==
-    /\ total < Limit 
-    \* /\ \E ss \in SUBSET Elements : 
-    \*     /\ Cardinality(ss) = 3 
-    /\ \E ss \in kSubset(3, Elements) : 
-        /\ IF ss \in DOMAIN counts
-            THEN counts' = [counts EXCEPT ![ss] = @ + 1]
-            ELSE counts' = counts @@ (ss :> 1)
-        /\ total' = total + 1
-
-PrintDist ==
-    /\ total = Limit
-    /\ total' = Limit + 1
-    /\ UNCHANGED <<counts>>
-    /\ \A ss \in DOMAIN counts : PrintT(<<total, ss, counts[ss]>>)
-    /\ PrintT(<<"RESULT", Cardinality(DOMAIN counts)>>)
-
-Init == 
-    /\ counts = [ss \in {} |-> 0]
-    /\ total = 0
-
-Next ==
-    \/ AddSubset
-    \/ PrintDist
-
-Spec == Init /\ [][Next]_vars  
-
-=============================================================================
-\* Modification History
-\* Last modified Wed Oct 28 09:08:31 PDT 2020 by markus
-\* Last modified Tue Oct 27 17:24:00 CET 2020 by jvanlightly
-\* Created Tue Oct 27 09:55:35 CET 2020 by jvanlightly
-*/
+ * 
+ * A spec by Jack Vanlightly as an eyeball test to empirically measures the
+ * distributions.
+ * 
+ * ---- CONFIG ksubsets_ex_quant ----
+ * SPECIFICATION Spec
+ * =====
+ * 
+ * ------------------------------ MODULE ksubsets_ex_quant
+ * ------------------------------
+ * EXTENDS Naturals, Randomization, FiniteSets, TLC, FiniteSetsExt
+ * 
+ * Elements == 1..500
+ * Limit == 1000
+ * 
+ * VARIABLES counts,
+ * total
+ * 
+ * vars == <<counts, total >>
+ * 
+ * AddSubset ==
+ * /\ total < Limit
+ * \* /\ \E ss \in SUBSET Elements :
+ * \* /\ Cardinality(ss) = 3
+ * /\ \E ss \in kSubset(3, Elements) :
+ * /\ IF ss \in DOMAIN counts
+ * THEN counts' = [counts EXCEPT ![ss] = @ + 1]
+ * ELSE counts' = counts @@ (ss :> 1)
+ * /\ total' = total + 1
+ * 
+ * PrintDist ==
+ * /\ total = Limit
+ * /\ total' = Limit + 1
+ * /\ UNCHANGED <<counts>>
+ * /\ \A ss \in DOMAIN counts : PrintT(<<total, ss, counts[ss]>>)
+ * /\ PrintT(<<"RESULT", Cardinality(DOMAIN counts)>>)
+ * 
+ * Init ==
+ * /\ counts = [ss \in {} |-> 0]
+ * /\ total = 0
+ * 
+ * Next ==
+ * \/ AddSubset
+ * \/ PrintDist
+ * 
+ * Spec == Init /\ [][Next]_vars
+ * 
+ * =============================================================================
+ * \* Modification History
+ * \* Last modified Wed Oct 28 09:08:31 PDT 2020 by markus
+ * \* Last modified Tue Oct 27 17:24:00 CET 2020 by jvanlightly
+ * \* Created Tue Oct 27 09:55:35 CET 2020 by jvanlightly
+ */

@@ -363,15 +363,14 @@ public class TestXMLExporterModule {
 
 		// Define expected comment content for each operator
 		Map<String, String> expectedComments = new HashMap<>(Map.of(
-			"IsReflexive", "Is the relation R reflexive over S?",
-			"IsIrreflexive", "Is the relation R irreflexive over set S?",
-			"IsSymmetric", "Is the relation R symmetric over set S?",
-			"IsAsymmetric", "Is the relation R asymmetric over set S?",
-			"IsTransitive", "Is the relation R transitive over set S?",
-			"TransitiveClosure", "Compute the transitive closure of relation R over set S",
-			"ReflexiveTransitiveClosure", "Compute the reflexive transitive closure of relation R over set S",
-			"IsConnected", "Is the relation R connected over set S"
-		));
+				"IsReflexive", "Is the relation R reflexive over S?",
+				"IsIrreflexive", "Is the relation R irreflexive over set S?",
+				"IsSymmetric", "Is the relation R symmetric over set S?",
+				"IsAsymmetric", "Is the relation R asymmetric over set S?",
+				"IsTransitive", "Is the relation R transitive over set S?",
+				"TransitiveClosure", "Compute the transitive closure of relation R over set S",
+				"ReflexiveTransitiveClosure", "Compute the reflexive transitive closure of relation R over set S",
+				"IsConnected", "Is the relation R connected over set S"));
 
 		for (int i = 0; i < preCommentsNodes.getLength(); i++) {
 			Element preComment = (Element) preCommentsNodes.item(i);
@@ -395,7 +394,8 @@ public class TestXMLExporterModule {
 		}
 
 		// Assert that all expected comments were found
-		Assert.assertTrue("Missing expected operator comments: " + expectedComments.keySet(), expectedComments.isEmpty());
+		Assert.assertTrue("Missing expected operator comments: " + expectedComments.keySet(),
+				expectedComments.isEmpty());
 	}
 
 	@Test
@@ -442,40 +442,39 @@ public class TestXMLExporterModule {
 
 		// Define expected comment content for each style
 		Map<String, String> expectedComments = new HashMap<>(Map.of(
-			    "CommentStyle1", 
-			        "(*************************************************************************)\n" +
-			        "(* Calculate the sum of projections of the elements in a set.            *)\n" +
-			        "(*                                                                       *)\n" +
-			        "(* Example:                                                              *)\n" +
-			        "(*         MapThenSumSet(                                                *)\n" +
-			        "(*             LAMBDA e : e.n,                                           *)\n" +
-			        "(*             {[n |-> 0], [n |-> 1], [n |-> 2]}                         *)\n" +
-			        "(*         ) = 3                                                         *)\n" +
-			        "(*************************************************************************)",
-			    "CommentStyle2", 
-			        "(*************************************************************************)\n" +
-			        "(* COMMENT STYLE 2: Indented Boxed Comment                              *)\n" +
-			        "(* Used for nested or secondary explanations.                           *)\n" +
-			        "(* Note the indentation at the start.                                   *)\n" +
-			        "(*************************************************************************)",
-			    "CommentStyle3", 
-			        "(* COMMENT STYLE 3: Simple Multi-line Comment Without Box\n" +
-			        "   This style doesn't use asterisks on every line.\n" +
-			        "   It's more free-form and less structured.\n" +
-			        "   Often used for algorithm descriptions or citations.\n" +
-			        " *)",
-			    "CommentStyle4", 
-			        "\\* Declaring instances local causes definition overrides to be hidden. In the\n" +
-			        "\\* case of Toolbox, this causes the definition override of `_TETrace` to be\n" +
-			        "\\* invisible.  In turn, TLC will then try to evaluate the TLA+ definition of\n" +
-			        "\\*\n" +
-			        "\\* `_TETrace` as defined in Tooblox.tla:\n" +
-			        "\\*   Attempted to enumerate S \\ T when S:\n" +
-			        "\\*   Nat\n" +
-			        "\\*   is not enumerable.\n" +
-			        "\\*\n" +
-			        "\\* See: https://github.com/tlaplus/CommunityModules/issues/37"
-		));
+				"CommentStyle1",
+				"(*************************************************************************)\n" +
+						"(* Calculate the sum of projections of the elements in a set.            *)\n" +
+						"(*                                                                       *)\n" +
+						"(* Example:                                                              *)\n" +
+						"(*         MapThenSumSet(                                                *)\n" +
+						"(*             LAMBDA e : e.n,                                           *)\n" +
+						"(*             {[n |-> 0], [n |-> 1], [n |-> 2]}                         *)\n" +
+						"(*         ) = 3                                                         *)\n" +
+						"(*************************************************************************)",
+				"CommentStyle2",
+				"(*************************************************************************)\n" +
+						"(* COMMENT STYLE 2: Indented Boxed Comment                              *)\n" +
+						"(* Used for nested or secondary explanations.                           *)\n" +
+						"(* Note the indentation at the start.                                   *)\n" +
+						"(*************************************************************************)",
+				"CommentStyle3",
+				"(* COMMENT STYLE 3: Simple Multi-line Comment Without Box\n" +
+						"   This style doesn't use asterisks on every line.\n" +
+						"   It's more free-form and less structured.\n" +
+						"   Often used for algorithm descriptions or citations.\n" +
+						" *)",
+				"CommentStyle4",
+				"\\* Declaring instances local causes definition overrides to be hidden. In the\n" +
+						"\\* case of Toolbox, this causes the definition override of `_TETrace` to be\n" +
+						"\\* invisible.  In turn, TLC will then try to evaluate the TLA+ definition of\n" +
+						"\\*\n" +
+						"\\* `_TETrace` as defined in Tooblox.tla:\n" +
+						"\\*   Attempted to enumerate S \\ T when S:\n" +
+						"\\*   Nat\n" +
+						"\\*   is not enumerable.\n" +
+						"\\*\n" +
+						"\\* See: https://github.com/tlaplus/CommunityModules/issues/37"));
 
 		for (int i = 0; i < preCommentsNodes.getLength(); i++) {
 			Element preComment = (Element) preCommentsNodes.item(i);
@@ -544,30 +543,29 @@ public class TestXMLExporterModule {
 
 		// With -u flag, boxed comments should have their box formatting removed
 		Map<String, String> expectedUncommentedContent = new HashMap<>(Map.of(
-			    "CommentStyle1", 
-			        "Calculate the sum of projections of the elements in a set.\n" +
-			        "\n" +
-			        "Example:\n" +
-			        "        MapThenSumSet(\n" +
-			        "            LAMBDA e : e.n,\n" +
-			        "            {[n |-> 0], [n |-> 1], [n |-> 2]}\n" +
-			        "        ) = 3",
-			    "CommentStyle2", 
-			        "COMMENT STYLE 2: Indented Boxed Comment\n" +
-			        "Used for nested or secondary explanations.\n" +
-			        "Note the indentation at the start.",
-			    "CommentStyle4",
-			        "Declaring instances local causes definition overrides to be hidden. In the\n" +
-			        "case of Toolbox, this causes the definition override of `_TETrace` to be\n" +
-			        "invisible.  In turn, TLC will then try to evaluate the TLA+ definition of\n" +
-			        "\n" +
-			        "`_TETrace` as defined in Tooblox.tla:\n" +
-			        "  Attempted to enumerate S \\ T when S:\n" +
-			        "  Nat\n" +
-			        "  is not enumerable.\n" +
-			        "\n" +
-			        "See: https://github.com/tlaplus/CommunityModules/issues/37"
-		));
+				"CommentStyle1",
+				"Calculate the sum of projections of the elements in a set.\n" +
+						"\n" +
+						"Example:\n" +
+						"        MapThenSumSet(\n" +
+						"            LAMBDA e : e.n,\n" +
+						"            {[n |-> 0], [n |-> 1], [n |-> 2]}\n" +
+						"        ) = 3",
+				"CommentStyle2",
+				"COMMENT STYLE 2: Indented Boxed Comment\n" +
+						"Used for nested or secondary explanations.\n" +
+						"Note the indentation at the start.",
+				"CommentStyle4",
+				"Declaring instances local causes definition overrides to be hidden. In the\n" +
+						"case of Toolbox, this causes the definition override of `_TETrace` to be\n" +
+						"invisible.  In turn, TLC will then try to evaluate the TLA+ definition of\n" +
+						"\n" +
+						"`_TETrace` as defined in Tooblox.tla:\n" +
+						"  Attempted to enumerate S \\ T when S:\n" +
+						"  Nat\n" +
+						"  is not enumerable.\n" +
+						"\n" +
+						"See: https://github.com/tlaplus/CommunityModules/issues/37"));
 
 		for (int i = 0; i < preCommentsNodes.getLength(); i++) {
 			Element preComment = (Element) preCommentsNodes.item(i);
@@ -634,17 +632,17 @@ public class TestXMLExporterModule {
 		Assert.assertTrue("Relation module should have operators with pre-comments", preCommentsNodes.getLength() > 0);
 
 		// With -u flag, the boxed comments should have their formatting removed
-		// The actual comment content should still be present but without the box characters
+		// The actual comment content should still be present but without the box
+		// characters
 		Map<String, String> expectedUncommentedContent = new HashMap<>(Map.of(
-			"IsReflexive", "Is the relation R reflexive over S?",
-			"IsIrreflexive", "Is the relation R irreflexive over set S?",
-			"IsSymmetric", "Is the relation R symmetric over set S?",
-			"IsAsymmetric", "Is the relation R asymmetric over set S?",
-			"IsTransitive", "Is the relation R transitive over set S?",
-			"TransitiveClosure", "Compute the transitive closure of relation R over set S",
-			"ReflexiveTransitiveClosure", "Compute the reflexive transitive closure of relation R over set S",
-			"IsConnected", "Is the relation R connected over set S"
-		));
+				"IsReflexive", "Is the relation R reflexive over S?",
+				"IsIrreflexive", "Is the relation R irreflexive over set S?",
+				"IsSymmetric", "Is the relation R symmetric over set S?",
+				"IsAsymmetric", "Is the relation R asymmetric over set S?",
+				"IsTransitive", "Is the relation R transitive over set S?",
+				"TransitiveClosure", "Compute the transitive closure of relation R over set S",
+				"ReflexiveTransitiveClosure", "Compute the reflexive transitive closure of relation R over set S",
+				"IsConnected", "Is the relation R connected over set S"));
 
 		for (int i = 0; i < preCommentsNodes.getLength(); i++) {
 			Element preComment = (Element) preCommentsNodes.item(i);

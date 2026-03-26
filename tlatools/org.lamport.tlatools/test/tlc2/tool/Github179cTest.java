@@ -45,15 +45,15 @@ public class Github179cTest extends ModelCheckerTestCase {
 
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_MODULE_VALUE_JAVA_METHOD_OVERRIDE,
 				"public static tlc2.value.impl.Value tlc2.module.TLC.PrintT(tlc2.value.impl.Value)",
-				"Attempted to check equality of integer 1 with non-integer:\n" + 
-				"{1}"));
+				"Attempted to check equality of integer 1 with non-integer:\n" +
+						"{1}"));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_NESTED_EXPRESSION,
-				"0. Line 16, column 9 to line 16, column 42 in Github179c\n" + 
-				"1. Line 16, column 9 to line 16, column 33 in Github179c\n" + 
-				"2. Line 16, column 9 to line 16, column 25 in Github179c\n" + 
-				"3. Line 10, column 11 to line 12, column 39 in Github179c\n" + 
-				"4. Line 10, column 24 to line 12, column 39 in Github179c\n" + 
-				"5. Line 10, column 27 to line 10, column 36 in Github179c\n" + 
-				"\n"));
+				"0. Line 16, column 9 to line 16, column 42 in Github179c\n" +
+						"1. Line 16, column 9 to line 16, column 33 in Github179c\n" +
+						"2. Line 16, column 9 to line 16, column 25 in Github179c\n" +
+						"3. Line 10, column 11 to line 12, column 39 in Github179c\n" +
+						"4. Line 10, column 24 to line 12, column 39 in Github179c\n" +
+						"5. Line 10, column 27 to line 10, column 36 in Github179c\n" +
+						"\n"));
 	}
 }

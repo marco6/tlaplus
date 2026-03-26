@@ -9,7 +9,7 @@ import org.junit.Test;
 import tlc2.tool.fp.OffHeapDiskFPSet.Iterator;
 
 public class OffHeapIteratorTest {
-	
+
 	@Before
 	public void setup() {
 		Assume.assumeTrue(LongArray.isSupported());
@@ -20,7 +20,7 @@ public class OffHeapIteratorTest {
 		final long elements = 32L;
 		final LongArray array = new LongArray(2L * elements);
 		for (int i = 0; i < array.size(); i++) {
-			array.set(i, i+1);
+			array.set(i, i + 1);
 		}
 
 		final Iterator itr = new OffHeapDiskFPSet.Iterator(array, elements,
@@ -33,7 +33,7 @@ public class OffHeapIteratorTest {
 			actual++;
 		}
 		assertEquals(elements, actual - 1);
-		
+
 		for (int i = 0; i < array.size(); i++) {
 			assertEquals(i + 1, array.get(i));
 		}
@@ -44,7 +44,7 @@ public class OffHeapIteratorTest {
 		final int elements = 32;
 		final LongArray array = new LongArray(2L * elements);
 		for (int i = 0; i < array.size(); i++) {
-			array.set(i, i+1);
+			array.set(i, i + 1);
 		}
 
 		final Iterator itr = new OffHeapDiskFPSet.Iterator(array, elements,
@@ -57,7 +57,7 @@ public class OffHeapIteratorTest {
 			actual++;
 		}
 		assertEquals(elements, actual - 1);
-		
+
 		for (int i = elements; i < array.size(); i++) {
 			assertEquals(elements + 1, array.get(elements));
 		}

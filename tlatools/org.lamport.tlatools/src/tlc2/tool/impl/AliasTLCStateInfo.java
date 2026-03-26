@@ -37,7 +37,7 @@ public class AliasTLCStateInfo extends TLCStateInfo {
 		super(alias, current);
 		originalState = current.state;
 	}
-	  
+
 	@Override
 	public int getStateNumber() {
 		return originalState.getLevel();

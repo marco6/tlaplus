@@ -47,19 +47,20 @@ import util.FileUtil;
 public class DotExplorerVisitor extends ExplorerVisitor {
 
 	private static final Map<Class<? extends SemanticNode>, String> type2format = new HashMap<>();
-	
+
 	static {
 		type2format.put(OpDefNode.class, " [style=filled,shape=diamond,fillcolor=\"red\",");
 		type2format.put(OpApplNode.class, " [color=\"green\",");
 		type2format.put(OpDeclNode.class, " [shape=square,color=\"yellow\",");
 		type2format.put(LetInNode.class, " [color=\"orange\",");
 	}
-	
+
 	private final ModuleNode rootModule;
 	private final Hashtable<Integer, ExploreNode> table;
 	private final PrintWriter writer;
 	private final Deque<ExploreNode> stack = new ArrayDeque<>();
-	private final boolean includeLineNumbers = Boolean.getBoolean(DotExplorerVisitor.class.getName() + ".includeLineNumbers");
+	private final boolean includeLineNumbers = Boolean
+			.getBoolean(DotExplorerVisitor.class.getName() + ".includeLineNumbers");
 
 	public DotExplorerVisitor(final ModuleNode rootModule) {
 		this.rootModule = rootModule;
@@ -71,24 +72,24 @@ public class DotExplorerVisitor extends ExplorerVisitor {
 		}
 		this.writer.append("strict digraph DiskGraph {\n"); // strict removes redundant edges
 	}
-	
+
 	@Override
 	public void preVisit(ExploreNode exploreNode) {
 		if (skipNode(exploreNode)) {
 			return;
 		}
-		
+
 		final ExploreNode parent = stack.peek();
 		if (exploreNode == this.rootModule) {
 			assert parent == null;
-			
+
 			final ModuleNode mn = (ModuleNode) exploreNode;
 			this.writer.append(Integer.toString(mn.hashCode()));
 			this.writer.append(" [label=\"");
 			this.writer.append(mn.getName().toString());
 			this.writer.append("\",style = filled]");
 			this.writer.append(";\n");
-			
+
 			stack.push(exploreNode);
 		} else {
 			final SemanticNode sn = (SemanticNode) exploreNode;
@@ -135,11 +136,11 @@ public class DotExplorerVisitor extends ExplorerVisitor {
 	public Hashtable<Integer, ExploreNode> getTable() {
 		return table;
 	}
-	
+
 	private static String toDot(final String sn) {
 		return sn.replace("\\", "\\\\").replace("\"", "\\\"").trim().replace("\n", "\\n");
 	}
-	
+
 	private static boolean skipNode(final ExploreNode exploreNode) {
 		if (exploreNode instanceof Context || exploreNode instanceof FormalParamNode) {
 			return true;
@@ -155,7 +156,7 @@ public class DotExplorerVisitor extends ExplorerVisitor {
 		}
 		return false;
 	}
-	
+
 	@SuppressWarnings("serial")
 	private class NoopTable<K, V> extends Hashtable<K, V> {
 		@Override

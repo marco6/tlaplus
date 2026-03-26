@@ -77,7 +77,8 @@ import util.UniqueString;
  * OpApplNodeWrapper#get) when Tool traverses the semantic graph to evaluate an
  * action.
  * <p>
- * As part of the work on the CostModel, the ExplorerVisitor received an extension
+ * As part of the work on the CostModel, the ExplorerVisitor received an
+ * extension
  * to export the semantic graph into dot notation, which can be rendered with
  * GraphViz:
  * <code>java -cp tla2tools.jartla2sany.SANY -d ATLA+Spec.tla dot</code> It
@@ -163,10 +164,10 @@ public class CostModelCreator extends ExplorerVisitor {
 	// Sequences.tla showed up in coverage output.
 	private final Set<OpApplNodeWrapper> nodes = new HashSet<>();
 	private final ITool tool;
-	
+
 	private ActionWrapper root;
 	private Context ctx = Context.Empty;
-	
+
 	private CostModelCreator(final SemanticNode root, final ActionWrapper aw, final ITool tool) {
 		this.tool = tool;
 		this.root = aw;
@@ -194,11 +195,11 @@ public class CostModelCreator extends ExplorerVisitor {
 		this.letIns.clear();
 		this.stack.clear();
 		this.ctx = Context.Empty;
-		
+
 		this.root = new ActionWrapper(act, relation);
 		this.stack.push(root);
 		act.pred.walkGraph(new CoverageHashTable(opDefNodes), this);
-		
+
 		assert this.stack.peek().isRoot();
 		return this.stack.peek().getRoot();
 	}
@@ -210,28 +211,29 @@ public class CostModelCreator extends ExplorerVisitor {
 			if (opApplNode.isStandardModule()) {
 				return;
 			}
-			
-	        final OpApplNodeWrapper oan;
+
+			final OpApplNodeWrapper oan;
 			if (opApplNode.hasOpcode(OPCODE_unchanged)) {
 				oan = new UnchangedOpApplNodeWrapper(opApplNode, this.root);
 			} else {
 				oan = new OpApplNodeWrapper(opApplNode, this.root);
 			}
-			
+
 			if (nodes.contains(oan)) {
 				oan.setPrimed();
 			}
-			
+
 			// A (recursive) function definition nested in LetIn:
-			//   LET F[n \in S] == e
-			//   IN F[...]
+			// LET F[n \in S] == e
+			// IN F[...]
 			// with e either built from F or not.
 			if (letIns.containsKey(opApplNode)) {
 				// At the visit of the LETIN node in the walk over the semantic graph we stored
-				// the mapping from the LET part to the IN part in this.lets (see LetInNode below).
+				// the mapping from the LET part to the IN part in this.lets (see LetInNode
+				// below).
 				// Here, we add the LET parts(s) to the lets of the IN part if it is found on
 				// the stack (this is more involved because we have to find the OANWrappers and
-				// not just the OANs). 
+				// not just the OANs).
 				final ExprNode in = letIns.get(opApplNode);
 				for (CostModelNode cmn : stack) {
 					final SemanticNode node = cmn.getNode();
@@ -242,19 +244,20 @@ public class CostModelCreator extends ExplorerVisitor {
 					}
 				}
 			}
-			
+
 			// CONSTANT operators (including definition overrides...)
 			final SymbolNode operator = opApplNode.getOperator();
 			final Object val = tool.lookup(operator);
-			if (val instanceof OpDefNode && operator != val) { // second conjunct bc lookup returns operator when nothing else found.
+			if (val instanceof OpDefNode && operator != val) { // second conjunct bc lookup returns operator when
+																// nothing else found.
 				final OpDefNode odn = (OpDefNode) val;
 				final ExprNode body = odn.getBody();
 				if (body instanceof OpApplNode) {
 					final CostModelCreator substitution = new CostModelCreator(body, root, tool);
 					oan.addChild((OpApplNodeWrapper) substitution.getModel());
 				}
-			}			
-			
+			}
+
 			// RECURSIVE
 			if (operator instanceof OpDefNode) {
 				final OpDefNode odn = (OpDefNode) operator;
@@ -279,7 +282,7 @@ public class CostModelCreator extends ExplorerVisitor {
 			// (mostly) forgotten about Op(s) when we see the LAMBDA. ToolImpl - as part of
 			// its DFS over the semantic graph - passes a context along which gets extended
 			// or *branched*. Here, we cannot pass a Context along the decent but instead
-			// keep a single, global context. 
+			// keep a single, global context.
 			//
 			// The global context does not create a problem with regards to correctness, but
 			// can lead to long context chains for larger specifications. Therefore, only
@@ -290,7 +293,7 @@ public class CostModelCreator extends ExplorerVisitor {
 			// to a second or two.
 			//
 			// To summarize, this is a clutch that has been hacked to be good enough!
-			// 
+			//
 			// if-branches 1., 2., and 3. below are evaluated in three distinct
 			// invocation of outer preVisit for different ExploreNodes.
 			if (tool != null && operator instanceof OpDefNode && opApplNode.hasOpcode(0)
@@ -321,15 +324,15 @@ public class CostModelCreator extends ExplorerVisitor {
 				// w is 'Op(s)' and oan is 'LAMBDA e: e...'
 				this.node2Wrapper.get(opApplNode).forEach(w -> w.addChild(oan));
 			}
-			// End of Higher-order operators/Operators as arguments (LAMBDA, ...) 
-			
+			// End of Higher-order operators/Operators as arguments (LAMBDA, ...)
+
 			// Substitutions
 			if (this.substs.containsKey(exploreNode)) {
 				final Subst subst = this.substs.get(exploreNode);
 				assert subst.getExpr() == oan.getNode();
 				subst.setCM(oan);
 			}
-			
+
 			final CostModelNode parent = stack.peek();
 			parent.addChild(oan.setLevel(parent.getLevel() + 1));
 			stack.push(oan);
@@ -345,7 +348,7 @@ public class CostModelCreator extends ExplorerVisitor {
 				letIns.put(opDefNode.getBody(), lin.getBody());
 			}
 		} else if (exploreNode instanceof OpDefNode) {
-			//TODO Might suffice to just keep RECURSIVE ones.
+			// TODO Might suffice to just keep RECURSIVE ones.
 			opDefNodes.add((OpDefNode) exploreNode);
 		}
 	}
@@ -368,7 +371,7 @@ public class CostModelCreator extends ExplorerVisitor {
 		assert this.stack.peek().isRoot();
 		return this.stack.peek().getRoot();
 	}
-	
+
 	public static final void create(final ITool tool) {
 		final CostModelCreator collector = new CostModelCreator(tool);
 
@@ -396,7 +399,7 @@ public class CostModelCreator extends ExplorerVisitor {
 				invariant.cm = collector.getCM(invariant, Relation.PROP);
 			}
 		}
-		
+
 		// action constraints
 		final ExprNode[] actionConstraints = tool.getActionConstraints();
 		for (ExprNode exprNode : actionConstraints) {
@@ -413,22 +416,22 @@ public class CostModelCreator extends ExplorerVisitor {
 			act.cm = collector.getCM(act, Relation.CONSTRAINT);
 			exprNode.setToolObject(tool.getId(), act);
 		}
-		
-        // https://github.com/tlaplus/tlaplus/issues/413#issuecomment-577304602
-        if (Boolean.getBoolean(CostModelCreator.class.getName() + ".implied")) {
-    		for (Action impliedInits : tool.getImpliedInits()) {
-    			impliedInits.cm = collector.getCM(impliedInits, Relation.PROP);
-    		}
-    		for (Action impliedActions : tool.getImpliedActions()) {
-    			impliedActions.cm = collector.getCM(impliedActions, Relation.PROP);
-    		}
-        }
-        
-        for (OpDeclNode odn : tool.getSpecProcessor().getVariablesNodes()) {
+
+		// https://github.com/tlaplus/tlaplus/issues/413#issuecomment-577304602
+		if (Boolean.getBoolean(CostModelCreator.class.getName() + ".implied")) {
+			for (Action impliedInits : tool.getImpliedInits()) {
+				impliedInits.cm = collector.getCM(impliedInits, Relation.PROP);
+			}
+			for (Action impliedActions : tool.getImpliedActions()) {
+				impliedActions.cm = collector.getCM(impliedActions, Relation.PROP);
+			}
+		}
+
+		for (OpDeclNode odn : tool.getSpecProcessor().getVariablesNodes()) {
 			odn.setCountDistinct(new CountDistinct.SyncedHyperLogLog(10));
 		}
 	}
-	
+
 	public static void report(final ITool tool, final long startTime) {
 		report(tool);
 
@@ -447,7 +450,7 @@ public class CostModelCreator extends ExplorerVisitor {
 
 	private static void report(final ITool tool) {
 		MP.printMessage(EC.TLC_COVERAGE_START);
-		
+
 		// VARIABLE and VARIABLES
 		for (final OpDeclNode odn : tool.getSpecProcessor().getVariablesNodes()) {
 			final long count = odn.getCountDistinct().count();
@@ -460,52 +463,52 @@ public class CostModelCreator extends ExplorerVisitor {
 						new String[] { varName.toString(), location.toString(), String.valueOf(count) });
 			}
 		}
-		
+
 		// INIT (or SPECIFICATION)
-    	final Vect<Action> init = tool.getInitStateSpec();
-    	for (int i = 0; i < init.size(); i++) {
-    		final Action initAction = init.elementAt(i);
-    		initAction.cm.report();
-    	}
+		final Vect<Action> init = tool.getInitStateSpec();
+		for (int i = 0; i < init.size(); i++) {
+			final Action initAction = init.elementAt(i);
+			initAction.cm.report();
+		}
 
 		// Order next-state actions based on location to print in order of location.
 		// Note that Action[] actions may contain action instances with identical
 		// location which is the case for actions that are evaluated in the scope of a
 		// Context, i.e. \E s \in ProcSet: action(s) \/ ...
-    	// However, actions with identical location share the ActionWrapper instance
-    	// which is why we can non-deterministically choose to report one of it without
-    	// producing bogus results (see CostModelCreator.preVisit(ExploreNode) above).
-    	final Action[] actions = tool.getActions();
-        final Set<CostModel> reported = new HashSet<>();
+		// However, actions with identical location share the ActionWrapper instance
+		// which is why we can non-deterministically choose to report one of it without
+		// producing bogus results (see CostModelCreator.preVisit(ExploreNode) above).
+		final Action[] actions = tool.getActions();
+		final Set<CostModel> reported = new HashSet<>();
 		// Let A be a sub-action with non-zero arity, i.e. a sub-action that has one or
 		// more parameters ("context"). TLC creates an action instance for each
 		// parameter in the set defining the set, if the set of parameter is
 		// constant-level. In other words, TLC may generate multiple Actions with the
 		// same location. Thus, sorting Action instances based on location
-		// non-deterministically eliminates the parameter dimension.  For coverage
-        // reporting, this is acceptable assuming that coverage data is uniform.
-        // However, this assumption doesn't hold if the model uses symmetry reduction.
-        final Set<Action> sortedActions = new TreeSet<>(new Comparator<Action>() {
+		// non-deterministically eliminates the parameter dimension. For coverage
+		// reporting, this is acceptable assuming that coverage data is uniform.
+		// However, this assumption doesn't hold if the model uses symmetry reduction.
+		final Set<Action> sortedActions = new TreeSet<>(new Comparator<Action>() {
 			@Override
 			public int compare(Action o1, Action o2) {
 				return o1.pred.getLocation().compareTo(o2.pred.getLocation());
 			}
 		});
-        sortedActions.addAll(Arrays.asList(actions));
-        for (Action action : sortedActions) {
-        	if (!reported.contains(action.cm)) {
-        		action.cm.report();
-        		reported.add(action.cm);
-        	}
-		}
-        
-        for (Action invariant : tool.getInvariants()) {
-			if (!invariant.isInternal()) {
-	        	//TODO May need to be ordered similar to next-state actions above.
-	        	invariant.cm.report();
+		sortedActions.addAll(Arrays.asList(actions));
+		for (Action action : sortedActions) {
+			if (!reported.contains(action.cm)) {
+				action.cm.report();
+				reported.add(action.cm);
 			}
 		}
-        
+
+		for (Action invariant : tool.getInvariants()) {
+			if (!invariant.isInternal()) {
+				// TODO May need to be ordered similar to next-state actions above.
+				invariant.cm.report();
+			}
+		}
+
 		// action constraints
 		final ExprNode[] actionConstraints = tool.getActionConstraints();
 		for (ExprNode exprNode : actionConstraints) {
@@ -518,15 +521,15 @@ public class CostModelCreator extends ExplorerVisitor {
 			final Action act = (Action) exprNode.getToolObject(tool.getId());
 			act.cm.report();
 		}
-        
-        // https://github.com/tlaplus/tlaplus/issues/413#issuecomment-577304602
-        if (Boolean.getBoolean(CostModelCreator.class.getName() + ".implied")) {
-    		for (Action impliedInits : tool.getImpliedInits()) {
-    			impliedInits.cm.report();
-    		}
-    		for (Action impliedActions : tool.getImpliedActions()) {
-    			impliedActions.cm.report();
-    		}
-        }
+
+		// https://github.com/tlaplus/tlaplus/issues/413#issuecomment-577304602
+		if (Boolean.getBoolean(CostModelCreator.class.getName() + ".implied")) {
+			for (Action impliedInits : tool.getImpliedInits()) {
+				impliedInits.cm.report();
+			}
+			for (Action impliedActions : tool.getImpliedActions()) {
+				impliedActions.cm.report();
+			}
+		}
 	}
 }

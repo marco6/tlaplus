@@ -35,8 +35,7 @@ public class SetOfFcnsConstruct implements TlaConstruct {
                 .append(domain)
                 .appendLineOrSpace(mapSymbol)
                 .appendLineOrSpace(codomain)
-                .append(endPar)
-        );
+                .append(endPar));
 
     }
 }

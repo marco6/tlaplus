@@ -38,14 +38,15 @@ import tlc2.tool.fp.MultiThreadedFPSetTest;
 public class PartitionedFingerPrintGenerator extends FingerPrintGenerator {
 
 	private long fp;
-	
+
 	private final long numOfPerThreadBuckets;
 	private final long increment;
 
-	public PartitionedFingerPrintGenerator(MultiThreadedFPSetTest test, int id, int numThreads, FPSet fpSet, CountDownLatch latch,
+	public PartitionedFingerPrintGenerator(MultiThreadedFPSetTest test, int id, int numThreads, FPSet fpSet,
+			CountDownLatch latch,
 			long seed, long insertions, final CyclicBarrier barrier) {
 		super(test, id, numThreads, fpSet, latch, seed, insertions, barrier);
-		
+
 		final long numOfTotalBuckets = fpSet.getConfiguration().getMemoryInFingerprintCnt();
 		numOfPerThreadBuckets = numOfTotalBuckets / (1L * numThreads);
 
@@ -53,15 +54,17 @@ public class PartitionedFingerPrintGenerator extends FingerPrintGenerator {
 		increment = (long) Math.ceil((Long.MAX_VALUE - 1L) / (numOfTotalBuckets * 1d));
 		fp = increment * perThreadStartBucket;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
 		waitForAllThreadsStarted();
-		
+
 		long insertions = 0L;
-		
+
 		while (insertions++ < numOfPerThreadBuckets) {
 			try {
 				if (fp != 0L) {
@@ -73,7 +76,7 @@ public class PartitionedFingerPrintGenerator extends FingerPrintGenerator {
 					// the same amount of cycles to obtain the next random like
 					// FPG does. puts is meaningless in the scope of PFPG
 					// anyway. It inserts up to a load factor of 1.
-					//puts += rnd.nextLong();
+					// puts += rnd.nextLong();
 					puts++;
 				}
 				fp += increment;

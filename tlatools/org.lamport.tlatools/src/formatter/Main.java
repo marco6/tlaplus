@@ -135,7 +135,8 @@ public class Main {
             try {
                 formatter = new TLAPlusFormatter(inputFile, config, verifyAst);
             } catch (AstVerificationException e) {
-                // AST verification failed: print original input to stdout, diagnostics to stderr
+                // AST verification failed: print original input to stdout, diagnostics to
+                // stderr
                 System.out.print(Files.readString(inputFile.toPath()));
                 System.err.println("AST verification failed after formatting.");
                 System.err.println(e.getResult().formatDiagnostic());

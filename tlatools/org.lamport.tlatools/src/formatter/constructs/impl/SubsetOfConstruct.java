@@ -31,7 +31,7 @@ public class SubsetOfConstruct implements TlaConstruct {
         List<Doc> zDoc = Arrays.stream(z).map(context::buildChild).collect(Collectors.toList());
         var header = zDoc.get(0) // {
                 .append(zDoc.get(1)) // x or a tuple like <<r,t>>
-                .appendSpace(zDoc.get(2)) //\in
+                .appendSpace(zDoc.get(2)) // \in
                 .appendSpace(zDoc.get(3)) // S
                 .append(zDoc.get(4)); // :
         return Doc.group(

@@ -77,7 +77,7 @@ class LNConj extends LiveExprNode {
 	public final boolean containAction() {
 		return (this.info & 8) > 0;
 	}
-	
+
 	@Override
 	public final boolean isPositiveForm() {
 		for (int i = 0; i < conjs.size(); i++) {
@@ -115,8 +115,10 @@ class LNConj extends LiveExprNode {
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.LiveExprNode#toDotViz()
 	 */
 	public String toDotViz() {

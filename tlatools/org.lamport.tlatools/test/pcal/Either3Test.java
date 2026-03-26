@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class Either3Test extends PCalModelCheckerTestCase {
 
 	public Either3Test() {
-		super("Either3", "pcal", new String[] {"-wf", "-termination"});
+		super("Either3", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test
@@ -46,7 +46,7 @@ public class Either3Test extends PCalModelCheckerTestCase {
 		assertFalse(recorder.recorded(EC.GENERAL));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "12", "9", "0"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "4"));
-		
+
 		assertZeroUncovered();
 	}
 }

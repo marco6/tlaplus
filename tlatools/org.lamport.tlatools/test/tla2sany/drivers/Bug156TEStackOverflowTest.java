@@ -26,16 +26,18 @@ public class Bug156TEStackOverflowTest {
 	}
 
 	/**
-	 * Test method for {@link tla2sany.drivers.SANY#frontEndParse(tla2sany.modanalyzer.SpecObj, java.io.PrintStream)}.
-	 * @throws ParseException 
+	 * Test method for
+	 * {@link tla2sany.drivers.SANY#frontEndParse(tla2sany.modanalyzer.SpecObj, java.io.PrintStream)}.
+	 * 
+	 * @throws ParseException
 	 */
 	@Test
 	public void testFrontEndParse() throws ParseException {
 		// uncomment if bug 156 has been fixed
-//        try {
-//			SANY.frontEndParse(moduleSpec, ToolIO.out);
-//		} catch (StackOverflowError e) {
-//			fail("StackOverflow must not happen");
-//		}
+		// try {
+		// SANY.frontEndParse(moduleSpec, ToolIO.out);
+		// } catch (StackOverflowError e) {
+		// fail("StackOverflow must not happen");
+		// }
 	}
 }

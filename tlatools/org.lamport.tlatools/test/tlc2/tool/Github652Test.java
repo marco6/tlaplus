@@ -36,7 +36,7 @@ import tlc2.tool.liveness.ModelCheckerTestCase;
 public class Github652Test extends ModelCheckerTestCase {
 
 	public Github652Test() {
-		super("Github652", new String[] { "-config", "Github652.tla"});
+		super("Github652", new String[] { "-config", "Github652.tla" });
 	}
 
 	@Test

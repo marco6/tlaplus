@@ -11,7 +11,7 @@ class MultiFPSetConfiguration extends FPSetConfiguration {
 		// Set wrapper to values of config to be wrapped
 		this.fpBits = fpSetConfig.getFpBits();
 		this.ratio = fpSetConfig.getRatio();
-		this.implementation = fpSetConfig.getImplementation();		
+		this.implementation = fpSetConfig.getImplementation();
 		// Sanity check configuration right away
 		if (getMemoryInFingerprintCnt() <= 0) {
 			throw new IllegalArgumentException(
@@ -19,21 +19,27 @@ class MultiFPSetConfiguration extends FPSetConfiguration {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSetConfiguration#allowsNesting()
 	 */
 	public boolean allowsNesting() {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSetConfiguration#getMemoryInBytes()
 	 */
 	public long getMemoryInBytes() {
 		return super.getMemoryInBytes() / getMultiFPSetCnt();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.fp.FPSetConfiguration#getMemoryInFingerprintCnt()
 	 */
 	public long getMemoryInFingerprintCnt() {

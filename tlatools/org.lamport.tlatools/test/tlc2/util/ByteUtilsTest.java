@@ -15,14 +15,14 @@ import util.ToolIO;
 
 /**
  * Test case for BinUtils
+ * 
  * @author Simon Zambrovski
  * @version $Id$
  */
-public class ByteUtilsTest
-{
+public class ByteUtilsTest {
     public static final int ARRAYSIZE = 10000;
     public static final int BITS = 1000;
-    
+
     private File testFileB;
     private File testFileA;
 
@@ -35,8 +35,7 @@ public class ByteUtilsTest
     long t2;
 
     @Before
-	public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         Arr = new BigInteger[ARRAYSIZE];
         Arr2 = new BigInteger[ARRAYSIZE];
         Arr3 = new BigInteger[ARRAYSIZE];
@@ -49,16 +48,16 @@ public class ByteUtilsTest
 
         testFileB = File.createTempFile("ByteUtilsTestB", null);
         testFileB.deleteOnExit();
-        
+
         // SZ Feb 20, 2009: no ide what it is for...
         // to load classes ?
-        // Class args[] = { Class.forName("java.math.BigInt"), Class.forName("java.math.BigInt") };
+        // Class args[] = { Class.forName("java.math.BigInt"),
+        // Class.forName("java.math.BigInt") };
 
     }
 
     @Test
-	public void test1()
-    {
+    public void test1() {
         t1 = System.currentTimeMillis();
         mainTestinttoByte();
         t2 = System.currentTimeMillis();
@@ -66,8 +65,7 @@ public class ByteUtilsTest
     }
 
     @Test
-	public void test2() throws FileNotFoundException, IOException
-    {
+    public void test2() throws FileNotFoundException, IOException {
         t1 = System.currentTimeMillis();
         mainTestWriteIntReadInt();
         t2 = System.currentTimeMillis();
@@ -75,8 +73,7 @@ public class ByteUtilsTest
     }
 
     @Test
-	public void test3()
-    {
+    public void test3() {
         t1 = System.currentTimeMillis();
         mainTestlongtoByte();
         t2 = System.currentTimeMillis();
@@ -84,8 +81,7 @@ public class ByteUtilsTest
     }
 
     @Test
-	public void test4() throws FileNotFoundException, IOException
-    {
+    public void test4() throws FileNotFoundException, IOException {
         t1 = System.currentTimeMillis();
         mainTestWriteLongReadLong();
         t2 = System.currentTimeMillis();
@@ -93,8 +89,7 @@ public class ByteUtilsTest
     }
 
     @Test
-	public void test5() throws FileNotFoundException, IOException
-    {
+    public void test5() throws FileNotFoundException, IOException {
         t1 = System.currentTimeMillis();
         mainTestWriteReadSizeByteArray();
         t2 = System.currentTimeMillis();
@@ -102,22 +97,19 @@ public class ByteUtilsTest
     }
 
     @Test
-	public void test6() throws FileNotFoundException, IOException
-    {
+    public void test6() throws FileNotFoundException, IOException {
         t1 = System.currentTimeMillis();
         mainTestAppend();
         t2 = System.currentTimeMillis();
         ToolIO.out.println("Testing Append took " + (t2 - t1) + "ms");
     }
 
-    private void mainTestinttoByte()
-    {
+    private void mainTestinttoByte() {
         int i, j;
         byte[] b;
         Random r = new Random();
 
-        for (j = 0; j < 10000; j += 1)
-        {
+        for (j = 0; j < 10000; j += 1) {
             i = r.nextInt();
             b = ByteUtils.intToByteArray(i);
             if ((i != ByteUtils.byteArrayToInt(b)) || (b.length != 4))
@@ -126,8 +118,7 @@ public class ByteUtilsTest
         }
     }
 
-    private void mainTestWriteIntReadInt() throws IOException, FileNotFoundException
-    {
+    private void mainTestWriteIntReadInt() throws IOException, FileNotFoundException {
         FileOutputStream fout = new FileOutputStream(testFileA);
 
         int i, j;
@@ -135,8 +126,7 @@ public class ByteUtilsTest
 
         Random r = new Random();
 
-        for (j = 0; j < 10000; j += 1)
-        {
+        for (j = 0; j < 10000; j += 1) {
             A[j] = r.nextInt();
             ByteUtils.writeInt(fout, A[j]);
         }
@@ -146,22 +136,19 @@ public class ByteUtilsTest
 
         FileInputStream fin = new FileInputStream(testFileA);
 
-        for (j = 0; j < 10000; j += 1)
-        {
+        for (j = 0; j < 10000; j += 1) {
             i = ByteUtils.readInt(fin);
             if (i != A[j])
                 ToolIO.out.println("i :" + i + "   A[j]: " + A[j]);
         }
     }
 
-    private void mainTestlongtoByte()
-    {
+    private void mainTestlongtoByte() {
         long i, j;
         byte[] b;
         Random r = new Random();
 
-        for (j = 0; j < 10000; j += 1)
-        {
+        for (j = 0; j < 10000; j += 1) {
             i = r.nextLong();
             b = ByteUtils.longToByteArray(i);
             if ((i != ByteUtils.byteArrayToLong(b)) || (b.length != 8))
@@ -170,8 +157,7 @@ public class ByteUtilsTest
         }
     }
 
-    private void mainTestWriteLongReadLong() throws IOException, FileNotFoundException
-    {
+    private void mainTestWriteLongReadLong() throws IOException, FileNotFoundException {
         FileOutputStream fout = new FileOutputStream(testFileA);
 
         long i;
@@ -180,8 +166,7 @@ public class ByteUtilsTest
 
         Random r = new Random();
 
-        for (j = 0; j < 10000; j += 1)
-        {
+        for (j = 0; j < 10000; j += 1) {
             A[j] = r.nextLong();
             ByteUtils.writeLong(fout, A[j]);
         }
@@ -190,16 +175,14 @@ public class ByteUtilsTest
 
         FileInputStream fin = new FileInputStream(testFileA);
 
-        for (j = 0; j < 10000; j += 1)
-        {
+        for (j = 0; j < 10000; j += 1) {
             i = ByteUtils.readLong(fin);
             if (i != A[j])
                 ToolIO.out.println("i :" + i + "   A[j]: " + A[j]);
         }
     }
 
-    private void mainTestWriteReadSizeByteArray() throws IOException, FileNotFoundException
-    {
+    private void mainTestWriteReadSizeByteArray() throws IOException, FileNotFoundException {
         FileOutputStream fout = new FileOutputStream(testFileA);
 
         int j;
@@ -222,21 +205,18 @@ public class ByteUtilsTest
         ByteUtils.readInt(fin);
         C = ByteUtils.readArrayOfSizeBigInts(fin);
 
-        for (j = 0; j < half; j++)
-        {
+        for (j = 0; j < half; j++) {
             if (!A[j].equals(B[j]))
                 ToolIO.out.println("A[" + j + "] :" + A[j] + "   B[" + j + "]: " + B[j]);
         }
 
-        for (j = half; j < ARRAYSIZE; j++)
-        {
+        for (j = half; j < ARRAYSIZE; j++) {
             if (!A[j].equals(C[j - half]))
                 ToolIO.out.println("A[" + j + "] :" + A[j] + "   C[" + (j - half) + "]: " + C[j - half]);
         }
     }
 
-    private void mainTestAppend() throws IOException, FileNotFoundException
-    {
+    private void mainTestAppend() throws IOException, FileNotFoundException {
         FileOutputStream fout = new FileOutputStream(testFileA);
 
         int j;
@@ -256,13 +236,11 @@ public class ByteUtilsTest
         FileInputStream fin = new FileInputStream(testFileA);
         fout = new FileOutputStream(testFileB);
 
-        try
-        {
+        try {
             ByteUtils.appendSizeByteArray(fin, fout);
             ByteUtils.appendSizeByteArray(fin, fout);
             ByteUtils.appendSizeByteArray(fin, fout);
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
         }
 
         fin.close();
@@ -275,25 +253,21 @@ public class ByteUtilsTest
         ByteUtils.readInt(fin);
         C = ByteUtils.readArrayOfSizeBigInts(fin);
 
-        for (j = 0; j < half; j++)
-        {
+        for (j = 0; j < half; j++) {
             if (!A[j].equals(B[j]))
                 ToolIO.out.println("A[" + j + "] :" + A[j] + "   B[" + j + "]: " + B[j]);
         }
 
-        for (j = half; j < ARRAYSIZE; j++)
-        {
+        for (j = half; j < ARRAYSIZE; j++) {
             if (!A[j].equals(C[j - half]))
                 ToolIO.out.println("A[" + j + "] :" + A[j] + "   C[" + (j - half) + "]: " + C[j - half]);
         }
     }
 
-    private void mainInitialize(BigInt[] Arr, BigInt[] Arr2)
-    {
+    private void mainInitialize(BigInt[] Arr, BigInt[] Arr2) {
         Random r = new Random();
 
-        for (int i = 0; i < ARRAYSIZE; i++)
-        {
+        for (int i = 0; i < ARRAYSIZE; i++) {
             Arr[i] = new BigInt(BITS, r);
             Arr2[i] = Arr[i];
         }

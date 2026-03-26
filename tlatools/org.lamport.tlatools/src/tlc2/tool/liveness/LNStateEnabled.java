@@ -19,12 +19,14 @@ import tlc2.util.Context;
  * The Enabled Predicate
  * 
  * <p>
- * For any action A, we define <i>Enabled A<i> to be the predicate that is true for a
+ * For any action A, we define <i>Enabled A<i> to be the predicate that is true
+ * for a
  * state iff it is possible to take an <i>A<i> step starting in that state.
  * </p>
  * 
  * <p>
- * If action <i>A<i> represents an atomic operation of a program, then <i>Enabled A<i> is
+ * If action <i>A<i> represents an atomic operation of a program, then
+ * <i>Enabled A<i> is
  * true for those states in which it is possible to perform the operation.
  * </p>
  * 
@@ -67,8 +69,10 @@ class LNStateEnabled extends LNState {
 			sb.append(((this.isBox) ? "]_" : ">_") + this.subscript);
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see tlc2.tool.liveness.LiveExprNode#toDotViz()
 	 */
 	public String toDotViz() {

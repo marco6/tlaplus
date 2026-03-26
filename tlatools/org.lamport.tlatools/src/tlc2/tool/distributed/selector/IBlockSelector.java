@@ -17,20 +17,23 @@ public interface IBlockSelector {
 	 * work they get assigned.
 	 * 
 	 * @param stateQueue Current queue of new states
-	 * @param worker {@link TLCWorker} requesting work units ({@link TLCState})
-	 * @return The states that will be assigned to the given remote {@link TLCWorker}
+	 * @param worker     {@link TLCWorker} requesting work units ({@link TLCState})
+	 * @return The states that will be assigned to the given remote
+	 *         {@link TLCWorker}
 	 */
 	public abstract TLCState[] getBlocks(final IStateQueue stateQueue, final TLCWorkerRMI worker);
 
 	/**
 	 * @param aMaximum
-	 *            The maximum possible size that can be transfered over the
-	 *            network. The {@link BlockSelector} must not exceed this value.
+	 *                 The maximum possible size that can be transfered over the
+	 *                 network. The {@link BlockSelector} must not exceed this
+	 *                 value.
 	 */
 	public abstract void setMaxTXSize(int aMaximum);
-	
+
 	/**
 	 * Statistical value intended for performance/scalability measures.
+	 * 
 	 * @return The average block size handed out to workers
 	 */
 	public abstract long getAverageBlockCnt();

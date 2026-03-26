@@ -25,7 +25,7 @@ import tlc2.value.impl.MethodValue;
 import util.UniqueString;
 
 public interface SymbolNodeValueLookupProvider {
-    /* Return the variable if expr is a state variable. Otherwise, null. */
+	/* Return the variable if expr is a state variable. Otherwise, null. */
 	default SymbolNode getVar(final SemanticNode expr, final Context c, final boolean cutoff, final int forToolId) {
 		if (expr instanceof SubstInNode) {
 			SubstInNode expr1 = (SubstInNode) expr;
@@ -121,8 +121,10 @@ public interface SymbolNodeValueLookupProvider {
 		return getVal(expr, c, cachable, CostModel.DO_NOT_RECORD, forToolId);
 	}
 
-	default Object getVal(final ExprOrOpArgNode expr, final Context c, final boolean cachable, final CostModel cm, final int forToolId) {
-		// For INSTANCE Foo With x <- z, y <- z, this currently creates two distinct LazyValues.  Is this really what should happen?
+	default Object getVal(final ExprOrOpArgNode expr, final Context c, final boolean cachable, final CostModel cm,
+			final int forToolId) {
+		// For INSTANCE Foo With x <- z, y <- z, this currently creates two distinct
+		// LazyValues. Is this really what should happen?
 		if (expr instanceof ExprNode) {
 			return new LazyValue(expr, c, cachable, cm);
 		}
@@ -130,7 +132,8 @@ public interface SymbolNodeValueLookupProvider {
 		return lookup(opNode, c, false, forToolId);
 	}
 
-	default Context getOpContext(final OpDefNode opDef, final ExprOrOpArgNode[] args, final Context c, final boolean cachable, final int forToolId) {
+	default Context getOpContext(final OpDefNode opDef, final ExprOrOpArgNode[] args, final Context c,
+			final boolean cachable, final int forToolId) {
 		return getOpContext(opDef, args, c, cachable, CostModel.DO_NOT_RECORD, forToolId);
 	}
 
@@ -146,15 +149,15 @@ public interface SymbolNodeValueLookupProvider {
 		return c1;
 	}
 
-    /**
-     * This method only returns an approximation of the level of the
-     * expression.  The "real" level is at most the return value. Adding
-     * <name, ValOne> to the context means that there is no need to
-     * compute level for name.
-     *
-     * Note that this method does not work if called on a part of an
-     * EXCEPT expression.
-     */
+	/**
+	 * This method only returns an approximation of the level of the
+	 * expression. The "real" level is at most the return value. Adding
+	 * <name, ValOne> to the context means that there is no need to
+	 * compute level for name.
+	 *
+	 * Note that this method does not work if called on a part of an
+	 * EXCEPT expression.
+	 */
 	default int getLevelBound(final SemanticNode expr, final Context c, final int forToolId) {
 		switch (expr.getKind()) {
 			case ASTConstants.OpApplKind: {
@@ -213,8 +216,9 @@ public interface SymbolNodeValueLookupProvider {
 	}
 
 	/**
-	 * Users will likely want to call only {@link #getLevelBound(SemanticNode, Context, int)} - this
-	 * 	method is called from that method in certain cases.
+	 * Users will likely want to call only
+	 * {@link #getLevelBound(SemanticNode, Context, int)} - this
+	 * method is called from that method in certain cases.
 	 */
 	default int getLevelBoundAppl(final OpApplNode expr, Context c, final int forToolId) {
 		final SymbolNode opNode = expr.getOperator();
@@ -267,12 +271,12 @@ public interface SymbolNodeValueLookupProvider {
 			} else if (val instanceof LazyValue) {
 				final LazyValue lv = (LazyValue) val;
 				level = Math.max(level, getLevelBound(lv.expr, lv.con, forToolId));
-            } else if (val instanceof EvaluatingValue) {
-            	final EvaluatingValue ev = (EvaluatingValue) val;
-            	level = Math.max(level, ev.getMinLevel());
-            } else if (val instanceof MethodValue) {
-            	final MethodValue mv = (MethodValue) val;
-            	level = Math.max(level, mv.getMinLevel());
+			} else if (val instanceof EvaluatingValue) {
+				final EvaluatingValue ev = (EvaluatingValue) val;
+				level = Math.max(level, ev.getMinLevel());
+			} else if (val instanceof MethodValue) {
+				final MethodValue mv = (MethodValue) val;
+				level = Math.max(level, mv.getMinLevel());
 			}
 		}
 		return level;

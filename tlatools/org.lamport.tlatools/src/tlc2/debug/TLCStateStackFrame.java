@@ -62,7 +62,7 @@ import util.Assert.TLCRuntimeException;
 import util.UniqueString;
 
 public class TLCStateStackFrame extends TLCStackFrame {
-	
+
 	@SuppressWarnings("serial")
 	public static class DebuggerValue extends StringValue {
 		// A placeholder for the value of a variable that has not yet been evaluated.
@@ -76,7 +76,7 @@ public class TLCStateStackFrame extends TLCStackFrame {
 		public StringBuffer toString(StringBuffer sb, int offset, boolean swallow) {
 			return sb.append("?");
 		}
-		
+
 		@Override
 		public String getKindString() {
 			// Let's not NPE if somebody ever calls getKindString.
@@ -92,7 +92,7 @@ public class TLCStateStackFrame extends TLCStackFrame {
 	}
 
 	public static final DebuggerValue NOT_EVAL = new DebuggerValue();
-	
+
 	public static final String SCOPE = "State";
 
 	public static final String TRACE = "Trace";
@@ -109,22 +109,23 @@ public class TLCStateStackFrame extends TLCStackFrame {
 		super(parent, node, ctxt, tool, e);
 		this.state = state.deepCopy();
 		assert this.state instanceof TLCStateMutExt;
-		
-		// Tempting to use state.fingerprint/hashCode, but would normalize all values as(
+
+		// Tempting to use state.fingerprint/hashCode, but would normalize all values
+		// as(
 		// a side effect.
 		this.stateId = rnd.nextInt(Integer.MAX_VALUE - 1) + 1;
 	}
-	
+
 	@Override
 	protected TLCState getS() {
 		return getT();
 	}
-	
+
 	@Override
 	protected TLCState getT() {
 		return state;
 	}
-	
+
 	List<TLCStackFrame> getTraceAsStackFrames() {
 		return ((DebugTool) tool).eval(() -> {
 			final List<TLCStackFrame> frames = new ArrayList<>();
@@ -229,7 +230,7 @@ public class TLCStateStackFrame extends TLCStackFrame {
 				try {
 					// A) Last state of the trace s_f.
 					final TLCState t = getT();
-					
+
 					if (t.isInitial()) {
 						assert t.getPredecessor() == null;
 						// No need to re-construct a trace if this.state is an initial state. Note that
@@ -238,7 +239,7 @@ public class TLCStateStackFrame extends TLCStackFrame {
 						return new Variable[] { getStateAsVariable(new RecordValue(t, NOT_EVAL), "1: "
 								+ (t.hasAction() ? t.getAction().getLocation() : TLCStateInfo.INITIAL_PREDICATE)) };
 					}
-					
+
 					final Deque<Variable> trace = new ArrayDeque<>();
 					if (addT()) {
 						trace.add(getStateAsVariable(new RecordValue(t, NOT_EVAL),
@@ -269,7 +270,7 @@ public class TLCStateStackFrame extends TLCStackFrame {
 									+ (s.hasAction() ? s.getAction().getLocation() : "<???>")));
 							last = s;
 						}
-						
+
 						// C) The prefix from an initial state s_i to the predecessor of s_d. We can
 						// assert that s_d is no initial state, it will *not* be part of prefix.
 						final List<TLCStateInfo> arrayList = new ArrayList<>(
@@ -290,10 +291,10 @@ public class TLCStateStackFrame extends TLCStackFrame {
 								// also make it easier for users to understand how states are ordered.
 								ti.state.getLevel() + ": " + ti.info.toString()));
 					}
-					
+
 					return trace.toArray(new Variable[trace.size()]);
 				} catch (IOException e) {
-					//TODO: Handle exception case.
+					// TODO: Handle exception case.
 					return new Variable[0];
 				}
 			});
@@ -312,7 +313,7 @@ public class TLCStateStackFrame extends TLCStackFrame {
 	private String getActionName(final TLCState t) {
 		return (t.hasAction() ? t.getAction().getLocation() : "<???>");
 	}
-	
+
 	protected RecordValue toRecordValue() {
 		return new RecordValue(getT(), NOT_EVAL);
 	}
@@ -324,9 +325,9 @@ public class TLCStateStackFrame extends TLCStackFrame {
 	@Override
 	protected DebugTLCVariable getStateAsVariable(final IValue value, String varName) {
 		final DebugTLCVariable variable = getVariable(value, UniqueString.of(varName));
-		
+
 		variable.setVscodeVariableMenuContext("state");
-		
+
 		// Because we convert the TLCState (getT) to a RecordValue to re-use the
 		// getVariable(..) implementation, the type (shown when hovering over the
 		// variable in the debugger's variable view) would be RecordValue. This would be
@@ -344,7 +345,7 @@ public class TLCStateStackFrame extends TLCStackFrame {
 	@Override
 	protected Variable getVariable(final LinkedList<SemanticNode> path) {
 		assert !path.isEmpty();
-		
+
 		if (!isPrimeScope(path)) {
 			SymbolNode var = tool.getVar(path.getFirst(), ctxt, false, tool.getId());
 			if (var != null) {
@@ -361,7 +362,8 @@ public class TLCStateStackFrame extends TLCStackFrame {
 		} else if (isPrimeScope(path)) {
 			// TLCStateStackFrame implies that there is no successor state, probably because
 			// the stack frame belongs to the evaluation of the initial predicate, an
-			// invariant, a state-constraint...  In this scope, a primed variable has no value.
+			// invariant, a state-constraint... In this scope, a primed variable has no
+			// value.
 			final Variable variable = new Variable();
 			variable.setName(path.getFirst().getHumanReadableImage());
 			variable.setValue(path.getFirst().getLocation().toString());
@@ -369,7 +371,7 @@ public class TLCStateStackFrame extends TLCStackFrame {
 		}
 		return super.getVariable(path);
 	}
-	
+
 	protected boolean isPrimeScope(LinkedList<SemanticNode> path) {
 		for (SemanticNode semanticNode : path) {
 			if (semanticNode instanceof OpApplNode) {
@@ -385,33 +387,33 @@ public class TLCStateStackFrame extends TLCStackFrame {
 	protected boolean hasScope() {
 		return true;
 	}
-	
+
 	@Override
 	public Scope[] getScopes() {
 		final List<Scope> scopes = new ArrayList<>();
 		scopes.addAll(Arrays.asList(super.getScopes()));
-		
+
 		// TODO: Consider merging SCOPE and TRACE. The separation, however, makes sure
 		// that we only pay the price for re-constructing the error-trace if a user
 		// actually expands the Trace node in the variable view, which I assume to
 		// happen less often than expanding the current state (SCOPE).
 		// Alternatively, we could cache the re-constructed trace while a user steps
-		// through an action, i.e. while the trace doesn't change.  Traversing
+		// through an action, i.e. while the trace doesn't change. Traversing
 		// up the TLCStackFrame stack is already implemented by
 		// tlc2.debug.TLCStackFrame.getStackVariables(List<Variable>). For simulation,
-		// we get the trace for free though.  There would be no need to cache it.
+		// we get the trace for free though. There would be no need to cache it.
 		if (hasScope()) {
 			Scope scope = new Scope();
 			scope.setName(getScope());
 			scope.setVariablesReference(stateId);
 			scopes.add(scope);
 		}
-		
+
 		Scope scope = new Scope();
 		scope.setName(TRACE);
 		scope.setVariablesReference(stateId + 1);
 		scopes.add(scope);
-		
+
 		return scopes.toArray(new Scope[scopes.size()]);
 	}
 
@@ -423,7 +425,7 @@ public class TLCStateStackFrame extends TLCStackFrame {
 	protected Object unlazy(LazyValue lv) {
 		return unlazy(lv, null);
 	}
-	
+
 	@Override
 	protected Object unlazy(final LazyValue lv, final Object fallback) {
 		try {

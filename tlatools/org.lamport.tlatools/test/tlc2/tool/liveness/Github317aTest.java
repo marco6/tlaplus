@@ -36,7 +36,7 @@ import tlc2.output.EC;
 public class Github317aTest extends ModelCheckerTestCase {
 
 	public Github317aTest() {
-		super("Github317a", new String[] { "-config", "Github317a.tla"}, EC.ExitStatus.ERROR);
+		super("Github317a", new String[] { "-config", "Github317a.tla" }, EC.ExitStatus.ERROR);
 	}
 
 	@Override
@@ -56,14 +56,14 @@ public class Github317aTest extends ModelCheckerTestCase {
 		// Assert the right error trace has been printed.
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_NESTED_EXPRESSION,
 				"0. Line 138, column 41 to line 138, column 48 in Github317a\n"
-				+ "1. Line 117, column 13 to line 133, column 54 in Github317a\n"
-				+ "2. Line 118, column 15 to line 133, column 54 in Github317a\n"
-				+ "3. Line 128, column 23 to line 133, column 54 in Github317a\n"
-				+ "4. Line 128, column 26 to line 128, column 67 in Github317a\n"
-				+ "5. Line 129, column 26 to line 132, column 50 in Github317a\n"
-				+ "6. Line 129, column 29 to line 129, column 59 in Github317a\n"
-				+ "7. Line 129, column 29 to line 129, column 42 in Github317a\n\n"));
-		
+						+ "1. Line 117, column 13 to line 133, column 54 in Github317a\n"
+						+ "2. Line 118, column 15 to line 133, column 54 in Github317a\n"
+						+ "3. Line 128, column 23 to line 133, column 54 in Github317a\n"
+						+ "4. Line 128, column 26 to line 128, column 67 in Github317a\n"
+						+ "5. Line 129, column 26 to line 132, column 50 in Github317a\n"
+						+ "6. Line 129, column 29 to line 129, column 59 in Github317a\n"
+						+ "7. Line 129, column 29 to line 129, column 42 in Github317a\n\n"));
+
 		// Assert error stack has only been printed once by one of the workers.
 		assertEquals(1, recorder.getRecords(EC.TLC_NESTED_EXPRESSION).size());
 	}

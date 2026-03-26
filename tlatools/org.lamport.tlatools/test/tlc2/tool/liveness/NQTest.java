@@ -42,7 +42,7 @@ public class NQTest extends ModelCheckerTestCase {
 	public NQTest() {
 		super(TLAConstants.Files.MODEL_CHECK_FILE_BASENAME, "symmetry" + File.separator + "NQ");
 	}
-	
+
 	/*
 	 * WRT @Ignore:
 	 * Without symmetry defined, TLC finds no counterexample. With symmetry,
@@ -63,7 +63,7 @@ public class NQTest extends ModelCheckerTestCase {
 		// Assert it has *not* found a temporal violation and a counter example
 		assertFalse(recorder.recorded(EC.TLC_TEMPORAL_PROPERTY_VIOLATED));
 		assertFalse(recorder.recorded(EC.TLC_COUNTER_EXAMPLE));
-		
+
 		// Assert *no* error trace
 		assertFalse(recorder.recorded(EC.TLC_STATE_PRINT2));
 	}

@@ -74,20 +74,20 @@ public class EWD840DebuggerTest extends TLCDebuggerTestCase {
 		assertEquals("{0, 1}", nested[1].getValue());
 		assertEquals("const_143073460396411000", nested[2].getName());
 		assertEquals("2", nested[2].getValue());
-		
+
 		assertEquals(MDL, variables[1].getName());
 		nested = f.getVariables(variables[1].getVariablesReference());
 		assertEquals(1, nested.length);
 		assertEquals("const_143073460396411000", nested[0].getName());
 		assertEquals("2", nested[0].getValue());
-		
+
 		final OpDeclNode[] vars = getVars();
-		
-		debugger.replaceAllBreakpointsWith(RM,23);
+
+		debugger.replaceAllBreakpointsWith(RM, 23);
 
 		// The spec has 16 initial states over which we will continue each time checking
 		// the stack frames:
-		for (int i = 0; i < 16; i++) { //64
+		for (int i = 0; i < 16; i++) { // 64
 			stackFrames = debugger.continue_();
 
 			assertEquals(6, stackFrames.length);
@@ -133,32 +133,32 @@ public class EWD840DebuggerTest extends TLCDebuggerTestCase {
 		assertEquals(6, stackFrames.length);
 		Context context = Context.Empty.cons(null, IntValue.ValOne).cons(null, IntValue.ValOne);
 		/*
-		  /\ active[i]
-		  /\ \E j \in Nodes \ {i} :
-		        /\ active' = [active EXCEPT ![j] = TRUE]
-		        /\ color' = [color EXCEPT ![i] = IF j>i THEN "black" ELSE @]
-		  /\ UNCHANGED <<tpos, tcolor>>
+		 * /\ active[i]
+		 * /\ \E j \in Nodes \ {i} :
+		 * /\ active' = [active EXCEPT ![j] = TRUE]
+		 * /\ color' = [color EXCEPT ![i] = IF j>i THEN "black" ELSE @]
+		 * /\ UNCHANGED <<tpos, tcolor>>
 		 */
 		assertTLCActionFrame(stackFrames[3], 44, 48, RM, context, vars);
 		/*
-		  /\ active[i]
+		 * /\ active[i]
 		 */
 		assertTLCActionFrame(stackFrames[2], 44, 44, RM, context, vars);
 		/*
-		  /\ \E j \in Nodes \ {i} :
-		        /\ active' = [active EXCEPT ![j] = TRUE]
-		        /\ color' = [color EXCEPT ![i] = IF j>i THEN "black" ELSE @]
+		 * /\ \E j \in Nodes \ {i} :
+		 * /\ active' = [active EXCEPT ![j] = TRUE]
+		 * /\ color' = [color EXCEPT ![i] = IF j>i THEN "black" ELSE @]
 		 */
 		assertTLCActionFrame(stackFrames[1], 45, 47, RM, context, vars);
 		/*
-		        /\ active' = [active EXCEPT ![j] = TRUE]
-		        /\ color' = [color EXCEPT ![i] = IF j>i THEN "black" ELSE @]
+		 * /\ active' = [active EXCEPT ![j] = TRUE]
+		 * /\ color' = [color EXCEPT ![i] = IF j>i THEN "black" ELSE @]
 		 */
 		context = context.cons(null, IntValue.ValZero);
 		assertTLCActionFrame(stackFrames[0], 46, 47, RM, context, vars);
 
 		/*
-        		/\ active' = [active EXCEPT ![j] = TRUE]
+		 * /\ active' = [active EXCEPT ![j] = TRUE]
 		 */
 		stackFrames = debugger.stepIn();
 		assertEquals(7, stackFrames.length);
@@ -171,28 +171,28 @@ public class EWD840DebuggerTest extends TLCDebuggerTestCase {
 		assertTLCActionFrame(stackFrames[0], 46, 46, RM, context, vars);
 
 		/*
-				[active EXCEPT ![j] = TRUE]
-				The breakpoint on this line (46) means that step in/out/over
-				takes precedence.
+		 * [active EXCEPT ![j] = TRUE]
+		 * The breakpoint on this line (46) means that step in/out/over
+		 * takes precedence.
 		 */
 		stackFrames = debugger.stepIn();
 		assertEquals(8, stackFrames.length);
 		assertTLCActionFrame(stackFrames[0], 46, 46, RM, context, vars);
 		/*
-		        /\ color' = [color EXCEPT ![i] = IF j>i THEN "black" ELSE @]
+		 * /\ color' = [color EXCEPT ![i] = IF j>i THEN "black" ELSE @]
 		 */
 		stackFrames = debugger.stepIn(5);
 		assertEquals(9, stackFrames.length);
 		assertTLCActionFrame(stackFrames[0], 47, 47, RM, context, vars[0], vars[2], vars[3]);
 
 		/*
-  				/\ UNCHANGED <<tpos, tcolor>>
+		 * /\ UNCHANGED <<tpos, tcolor>>
 		 */
 		stackFrames = debugger.stepIn(8);
 		assertEquals(9, stackFrames.length);
 		context = Context.Empty.cons(null, IntValue.ValOne).cons(null, IntValue.ValOne);
 		assertTLCActionFrame(stackFrames[0], 48, 48, RM, context, vars[0], vars[2]);
-		
+
 		// 8888888888888888888 State Constraint 8888888888888888888 //
 		debugger.replaceAllBreakpointsWith(MDL, 16);
 		stackFrames = debugger.continue_();
@@ -206,13 +206,13 @@ public class EWD840DebuggerTest extends TLCDebuggerTestCase {
 		assertEquals("node", variable.getName());
 		assertEquals(IntValue.ValZero.getTypeString(), variable.getType());
 		assertEquals("0", variable.getValue());
-		
+
 		// 8888888888888888888 Action Constraint 8888888888888888888 //
 		debugger.replaceAllBreakpointsWith(MDL, 19);
 		stackFrames = debugger.continue_();
 		assertEquals(10, stackFrames.length);
 		assertTLCActionFrame(stackFrames[0], 19, 21, MDL);
-		
+
 		// 8888888888888888888 Invariant Inv 8888888888888888888 //
 		debugger.replaceAllBreakpointsWith(RM, 94);
 		stackFrames = debugger.continue_();
@@ -230,10 +230,10 @@ public class EWD840DebuggerTest extends TLCDebuggerTestCase {
 		// Error trace is six states long on which we evaluate the alias expression six
 		// times. By definition, an alias expression is evaluated on a pair of states.
 		// Let s1 be the initial state and let s2 to s6 be the successor states in the
-		// trace with s6 the state that violates the invariant.  The for loop below
+		// trace with s6 the state that violates the invariant. The for loop below
 		// evaluates the alias expression for the pairs (s1, s2), (s2, s3), (s3, s4),
-		// (s4, s5), (s5, s6).  For s6, the alias expression is then evaluated on the
-		// pair (s6, s6).  This is done after the for loop.
+		// (s4, s5), (s5, s6). For s6, the alias expression is then evaluated on the
+		// pair (s6, s6). This is done after the for loop.
 		debugger.replaceAllBreakpointsWith(MDL, 33);
 		for (int i = 0; i < 4; i++) {
 			// Continuing from the initial state introduces an extra stack frame.

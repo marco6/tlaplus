@@ -45,7 +45,7 @@ public class Github696Test extends ModelCheckerTestCase {
 
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "1"));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "1", "1", "1"));
-		
+
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_INITIAL_STATE,
 				"Attempted to compare the differently-typed model values A_31 and B_a"));
 	}

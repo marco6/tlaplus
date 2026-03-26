@@ -55,7 +55,7 @@ public class Github687Test extends ModelCheckerTestCase {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertTrue(recorder.recorded(EC.TLC_SUCCESS));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "13", "9", "0"));
-		
+
 		assertZeroUncovered();
 	}
 

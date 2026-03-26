@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class FactorialTest extends PCalModelCheckerTestCase {
 
 	public FactorialTest() {
-		super("Factorial", "pcal", new String[] {"-wf", "-termination"});
+		super("Factorial", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test

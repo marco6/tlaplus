@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-
 public class ModuleConstructTest {
     @Test
     public void testDashesArePreserved() throws SanyFrontendException, IOException {
@@ -20,7 +19,8 @@ public class ModuleConstructTest {
     @Test
     public void testModuleNamePreservedWhenSanyKeyword() throws SanyFrontendException, IOException {
         // "Token" is a SANY keyword where getHumanReadableImage() returns empty string
-        // The formatter should still preserve the module name using getImage() as fallback
+        // The formatter should still preserve the module name using getImage() as
+        // fallback
         var s = "---- MODULE Token ----\n" +
                 "VARIABLE x\n" +
                 "====";

@@ -49,26 +49,26 @@ public class UnsymmetricModelCheckerTestA_TTraceTest extends TTraceModelCheckerT
 		// ModelChecker intends to check liveness
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_LIVE_IMPLIED, "1"));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_INIT_GENERATED1, "1", ""));
-		
+
 		// ModelChecker has finished and generated the expected amount of states
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "3", "2", "0"));
-	
+
 		// Assert it has found a temporal violation and a counter example
 		assertTrue(recorder.recorded(EC.TLC_TEMPORAL_PROPERTY_VIOLATED));
 		assertTrue(recorder.recorded(EC.TLC_COUNTER_EXAMPLE));
-		
+
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
 		final List<String> expectedTrace = new ArrayList<String>(2);
 		expectedTrace.add("x = a");
 		expectedTrace.add("x = 1");
-		
+
 		final List<String> expectedActions = new ArrayList<>();
 		expectedActions.add(isExtendedTLCState()
-				? "<_init line 23, col 5 to line 23, col 24 of module "+getModuleName()+">"
+				? "<_init line 23, col 5 to line 23, col 24 of module " + getModuleName() + ">"
 				: TLCStateInfo.INITIAL_PREDICATE);
-		expectedActions.add("<_next line 27, col 5 to line 33, col 29 of module "+getModuleName()+">");
+		expectedActions.add("<_next line 27, col 5 to line 33, col 29 of module " + getModuleName() + ">");
 
 		assertTraceWith(recorder.getRecords(EC.TLC_STATE_PRINT2), expectedTrace, expectedActions);
 

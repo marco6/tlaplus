@@ -53,25 +53,25 @@ public class RandomSubsetTest_TTraceTest extends TTraceModelCheckerTestCase {
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_INIT_GENERATED1, "1"));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "2", "2", "0"));
 		assertEquals(2, recorder.getRecordAsInt(EC.TLC_SEARCH_DEPTH));
 
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
-		
+
 		final List<Object> actual = recorder.getRecords(EC.TLC_STATE_PRINT2);
 		assertEquals(2, actual.size());
-		
+
 		final TLCStateInfo first = (TLCStateInfo) ((Object[]) actual.get(0))[0];
 		if (isExtendedTLCState()) {
-			assertEquals("<_init line 27, col 5 to line 29, col 24 of module "+getModuleName()+">", first.info);
+			assertEquals("<_init line 27, col 5 to line 29, col 24 of module " + getModuleName() + ">", first.info);
 		} else {
 			assertTrue(((String) first.info).startsWith("<Initial predicate>"));
 		}
 		final Map<UniqueString, IValue> firstState = first.state.getVals();
 		assertEquals(3, firstState.size());
-		
+
 		// Check x and y values are within defined ranges.
 		final IntValue firstX = (IntValue) firstState.get(UniqueString.uniqueStringOf("x"));
 		assertTrue(1 <= firstX.val && firstX.val <= 100000000);
@@ -80,9 +80,10 @@ public class RandomSubsetTest_TTraceTest extends TTraceModelCheckerTestCase {
 
 		// Check z is true
 		assertEquals(BoolValue.ValTrue, (IBoolValue) firstState.get(UniqueString.uniqueStringOf("z")));
-		
+
 		final TLCStateInfo second = (TLCStateInfo) ((Object[]) actual.get(1))[0];
-		assertTrue(((String) second.info).startsWith("<_next line 33, col 5 to line 41, col 29 of module "+getModuleName()+">"));
+		assertTrue(((String) second.info)
+				.startsWith("<_next line 33, col 5 to line 41, col 29 of module " + getModuleName() + ">"));
 		final Map<UniqueString, IValue> secondState = second.state.getVals();
 		assertEquals(3, secondState.size());
 		// UNCHANGED x,y

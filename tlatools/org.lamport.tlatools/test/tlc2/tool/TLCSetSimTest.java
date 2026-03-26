@@ -36,11 +36,14 @@ import tlc2.tool.liveness.ModelCheckerTestCase;
 public class TLCSetSimTest extends ModelCheckerTestCase {
 
 	public TLCSetSimTest() {
-		super("TLCSetSim", new String[] { "-config", "TLCSet.cfg", "-simulate", "-depth", "4224" }); // 4224 and not 4223
-																									// (as in the spec)
-																									// because I screwed
-																									// up in
-																									// SimulationWorker.
+		super("TLCSetSim", new String[] { "-config", "TLCSet.cfg", "-simulate", "-depth", "4224" }); // 4224 and not
+																										// 4223
+																										// (as in the
+																										// spec)
+																										// because I
+																										// screwed
+																										// up in
+																										// SimulationWorker.
 	}
 
 	@Test

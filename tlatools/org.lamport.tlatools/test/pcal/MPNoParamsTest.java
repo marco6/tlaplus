@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class MPNoParamsTest extends PCalModelCheckerTestCase {
 
 	public MPNoParamsTest() {
-		super("MPNoParams", "pcal", new String[] {"-wf", "-termination"});
+		super("MPNoParams", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test
@@ -47,6 +47,6 @@ public class MPNoParamsTest extends PCalModelCheckerTestCase {
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "250", "96", "0"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "13"));
 
-	assertZeroUncovered();
+		assertZeroUncovered();
 	}
 }

@@ -47,34 +47,34 @@ public class LiveCheckSimulationTest2a_TTraceTest extends TTraceModelCheckerTest
 	public LiveCheckSimulationTest2a_TTraceTest() {
 		super(LiveCheckSimulationTest2a.class, ExitStatus.VIOLATION_LIVENESS);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		// ModelChecker has finished and generated the expected amount of states
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertFalse(recorder.recorded(EC.GENERAL));
-		
+
 		// Assert it has found the temporal violation and also a counter example
 		assertTrue(recorder.recorded(EC.TLC_TEMPORAL_PROPERTY_VIOLATED));
 		assertTrue(recorder.recorded(EC.TLC_COUNTER_EXAMPLE));
-		
+
 		// Assert the error trace
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
 		List<Object> trace = recorder.getRecords(EC.TLC_STATE_PRINT2);
-		
+
 		int i = 0; // State's position in records
 		Object[] objs = (Object[]) trace.get(i++);
 		TLCStateInfo stateInfo = (TLCStateInfo) objs[0];
 		assertEquals("x = 0", stateInfo.toString().trim()); // trimmed to remove any newlines or whitespace
 		assertEquals(i, objs[1]);
-		
+
 		objs = (Object[]) trace.get(trace.size() - 1);
 		stateInfo = (TLCStateInfo) objs[0];
 		assertEquals("x = 4", stateInfo.toString().trim());
-		
+
 		// Must not stutter
 		assertFalse(recorder.recorded(EC.TLC_STATE_PRINT3));
-		
+
 		// Must show back loop to init state
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));
 		trace = recorder.getRecords(EC.TLC_STATE_PRINT2);

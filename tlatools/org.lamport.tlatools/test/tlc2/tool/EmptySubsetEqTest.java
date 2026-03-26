@@ -54,10 +54,10 @@ public class EmptySubsetEqTest extends ModelCheckerTestCase {
 
 		assertTrue(recorder.recordedWithStringValue(EC.GENERAL,
 				"TLC threw an unexpected exception.\nThis was probably caused by an "
-				+ "error in the spec or model.\nSee the User Output or TLC Console "
-				+ "for clues to what happened.\nThe exception was a "
-				+ "java.lang.RuntimeException\n: Attempted to check if the value:\n"
-				+ "{}\nis in the integer interval 1..4"));
+						+ "error in the spec or model.\nSee the User Output or TLC Console "
+						+ "for clues to what happened.\nThe exception was a "
+						+ "java.lang.RuntimeException\n: Attempted to check if the value:\n"
+						+ "{}\nis in the integer interval 1..4"));
 
 		// Expect an error trace consisting of a single state.
 		assertTrue(recorder.recorded(EC.TLC_STATE_PRINT2));

@@ -101,8 +101,10 @@ public class TLCExt {
 	public synchronized static Value pickSuccessor(final Tool tool, final ExprOrOpArgNode[] args, final Context c,
 			final TLCState s0, final TLCState s1, final int control, final CostModel cm) {
 
-		// TLC checks action constraints before it checks if states are new or not. Exclude seen states here
-		// to not repeatedly ask a user to extend a behavior with the same state over and over again.
+		// TLC checks action constraints before it checks if states are new or not.
+		// Exclude seen states here
+		// to not repeatedly ask a user to extend a behavior with the same state over
+		// and over again.
 		try {
 			if (TLCGlobals.mainChecker != null // simulation mode does not remember seen states.
 					&& ((ModelChecker) TLCGlobals.mainChecker).theFPSet.contains(s1.fingerPrint())) {
@@ -132,7 +134,7 @@ public class TLCExt {
 			// relation before all primed variables are defined.
 			return BoolValue.ValTrue;
 		}
-		
+
 		Action action = null;
 		if (s1 instanceof TLCStateMutExt) {
 			action = s1.getAction();
@@ -232,38 +234,39 @@ public class TLCExt {
 			// TODO Somehow load only this implementation in simulation mode => module
 			// overrides for a specific tool mode.
 			final StateVec trace = TLCGlobals.simulator.getTrace(s0);
-			
+
 			final Value[] values = new Value[trace.size()];
 			for (int j = 0; j < trace.size(); j++) {
 				final TLCState state = trace.elementAt(j);
 				values[j] = new RecordValue(state, state.getAction());
 			}
-			
+
 			return new TupleValue(values);
 		}
-		
+
 		if (s0.isInitial()) {
 			return new TupleValue(new Value[] { new RecordValue(s0) });
 		}
-			
+
 		synchronized (TLCExt.class) {
 			if (s0.uid == TLCState.INIT_UID) {
 				// The state s0 has not been written do disk, i.e. the trace file.
 				// This is the case where Trace is evaluated in a state-constraint when the
-				// trace up to s0 hasn't been constructed yet.  Consequently, we cannot 
-				// re-construct the trace up to s0.  Instead, we re-construct the trace up
-				// to s0's predecessor sP.  If sP is an initial state, we are done and return
-				// the trace of length two.  Otherwise, we re-construct the trace to sP and
+				// trace up to s0 hasn't been constructed yet. Consequently, we cannot
+				// re-construct the trace up to s0. Instead, we re-construct the trace up
+				// to s0's predecessor sP. If sP is an initial state, we are done and return
+				// the trace of length two. Otherwise, we re-construct the trace to sP and
 				// append sP and s0.
 				// Obviously, this hack is prohibitively expensive if evaluated for every state.
 				// However, the TLCDebugger makes use of this should a user manually request
 				// the trace for a TLCStateStackFrame that correspond to a state-constraint.
 				// For this use-case, we consider this good enough.
-				//TODO: This won't work if TLCExt is extended to return action names for which
-				// we have to create proper TLCStateInfo instances below instead of instantiating
+				// TODO: This won't work if TLCExt is extended to return action names for which
+				// we have to create proper TLCStateInfo instances below instead of
+				// instantiating
 				// them here.
 				final List<TLCStateInfo> trace = new ArrayList<>();
-				
+
 				final TLCState currentState = IdThread.getCurrentState();
 				if (currentState.isInitial()) {
 					trace.add(new TLCStateInfo(currentState));
@@ -273,7 +276,8 @@ public class TLCExt {
 					trace.add(new TLCStateInfo(currentState));
 					trace.add(new TLCStateInfo(s0));
 					// A side-effect of getTraceInfo are nested calls to setCurrentState. Thus, we
-					// have to reset to currentState after we are done with our getTraceInfo business.
+					// have to reset to currentState after we are done with our getTraceInfo
+					// business.
 					IdThread.setCurrentState(currentState);
 				}
 				return new TupleValue(trace.stream().map(si -> new RecordValue(si.state)).toArray(Value[]::new));
@@ -298,7 +302,7 @@ public class TLCExt {
 			// We should compare control to EvalControl.Primed instead of setting the
 			// callable on s0 and s1, but @Evaluation doesn't seem to correctly pass
 			// control in all scopes such as the next-state relation, state-, and
-			// action-constraints.  
+			// action-constraints.
 			Stream.of(s0, s1).forEach(s -> s.setCallable(() -> {
 				final Value[] argVals = new Value[args.length];
 				// evaluate the operator's arguments:
@@ -327,9 +331,9 @@ public class TLCExt {
 		final StringValue str = (StringValue) val;
 		return ModelValue.add(str.val.toString());
 	}
-	
+
 	private static final ReentrantReadWriteLock tlcEval2Lock = new ReentrantReadWriteLock();
-	
+
 	@SuppressWarnings("unchecked")
 	@Evaluation(definition = "TLCCache", module = "TLCExt", warn = false, silent = true)
 	public static Value tlcEval2(final Tool tool, final ExprOrOpArgNode[] args, final Context c, final TLCState s0,
@@ -340,12 +344,12 @@ public class TLCExt {
 
 		if (expr.getLevel() == LevelConstants.ConstantLevel) {
 			final Value key = tool.eval(closure, c, s0, s1, control, cm);
-			
+
 			ReentrantReadWriteLock.ReadLock readLock = tlcEval2Lock.readLock();
 			ReentrantReadWriteLock.WriteLock writeLock = null;
 			readLock.lock();
 			try {
-				HashMap<Value, Value> cache = (HashMap<Value, Value>)expr.getToolObject(tool.getId());
+				HashMap<Value, Value> cache = (HashMap<Value, Value>) expr.getToolObject(tool.getId());
 				Value value = null;
 				if (cache != null) {
 					value = cache.get(key);
@@ -353,34 +357,35 @@ public class TLCExt {
 				if (value != null) {
 					return value;
 				}
-				
+
 				readLock.unlock();
 				readLock = null;
-				
+
 				// Now get the write lock, but assume nothing stayed put.
 				// Other writers might have done some or all of your work for you.
 				writeLock = tlcEval2Lock.writeLock();
 				writeLock.lock();
-				
+
 				if (cache == null) {
 					// Re-fetch the cache if it was missing before, in case it's allocated now.
-					cache = (HashMap<Value, Value>)expr.getToolObject(tool.getId());
+					cache = (HashMap<Value, Value>) expr.getToolObject(tool.getId());
 				}
 				if (cache == null) {
 					cache = new HashMap<>();
 					expr.setToolObject(tool.getId(), cache);
 				}
-				
+
 				value = cache.get(key);
 				if (value != null) {
 					return value;
 				}
-				
-				// The element is still missing. Populate it (may recursively read and/or write lock)..
+
+				// The element is still missing. Populate it (may recursively read and/or write
+				// lock)..
 				value = tool.eval(expr, c, s0, s1, control, cm);
 				// This is needed to ensure the value is usable from any thread going forward.
 				value.initialize();
-				
+
 				cache.put(key, value);
 				return value;
 			} finally {
@@ -391,7 +396,7 @@ public class TLCExt {
 					writeLock.unlock();
 				}
 			}
-		} else if ( expr.getLevel() == LevelConstants.VariableLevel) {
+		} else if (expr.getLevel() == LevelConstants.VariableLevel) {
 			final int key = expr.hashCode() ^ closure.hashCode() ^ tool.eval(closure, c, s0).hashCode();
 
 			final Value value = s0.getCached(key);
@@ -418,31 +423,34 @@ public class TLCExt {
 	@Evaluation(definition = "TLCEvalDefinition", module = "TLCExt", warn = false, silent = true)
 	public static Value tlcDefByName(final Tool tool, final ExprOrOpArgNode[] args, final Context c, final TLCState s0,
 			final TLCState s1, final int control, final CostModel cm) {
-		
+
 		// Determine the name of the definition to evaluate.
 		final Value v = tool.eval(args[0], c, s0, s1, control, cm);
 		if (!(v instanceof StringValue)) {
 			throw new EvalException(EC.TLC_MODULE_ONE_ARGUMENT_ERROR,
 					new String[] { "TLCEvalDefinition", "string", Values.ppr(v.toString()) });
-		}	
+		}
 		final StringValue sv = (StringValue) v;
-		
+
 		final ModuleNode mn = tool.getSpecProcessor().getModuleTbl().getRootModule();
 		assert mn != null;
-		
-		// Try to find the definition (not declaration, ...) starting at the root module.
+
+		// Try to find the definition (not declaration, ...) starting at the root
+		// module.
 		final OpDefNode opDef = mn.getOpDef(sv.val);
 		if (opDef == null) {
 			throw new EvalException(EC.TLC_MODULE_ONE_ARGUMENT_ERROR,
-					new String[] { "TLCEvalDefinition", "name of a definition reachable from the root module", Values.ppr(v.toString()) });
+					new String[] { "TLCEvalDefinition", "name of a definition reachable from the root module",
+							Values.ppr(v.toString()) });
 		}
-		
+
 		if (opDef.getArity() != 0) {
 			throw new EvalException(EC.TLC_MODULE_ONE_ARGUMENT_ERROR,
 					new String[] { "TLCEvalDefinition", "a zero-arity definition", opDef.getSignature() });
 		}
-		
-		// Evaluate (the body of) the requested definition in the existing scope (context & states).
+
+		// Evaluate (the body of) the requested definition in the existing scope
+		// (context & states).
 		return tool.eval(opDef.getBody(), c, s0, s1, control, cm);
 	}
 

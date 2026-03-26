@@ -58,10 +58,10 @@ public class SubsetEnumeratorTest {
 	@Parameters
 	public static List<Enumerable> getEnumerable() {
 		final List<Enumerable> params = new ArrayList<Enumerable>();
-		
+
 		// IntervalValue
 		params.add(new IntervalValue(1, 10));
-		
+
 		// SetEnumValue
 		final ValueVec vec = new ValueVec();
 		final String input = "ABCDEFGHIJ";
@@ -72,19 +72,20 @@ public class SubsetEnumeratorTest {
 			}
 		});
 		params.add(new SetEnumValue(vec, false));
-		
+
 		// SetOfTuplesValue
 		params.add(new SetOfTuplesValue(new IntervalValue(1, 5), new IntervalValue(1, 5)));
 		params.add(new SetOfTuplesValue(new SetEnumValue(), new SetEnumValue())); // empty
-		
+
 		// UnionValue
 		params.add(new UnionValue(
 				new SetEnumValue(new Value[] { new IntervalValue(1, 5), new IntervalValue(5, 11) }, true)));
 		params.add(new UnionValue(new SetEnumValue())); // empty
-		
+
 		// SetOfFcnsValue
 		params.add(new SetOfFcnsValue(new IntervalValue(2, 5),
-				new SetEnumValue(new Value[] { new StringValue("a"), new StringValue("b"), new StringValue("c") }, true)));
+				new SetEnumValue(new Value[] { new StringValue("a"), new StringValue("b"), new StringValue("c") },
+						true)));
 		params.add(new SetOfFcnsValue(new IntervalValue(3, 5), new SetEnumValue())); // empty range
 
 		// SetOfFcnsValue with SubsetValue as range.
@@ -103,13 +104,13 @@ public class SubsetEnumeratorTest {
 		params.add(new SubsetValue(new SetEnumValue(
 				new Value[] { new StringValue("a"), new StringValue("b"), new StringValue("c") }, true)));
 		params.add(new SubsetValue(new SetEnumValue())); // empty
-		
+
 		// Adding values to Set<Value> requires fingerprinting.
 		FP64.Init();
 
 		return params;
 	}
-	
+
 	private final Enumerable enumerable;
 
 	public SubsetEnumeratorTest(final Enumerable enumerable) {
@@ -124,7 +125,7 @@ public class SubsetEnumeratorTest {
 			public void accept(double fraction) {
 				final int k = (int) Math.ceil(enumerable.size() * fraction);
 				final List<Value> values = enumerable.elements(k).all();
-				
+
 				// Expected size.
 				Assert.assertEquals(String.format("Failed for fraction: %s", fraction), k, values.size());
 
@@ -139,21 +140,21 @@ public class SubsetEnumeratorTest {
 			}
 		});
 	}
-	
+
 	@Test
 	public void testGetRandomSubset() {
 		DoubleStream.of(0, .1, .2, .3, .4, .55, .625, .775, .8, .9, 1).forEach(new DoubleConsumer() {
 			@Override
 			public void accept(final double fraction) {
 				final int k = (int) Math.ceil(enumerable.size() * fraction);
-				
+
 				final Enumerable enumValue = enumerable.getRandomSubset(k);
-				
+
 				// Expected size.
 				assertEquals(String.format("Failed for fraction: %s", fraction), k, enumValue.size());
 
 				final Set<Value> values = new HashSet<>(enumValue.size());
-				
+
 				// Each value is actually a member of enumerable.
 				ValueEnumeration elements = enumValue.elements();
 				Value v = null;
@@ -165,7 +166,7 @@ public class SubsetEnumeratorTest {
 				// Unique values.
 				Assert.assertEquals(String.format("Failed for fraction: %s", fraction), enumValue.size(),
 						new HashSet<Value>(values).size());
-				
+
 			}
 		});
 	}

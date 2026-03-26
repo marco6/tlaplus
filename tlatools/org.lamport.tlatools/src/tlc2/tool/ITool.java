@@ -52,40 +52,40 @@ import util.FilenameToStream;
 public interface ITool extends TraceApp, OpDefEvaluator {
 
 	Mode getMode();
-	
+
 	/**
-	   * This method returns the set of all possible actions of the
-	   * spec, and sets the actions field of this object. In fact, we
-	   * could simply treat the next predicate as one "giant" action.
-	   * But for efficiency, we preprocess the next state predicate by
-	   * splitting it into a set of actions for the maximum prefix
-	   * of disjunction and existential quantification.
-	   */
+	 * This method returns the set of all possible actions of the
+	 * spec, and sets the actions field of this object. In fact, we
+	 * could simply treat the next predicate as one "giant" action.
+	 * But for efficiency, we preprocess the next state predicate by
+	 * splitting it into a set of actions for the maximum prefix
+	 * of disjunction and existential quantification.
+	 */
 	Action[] getActions();
 
 	/*
-	   * This method returns the set of possible initial states that
-	   * satisfies the initial state predicate. Initial state predicate
-	   * can be under-specified.  Too many possible initial states will
-	   * probably make tools like TLC useless.
-	   */
+	 * This method returns the set of possible initial states that
+	 * satisfies the initial state predicate. Initial state predicate
+	 * can be under-specified. Too many possible initial states will
+	 * probably make tools like TLC useless.
+	 */
 	StateVec getInitStates();
 
 	void getInitStates(IStateFunctor functor);
 
-	/* Create the state specified by pred.  */
+	/* Create the state specified by pred. */
 	TLCState makeState(SemanticNode pred);
 
 	/**
-	   * This method returns the set of next states when taking the action
-	   * in the given state.
-	   */
+	 * This method returns the set of next states when taking the action
+	 * in the given state.
+	 */
 	StateVec getNextStates(Action action, TLCState state);
-	
+
 	boolean getNextStates(final INextStateFunctor functor, final TLCState state);
 
 	boolean getNextStates(final INextStateFunctor functor, final TLCState state, final Action action);
-	
+
 	IValue eval(SemanticNode expr);
 
 	IValue eval(SemanticNode expr, Context c);
@@ -93,24 +93,24 @@ public interface ITool extends TraceApp, OpDefEvaluator {
 	IValue eval(SemanticNode expr, Context c, TLCState s0);
 
 	IValue eval(SemanticNode expr, Context c, TLCState s0, TLCState s1, int control);
-	
+
 	IValue eval(SemanticNode expr, Context c, TLCState s0, TLCState s1, int control, CostModel cm);
 
 	/**
-	   * This method determines if the argument is a valid state.  A state
-	   * is good iff it assigns legal explicit values to all the global
-	   * state variables.
-	   */
+	 * This method determines if the argument is a valid state. A state
+	 * is good iff it assigns legal explicit values to all the global
+	 * state variables.
+	 */
 	boolean isGoodState(TLCState state);
 
 	/* This method determines if a state satisfies the model constraints. */
 	boolean isInModel(TLCState state) throws EvalException;
-	
+
 	boolean isInModel(final ExprNode constraint, TLCState state) throws EvalException;
 
 	/* This method determines if a pair of states satisfy the action constraints. */
 	boolean isInActions(TLCState s1, TLCState s2) throws EvalException;
-	
+
 	boolean isInActions(final ExprNode constraint, TLCState s1, TLCState s2) throws EvalException;
 
 	double evalReward(TLCState s1, TLCState s2, final double fallback) throws EvalException;
@@ -118,17 +118,20 @@ public interface ITool extends TraceApp, OpDefEvaluator {
 	boolean hasStateOrActionConstraints();
 
 	/**
-	   * This method determines if an action is enabled in the given state.
-	   * More precisely, it determines if (act.pred /\ (sub' # sub)) is
-	   * enabled in the state s and context act.con.
-	   */
+	 * This method determines if an action is enabled in the given state.
+	 * More precisely, it determines if (act.pred /\ (sub' # sub)) is
+	 * enabled in the state s and context act.con.
+	 */
 	TLCState enabled(SemanticNode pred, Context c, TLCState s0, TLCState s1, ExprNode subscript, final int ail);
+
 	TLCState enabled(SemanticNode pred, Context c, TLCState s0, TLCState s1);
+
 	TLCState enabled(SemanticNode pred, IActionItemList acts, Context c, TLCState s0, TLCState s1);
+
 	TLCState enabled(SemanticNode pred, IActionItemList acts, Context c, TLCState s0, TLCState s1, CostModel cm);
 
 	boolean isValid(ExprNode expr, Context ctxt);
-	
+
 	/* This method determines if the action predicate is valid in (s0, s1). */
 	boolean isValid(Action act, TLCState s0, TLCState s1);
 
@@ -144,18 +147,18 @@ public interface ITool extends TraceApp, OpDefEvaluator {
 	TLCStateInfo getState(long fp);
 
 	/**
-		 * Reconstruct the next state of state s whose fingerprint is fp.
-		 *
-		 * @return Returns the TLCState wrapped in TLCStateInfo. TLCStateInfo stores
-		 *         the stateNumber (relative to the given sinfo) and a pointer to
-		 *         the predecessor.
-		 */
+	 * Reconstruct the next state of state s whose fingerprint is fp.
+	 *
+	 * @return Returns the TLCState wrapped in TLCStateInfo. TLCStateInfo stores
+	 *         the stateNumber (relative to the given sinfo) and a pointer to
+	 *         the predecessor.
+	 */
 	TLCStateInfo getState(long fp, TLCStateInfo sinfo);
 
 	/* Reconstruct the next state of state s whose fingerprint is fp. */
 	TLCStateInfo getState(long fp, TLCState s);
 
-	/* Reconstruct the info for s1.   */
+	/* Reconstruct the info for s1. */
 	TLCStateInfo getState(TLCState s1, TLCState s);
 
 	/* Return the set of all permutations under the symmetry assumption. */
@@ -163,7 +166,8 @@ public interface ITool extends TraceApp, OpDefEvaluator {
 
 	boolean hasSymmetry();
 
-	Context getFcnContext(IFcnLambdaValue fcn, ExprOrOpArgNode[] args, Context c, TLCState s0, TLCState s1, int control);
+	Context getFcnContext(IFcnLambdaValue fcn, ExprOrOpArgNode[] args, Context c, TLCState s0, TLCState s1,
+			int control);
 
 	Context getFcnContext(IFcnLambdaValue fcn, ExprOrOpArgNode[] args, Context c, TLCState s0, TLCState s1, int control,
 			CostModel cm);
@@ -183,9 +187,9 @@ public interface ITool extends TraceApp, OpDefEvaluator {
 	boolean[] getAssumptionIsAxiom();
 
 	int checkAssumptions();
-	
+
 	int checkPostCondition();
-	
+
 	int checkPostConditionWithCounterExample(IValue value);
 
 	String[] getInvNames();
@@ -196,7 +200,7 @@ public interface ITool extends TraceApp, OpDefEvaluator {
 	 * @return The name of the root module.
 	 */
 	String getRootName();
-	
+
 	/**
 	 * @return The file name of the root module which might contain the
 	 *         full or relative path information.
@@ -296,7 +300,7 @@ public interface ITool extends TraceApp, OpDefEvaluator {
 		}
 		return this;
 	}
-	
+
 	default boolean isDebugger() {
 		return false;
 	}

@@ -36,9 +36,9 @@ import tlc2.output.EC.ExitStatus;
 public class IncompatibleTypesLiveTest extends ModelCheckerTestCase {
 
 	public IncompatibleTypesLiveTest() {
-		super("IncompatibleTypesLive", new String[] {"-config", "IncompatibleTypesLive.tla"}, ExitStatus.SUCCESS);
+		super("IncompatibleTypesLive", new String[] { "-config", "IncompatibleTypesLive.tla" }, ExitStatus.SUCCESS);
 	}
-	
+
 	@Test
 	public void testSpec() {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));

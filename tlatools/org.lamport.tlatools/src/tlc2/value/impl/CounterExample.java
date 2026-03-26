@@ -56,21 +56,22 @@ public class CounterExample extends RecordValue {
 	public CounterExample(final List<TLCStateInfo> trace, final int loopOrdinal) {
 		this(trace, Action.UNKNOWN, loopOrdinal, true);
 	}
-	
+
 	public CounterExample(final List<TLCStateInfo> trace, final Action action, final int loopOrdinal) {
 		this(trace, action, loopOrdinal, true);
 	}
-		
+
 	// CounterExample has been modeled as a graph to represent counterexamples
 	// of safety *and* liveness violations. Also, this representation is
 	// suitable once the code is extended to handle TLC's "-continue" parameter,
 	// when there can be many counterexamples.
 	// TODO Include name of definition of the violated property.
-	public CounterExample(final List<TLCStateInfo> trace, final Action action, final int loopOrdinal, final boolean isConsole) {
+	public CounterExample(final List<TLCStateInfo> trace, final Action action, final int loopOrdinal,
+			final boolean isConsole) {
 		super(isConsole ? new UniqueString[] { ACTIONS, STATES } : new UniqueString[] { ACTIONS, STATES, CONSOLE },
 				new Value[isConsole ? 2 : 3], false);
 
- 		final int loopIdx = loopOrdinal - 1;
+		final int loopIdx = loopOrdinal - 1;
 		assert loopIdx < trace.size();
 
 		final LinkedList<Value> states = new LinkedList<>();
@@ -102,11 +103,12 @@ public class CounterExample extends RecordValue {
 			this.values[2] = BoolValue.ValFalse;
 		}
 	}
+
 	public CounterExample(TLCState initialState) {
 		this(Arrays.asList(new TLCStateInfo[] { new TLCStateInfo(initialState) }), Action.UNKNOWN, 0, true);
 	}
 
-    public Value toTrace() {
+	public Value toTrace() {
 		final SetEnumValue set = (SetEnumValue) this.select(new StringValue(STATES));
 		final Value[] v = new Value[set.elems.size()];
 		for (int i = 0; i < v.length; i++) {

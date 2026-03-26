@@ -52,7 +52,9 @@ public class ActionCompositionDistributiveATest extends ModelCheckerTestCase {
 		assertFalse(recorder.recorded(EC.GENERAL));
 
 		// This is the test that is *not* false.
-		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "1", "1", "0")); // TODO stats are an educated guess but distinct should be 1 because z' = z.
+		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "1", "1", "0")); // TODO stats are an educated guess
+																					// but distinct should be 1 because
+																					// z' = z.
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "2"));
 	}
 

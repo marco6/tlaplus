@@ -52,8 +52,8 @@ public class RecordValue extends Value implements FunctionValue {
   private static final UniqueString PARAMS = UniqueString.of("parameters");
   private static final UniqueString ACTION = UniqueString.of("_action");
 
-  public final UniqueString[] names;   // the field names
-  public final Value[] values;         // the field values
+  public final UniqueString[] names; // the field names
+  public final Value[] values; // the field values
   private boolean isNorm;
   public static final RecordValue EmptyRcd = new RecordValue(new UniqueString[0], new Value[0], true);
 
@@ -65,304 +65,313 @@ public class RecordValue extends Value implements FunctionValue {
   }
 
   public RecordValue(UniqueString[] names, Value[] values, boolean isNorm, CostModel cm) {
-	  this(names, values, isNorm);
-	  this.cm = cm;
+    this(names, values, isNorm);
+    this.cm = cm;
   }
-  
+
   public RecordValue(UniqueString name, Value v, boolean isNorm) {
-	  this(new UniqueString[] {name}, new Value[] {v}, isNorm);
+    this(new UniqueString[] { name }, new Value[] { v }, isNorm);
   }
-  
+
   public RecordValue(UniqueString name, Value v) {
-	  this(new UniqueString[] {name}, new Value[] {v}, false);
+    this(new UniqueString[] { name }, new Value[] { v }, false);
   }
 
-	// See
-	// https://github.com/tlaplus/CommunityModules/commit/12cc3c6046d49ceaf2d0de8ce7558d8e2f4e53ad#diff-9a781a1a0e9b833becf01e1979ac6c5a9d49561c6b41cfbd70cfd75df1716867R86
-	// where this would have been useful. Consider refactoring the CM module
-	// override once sufficient time has passed that we can expect most users to be
-	// on a version of TLC with this constructor.
-	public RecordValue(final Map<UniqueString, ? extends Value> m) {
-		final List<Map.Entry<UniqueString, ? extends Value>> entries = new ArrayList<>(m.entrySet());
+  // See
+  // https://github.com/tlaplus/CommunityModules/commit/12cc3c6046d49ceaf2d0de8ce7558d8e2f4e53ad#diff-9a781a1a0e9b833becf01e1979ac6c5a9d49561c6b41cfbd70cfd75df1716867R86
+  // where this would have been useful. Consider refactoring the CM module
+  // override once sufficient time has passed that we can expect most users to be
+  // on a version of TLC with this constructor.
+  public RecordValue(final Map<UniqueString, ? extends Value> m) {
+    final List<Map.Entry<UniqueString, ? extends Value>> entries = new ArrayList<>(m.entrySet());
 
-		this.names = new UniqueString[entries.size()];
-		this.values = new Value[entries.size()];
+    this.names = new UniqueString[entries.size()];
+    this.values = new Value[entries.size()];
 
-		for (int i = 0; i < entries.size(); i++) {
-			this.names[i] = entries.get(i).getKey();
-			this.values[i] = entries.get(i).getValue();
-		}
-	}
+    for (int i = 0; i < entries.size(); i++) {
+      this.names[i] = entries.get(i).getKey();
+      this.values[i] = entries.get(i).getValue();
+    }
+  }
 
   public RecordValue(final RecordValue existing, UniqueString name, Value v) {
-	  this(Stream.concat(Arrays.stream(existing.names), Stream.of(name)).toArray(UniqueString[]::new),
-				Stream.concat(Arrays.stream(existing.values), Stream.of(v)).toArray(Value[]::new), false);
+    this(Stream.concat(Arrays.stream(existing.names), Stream.of(name)).toArray(UniqueString[]::new),
+        Stream.concat(Arrays.stream(existing.values), Stream.of(v)).toArray(Value[]::new), false);
   }
 
   public RecordValue(final Location location) {
-		this.names = new UniqueString[5];
-		this.values = new Value[this.names.length];
+    this.names = new UniqueString[5];
+    this.values = new Value[this.names.length];
 
-		this.names[0] = BLI;
-		this.values[0] = IntValue.gen(location.beginLine());
+    this.names[0] = BLI;
+    this.values[0] = IntValue.gen(location.beginLine());
 
-		this.names[1] = BCOL;
-		this.values[1] = IntValue.gen(location.beginColumn());
+    this.names[1] = BCOL;
+    this.values[1] = IntValue.gen(location.beginColumn());
 
-		this.names[2] = ELI;
-		this.values[2] = IntValue.gen(location.endLine());
+    this.names[2] = ELI;
+    this.values[2] = IntValue.gen(location.endLine());
 
-		this.names[3] = ECOL;
-		this.values[3] = IntValue.gen(location.endColumn());
-		
-		this.names[4] = MOD;
-		this.values[4] = new StringValue(location.sourceAsUniqueString());
-		
-		this.isNorm = false;
+    this.names[3] = ECOL;
+    this.values[3] = IntValue.gen(location.endColumn());
+
+    this.names[4] = MOD;
+    this.values[4] = new StringValue(location.sourceAsUniqueString());
+
+    this.isNorm = false;
   }
-  
+
   public RecordValue(final OpDefNode odn) {
-	  	this.names = new UniqueString[2];
-    	this.values = new Value[this.names.length];
-    	
-		this.names[0] = NAME;
-		this.values[0] = new StringValue(odn.getName());
-		
-		this.names[1] = LOC;
-		this.values[1] = new RecordValue(odn.getLocation());
-    	
-		this.isNorm = false;
+    this.names = new UniqueString[2];
+    this.values = new Value[this.names.length];
+
+    this.names[0] = NAME;
+    this.values[0] = new StringValue(odn.getName());
+
+    this.names[1] = LOC;
+    this.values[1] = new RecordValue(odn.getLocation());
+
+    this.isNorm = false;
   }
-  
+
   public RecordValue(final OpDeclNode odn) {
-	  	this.names = new UniqueString[2];
-    	this.values = new Value[this.names.length];
-    	
-		this.names[0] = NAME;
-		this.values[0] = new StringValue(odn.getName());
-		
-		this.names[1] = LOC;
-		this.values[1] = new RecordValue(odn.getLocation());
-    	
-		this.isNorm = false;
+    this.names = new UniqueString[2];
+    this.values = new Value[this.names.length];
+
+    this.names[0] = NAME;
+    this.values[0] = new StringValue(odn.getName());
+
+    this.names[1] = LOC;
+    this.values[1] = new RecordValue(odn.getLocation());
+
+    this.isNorm = false;
   }
-  
+
   public RecordValue(final OpDeclNode odn, final UniqueString u, final Value v) {
-	  	this.names = new UniqueString[3];
-    	this.values = new Value[this.names.length];
-    	
-		this.names[0] = NAME;
-		this.values[0] = new StringValue(odn.getName());
-		
-		this.names[1] = LOC;
-		this.values[1] = new RecordValue(odn.getLocation());
+    this.names = new UniqueString[3];
+    this.values = new Value[this.names.length];
 
-		this.names[2] = u;
-		this.values[2] = v;
+    this.names[0] = NAME;
+    this.values[0] = new StringValue(odn.getName());
 
-		this.isNorm = false;
+    this.names[1] = LOC;
+    this.values[1] = new RecordValue(odn.getLocation());
+
+    this.names[2] = u;
+    this.values[2] = v;
+
+    this.isNorm = false;
   }
 
   public RecordValue(final Action action) {
-	    final Map<UniqueString, Value> parameters = action.getParameters();    
-	    if (parameters.isEmpty()) {
-	    	this.names = new UniqueString[2];
-	    	this.values = new Value[this.names.length];
-	    } else {
-	    	this.names = new UniqueString[4];	    	
-	    	this.values = new Value[this.names.length];
-	    	
-			this.names[2] = CTXT;
-			this.values[2] = new RecordValue(parameters);
+    final Map<UniqueString, Value> parameters = action.getParameters();
+    if (parameters.isEmpty()) {
+      this.names = new UniqueString[2];
+      this.values = new Value[this.names.length];
+    } else {
+      this.names = new UniqueString[4];
+      this.values = new Value[this.names.length];
 
-			this.names[3] = PARAMS;
-			this.values[3] = new TupleValue(
-					action.getParameters().keySet().stream().map(StringValue::new).toArray(Value[]::new));
-	    }
+      this.names[2] = CTXT;
+      this.values[2] = new RecordValue(parameters);
 
-		this.names[0] = NAME;
-		this.values[0] = new StringValue(action.getName());
-		
-		this.names[1] = LOC;
-		this.values[1] = new RecordValue(action.getDefinition());
-		
-		this.isNorm = false;
+      this.names[3] = PARAMS;
+      this.values[3] = new TupleValue(
+          action.getParameters().keySet().stream().map(StringValue::new).toArray(Value[]::new));
+    }
+
+    this.names[0] = NAME;
+    this.values[0] = new StringValue(action.getName());
+
+    this.names[1] = LOC;
+    this.values[1] = new RecordValue(action.getDefinition());
+
+    this.isNorm = false;
   }
 
   public RecordValue(final Action action, final UniqueString u, final Value v) {
-		final Map<UniqueString, Value> parameters = action.getParameters();
-		this.names = new UniqueString[parameters.isEmpty() ? 3 : 5];
-		this.values = new Value[this.names.length];
+    final Map<UniqueString, Value> parameters = action.getParameters();
+    this.names = new UniqueString[parameters.isEmpty() ? 3 : 5];
+    this.values = new Value[this.names.length];
 
-		this.names[0] = NAME;
-		this.values[0] = new StringValue(action.getName());
+    this.names[0] = NAME;
+    this.values[0] = new StringValue(action.getName());
 
-		this.names[1] = LOC;
-		this.values[1] = new RecordValue(action.getDefinition());
+    this.names[1] = LOC;
+    this.values[1] = new RecordValue(action.getDefinition());
 
-		this.names[2] = u;
-		this.values[2] = v;
+    this.names[2] = u;
+    this.values[2] = v;
 
-		if (!parameters.isEmpty()) {
-			this.names[3] = CTXT;
-			this.values[3] = new RecordValue(parameters);
+    if (!parameters.isEmpty()) {
+      this.names[3] = CTXT;
+      this.values[3] = new RecordValue(parameters);
 
-			this.names[4] = PARAMS;
-			this.values[4] = new TupleValue(
-					action.getParameters().keySet().stream().map(StringValue::new).toArray(Value[]::new));
-		}
-		
-		this.isNorm = false;
+      this.names[4] = PARAMS;
+      this.values[4] = new TupleValue(
+          action.getParameters().keySet().stream().map(StringValue::new).toArray(Value[]::new));
+    }
+
+    this.isNorm = false;
   }
 
   public RecordValue(final TLCStateInfo info) {
-	  this(info.state);
+    this(info.state);
   }
 
   public RecordValue(final TLCState state) {
-		final OpDeclNode[] vars = state.getVars();
-		
-		this.names = new UniqueString[vars.length];
-		this.values = new Value[vars.length];
+    final OpDeclNode[] vars = state.getVars();
 
-		for (int i = 0; i < vars.length; i++) {
-			this.names[i] = vars[i].getName();
-			this.values[i] = (Value) state.lookup(this.names[i]); 
-		}
+    this.names = new UniqueString[vars.length];
+    this.values = new Value[vars.length];
 
-		this.isNorm = false;
+    for (int i = 0; i < vars.length; i++) {
+      this.names[i] = vars[i].getName();
+      this.values[i] = (Value) state.lookup(this.names[i]);
+    }
+
+    this.isNorm = false;
   }
 
   public RecordValue(final TLCState state, final Action action) {
-		final OpDeclNode[] vars = state.getVars();
-		
-		this.names = new UniqueString[vars.length + 1];
-		this.values = new Value[vars.length + 1];
+    final OpDeclNode[] vars = state.getVars();
 
-		//TODO: _action too verbose?
-		this.names[0] = ACTION;
-		this.values[0] = new RecordValue(action);
-		
-		for (int i = 0; i < vars.length; i++) {
-			this.names[i+1] = vars[i].getName();
-			this.values[i+1] = (Value) state.lookup(this.names[i+1]); 
-		}
-		
-		this.isNorm = false;
+    this.names = new UniqueString[vars.length + 1];
+    this.values = new Value[vars.length + 1];
+
+    // TODO: _action too verbose?
+    this.names[0] = ACTION;
+    this.values[0] = new RecordValue(action);
+
+    for (int i = 0; i < vars.length; i++) {
+      this.names[i + 1] = vars[i].getName();
+      this.values[i + 1] = (Value) state.lookup(this.names[i + 1]);
+    }
+
+    this.isNorm = false;
   }
 
   public RecordValue(final TLCState state, final Value defVal) {
-	  this(state);
-		// if state.lookup in this returned null, replace null with defVal.
-		for (int i = 0; i < this.values.length; i++) {
-			if (this.values[i] == null) {
-				this.values[i] = defVal;
-			}
-		}
+    this(state);
+    // if state.lookup in this returned null, replace null with defVal.
+    for (int i = 0; i < this.values.length; i++) {
+      if (this.values[i] == null) {
+        this.values[i] = defVal;
+      }
+    }
   }
 
-  	/**
-	 * Create RecordValue out of pair of states (s, t) such that the variable names
-	 * of s become record keys as is and the variables of t become record keys with
-	 * a ' appended.
-	 */
+  /**
+   * Create RecordValue out of pair of states (s, t) such that the variable names
+   * of s become record keys as is and the variables of t become record keys with
+   * a ' appended.
+   */
   public RecordValue(final TLCState state, final TLCState successor, final Value defVal) {
-	  assert state.getVars().length == successor.getVars().length;
-	  
-		final OpDeclNode[] vars = state.getVars();
-		
-		this.names = new UniqueString[vars.length * 2];
-		this.values = new Value[vars.length * 2];
+    assert state.getVars().length == successor.getVars().length;
 
-		for (int i = 0; i < vars.length; i++) {
-			final int j = i * 2;
-			final UniqueString var = vars[i].getName();
+    final OpDeclNode[] vars = state.getVars();
 
-			this.names[j] = UniqueString.of(var + " ");
-			this.names[j+1] = UniqueString.of(var + "'");
+    this.names = new UniqueString[vars.length * 2];
+    this.values = new Value[vars.length * 2];
 
-			this.values[j] = (Value) state.lookup(var);
-			if (this.values[j] == null) {
-				this.values[j] = defVal;
-			}
-			
-			this.values[j+1] = (Value) successor.lookup(var);
-			if (this.values[j+1] == null) {
-				this.values[j+1] = defVal;
-			}
-		}
+    for (int i = 0; i < vars.length; i++) {
+      final int j = i * 2;
+      final UniqueString var = vars[i].getName();
 
-		this.isNorm = false;
+      this.names[j] = UniqueString.of(var + " ");
+      this.names[j + 1] = UniqueString.of(var + "'");
+
+      this.values[j] = (Value) state.lookup(var);
+      if (this.values[j] == null) {
+        this.values[j] = defVal;
+      }
+
+      this.values[j + 1] = (Value) successor.lookup(var);
+      if (this.values[j + 1] == null) {
+        this.values[j + 1] = defVal;
+      }
+    }
+
+    this.isNorm = false;
   }
 
   @Override
-  public final byte getKind() { return RECORDVALUE; }
+  public final byte getKind() {
+    return RECORDVALUE;
+  }
 
   @Override
   public final int compareTo(Object obj) {
     try {
-      RecordValue rcd = obj instanceof Value ? (RecordValue) ((Value)obj).toRcd() : null;
+      RecordValue rcd = obj instanceof Value ? (RecordValue) ((Value) obj).toRcd() : null;
       if (rcd == null) {
         if (obj instanceof ModelValue) {
-            return ((ModelValue) obj).modelValueCompareTo(this);
+          return ((ModelValue) obj).modelValueCompareTo(this);
         }
         Assert.fail("Attempted to compare record:\n" + Values.ppr(this.toString()) +
-        "\nwith non-record\n" + Values.ppr(obj.toString()), getSource());
+            "\nwith non-record\n" + Values.ppr(obj.toString()), getSource());
       }
       this.normalize();
       rcd.normalize();
       int len = this.names.length;
       int cmp = len - rcd.names.length;
       if (cmp == 0) {
-    	// First, compare the (equicardinal) domains.
+        // First, compare the (equicardinal) domains.
         for (int i = 0; i < len; i++) {
           cmp = this.names[i].compareTo(rcd.names[i]);
-          if (cmp != 0) return cmp;
+          if (cmp != 0)
+            return cmp;
         }
         // Then, compare values iff domains are equal.
         for (int i = 0; i < len; i++) {
           cmp = this.values[i].compareTo(rcd.values[i]);
-          if (cmp != 0) return cmp;
+          if (cmp != 0)
+            return cmp;
         }
       }
       return cmp;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   public final boolean equals(Object obj) {
     try {
-      RecordValue rcd = obj instanceof Value ? (RecordValue) ((Value)obj).toRcd() : null;
+      RecordValue rcd = obj instanceof Value ? (RecordValue) ((Value) obj).toRcd() : null;
       if (rcd == null) {
         if (obj instanceof ModelValue)
-           return ((ModelValue) obj).modelValueEquals(this) ;
+          return ((ModelValue) obj).modelValueEquals(this);
         Assert.fail("Attempted to check equality of record:\n" + Values.ppr(this.toString()) +
-        "\nwith non-record\n" + Values.ppr(obj.toString()), getSource());
+            "\nwith non-record\n" + Values.ppr(obj.toString()), getSource());
       }
       this.normalize();
       rcd.normalize();
       int len = this.names.length;
-      if (len != rcd.names.length) return false;
-  	  // First, compare the (equicardinal) domains.
+      if (len != rcd.names.length)
+        return false;
+      // First, compare the (equicardinal) domains.
       for (int i = 0; i < len; i++) {
         if (!(this.names[i].equals(rcd.names[i]))) {
-        	return false;
+          return false;
         }
       }
       // Then, compare values iff domains are equal.
       for (int i = 0; i < len; i++) {
         if (!(this.values[i].equals(rcd.values[i]))) {
-        	  return false;
+          return false;
         }
       }
       return true;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -370,17 +379,21 @@ public class RecordValue extends Value implements FunctionValue {
   public final boolean member(Value elem) {
     try {
       Assert.fail("Attempted to check if element:\n" + Values.ppr(elem.toString()) +
-                  "\nis in the record:\n" + Values.ppr(this.toString()), getSource());
-      return false;    // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+          "\nis in the record:\n" + Values.ppr(this.toString()), getSource());
+      return false; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   @Override
-  public final boolean isFinite() { return true; }
+  public final boolean isFinite() {
+    return true;
+  }
 
   @Override
   public final Value takeExcept(ValueExcept ex) {
@@ -390,13 +403,12 @@ public class RecordValue extends Value implements FunctionValue {
         Value[] newValues = new Value[rlen];
         Value arcVal = ex.path[ex.idx];
         if (arcVal instanceof StringValue) {
-          UniqueString arc = ((StringValue)arcVal).val;
+          UniqueString arc = ((StringValue) arcVal).val;
           for (int i = 0; i < rlen; i++) {
             if (this.names[i].equals(arc)) {
               ex.idx++;
               newValues[i] = this.values[i].takeExcept(ex);
-            }
-            else {
+            } else {
               newValues[i] = this.values[i];
             }
           }
@@ -408,16 +420,17 @@ public class RecordValue extends Value implements FunctionValue {
             }
           }
           return new RecordValue(newNames, newValues, this.isNorm);
-        }
-        else {
-            MP.printWarning(EC.TLC_WRONG_RECORD_FIELD_NAME, new String[]{Values.ppr(arcVal.toString())});
+        } else {
+          MP.printWarning(EC.TLC_WRONG_RECORD_FIELD_NAME, new String[] { Values.ppr(arcVal.toString()) });
         }
       }
       return ex.value;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -429,42 +442,48 @@ public class RecordValue extends Value implements FunctionValue {
         res = res.takeExcept(exs[i]);
       }
       return res;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   @Override
   public final Value toRcd() {
-	  return this;
-  }
-  
-  @Override
-  public final Value toTuple() {
-	  return size() == 0 ? TupleValue.EmptyTuple : super.toTuple();
+    return this;
   }
 
   @Override
-	public final Value toFcnRcd() {
-        this.normalize();
-        Value[] dom = new Value[this.names.length];
-        for (int i = 0; i < this.names.length; i++) {
-          dom[i] = new StringValue(this.names[i], cm);
-        }
-        if (coverage) {cm.incSecondary(dom.length);}
-        return new FcnRcdValue(dom, this.values, this.isNormalized(), cm);
-	}
+  public final Value toTuple() {
+    return size() == 0 ? TupleValue.EmptyTuple : super.toTuple();
+  }
+
+  @Override
+  public final Value toFcnRcd() {
+    this.normalize();
+    Value[] dom = new Value[this.names.length];
+    for (int i = 0; i < this.names.length; i++) {
+      dom[i] = new StringValue(this.names[i], cm);
+    }
+    if (coverage) {
+      cm.incSecondary(dom.length);
+    }
+    return new FcnRcdValue(dom, this.values, this.isNormalized(), cm);
+  }
 
   @Override
   public final int size() {
     try {
       return this.names.length;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -474,7 +493,7 @@ public class RecordValue extends Value implements FunctionValue {
       if (!(arg instanceof StringValue)) {
         Assert.fail("Attempted to access record by a non-string argument: " + Values.ppr(arg.toString()), getSource());
       }
-      UniqueString name = ((StringValue)arg).getVal();
+      UniqueString name = ((StringValue) arg).getVal();
       int rlen = this.names.length;
       for (int i = 0; i < rlen; i++) {
         if (name.equals(this.names[i])) {
@@ -483,11 +502,13 @@ public class RecordValue extends Value implements FunctionValue {
       }
       Assert.fail("Attempted to access nonexistent field '" + name +
           "' of record\n" + Values.ppr(this.toString()), getSource());
-      return null;    // make compiler happy
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+      return null; // make compiler happy
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -498,10 +519,12 @@ public class RecordValue extends Value implements FunctionValue {
         Assert.fail("Attempted to apply record to more than one arguments.", getSource());
       }
       return this.apply(args[0], control);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -512,7 +535,7 @@ public class RecordValue extends Value implements FunctionValue {
       if (!(arg instanceof StringValue)) {
         Assert.fail("Attempted to access record by a non-string argument: " + Values.ppr(arg.toString()), getSource());
       }
-      UniqueString name = ((StringValue)arg).getVal();
+      UniqueString name = ((StringValue) arg).getVal();
       int rlen = this.names.length;
       for (int i = 0; i < rlen; i++) {
         if (name.equals(this.names[i])) {
@@ -520,51 +543,58 @@ public class RecordValue extends Value implements FunctionValue {
         }
       }
       return null;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   @Override
   public final Value getDomain() {
     try {
-    	Value[] dElems = new Value[this.names.length];
+      Value[] dElems = new Value[this.names.length];
       for (int i = 0; i < this.names.length; i++) {
         dElems[i] = new StringValue(this.names[i]);
       }
       return new SetEnumValue(dElems, this.isNormalized());
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
-//  public final boolean assign(UniqueString name, Value val) {
-//    try {
-//      for (int i = 0; i < this.names.length; i++) {
-//        if (name.equals(this.names[i])) {
-//          if (this.values[i] == UndefValue.ValUndef ||
-//              this.values[i].equals(val)) {
-//            this.values[i] = val;
-//            return true;
-//          }
-//          return false;
-//        }
-//      }
-//      Assert.fail("Attempted to assign to nonexistent record field " + name + ".", getSource());
-//      return false;    // make compiler happy
-//    }
-//    catch (RuntimeException | OutOfMemoryError e) {
-//      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-//      else { throw e; }
-//    }
-//  }
+  // public final boolean assign(UniqueString name, Value val) {
+  // try {
+  // for (int i = 0; i < this.names.length; i++) {
+  // if (name.equals(this.names[i])) {
+  // if (this.values[i] == UndefValue.ValUndef ||
+  // this.values[i].equals(val)) {
+  // this.values[i] = val;
+  // return true;
+  // }
+  // return false;
+  // }
+  // }
+  // Assert.fail("Attempted to assign to nonexistent record field " + name + ".",
+  // getSource());
+  // return false; // make compiler happy
+  // }
+  // catch (RuntimeException | OutOfMemoryError e) {
+  // if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
+  // else { throw e; }
+  // }
+  // }
 
   @Override
-  public final boolean isNormalized() { return this.isNorm; }
+  public final boolean isNormalized() {
+    return this.isNorm;
+  }
 
   @Override
   public final Value normalize() {
@@ -575,8 +605,7 @@ public class RecordValue extends Value implements FunctionValue {
           int cmp = this.names[0].compareTo(this.names[i]);
           if (cmp == 0) {
             Assert.fail("Field name " + this.names[i] + " occurs multiple times in record.", getSource());
-          }
-          else if (cmp > 0) {
+          } else if (cmp > 0) {
             UniqueString ts = this.names[0];
             this.names[0] = this.names[i];
             this.names[i] = ts;
@@ -590,9 +619,9 @@ public class RecordValue extends Value implements FunctionValue {
           UniqueString st = this.names[i];
           Value val = this.values[i];
           int cmp;
-          while ((cmp = st.compareTo(this.names[j-1])) < 0) {
-            this.names[j] = this.names[j-1];
-            this.values[j] = this.values[j-1];
+          while ((cmp = st.compareTo(this.names[j - 1])) < 0) {
+            this.names[j] = this.names[j - 1];
+            this.values[j] = this.values[j - 1];
             j--;
           }
           if (cmp == 0) {
@@ -604,25 +633,29 @@ public class RecordValue extends Value implements FunctionValue {
         this.isNorm = true;
       }
       return this;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   @Override
   public final void deepNormalize() {
-	  try {
+    try {
       for (int i = 0; i < values.length; i++) {
-          values[i].deepNormalize();
-        }
-        normalize();
-	    }
-	    catch (RuntimeException | OutOfMemoryError e) {
-	      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-	      else { throw e; }
-	    }
+        values[i].deepNormalize();
+      }
+      normalize();
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
+    }
   }
 
   @Override
@@ -633,17 +666,19 @@ public class RecordValue extends Value implements FunctionValue {
         defined = defined && this.values[i].isDefined();
       }
       return defined;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
   @Override
   public final IValue deepCopy() {
     try {
-    	Value[] vals = new Value[this.values.length];
+      Value[] vals = new Value[this.values.length];
       for (int i = 0; i < this.values.length; i++) {
         vals[i] = (Value) this.values[i].deepCopy();
       }
@@ -655,38 +690,40 @@ public class RecordValue extends Value implements FunctionValue {
       // copied too to prevent any modification/normalization done to the
       // original to appear in the deepCopy.
       return new RecordValue(Arrays.copyOf(this.names, this.names.length), vals, this.isNorm);
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
-	@Override
-	public final void write(final IValueOutputStream vos) throws IOException {
-		final int index = vos.put(this);
-		if (index == -1) {
-			vos.writeByte(RECORDVALUE);
-			final int len = names.length;
-			vos.writeInt((isNormalized()) ? len : -len);
-			for (int i = 0; i < len; i++) {
-				final int index1 = vos.put(names[i]);
-				if (index1 == -1) {
-					vos.writeByte(STRINGVALUE);
-					names[i].write(vos.getOutputStream());
-				} else {
-					vos.writeByte(DUMMYVALUE);
-					vos.writeNat(index1);
-				}
-				values[i].write(vos);
-			}
-		} else {
-			vos.writeByte(DUMMYVALUE);
-			vos.writeNat(index);
-		}
-	}
+  @Override
+  public final void write(final IValueOutputStream vos) throws IOException {
+    final int index = vos.put(this);
+    if (index == -1) {
+      vos.writeByte(RECORDVALUE);
+      final int len = names.length;
+      vos.writeInt((isNormalized()) ? len : -len);
+      for (int i = 0; i < len; i++) {
+        final int index1 = vos.put(names[i]);
+        if (index1 == -1) {
+          vos.writeByte(STRINGVALUE);
+          names[i].write(vos.getOutputStream());
+        } else {
+          vos.writeByte(DUMMYVALUE);
+          vos.writeNat(index1);
+        }
+        values[i].write(vos);
+      }
+    } else {
+      vos.writeByte(DUMMYVALUE);
+      vos.writeNat(index);
+    }
+  }
 
-  /* The fingerprint methods.  */
+  /* The fingerprint methods. */
   @Override
   public final long fingerPrint(long fp) {
     try {
@@ -702,10 +739,12 @@ public class RecordValue extends Value implements FunctionValue {
         fp = this.values[i].fingerPrint(fp);
       }
       return fp;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -724,10 +763,12 @@ public class RecordValue extends Value implements FunctionValue {
         return new RecordValue(this.names, vals, true);
       }
       return this;
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -748,241 +789,243 @@ public class RecordValue extends Value implements FunctionValue {
         sb = this.values[i].toString(sb, offset, swallow);
       }
       return sb.append("]");
-    }
-    catch (RuntimeException | OutOfMemoryError e) {
-      if (hasSource()) { throw FingerprintException.getNewHead(this, e); }
-      else { throw e; }
+    } catch (RuntimeException | OutOfMemoryError e) {
+      if (hasSource()) {
+        throw FingerprintException.getNewHead(this, e);
+      } else {
+        throw e;
+      }
     }
   }
 
-	public static IValue createFrom(final IValueInputStream vos) throws EOFException, IOException {
-		final int index = vos.getIndex();
-		boolean isNorm = true;
-		int len = vos.readInt();
-		if (len < 0) {
-			len = -len;
-			isNorm = false;
-		}
-		final UniqueString[] names = new UniqueString[len];
-		final Value[] vals = new Value[len];
-		for (int i = 0; i < len; i++) {
-			final byte kind1 = vos.readByte();
-			if (kind1 == DUMMYVALUE) {
-				final int index1 = vos.readNat();
-				names[i] = vos.getValue(index1);
-			} else {
-				final int index1 = vos.getIndex();
-				names[i] = UniqueString.read(vos.getInputStream());
-				vos.assign(names[i], index1);
-			}
-			vals[i] = (Value) vos.read();
-		}
-		final Value res = new RecordValue(names, vals, isNorm);
-		vos.assign(res, index);
-		return res;
-	}
+  public static IValue createFrom(final IValueInputStream vos) throws EOFException, IOException {
+    final int index = vos.getIndex();
+    boolean isNorm = true;
+    int len = vos.readInt();
+    if (len < 0) {
+      len = -len;
+      isNorm = false;
+    }
+    final UniqueString[] names = new UniqueString[len];
+    final Value[] vals = new Value[len];
+    for (int i = 0; i < len; i++) {
+      final byte kind1 = vos.readByte();
+      if (kind1 == DUMMYVALUE) {
+        final int index1 = vos.readNat();
+        names[i] = vos.getValue(index1);
+      } else {
+        final int index1 = vos.getIndex();
+        names[i] = UniqueString.read(vos.getInputStream());
+        vos.assign(names[i], index1);
+      }
+      vals[i] = (Value) vos.read();
+    }
+    final Value res = new RecordValue(names, vals, isNorm);
+    vos.assign(res, index);
+    return res;
+  }
 
-	public static IValue createFromExternal(final ValueInputStream vos) throws EOFException, IOException {
-		final int index = vos.getIndex();
-		int len = vos.readInt();
-		if (len < 0) {
-			len = -len;
-		}
-		final UniqueString[] names = new UniqueString[len];
-		final Value[] vals = new Value[len];
-		for (int i = 0; i < len; i++) {
-			final byte kind1 = vos.readByte();
-			if (kind1 == DUMMYVALUE) {
-				final int index1 = vos.readNat();
-				names[i] = vos.getValue(index1);
-			} else {
-				final int index1 = vos.getIndex();
-				names[i] = UniqueString.readExternal(vos.getInputStream());
-				vos.assign(names[i], index1);
-			}
-			vals[i] = (Value) vos.readExternal();
-		}
-		// If a RecordValue is de-serialized with a potentially different UniqueString
-		// table, the RecordValue is not guaranteed to be normalized.
-		final Value res = new RecordValue(names, vals, false);
-		vos.assign(res, index);
-		return res;
-	}
+  public static IValue createFromExternal(final ValueInputStream vos) throws EOFException, IOException {
+    final int index = vos.getIndex();
+    int len = vos.readInt();
+    if (len < 0) {
+      len = -len;
+    }
+    final UniqueString[] names = new UniqueString[len];
+    final Value[] vals = new Value[len];
+    for (int i = 0; i < len; i++) {
+      final byte kind1 = vos.readByte();
+      if (kind1 == DUMMYVALUE) {
+        final int index1 = vos.readNat();
+        names[i] = vos.getValue(index1);
+      } else {
+        final int index1 = vos.getIndex();
+        names[i] = UniqueString.readExternal(vos.getInputStream());
+        vos.assign(names[i], index1);
+      }
+      vals[i] = (Value) vos.readExternal();
+    }
+    // If a RecordValue is de-serialized with a potentially different UniqueString
+    // table, the RecordValue is not guaranteed to be normalized.
+    final Value res = new RecordValue(names, vals, false);
+    vos.assign(res, index);
+    return res;
+  }
 
-	public TLCState toState() {
-		// rcd can be a superset or subset of the spec's variables, which is why we
-		// cannot simply redefine the values of the state created from
-		// TLCState.Empty.createEmpty(). If would be more elegant to add new
-		// functionality to TLCStateMut. However, the class is final and we should
-		// generally not add additional fields for performance reasons. Thus, create a
-		// nested TLCStateMut or TLCStateMutExt to correctly handle fingerprinting, ....
-			final TLCState state = TLCState.Empty.createEmpty();
-			final OpDeclNode[] vars = state.getVars();
-			for (int i = 0; i < vars.length; i++) {
-				final UniqueString name = vars[i].getName();
-				int rlen = this.names.length;
-				for (int j = 0; j < rlen; j++) {
-					if (name.equals(this.names[j])) {
-						state.bind(name, this.values[j]);
-					}
-				}
-			}
-			return new PrintTLCState(this, state);
-		}
+  public TLCState toState() {
+    // rcd can be a superset or subset of the spec's variables, which is why we
+    // cannot simply redefine the values of the state created from
+    // TLCState.Empty.createEmpty(). If would be more elegant to add new
+    // functionality to TLCStateMut. However, the class is final and we should
+    // generally not add additional fields for performance reasons. Thus, create a
+    // nested TLCStateMut or TLCStateMutExt to correctly handle fingerprinting, ....
+    final TLCState state = TLCState.Empty.createEmpty();
+    final OpDeclNode[] vars = state.getVars();
+    for (int i = 0; i < vars.length; i++) {
+      final UniqueString name = vars[i].getName();
+      int rlen = this.names.length;
+      for (int j = 0; j < rlen; j++) {
+        if (name.equals(this.names[j])) {
+          state.bind(name, this.values[j]);
+        }
+      }
+    }
+    return new PrintTLCState(this, state);
+  }
 
-		public static final class PrintTLCState extends TLCState {
+  public static final class PrintTLCState extends TLCState {
 
-			private static final UniqueString _FORMAT = UniqueString.of("_format");
-			private final RecordValue rcd;
-			private final TLCState state;
+    private static final UniqueString _FORMAT = UniqueString.of("_format");
+    private final RecordValue rcd;
+    private final TLCState state;
 
-			public PrintTLCState(RecordValue recordValue, final TLCState state) {
-				this.rcd = recordValue;
-				this.state = state;
-			}
+    public PrintTLCState(RecordValue recordValue, final TLCState state) {
+      this.rcd = recordValue;
+      this.state = state;
+    }
 
-			@Override
-			public String toString() {
-				final StringBuffer result = new StringBuffer();
-				final int vlen = rcd.names.length;
-				
-				final int idx = Arrays.asList(rcd.names).indexOf(_FORMAT);
+    @Override
+    public String toString() {
+      final StringBuffer result = new StringBuffer();
+      final int vlen = rcd.names.length;
 
-				final String format;
-				if (idx > -1) {
-					format = ((StringValue) rcd.values[idx]).val.toString();
-				} else {
-					if (vlen == 1) {
-						format = "%s = %s\n";
-					} else {
-						format = "/\\ %s = %s\n";
-					}
-				}
-				
-				for (int i = 0; i < vlen; i++) {
-					if (i == idx) {
-						continue;
-					}
-					final String key = rcd.names[i].toString();
-					final String value = Values.ppr(rcd.values[i]);
-					result.append(String.format(format, key, value));
-				}
+      final int idx = Arrays.asList(rcd.names).indexOf(_FORMAT);
 
-				return result.toString();
-			}
+      final String format;
+      if (idx > -1) {
+        format = ((StringValue) rcd.values[idx]).val.toString();
+      } else {
+        if (vlen == 1) {
+          format = "%s = %s\n";
+        } else {
+          format = "/\\ %s = %s\n";
+        }
+      }
 
-			@Override
-			public int hashCode() {
-				return this.state.hashCode();
-			}
+      for (int i = 0; i < vlen; i++) {
+        if (i == idx) {
+          continue;
+        }
+        final String key = rcd.names[i].toString();
+        final String value = Values.ppr(rcd.values[i]);
+        result.append(String.format(format, key, value));
+      }
 
-			@Override
-			public boolean equals(Object obj) {
-				return this.state.equals(obj);
-			}
+      return result.toString();
+    }
 
-			@Override
-			public long fingerPrint() {
-				return this.state.fingerPrint();
-			}
+    @Override
+    public int hashCode() {
+      return this.state.hashCode();
+    }
 
-			@Override
-			public boolean allAssigned() {
-				return this.state.allAssigned();
-			}
+    @Override
+    public boolean equals(Object obj) {
+      return this.state.equals(obj);
+    }
 
-			@Override
-			public String toString(TLCState lastState) {
-				return this.state.toString(this.rcd.names, lastState);
-			}
+    @Override
+    public long fingerPrint() {
+      return this.state.fingerPrint();
+    }
 
-			@Override
-			public String toString(UniqueString[] vars, TLCState lastState) {
-				return this.state.toString(vars, lastState);
-			}
+    @Override
+    public boolean allAssigned() {
+      return this.state.allAssigned();
+    }
 
-			@Override
-			public TLCState bind(UniqueString name, IValue value) {
-				return this.state.bind(name, value);
-			}
+    @Override
+    public String toString(TLCState lastState) {
+      return this.state.toString(this.rcd.names, lastState);
+    }
 
-			@Override
-			public TLCState bind(SymbolNode id, IValue value) {
-				return this.state.bind(id, value);
-			}
+    @Override
+    public String toString(UniqueString[] vars, TLCState lastState) {
+      return this.state.toString(vars, lastState);
+    }
 
-			@Override
-			public TLCState unbind(UniqueString name) {
-				return this.state.unbind(name);
-			}
+    @Override
+    public TLCState bind(UniqueString name, IValue value) {
+      return this.state.bind(name, value);
+    }
 
-			@Override
-			public IValue lookup(UniqueString var) {
-				if (this.state.containsKey(var)) {
-					return this.state.lookup(var);
-				}
-				return this.rcd.select(new StringValue(var));
-			}
+    @Override
+    public TLCState bind(SymbolNode id, IValue value) {
+      return this.state.bind(id, value);
+    }
 
-			@Override
-			public boolean containsKey(UniqueString var) {
-				if (this.state.containsKey(var)) {
-					return true;
-				}
-				for (int i = 0; i < this.rcd.names.length; i++) {
-					if (this.rcd.names[i] == var) {
-						return true;
-					}
-				}
-				return false;
-			}
+    @Override
+    public TLCState unbind(UniqueString name) {
+      return this.state.unbind(name);
+    }
 
-			@Override
-			public TLCState copy() {
-				return this.state.copy();
-			}
+    @Override
+    public IValue lookup(UniqueString var) {
+      if (this.state.containsKey(var)) {
+        return this.state.lookup(var);
+      }
+      return this.rcd.select(new StringValue(var));
+    }
 
-			@Override
-			public TLCState deepCopy() {
-				return this.state.deepCopy();
-			}
+    @Override
+    public boolean containsKey(UniqueString var) {
+      if (this.state.containsKey(var)) {
+        return true;
+      }
+      for (int i = 0; i < this.rcd.names.length; i++) {
+        if (this.rcd.names[i] == var) {
+          return true;
+        }
+      }
+      return false;
+    }
 
-			@Override
-			public StateVec addToVec(StateVec states) {
-				return this.state.addToVec(states);
-			}
+    @Override
+    public TLCState copy() {
+      return this.state.copy();
+    }
 
-			@Override
-			public void deepNormalize() {
-				this.state.deepNormalize();
-			}
+    @Override
+    public TLCState deepCopy() {
+      return this.state.deepCopy();
+    }
 
-			@Override
-			public Set<OpDeclNode> getUnassigned() {
-				return this.state.getUnassigned();
-			}
+    @Override
+    public StateVec addToVec(StateVec states) {
+      return this.state.addToVec(states);
+    }
 
-			@Override
-			public TLCState createEmpty() {
-				return this.state.createEmpty();
-			}
+    @Override
+    public void deepNormalize() {
+      this.state.deepNormalize();
+    }
 
-			public Value getRecord() {
-				return rcd;
-			}
-		}
+    @Override
+    public Set<OpDeclNode> getUnassigned() {
+      return this.state.getUnassigned();
+    }
 
-		@Override
-		public List<TLCVariable> getTLCVariables(final TLCVariable prototype, Random rnd) {
-			final List<TLCVariable> nestedVars = new ArrayList<>(values.length);
-			for (int i = 0; i < names.length; i++) {
-				final UniqueString uniqueString = names[i];
-				final Value v = values[i];
-				final TLCVariable nested = prototype.newInstance(uniqueString.toString(), v, rnd);
-				nested.setValue(v.toString());
-				nested.setType(v.getTypeString());
-				nestedVars.add(nested);
-			}
-			return nestedVars;
-		}
+    @Override
+    public TLCState createEmpty() {
+      return this.state.createEmpty();
+    }
+
+    public Value getRecord() {
+      return rcd;
+    }
+  }
+
+  @Override
+  public List<TLCVariable> getTLCVariables(final TLCVariable prototype, Random rnd) {
+    final List<TLCVariable> nestedVars = new ArrayList<>(values.length);
+    for (int i = 0; i < names.length; i++) {
+      final UniqueString uniqueString = names[i];
+      final Value v = values[i];
+      final TLCVariable nested = prototype.newInstance(uniqueString.toString(), v, rnd);
+      nested.setValue(v.toString());
+      nested.setType(v.getTypeString());
+      nestedVars.add(nested);
+    }
+    return nestedVars;
+  }
 }

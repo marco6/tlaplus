@@ -50,17 +50,17 @@ public abstract class AbstractBucketStatistics implements IBucketStatistics {
 
 	/**
 	 * @param aTitle
-	 *            A title for console pretty printing
+	 *               A title for console pretty printing
 	 * @param pkg
-	 *            A package name for this statistics, e.g. tlc2.tool.liveness
-	 *            for stats are from classes in the liveness package.
+	 *               A package name for this statistics, e.g. tlc2.tool.liveness
+	 *               for stats are from classes in the liveness package.
 	 * @param name
-	 *            The (class) name of the source of the statistics.
+	 *               The (class) name of the source of the statistics.
 	 */
 	public AbstractBucketStatistics(final String aTitle, final String pkg, final String name) {
 		this(aTitle);
 		try {
-			//TODO unregister somehow
+			// TODO unregister somehow
 			new BucketStatisticsMXWrapper(this, name, pkg);
 		} catch (NotCompliantMBeanException e) {
 			// not expected to happen would cause JMX to be broken, hence just log and
@@ -92,7 +92,7 @@ public abstract class AbstractBucketStatistics implements IBucketStatistics {
 		buf.append("numEdges/occurrences (log scale)%n");
 		buf.append("--------------------------------%n");
 		final Iterator<Entry<Integer, Long>> iterator = getSamples().entrySet().iterator();
-		while(iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			Entry<Integer, Long> next = iterator.next();
 			long amount = next.getValue();
 			int i = next.getKey();
@@ -114,11 +114,11 @@ public abstract class AbstractBucketStatistics implements IBucketStatistics {
 		if (l <= 0) {
 			return -1;
 		}
-		// skip forward for as many elements as 1/2 observations. The 
+		// skip forward for as many elements as 1/2 observations. The
 		// corresponding bucket is the median.
 		long sum = 0L;
 		final Iterator<Entry<Integer, Long>> iterator = getSamples().entrySet().iterator();
-		while(iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			final Entry<Integer, Long> next = iterator.next();
 			sum += next.getValue();
 			if (sum > (l / 2)) {
@@ -133,7 +133,7 @@ public abstract class AbstractBucketStatistics implements IBucketStatistics {
 		long sum = 0L;
 		// Sum up values and count
 		final Iterator<Entry<Integer, Long>> iterator = getSamples().entrySet().iterator();
-		while(iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			final Entry<Integer, Long> next = iterator.next();
 			final long value = next.getValue();
 			final int i = next.getKey();
@@ -169,7 +169,7 @@ public abstract class AbstractBucketStatistics implements IBucketStatistics {
 		final double mean = getMean() * 1.0d;
 		double sum = 0.0d;
 		final Iterator<Entry<Integer, Long>> iterator = getSamples().entrySet().iterator();
-		while(iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			Entry<Integer, Long> next = iterator.next();
 			double Xi = next.getKey() * 1.0d;
 			double diff = Xi - mean;
@@ -191,25 +191,25 @@ public abstract class AbstractBucketStatistics implements IBucketStatistics {
 		// adjust values to valid range
 		quantile = Math.min(1.0, quantile);
 		quantile = Math.max(0, quantile);
-		
+
 		final NavigableMap<Integer, Long> samples = getSamples();
 
 		// calculate the elements position for the
 		// given quantile
-	    final int pos = (int) ((obsv * 1.0d) * quantile);
+		final int pos = (int) ((obsv * 1.0d) * quantile);
 		if (pos > obsv) {
-	    	return samples.size();
-	    }
-	    if (pos < 0) {
-	    	return 0;
-	    }
-	    
-	    // advance to the bucket at position
-	    long cnt = 0l;
+			return samples.size();
+		}
+		if (pos < 0) {
+			return 0;
+		}
+
+		// advance to the bucket at position
+		long cnt = 0l;
 		final Iterator<Entry<Integer, Long>> iterator = samples.entrySet().iterator();
-		while(iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			Entry<Integer, Long> next = iterator.next();
-			int i  = next.getKey();
+			int i = next.getKey();
 			cnt += next.getValue();
 			if (cnt > pos) {
 				return i;

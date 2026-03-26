@@ -43,7 +43,7 @@ public class EnumerableValueTest {
 	@Test
 	public void test() {
 		RandomEnumerableValues.setSeed(15041980);
-		
+
 		final Set<Integer> indices = new HashSet<>();
 		// For the first n \in Nat+ up to 10657 show that:
 		for (int n = 1; n < 10657; n++) {
@@ -72,7 +72,7 @@ public class EnumerableValueTest {
 		public int size() {
 			return size;
 		}
-		
+
 		@Override
 		public ValueEnumeration elements(final int k) {
 			return new EnumerableValue.SubsetEnumerator(k) {

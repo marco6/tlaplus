@@ -55,7 +55,7 @@ public class Github687fifoTest extends ModelCheckerTestCase {
 		assertTrue(recorder.recorded(EC.TLC_FINISHED));
 		assertTrue(recorder.recorded(EC.TLC_SUCCESS));
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "169", "49", "0"));
-		
+
 		assertZeroUncovered();
 	}
 

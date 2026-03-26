@@ -21,14 +21,14 @@ public class CaseConstruct implements TlaConstruct {
     }
 
     /*
-      /\ pc =
-           [
-             self \in ProcSet
-             |->
-             CASE self \in SlushQueryProcess -> "QueryReplyLoop"
-             [] self \in SlushLoopProcess -> "RequireColorAssignment"
-             [] self = "ClientRequest" -> "ClientRequestLoop"
-           ]
+     * /\ pc =
+     * [
+     * self \in ProcSet
+     * |->
+     * CASE self \in SlushQueryProcess -> "QueryReplyLoop"
+     * [] self \in SlushLoopProcess -> "RequireColorAssignment"
+     * [] self = "ClientRequest" -> "ClientRequestLoop"
+     * ]
      */
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {

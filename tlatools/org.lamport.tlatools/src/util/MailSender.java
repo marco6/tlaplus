@@ -40,17 +40,18 @@ public class MailSender {
 	public static final String MAIL_ADDRESS = "result.mail.address";
 
 	/**
-	 * @param from "Foo bar <foo@bar.com>"
-	 * @param to An email address _with_ domain part (foo@bar.com)
+	 * @param from     "Foo bar <foo@bar.com>"
+	 * @param to       An email address _with_ domain part (foo@bar.com)
 	 * @param subject
 	 * @param messages
 	 */
-	private static boolean send(final InternetAddress from, final InternetAddress to, final String subject, final String body, final File[] files) {
-		
+	private static boolean send(final InternetAddress from, final InternetAddress to, final String subject,
+			final String body, final File[] files) {
+
 		// https://javaee.github.io/javamail/docs/api/com/sun/mail/smtp/package-summary.html
 		final Properties properties = System.getProperties();
-		//properties.put("mail.debug", "true");
-		
+		// properties.put("mail.debug", "true");
+
 		if (!to.getAddress().contains("@")) {
 			// no domain, no MX record to lookup
 			return false;
@@ -62,7 +63,7 @@ public class MailSender {
 			// certificate which gets rejected by java mail.
 			properties.put("mail.smtp.starttls.enable", "true");
 		}
-		
+
 		List<MXRecord> mailhosts;
 		try {
 			mailhosts = getMXForDomain(to.getAddress().split("@")[1]);
@@ -70,7 +71,7 @@ public class MailSender {
 			e.printStackTrace();
 			return false;
 		}
-				
+
 		// retry all mx host
 		for (int i = 0; i < mailhosts.size(); i++) {
 			final MXRecord mxRecord = mailhosts.get(i);
@@ -81,12 +82,12 @@ public class MailSender {
 				msg.setFrom(from);
 				msg.addRecipient(Message.RecipientType.TO, to);
 				msg.setSubject(subject);
-				
+
 				// not sure why the extra body part is needed here
 				MimeBodyPart messageBodyPart = new MimeBodyPart();
-	
+
 				final Multipart multipart = new MimeMultipart();
-				
+
 				// The main body part. Having a main body appears to have a very
 				// positive effect on the spam score compared to emails with
 				// just attachments. It is also visually more appealing to e.g.
@@ -94,7 +95,7 @@ public class MailSender {
 				messageBodyPart = new MimeBodyPart();
 				messageBodyPart.setContent(body, "text/plain");
 				multipart.addBodyPart(messageBodyPart);
-	
+
 				// attach file(s)
 				for (File file : files) {
 					if (file == null) {
@@ -106,9 +107,9 @@ public class MailSender {
 					messageBodyPart.setHeader("Content-Type", "text/plain");
 					multipart.addBodyPart(messageBodyPart);
 				}
-		        msg.setContent(multipart);
-				
-		        Transport.send(msg);
+				msg.setContent(multipart);
+
+				Transport.send(msg);
 				return true;
 			} catch (SendFailedException e) {
 				final Exception next = e.getNextException();
@@ -135,7 +136,7 @@ public class MailSender {
 		}
 		return false;
 	}
-	
+
 	private static void throttleRetry(final String msg, long minutes) {
 		try {
 			System.err.println(msg);
@@ -153,7 +154,7 @@ public class MailSender {
 		final Attribute attr = attributes.get("MX");
 
 		final List<MXRecord> list = new ArrayList<MXRecord>();
-		
+
 		// RFC 974
 		if (attr == null) {
 			list.add(new MXRecord(0, aDomain));
@@ -170,17 +171,17 @@ public class MailSender {
 				}
 			}
 		}
-		
+
 		// sort (according to weight of mxrecord)
 		Collections.sort(list);
-		
+
 		return list;
 	}
-	
+
 	private static class MXRecord implements Comparable<MXRecord> {
 		public Integer weight;
 		public String hostname;
-		
+
 		public MXRecord(int aWeight, String aHostname) {
 			weight = aWeight;
 			hostname = aHostname;
@@ -190,14 +191,13 @@ public class MailSender {
 			return weight.compareTo(o.weight);
 		}
 	}
-	
+
 	// For testing only.
 	public static void main(String[] args) throws AddressException, FileNotFoundException, UnknownHostException {
 		MailSender mailSender = new MailSender();
 		mailSender.send();
 	}
 
-	
 	private String modelName = "unknown model";
 	private String specName = "unknown spec";
 	private File err;
@@ -212,13 +212,13 @@ public class MailSender {
 		final String mailto = System.getProperty(MAIL_ADDRESS);
 		if (mailto != null) {
 			this.toAddresses = InternetAddress.parse(mailto);
-			
+
 			this.from = new InternetAddress("TLC - The friendly model checker <"
 					+ toAddresses[0].getAddress() + ">");
 			this.fromAlt = new InternetAddress("TLC - The friendly model checker <"
 					+ System.getProperty("user.name") + "@"
 					+ InetAddress.getLocalHost().getHostName() + ">");
-			
+
 			// Record/Log output to later send it by email
 			final String tmpdir = System.getProperty("java.io.tmpdir");
 			this.out = new File(tmpdir + File.separator + TLAConstants.Files.MODEL_CHECK_OUTPUT_FILE);
@@ -227,12 +227,12 @@ public class MailSender {
 			ToolIO.err = new ErrLogPrintStream(err);
 		}
 	}
-	
+
 	public MailSender(String mainFile) throws FileNotFoundException, UnknownHostException, AddressException {
 		this();
 		setModelName(mainFile);
 	}
-	
+
 	public void setModelName(String modelName) {
 		this.modelName = modelName;
 	}
@@ -248,7 +248,7 @@ public class MailSender {
 	public boolean send(List<File> files) {
 		if (toAddresses != null) {
 			files.add(0, out);
-			// Only add the err file if there is actually content 
+			// Only add the err file if there is actually content
 			if (err.length() != 0L) {
 				files.add(0, err);
 			}
@@ -270,10 +270,10 @@ public class MailSender {
 			// ignore, just signal everything is fine
 			return true;
 		}
-	}	
-    
+	}
+
 	/**
-	 * @return The human readable lines in the log file. 
+	 * @return The human readable lines in the log file.
 	 */
 	private String extractBody(File out) {
 		StringBuffer result = new StringBuffer();
@@ -289,7 +289,7 @@ public class MailSender {
 			scanner.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			result.append("Failed to find file " + out.getAbsolutePath()); 
+			result.append("Failed to find file " + out.getAbsolutePath());
 		}
 		return result.toString();
 	}
@@ -298,32 +298,36 @@ public class MailSender {
 	 * A LogPrintStream writes the logging statements to a file _and_ to
 	 * System.out.
 	 */
-    private static class LogPrintStream extends PrintStream {
+	private static class LogPrintStream extends PrintStream {
 
-    	public LogPrintStream(File file) throws FileNotFoundException  {
-    		super(new FileOutputStream(file));
+		public LogPrintStream(File file) throws FileNotFoundException {
+			super(new FileOutputStream(file));
 		}
 
-    	/* (non-Javadoc)
-    	 * @see java.io.PrintStream#println(java.lang.String)
-    	 */
-    	public void println(String str) {
-    		System.out.println(str);
-    		super.println(str);
-    	}
-    }
-    
-    private static class ErrLogPrintStream extends PrintStream {
-    	public ErrLogPrintStream(File file) throws FileNotFoundException  {
-    		super(new FileOutputStream(file));
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.io.PrintStream#println(java.lang.String)
+		 */
+		public void println(String str) {
+			System.out.println(str);
+			super.println(str);
+		}
+	}
+
+	private static class ErrLogPrintStream extends PrintStream {
+		public ErrLogPrintStream(File file) throws FileNotFoundException {
+			super(new FileOutputStream(file));
 		}
 
-    	/* (non-Javadoc)
-    	 * @see java.io.PrintStream#println(java.lang.String)
-    	 */
-    	public void println(String str) {
-    		System.err.println(str);
-    		super.println(str);
-    	}
-    }
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.io.PrintStream#println(java.lang.String)
+		 */
+		public void println(String str) {
+			System.err.println(str);
+			super.println(str);
+		}
+	}
 }

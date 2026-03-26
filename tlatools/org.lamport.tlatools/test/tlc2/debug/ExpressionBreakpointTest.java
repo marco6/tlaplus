@@ -42,7 +42,7 @@ public class ExpressionBreakpointTest extends TLCDebuggerTestCase {
 	public ExpressionBreakpointTest() {
 		super(RM, FOLDER, new String[] { "-config", RM + ".tla" }, EC.ExitStatus.SUCCESS);
 	}
-	
+
 	@Test
 	public void testSpec() throws Exception {
 		// Set breakpoint
@@ -52,7 +52,7 @@ public class ExpressionBreakpointTest extends TLCDebuggerTestCase {
 
 		// Break at init
 		debugger.continue_();
-		
+
 		// Break at bp
 		final TLCStateStackFrame current = (TLCStateStackFrame) debugger.continue_()[0];
 		Assert.assertEquals(2, ((IntValue) current.getT().getVals().get(UniqueString.of("i"))).val);
@@ -60,7 +60,7 @@ public class ExpressionBreakpointTest extends TLCDebuggerTestCase {
 		allVariables.put("k", "5");
 		allVariables.put("l", "4");
 		assertTLCStateFrame(current, 8, 8, RM, allVariables);
-		
+
 		// Remove all breakpoints and run the spec to completion.
 		debugger.unsetBreakpoints();
 		debugger.continue_();

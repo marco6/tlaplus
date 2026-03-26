@@ -22,7 +22,7 @@ import util.WrongInvocationException;
 /**
  * This class represents a TLA+ state, which simply is an assignment
  * of explicit values to the variables. This is the functional
- * version.  It is used for implementing the enabled predicate.  It
+ * version. It is used for implementing the enabled predicate. It
  * can not be used in getInitStates and getNextStates.
  */
 public final class TLCStateFun extends TLCState {
@@ -31,66 +31,73 @@ public final class TLCStateFun extends TLCState {
   private final TLCStateFun next;
 
   public final static TLCState Empty = new TLCStateFun(null, null, null);
-  
+
   private TLCStateFun(SymbolNode name, IValue value, TLCStateFun state) {
     this.name = name;
     this.value = value;
     this.next = state;
   }
 
-  public final TLCState createEmpty() { return Empty; }
+  public final TLCState createEmpty() {
+    return Empty;
+  }
 
   public final TLCState bind(UniqueString name, IValue value) {
-      throw new WrongInvocationException("TLCStateFun.bind: This is a TLC bug.");
+    throw new WrongInvocationException("TLCStateFun.bind: This is a TLC bug.");
   }
 
   public final TLCState bind(SymbolNode id, IValue value) {
     return new TLCStateFun(id, value, this);
   }
-  
+
   public final TLCState unbind(UniqueString name) {
-      throw new WrongInvocationException("TLCStateFun.unbind: This is a TLC bug.");
+    throw new WrongInvocationException("TLCStateFun.unbind: This is a TLC bug.");
   }
-  
+
   public final IValue lookup(UniqueString var) {
     for (TLCStateFun cur = this; cur != Empty; cur = cur.next) {
-      if (var == cur.name.getName()) return cur.value;
+      if (var == cur.name.getName())
+        return cur.value;
     }
     return null;
   }
-  
+
   public final boolean containsKey(UniqueString var) {
     return this.lookup(var) != null;
   }
-  
+
   public final TLCState copy() {
     // NOTE 2023/4/10: Since instances of this class are immutable, there is no need
-    // to create an actual copy.  In addition to being more performant, this fixes a
+    // to create an actual copy. In addition to being more performant, this fixes a
     // latent bug: LL's code below can copy the `Empty` TLCState, creating "corrupt"
     // instances of TLCStateFun that have null fields but are not equal to `Empty`.
     return this;
     // The following code added blindly by LL on 28 May 2010
-    // to fix a bug.  I have no idea what's going on here.
+    // to fix a bug. I have no idea what's going on here.
     // return new TLCStateFun(this.name, this.value, this.next);
     // NOTE: the original implementation threw an exception:
     // throw new WrongInvocationException("TLCStateFun.copy: This is a TLC bug.");
   }
-  
+
   public final TLCState deepCopy() {
-      throw new WrongInvocationException("TLCStateFun.deepCopy: This is a TLC bug.");
-  }
-  
-  public final void deepNormalize() {
-      throw new WrongInvocationException("TLCStateFun.normalizeFcns: This is a TLC bug.");
-  }
-  
-  public final long fingerPrint() {
-      throw new WrongInvocationException("TLCStateFun.fingerPrint: This is a TLC bug.");
+    throw new WrongInvocationException("TLCStateFun.deepCopy: This is a TLC bug.");
   }
 
-  public final boolean allAssigned() { return true; }  
-  
-  public final Set<OpDeclNode> getUnassigned() { return new HashSet<OpDeclNode>(); }
+  public final void deepNormalize() {
+    throw new WrongInvocationException("TLCStateFun.normalizeFcns: This is a TLC bug.");
+  }
+
+  public final long fingerPrint() {
+    throw new WrongInvocationException("TLCStateFun.fingerPrint: This is a TLC bug.");
+  }
+
+  public final boolean allAssigned() {
+    return true;
+  }
+
+  public final Set<OpDeclNode> getUnassigned() {
+    return new HashSet<OpDeclNode>();
+  }
 
   public final Context addToContext(Context c) {
     Context c1 = c;
@@ -103,16 +110,16 @@ public final class TLCStateFun extends TLCState {
   public final StateVec addToVec(StateVec states) {
     return states.addElement(this);
   }
-  
+
   public final void read(IValueInputStream vis) throws IOException {
-      throw new WrongInvocationException("TLCStateFun.read: This is a TLC bug.");
+    throw new WrongInvocationException("TLCStateFun.read: This is a TLC bug.");
   }
 
   public final void write(IValueOutputStream vos) throws IOException {
-      throw new WrongInvocationException("TLCStateFun.write: This is a TLC bug.");
+    throw new WrongInvocationException("TLCStateFun.write: This is a TLC bug.");
   }
-  
-  /* Returns a string representation of this state.  */
+
+  /* Returns a string representation of this state. */
   public final String toString() {
     StringBuffer sb = new StringBuffer("[");
     if (this != Empty) {
@@ -121,22 +128,22 @@ public final class TLCStateFun extends TLCState {
       sb.append(this.value.toString());
 
       for (TLCStateFun cur = this.next; cur != Empty; cur = cur.next) {
-	sb.append(", ");
-	sb.append(cur.name.getName().toString());
-	sb.append("->");
-	sb.append(cur.value);
+        sb.append(", ");
+        sb.append(cur.name.getName().toString());
+        sb.append("->");
+        sb.append(cur.value);
       }
     }
     sb.append("]");
     return sb.toString();
   }
-  
+
   public final String toString(TLCState lastState) {
-      throw new WrongInvocationException("TLCStateFun.toString: This is a TLC bug.");
+    throw new WrongInvocationException("TLCStateFun.toString: This is a TLC bug.");
   }
-  
+
   public final String toString(UniqueString[] vars, TLCState lastState) {
-      throw new WrongInvocationException("TLCStateFun.toString: This is a TLC bug.");
+    throw new WrongInvocationException("TLCStateFun.toString: This is a TLC bug.");
   }
-  
+
 }

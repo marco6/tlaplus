@@ -61,42 +61,42 @@ import tlc2.util.BufferedRandomAccessFile;
 import util.TLCRuntime;
 
 public class OffHeapDiskFPSetTest {
-	
+
 	protected static final String filename = "OffHeapDiskFPSetTest";
-	
+
 	@Before
 	public void setup() {
 		Assume.assumeTrue(TLCRuntime.getInstance().getArchitecture() == TLCRuntime.ARCH.BIT_64);
 	}
 
-//	@Test
-//	public void testInsertAndEvictRnd() throws Exception {
-//		Random rnd = new Random();
-//		for (int i = 0; i < 1000; i++) {
-//			doTest(System.currentTimeMillis(), rnd.nextInt(255) + 1);
-//		}
-//	}
-	
+	// @Test
+	// public void testInsertAndEvictRnd() throws Exception {
+	// Random rnd = new Random();
+	// for (int i = 0; i < 1000; i++) {
+	// doTest(System.currentTimeMillis(), rnd.nextInt(255) + 1);
+	// }
+	// }
+
 	@Test
 	public void testInsertAndEvict1() throws Exception {
 		doTest(1473793977852L, 87);
 	}
-	
+
 	@Test
 	public void testInsertAndEvict2() throws Exception {
 		doTest(1473793976137L, 87);
 	}
-	
+
 	@Test
 	public void testInsertAndEvict3() throws Exception {
 		doTest(1473839150698L, 46);
 	}
-	
+
 	@Test
 	public void testInsertAndEvict4() throws Exception {
 		doTest(1473839150698L, 46);
 	}
-	
+
 	@Test
 	public void testInsertAndEvict5() throws Exception {
 		doTest(1473839322351L, 23);
@@ -116,7 +116,7 @@ public class OffHeapDiskFPSetTest {
 	public void testInsertAndEvict8() throws Exception {
 		doTest(1473839543883L, 11);
 	}
-	
+
 	@Test
 	public void testInsertAndEvict9() throws Exception {
 		doTest(1473871461079L, 64);
@@ -131,7 +131,7 @@ public class OffHeapDiskFPSetTest {
 	public void testInsertAndEvict11() throws Exception {
 		doTest(1473871522834L, 32);
 	}
-	
+
 	@Test
 	public void testInsertAndEvict12() throws Exception {
 		doTest(1473871526136L, 32);
@@ -157,10 +157,11 @@ public class OffHeapDiskFPSetTest {
 		doTest(1473871209569L, 157);
 	}
 
-	private void doTest(final long rgenseed, final long length) throws RemoteException, IOException, NoSuchFieldException, IllegalAccessException {
+	private void doTest(final long rgenseed, final long length)
+			throws RemoteException, IOException, NoSuchFieldException, IllegalAccessException {
 		final DummyFPSetConfiguration fpSetConfig = new DummyFPSetConfiguration();
 		fpSetConfig.setMemoryInFingerprintCnt(length);
-		
+
 		final DiskFPSet fpSet = new OffHeapDiskFPSet(fpSetConfig);
 		fpSet.init(1, createTmpFile(), filename);
 
@@ -170,17 +171,18 @@ public class OffHeapDiskFPSetTest {
 			assertFalse(fpSet.put(getFingerprint(random)));
 		}
 
-		// Get the current content of LongArray for later comparison of special elements.
+		// Get the current content of LongArray for later comparison of special
+		// elements.
 		Field field = OffHeapDiskFPSet.class.getDeclaredField("array");
 		field.setAccessible(true);
 		final long[] expected = LongArrays.toArray((LongArray) field.get(fpSet));
-		
+
 		// Flush/Evict the first time and assure its successful.
 		assertTrue(fpSet.getGrowDiskMark() == 0);
 		fpSet.forceFlush();
 		fpSet.contains(1L); // contains triggers eviction
 		assertTrue(fpSet.getGrowDiskMark() == 1);
-		
+
 		// Special elements (EMPTY or marked evicted) do not change positions
 		// when sorted.
 		final LongArray actual = (LongArray) field.get(fpSet);
@@ -199,16 +201,17 @@ public class OffHeapDiskFPSetTest {
 						EMPTY, actual.get(i));
 			}
 		}
-		
+
 		random = new Random(rgenseed);
 		for (int i = 0; i < length / 2; i++) {
 			final long fp = getFingerprint(random);
-			assertTrue(String.format("Failed to find fp %s/%s with seed %sL and length %s.\n\nexpected: %s\n\nactual: %s",
-					new Object[] { fp, (fp | MARK_FLUSHED), rgenseed, length, Arrays.toString(expected),
-							actual.toString() }),
+			assertTrue(
+					String.format("Failed to find fp %s/%s with seed %sL and length %s.\n\nexpected: %s\n\nactual: %s",
+							new Object[] { fp, (fp | MARK_FLUSHED), rgenseed, length, Arrays.toString(expected),
+									actual.toString() }),
 					fpSet.contains(fp));
 		}
-		
+
 		assertTrue(
 				String.format("Invariant violated with seed %sL and length %s.\n\nexpected: %s\n\nactual: %s",
 						new Object[] { rgenseed, length, Arrays.toString(expected), actual.toString() }),
@@ -225,50 +228,55 @@ public class OffHeapDiskFPSetTest {
 		random = new Random(rgenseed);
 		for (int i = 0; i < length / 2; i++) {
 			final long fp = getFingerprint(random);
-			assertTrue(String.format("Failed to find fp %s/%s with seed %sL and length %s.\n\nexpected: %s\n\nactual: %s",
-					new Object[] { fp, (fp | MARK_FLUSHED), rgenseed, length, Arrays.toString(expected),
-							actual.toString() }),
+			assertTrue(
+					String.format("Failed to find fp %s/%s with seed %sL and length %s.\n\nexpected: %s\n\nactual: %s",
+							new Object[] { fp, (fp | MARK_FLUSHED), rgenseed, length, Arrays.toString(expected),
+									actual.toString() }),
 					fpSet.contains(fp));
 		}
-		
+
 		fpSet.close();
 	}
-	
+
 	@Test
-	public void testOffset1Page() throws IOException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void testOffset1Page() throws IOException, NoSuchMethodException, SecurityException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
 		final long length = DiskFPSet.NumEntriesPerPage;
 		doTestOffset(length, 1474536306841L);
 	}
-	
+
 	@Test
-	public void testOffset3Page() throws IOException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void testOffset3Page() throws IOException, NoSuchMethodException, SecurityException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
 		long length = DiskFPSet.NumEntriesPerPage * 3L;
 		doTestOffset(length, 1474536306841L);
 	}
-	
+
 	@Test
-	public void testOffset5Page() throws IOException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void testOffset5Page() throws IOException, NoSuchMethodException, SecurityException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
 		long length = DiskFPSet.NumEntriesPerPage * 5L;
 		doTestOffset(length, 1474536306841L);
 	}
-	
+
 	@Test
-	public void testOffset9Page() throws IOException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void testOffset9Page() throws IOException, NoSuchMethodException, SecurityException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
 		long length = DiskFPSet.NumEntriesPerPage * 9L;
 		doTestOffset(length, 1474536306841L);
 	}
 
 	private void doTestOffset(long length, long rgenseed) throws RemoteException, IOException, NoSuchMethodException,
 			IllegalAccessException, InvocationTargetException {
-		
+
 		final DummyFPSetConfiguration fpSetConfig = new DummyFPSetConfiguration();
 		fpSetConfig.setMemoryInFingerprintCnt(length);
-		
+
 		final OffHeapDiskFPSet fpSet = new OffHeapDiskFPSet(fpSetConfig);
 		fpSet.init(1, createTmpFile(), filename);
 
 		final SortedSet<Long> longs = new TreeSet<Long>();
-		
+
 		// Insert n randomly chosen positive longs.
 		Random random = new Random(rgenseed);
 		for (int i = 0; i < length / 2; i++) {
@@ -278,10 +286,11 @@ public class OffHeapDiskFPSetTest {
 		}
 		fpSet.forceFlush();
 		assertFalse(fpSet.contains(1L)); // contains triggers flush
-		
-		final Method field = OffHeapDiskFPSet.class.getDeclaredMethod("getDiskOffset", new Class[] {int.class, long.class});
+
+		final Method field = OffHeapDiskFPSet.class.getDeclaredMethod("getDiskOffset",
+				new Class[] { int.class, long.class });
 		field.setAccessible(true);
-		
+
 		for (long i = 0L; i < longs.size(); i++) {
 			long fp = longs.first();
 			assertEquals(String.format("Length: %s with seed: %s", length, rgenseed), i + 1L,
@@ -289,7 +298,7 @@ public class OffHeapDiskFPSetTest {
 			longs.remove(fp);
 		}
 	}
-	
+
 	private static String createTmpFile() {
 		final String tmpdir = System.getProperty("java.io.tmpdir") + File.separator + "OffHeapDiskFPSetTest"
 				+ System.currentTimeMillis();
@@ -331,7 +340,7 @@ public class OffHeapDiskFPSetTest {
 			NoSuchMethodException, SecurityException {
 		final TestMPRecorder recorder = new TestMPRecorder();
 		MP.setRecorder(recorder);
-		
+
 		final DummyFPSetConfiguration fpSetConfig = new DummyFPSetConfiguration();
 		fpSetConfig.setMemoryInFingerprintCnt(1);
 
@@ -365,7 +374,7 @@ public class OffHeapDiskFPSetTest {
 			Throwable targetException = e.getTargetException();
 			fail(targetException.getMessage());
 		}
-		
+
 		assertEquals(10 * FPSet.LongSize, outRAF.length());
 
 		outRAF.seek(0);
@@ -379,7 +388,7 @@ public class OffHeapDiskFPSetTest {
 		assertEquals(8, outRAF.readLong());
 		assertEquals(10, outRAF.readLong());
 		assertEquals(11, outRAF.readLong());
-		
+
 		final List<Object> r = recorder.getRecords(EC.TLC_FP_VALUE_ALREADY_ON_DISK);
 		assertEquals(6, r.size());
 		assertEquals(Set.of(1, 2, 4, 6, 7, 8),
@@ -422,7 +431,7 @@ public class OffHeapDiskFPSetTest {
 			Throwable targetException = e.getTargetException();
 			fail(targetException.getMessage());
 		}
-		
+
 		assertEquals(10 * FPSet.LongSize, outRAF.length());
 
 		outRAF.seek(0);
@@ -437,7 +446,6 @@ public class OffHeapDiskFPSetTest {
 		assertEquals(10, outRAF.readLong());
 		assertEquals(11, outRAF.readLong());
 	}
-
 
 	private static class DummyIterator extends Iterator {
 
@@ -457,7 +465,7 @@ public class OffHeapDiskFPSetTest {
 			return false;
 		}
 	}
-	
+
 	private static class DummyRandomAccessFile extends java.io.RandomAccessFile {
 
 		public DummyRandomAccessFile(File file, String mode) throws FileNotFoundException {
@@ -476,7 +484,7 @@ public class OffHeapDiskFPSetTest {
 
 		@Override
 		public int read(byte[] b, int off, int len) {
-			Arrays.fill(b, off, off + len, (byte)0);
+			Arrays.fill(b, off, off + len, (byte) 0);
 			return len;
 		}
 	}

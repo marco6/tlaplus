@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class EvenOddTest extends PCalModelCheckerTestCase {
 
 	public EvenOddTest() {
-		super("EvenOdd", "pcal", new String[] {"-wf", "-termination"});
+		super("EvenOdd", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test
@@ -47,8 +47,8 @@ public class EvenOddTest extends PCalModelCheckerTestCase {
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "14", "13", "0"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "13"));
 
-		assertUncovered("line 67, col 23 to line 67, col 37 of module EvenOdd: 0\n" + 
-				"line 68, col 23 to line 68, col 34 of module EvenOdd: 0\n" + 
+		assertUncovered("line 67, col 23 to line 67, col 37 of module EvenOdd: 0\n" +
+				"line 68, col 23 to line 68, col 34 of module EvenOdd: 0\n" +
 				"line 69, col 23 to line 69, col 50 of module EvenOdd: 0");
 	}
 }

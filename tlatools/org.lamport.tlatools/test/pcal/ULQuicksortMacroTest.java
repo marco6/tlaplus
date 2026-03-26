@@ -35,7 +35,7 @@ import tlc2.output.EC;
 public class ULQuicksortMacroTest extends PCalModelCheckerTestCase {
 
 	public ULQuicksortMacroTest() {
-		super("ULQuicksortMacro", "pcal", new String[] {"-wf", "-termination"});
+		super("ULQuicksortMacro", "pcal", new String[] { "-wf", "-termination" });
 	}
 
 	@Test
@@ -47,6 +47,6 @@ public class ULQuicksortMacroTest extends PCalModelCheckerTestCase {
 		assertTrue(recorder.recordedWithStringValues(EC.TLC_STATS, "342", "258", "0"));
 		assertTrue(recorder.recordedWithStringValue(EC.TLC_SEARCH_DEPTH, "11"));
 
-	assertZeroUncovered();
+		assertZeroUncovered();
 	}
 }
