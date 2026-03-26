@@ -52,6 +52,27 @@ public class FP64 {
         return Extend(IrredPoly, is);
     }
 
+    // 8 tables of 256 entries
+    public static final long[][] SliceTable = new long[8][256];
+
+    // Call this ONCE at startup, immediately after initializing your original
+    // ByteModTable
+    public static void initSlicing(long[] originalByteModTable) {
+        // Slice 0 is the original 1-byte table (the effect of pushing 1 byte)
+        for (int i = 0; i < 256; i++) {
+            SliceTable[0][i] = originalByteModTable[i];
+        }
+
+        // Slices 1 through 7 represent the effect of processing additional bytes
+        for (int slice = 1; slice < 8; slice++) {
+            for (int i = 0; i < 256; i++) {
+                long c = SliceTable[slice - 1][i];
+                // Shift right by 8 and XOR with the table lookup of the lowest byte
+                SliceTable[slice][i] = (c >>> 8) ^ originalByteModTable[(int) (c & 0xFF)];
+            }
+        }
+    }
+
     /**
      * Extend the fingerprint <code>fp</code> by the
      * characters of <code>s</code>.
@@ -143,23 +164,16 @@ public class FP64 {
     }
 
     public static long Extend(long fp, int x) {
-        final long[] mod = ByteModTable_7;
-        byte b = (byte) (x & 0xFF);
-        fp = ((fp >>> 8) ^ (mod[(b ^ ((int) fp)) & 0xFF]));
-        x = x >>> 8;
+        long state = (fp ^ (x & 0xFFFFFFFFL));
+        long[][] sliceTable = SliceTable;
 
-        b = (byte) (x & 0xFF);
-        fp = ((fp >>> 8) ^ (mod[(b ^ ((int) fp)) & 0xFF]));
-        x = x >>> 8;
-
-        b = (byte) (x & 0xFF);
-        fp = ((fp >>> 8) ^ (mod[(b ^ ((int) fp)) & 0xFF]));
-        x = x >>> 8;
-
-        b = (byte) (x & 0xFF);
-        fp = ((fp >>> 8) ^ (mod[(b ^ ((int) fp)) & 0xFF]));
-
-        return fp;
+        // The upper 32 bits of the original fp shift down safely.
+        // The 4 bytes of 'state' are looked up in parallel.
+        return (fp >>> 32) ^
+                sliceTable[3][(int) (state & 0xFF)] ^
+                sliceTable[2][(int) ((state >>> 8) & 0xFF)] ^
+                sliceTable[1][(int) ((state >>> 16) & 0xFF)] ^
+                sliceTable[0][(int) ((state >>> 24) & 0xFF)];
     }
 
     /*
@@ -167,41 +181,17 @@ public class FP64 {
      * integer <code>fp1</code>.
      */
     public static long Extend(long fp, long fp1) {
-        long[] mod = ByteModTable_7;
+        long state = fp ^ fp1;
+        long[][] sliceTable = SliceTable;
 
-        byte b = (byte) (fp1 & 0xFF);
-        fp = ((fp >>> 8) ^ (mod[(b ^ ((int) fp)) & 0xFF]));
-        fp1 = fp1 >>> 8;
-
-        b = (byte) (fp1 & 0xFF);
-        fp = ((fp >>> 8) ^ (mod[(b ^ ((int) fp)) & 0xFF]));
-        fp1 = fp1 >>> 8;
-
-        b = (byte) (fp1 & 0xFF);
-        fp = ((fp >>> 8) ^ (mod[(b ^ ((int) fp)) & 0xFF]));
-        fp1 = fp1 >>> 8;
-
-        b = (byte) (fp1 & 0xFF);
-        fp = ((fp >>> 8) ^ (mod[(b ^ ((int) fp)) & 0xFF]));
-        fp1 = fp1 >>> 8;
-
-        b = (byte) (fp1 & 0xFF);
-        fp = ((fp >>> 8) ^ (mod[(b ^ ((int) fp)) & 0xFF]));
-        fp1 = fp1 >>> 8;
-
-        b = (byte) (fp1 & 0xFF);
-        fp = ((fp >>> 8) ^ (mod[(b ^ ((int) fp)) & 0xFF]));
-        fp1 = fp1 >>> 8;
-
-        b = (byte) (fp1 & 0xFF);
-        fp = ((fp >>> 8) ^ (mod[(b ^ ((int) fp)) & 0xFF]));
-        fp1 = fp1 >>> 8;
-
-        b = (byte) (fp1 & 0xFF);
-        fp = ((fp >>> 8) ^ (mod[(b ^ ((int) fp)) & 0xFF]));
-        /* fp1 = fp1 >>> 8; */
-
-        return fp;
+        return sliceTable[7][(int) (state & 0xFF)] ^
+                sliceTable[6][(int) ((state >>> 8) & 0xFF)] ^
+                sliceTable[5][(int) ((state >>> 16) & 0xFF)] ^
+                sliceTable[4][(int) ((state >>> 24) & 0xFF)] ^
+                sliceTable[3][(int) ((state >>> 32) & 0xFF)] ^
+                sliceTable[2][(int) ((state >>> 40) & 0xFF)] ^
+                sliceTable[1][(int) ((state >>> 48) & 0xFF)] ^
+                sliceTable[0][(int) ((state >>> 56) & 0xFF)];
     }
     /*
      * public static long Extend(long fp, long fp1)
@@ -459,6 +449,7 @@ public class FP64 {
             }
             ByteModTable_7[j] = v;
         }
-    }
 
+        initSlicing(ByteModTable_7);
+    }
 }

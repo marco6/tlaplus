@@ -296,12 +296,9 @@ public class IntervalValue extends EnumerableValue
   @Override
   public final long fingerPrint(long fp) {
     try {
-      fp = FP64.Extend(fp, SETENUMVALUE);
-      fp = FP64.Extend(fp, this.size());
-      for (int i = this.low; i <= this.high; i++) {
-        fp = FP64.Extend(fp, INTVALUE);
-        fp = FP64.Extend(fp, i);
-      }
+      fp = FP64.Extend(fp, INTERVALVALUE);
+      fp = FP64.Extend(fp, this.low);
+      fp = FP64.Extend(fp, this.high);
       return fp;
     } catch (RuntimeException | OutOfMemoryError e) {
       if (hasSource()) {

@@ -221,8 +221,7 @@ public class StringValue extends Value {
   public final long fingerPrint(long fp) {
     try {
       fp = FP64.Extend(fp, STRINGVALUE);
-      fp = FP64.Extend(fp, this.val.length());
-      fp = FP64.Extend(fp, this.val.toString());
+      fp = this.val.fingerPrint(fp);
       return fp;
     } catch (RuntimeException | OutOfMemoryError e) {
       if (hasSource()) {

@@ -689,10 +689,8 @@ public class RecordValue extends Value implements FunctionValue {
       fp = FP64.Extend(fp, FCNRCDVALUE);
       fp = FP64.Extend(fp, rlen);
       for (int i = 0; i < rlen; i++) {
-        String str = this.names[i].toString();
         fp = FP64.Extend(fp, STRINGVALUE);
-        fp = FP64.Extend(fp, str.length());
-        fp = FP64.Extend(fp, str);
+        fp = this.names[i].fingerPrint(fp);
         fp = this.values[i].fingerPrint(fp);
       }
       return fp;
