@@ -123,11 +123,11 @@ public final class InternTable implements Serializable {
 
     public UniqueString put(String str) {
         int hash = str.hashCode();
-        int initial_count;
+        int initial_length;
         int loc = (hash & 0x7FFFFFFF) % length;
         this.lock.readLock().lock();
         try {
-            initial_count = this.count;
+            initial_length = length;
             while (true) {
                 UniqueString ent = this.table[loc];
                 if (ent == null) {
@@ -136,7 +136,7 @@ public final class InternTable implements Serializable {
                 if (ent.toString().equals(str)) {
                     return ent;
                 }
-                loc = (loc + 1) % length;
+                loc = (loc + 1) % initial_length;
             }
         } finally {
             this.lock.readLock().unlock();
@@ -153,9 +153,10 @@ public final class InternTable implements Serializable {
             // we can just iterate until we find an empty slot.
             // If the table grew, then we need to re-compute the location and check for
             // duplicates again.
-            if (this.count != initial_count) {
+            if (this.length != initial_length) {
                 loc = (hash & 0x7FFFFFFF) % length;
             }
+            this.count++;
 
             while (true) {
                 UniqueString ent = this.table[loc];
