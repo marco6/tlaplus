@@ -104,7 +104,7 @@ public class GraphStateWriter extends StateWriter {
 		OpDeclNode[] vars = state.getVars();
 		for (var var : vars) {
 			UniqueString key = var.getName();
-			if (key.toString().equals("action")) {
+			if (key.toString().equals("action") || key.toString().equals("zaction")) {
 				continue;
 			}
 			writer.name(key.toString());
@@ -435,6 +435,9 @@ public class GraphStateWriter extends StateWriter {
 		this.writer.append(Long.toString(sfp));
 
 		var actionValue = successor.lookup("action");
+		if (actionValue == null) {
+			actionValue = successor.lookup("zaction");
+		}
 		if (actionValue instanceof RecordValue) {
 			RecordValue actionRecord = (RecordValue) actionValue;
 			assert actionRecord.names.length == 1;
