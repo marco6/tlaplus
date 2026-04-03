@@ -176,6 +176,9 @@ public final class TLCStateMut extends TLCState implements Serializable {
    */
   public final long fingerPrint() {
     int sz = this.values.length;
+    for (int i = 0; i < sz; i++) {
+      this.values[i].deepNormalize();
+    }
 
     // TLC supports symmetry reduction. Symmetry reduction works by defining classes
     // of symmetrically equivalent states for which TLC only checks a
@@ -209,7 +212,21 @@ public final class TLCStateMut extends TLCState implements Serializable {
     // If this state is not the lexicographically smallest state ss, its current
     // minVals will be replaced temporarily with the values of ss for the
     // calculation of the fingerprint.
-    IValue[] minVals = this.values;
+    IValue[] values;
+    if (viewMap == null) {
+      values = this.values;
+    } else {
+      // If viewMap is non-null, we have to evaluate the view function first,
+      // so that the symmetry reduction is applied to the view of the state, not the
+      // state itself as the lexicographical order for the view is not necessarily the
+      // same as for the state.
+      IValue view = mytool.eval(viewMap, Context.Empty, this);
+      values = new IValue[] { view };
+      sz = 1;
+    }
+
+    IValue[] minVals = values;
+
     if (perms != null) {
       IValue[] vals = new IValue[sz];
       // The following for loop converges to the smallest state ss under symmetry by
@@ -222,7 +239,7 @@ public final class TLCStateMut extends TLCState implements Serializable {
         // For each value in values succinctly permute the current value
         // and compare it to its corresponding minValue in minVals.
         for (int j = 0; j < sz; j++) {
-          vals[j] = this.values[j].permute(perms[i]);
+          vals[j] = values[j].permute(perms[i]);
           if (cmp == 0) {
             // Only compare unless an earlier compare has found a
             // difference already (if a difference has been found
@@ -243,7 +260,7 @@ public final class TLCStateMut extends TLCState implements Serializable {
         // cmp < 0 means the current state is part of a symmetry
         // permutation set/group and not the "smallest" one.
         if (cmp < 0) {
-          if (minVals == this.values) {
+          if (minVals == values) {
             minVals = vals;
             vals = new IValue[sz];
           } else {
@@ -256,25 +273,8 @@ public final class TLCStateMut extends TLCState implements Serializable {
     }
     // Fingerprint the state:
     long fp = FP64.New();
-    if (viewMap == null) {
-      for (int i = 0; i < sz; i++) {
-        fp = minVals[i].fingerPrint(fp);
-      }
-      if (this.values != minVals) {
-        for (int i = 0; i < sz; i++) {
-          this.values[i].deepNormalize();
-        }
-      }
-    } else {
-      for (int i = 0; i < sz; i++) {
-        this.values[i].deepNormalize();
-      }
-      TLCStateMut state = this;
-      if (minVals != this.values) {
-        state = new TLCStateMut(minVals);
-      }
-      IValue val = mytool.eval(viewMap, Context.Empty, state);
-      fp = val.fingerPrint(fp);
+    for (int i = 0; i < sz; i++) {
+      fp = minVals[i].fingerPrint(fp);
     }
     return fp;
   }
