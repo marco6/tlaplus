@@ -212,7 +212,6 @@ public class LazyValue extends Value {
       }
     }
 
-    getCachedValue(tool, s0, s1, control);
     if (res == null) {
       res = tool.eval(this.expr, this.con, s0, s1, control, getCostModel());
       if (isCachable()) {
