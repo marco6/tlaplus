@@ -8,6 +8,7 @@ package tlc2.tool;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Set;
@@ -25,6 +26,8 @@ import tlc2.value.IValue;
 import tlc2.value.IValueInputStream;
 import tlc2.value.IValueOutputStream;
 import tlc2.value.Values;
+import tlc2.value.impl.RecordValue;
+import tlc2.value.impl.TupleValue;
 import util.UniqueString;
 import util.WrongInvocationException;
 
@@ -221,8 +224,19 @@ public final class TLCStateMut extends TLCState implements Serializable {
       // state itself as the lexicographical order for the view is not necessarily the
       // same as for the state.
       IValue view = mytool.eval(viewMap, Context.Empty, this);
-      values = new IValue[] { view };
-      sz = 1;
+      if (view instanceof RecordValue) {
+        RecordValue rec = (RecordValue) view;
+        rec.normalize();
+        values = rec.values;
+        sz = rec.size();
+      } else if (view instanceof TupleValue) {
+        TupleValue tup = (TupleValue) view;
+        values = tup.elems;
+        sz = tup.size();
+      } else {
+        values = new IValue[] { view };
+        sz = 1;
+      }
     }
 
     IValue[] minVals = values;
@@ -234,43 +248,35 @@ public final class TLCStateMut extends TLCState implements Serializable {
       // lexicographically smaller than the currently smallest, it replaces the
       // current smallest. Once all permutations (perms) have been processed, we know
       // we have found the smallest state.
-      NEXT_PERM: for (int i = 0; i < perms.length; i++) {
-        int cmp = 0;
-        // For each value in values succinctly permute the current value
-        // and compare it to its corresponding minValue in minVals.
-        for (int j = 0; j < sz; j++) {
-          vals[j] = values[j].permute(perms[i]);
-          if (cmp == 0) {
-            // Only compare unless an earlier compare has found a
-            // difference already (if a difference has been found
-            // earlier, still permute the remaining values of the
-            // state to fully permute all state values).
-            cmp = vals[j].compareTo(minVals[j]);
-            if (cmp > 0) {
-              // When cmp evaluates to >0, all subsequent
-              // applications of perms[i] for the remaining values
-              // won't make the resulting vals[] smaller than
-              // minVals. Thus, exit preemptively from the loop
-              // over vals. This works because perms is the cross
-              // product of all symmetry sets.
-              continue NEXT_PERM;
-            }
-          }
-        }
-        // cmp < 0 means the current state is part of a symmetry
-        // permutation set/group and not the "smallest" one.
-        if (cmp < 0) {
-          if (minVals == values) {
-            minVals = vals;
-            vals = new IValue[sz];
-          } else {
-            IValue[] temp = minVals;
-            minVals = vals;
-            vals = temp;
-          }
-        }
+      var localPerms = new ArrayList<IMVPerm>();
+      var survivedPerms = new ArrayList<IMVPerm>();
+
+      for (IMVPerm perm : perms) {
+        localPerms.add(perm);
       }
+
+      for (int j = 0; j < sz; j++) {
+        IValue min = values[j];
+        for (IMVPerm perm : localPerms) {
+          IValue permuted = values[j].permute(perm);
+          int cmp = permuted.compareTo(min);
+          if (cmp == 0) {
+            survivedPerms.add(perm);
+          } else if (cmp < 0) {
+            min = permuted;
+            survivedPerms.clear();
+            survivedPerms.add(perm);
+          }
+        }
+        var tmp = localPerms;
+        localPerms = survivedPerms;
+        survivedPerms = tmp;
+        survivedPerms.clear();
+        vals[j] = min;
+      }
+      minVals = vals;
     }
+  
     // Fingerprint the state:
     long fp = FP64.New();
     for (int i = 0; i < sz; i++) {
