@@ -6,6 +6,8 @@
 package tlc2.tool.queue;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import tlc2.TLCGlobals;
 import tlc2.output.EC;
@@ -221,16 +223,13 @@ public abstract class ByteArrayQueue implements IStateQueue {
 	}
 
 	@Override
-	public final TLCState[] sDequeue(int cnt) {
+	public final void sDequeue(Collection<TLCState> states, int cnt) {
 		final byte[][] bytes = sDequeueRaw(cnt);
 		if (bytes != null) {
-			final TLCState[] array = new TLCState[cnt];
-			for (int i = 0; i < array.length; i++) {
-				array[i] = toState(bytes[i]);
+			for (int i = 0; i < cnt; i++) {
+				states.add(toState(bytes[i]));
 			}
-			return array;
 		}
-		return null;
 	}
 
 	private final synchronized byte[][] sDequeueRaw(int cnt) {

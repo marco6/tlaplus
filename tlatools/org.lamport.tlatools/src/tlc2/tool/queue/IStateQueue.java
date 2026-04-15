@@ -1,6 +1,8 @@
 package tlc2.tool.queue;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import tlc2.tool.ModelChecker;
 import tlc2.tool.StateVec;
@@ -76,7 +78,7 @@ public interface IStateQueue {
 	 * @throws RuntimeException
 	 *                          if cnt <= 0
 	 */
-	public abstract TLCState[] sDequeue(int cnt);
+	public abstract void sDequeue(Collection<TLCState> states, int cnt);
 
 	/**
 	 * Signals all waiting {@link Worker} that all work is done. We can exit now.

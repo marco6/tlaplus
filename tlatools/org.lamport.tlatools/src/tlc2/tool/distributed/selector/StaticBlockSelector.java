@@ -1,5 +1,7 @@
 package tlc2.tool.distributed.selector;
 
+import java.util.ArrayList;
+
 import tlc2.tool.TLCState;
 import tlc2.tool.distributed.TLCServer;
 import tlc2.tool.distributed.TLCWorkerRMI;
@@ -28,7 +30,9 @@ public class StaticBlockSelector extends BlockSelector {
 	 * tlc2.tool.distributed.TLCWorkerRMI)
 	 */
 	public TLCState[] getBlocks(IStateQueue stateQueue, TLCWorkerRMI worker) {
-		return stateQueue.sDequeue(BlockSize);
+		final ArrayList<TLCState> states = new ArrayList<>();
+		stateQueue.sDequeue(states, BlockSize);
+		return states.toArray(new TLCState[0]);
 	}
 
 	/*

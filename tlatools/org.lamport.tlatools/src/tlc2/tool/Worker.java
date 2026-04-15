@@ -10,6 +10,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -38,7 +39,6 @@ import util.FileUtil;
 import util.WrongInvocationException;
 
 public final class Worker extends IdThread implements IWorker, INextStateFunctor {
-
 	protected static final boolean coverage = TLCGlobals.Coverage.isActionEnabled();
 	protected static final boolean variableCoverage = TLCGlobals.Coverage.isVariableEnabled();
 	private static final int INITIAL_CAPACITY = 16;
@@ -58,6 +58,7 @@ public final class Worker extends IdThread implements IWorker, INextStateFunctor
 	private final String filename;
 	private final BufferedRandomAccessFile raf;
 	private final boolean checkDeadlock;
+	private final ArrayDeque<TLCState> localQueue = new ArrayDeque<>(TLCGlobals.LocalQueueSize);
 
 	private long lastPtr;
 	private long statesGenerated;
@@ -92,9 +93,13 @@ public final class Worker extends IdThread implements IWorker, INextStateFunctor
 	 */
 	public void run() {
 		TLCState curState = null;
+
 		try {
 			while (true) {
-				curState = this.squeue.sDequeue();
+				if (localQueue.size() == 0) {
+					this.squeue.sDequeue(localQueue, TLCGlobals.LocalQueueSize);
+				}
+				curState = localQueue.poll();
 				if (curState == null) {
 					synchronized (this.tlc) {
 						this.tlc.setDone();
@@ -481,7 +486,15 @@ public final class Worker extends IdThread implements IWorker, INextStateFunctor
 				// The state is inModel, unseen and neither invariants
 				// nor implied actions are violated. It is thus eligible
 				// for further processing by other workers.
-				this.squeue.sEnqueue(succState);
+				localQueue.offer(succState);
+				if (localQueue.size() >= TLCGlobals.LocalQueueSize) {
+					// Take half the queue and put it into the shared queue.
+					TLCState[] states = new TLCState[TLCGlobals.LocalQueueSize];
+					for (int i = 0; i < TLCGlobals.LocalQueueSize; i++) {
+						states[i] = localQueue.pollLast();
+					}
+					this.squeue.sEnqueue(states);
+				}
 				if (variableCoverage) {
 					for (final OpDeclNode odn : TLCState.vars) {
 						odn.count(succState.lookup(odn.getName()));

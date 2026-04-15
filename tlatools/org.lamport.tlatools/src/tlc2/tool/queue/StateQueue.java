@@ -6,6 +6,8 @@
 package tlc2.tool.queue;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import tlc2.TLCGlobals;
 import tlc2.output.EC;
@@ -137,32 +139,19 @@ public abstract class StateQueue implements IStateQueue {
 	 * 
 	 * @see tlc2.tool.queue.IStateQueue#sDequeue(int)
 	 */
-	public final synchronized TLCState[] sDequeue(int cnt) {
+	public final synchronized void sDequeue(Collection<TLCState> states, int cnt) {
 		assert cnt > 0 : "Nonpositive number of states requested.";
 		if (this.isAvail()) {
 			if (cnt > len) {
 				// in this case, casting len to int is safe
 				cnt = (int) len;
 			}
-			final TLCState states[] = new TLCState[cnt];
 			int idx;
 			for (idx = 0; idx < cnt && this.len > 0; idx++) {
-				states[idx] = this.dequeueInner();
+				states.add(this.dequeueInner());
 				this.len--;
 			}
-			if (idx == cnt) {
-				return states;
-			}
-
-			// cnt >= index, shrink resulting array
-			// dead code due to resetting cnt == len if cnt > len
-			final TLCState res[] = new TLCState[idx];
-			for (int i = 0; i < idx; i++) {
-				res[i] = states[i];
-			}
-			return res;
 		}
-		return null;
 	}
 
 	/**

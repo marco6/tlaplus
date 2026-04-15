@@ -1,5 +1,7 @@
 package tlc2.tool.distributed.selector;
 
+import java.util.ArrayList;
+
 import tlc2.tool.TLCState;
 import tlc2.tool.distributed.TLCServer;
 import tlc2.tool.distributed.TLCWorker;
@@ -60,10 +62,11 @@ public class BlockSelector implements IBlockSelector {
 		// can only read Integer.MAX_VALUE at max
 		blockSize = Math.min(Integer.MAX_VALUE, blockSize);
 		// synchronized removal from the state queue
-		final TLCState[] sDequeue = stateQueue.sDequeue((int) blockSize);
+		final ArrayList<TLCState> states = new ArrayList<>();
+		stateQueue.sDequeue(states, (int) blockSize);
 		// maintain statistics with what we really got from the state queue.
-		setAverageBlockCnt(sDequeue != null ? sDequeue.length : 0);
-		return sDequeue;
+		setAverageBlockCnt(states.size());
+		return states.toArray(new TLCState[0]);
 	}
 
 	/**

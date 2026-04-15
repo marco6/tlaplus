@@ -1013,6 +1013,9 @@ public class TLC {
 					printErrorMsg("Error: fpbits required.");
 					return false;
 				}
+			}  else if (args[index].equals("-localQueueSize")) {
+				index++;
+				TLCGlobals.LocalQueueSize = Integer.parseInt(args[index++]);
 			} else {
 				if (args[index].charAt(0) == '-') {
 					printErrorMsg("Error: unrecognized option: " + args[index]);
