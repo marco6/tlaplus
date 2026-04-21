@@ -22,6 +22,7 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="lib" path="lib/javax.mail/mailapi-1.6.3.jar"/>
 	<classpathentry kind="lib" path="lib/fastutil-8.5.18.jar"/>
+	<classpathentry kind="lib" path="lib/byte-buddy-1.18.8.jar"/>
 	<classpathentry kind="lib" path="lib/jline/jline-console-3.25.0.jar"/>
 	<classpathentry kind="lib" path="lib/jline/jline-builtins-3.25.0.jar"/>
 	<classpathentry kind="lib" path="lib/jline/jline-reader-3.25.0.jar"/>

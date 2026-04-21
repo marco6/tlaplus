@@ -6,6 +6,7 @@
 package tlc2.module;
 
 import tlc2.output.EC;
+import tlc2.overrides.TLAPlusOperator;
 import tlc2.tool.EvalException;
 import tlc2.value.IBoolValue;
 import tlc2.value.ValueConstants;
@@ -115,4 +116,23 @@ public class FiniteSets implements ValueConstants {
    * return new TupleValue(elems);
    * }
    */
+
+  @TLAPlusOperator(identifier = "Max", module = "FiniteSetsExt", warn = false)
+  public static Value Max(Value set) {
+    if (set instanceof Enumerable) {
+      var enumSet = ((Enumerable) set).elements();
+      Value elem;
+      Value max = enumSet.nextElement();
+      if (max == null) {
+        throw new EvalException(EC.CHECK_PARAM_USAGE, Values.ppr(set.toString()));
+      }
+      while ((elem = enumSet.nextElement()) != null) {
+        if (max.compareTo(elem) < 0) {
+          max = elem;
+        }
+      }
+      return max;
+    }
+    throw new EvalException(EC.CHECK_PARAM_USAGE, Values.ppr(set.toString()));
+  }
 }

@@ -22,7 +22,7 @@ public class IntValue extends Value {
   static {
     cache = new IntValue[10];
     for (int i = 0; i < cache.length; i++) {
-      cache[i] = new IntValue(i);
+      cache[i] = new IntValue(i + 2);
     }
   }
 
@@ -77,8 +77,8 @@ public class IntValue extends Value {
     } else if (i == -1) {
       return ValNegOne;
     }
-    if (i >= 0 && i < cache.length) {
-      return cache[i];
+    if (i >= 2 && i < cache.length + 2) {
+      return cache[i - 2];
     }
     return new IntValue(i);
   }

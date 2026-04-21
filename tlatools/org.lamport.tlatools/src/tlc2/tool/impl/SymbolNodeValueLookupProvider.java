@@ -22,6 +22,7 @@ import tlc2.value.impl.EvaluatingValue;
 import tlc2.value.impl.IntValue;
 import tlc2.value.impl.LazyValue;
 import tlc2.value.impl.MethodValue;
+import tlc2.value.impl.Value;
 import util.UniqueString;
 
 public interface SymbolNodeValueLookupProvider {
@@ -126,6 +127,18 @@ public interface SymbolNodeValueLookupProvider {
 		// For INSTANCE Foo With x <- z, y <- z, this currently creates two distinct
 		// LazyValues. Is this really what should happen?
 		if (expr instanceof ExprNode) {
+			if (expr instanceof OpApplNode) {
+				var opApplNode = (OpApplNode) expr;
+				var opNode = opApplNode.getOperator();
+				if (opNode.getArity() == 0) {
+					var val = lookup(opNode, c, false, forToolId);
+					if (val != opNode) { // Already bound!
+						return val;
+					}
+					return new LazyValue(expr, c, cachable, cm);
+				}
+			}
+
 			return new LazyValue(expr, c, cachable, cm);
 		}
 		final SymbolNode opNode = ((OpArgNode) expr).getOp();
@@ -144,6 +157,7 @@ public interface SymbolNodeValueLookupProvider {
 		Context c1 = c;
 		for (int i = 0; i < alen; i++) {
 			Object aval = getVal(args[i], c, cachable, cm, forToolId);
+			// Bind only if not already there with the same value.
 			c1 = c1.cons(formals[i], aval);
 		}
 		return c1;

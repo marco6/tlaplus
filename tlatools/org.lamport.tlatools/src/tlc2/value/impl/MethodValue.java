@@ -15,12 +15,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import tla2sany.semantic.ExprOrOpArgNode;
 import tlc2.output.EC;
 import tlc2.output.MP;
 import tlc2.tool.EvalControl;
 import tlc2.tool.EvalException;
 import tlc2.tool.FingerprintException;
+import tlc2.tool.TLCState;
+import tlc2.tool.coverage.CostModel;
 import tlc2.tool.impl.Tool;
+import tlc2.util.Context;
 import tlc2.value.IValue;
 import tlc2.value.Values;
 import util.Assert;
@@ -28,7 +32,6 @@ import util.Assert.TLCRuntimeException;
 import util.WrongInvocationException;
 
 public class MethodValue extends OpValue {
-
   public static Value get(final Method md) {
     // Call from e.g. STRING (see tlc2.module.Strings.STRING()), which has no
     // operator
@@ -46,7 +49,7 @@ public class MethodValue extends OpValue {
   }
 
   private final MethodHandle mh;
-  private final Method md;
+  public final Method md;
   private final int minLevel;
 
   /* Constructor */
@@ -55,7 +58,7 @@ public class MethodValue extends OpValue {
     this.minLevel = minLevel;
     try {
       final int parameterCount = this.md.getParameterCount();
-      if (parameterCount > 0) {
+      if (parameterCount > 2) {
         // With more than one argument, we want to setup the method handle to use a
         // spreader which essentially converts the Value[] into something that is
         // accepted by the method handle. Without a spreader, passing a Value[] to
@@ -153,14 +156,24 @@ public class MethodValue extends OpValue {
   }
 
   @Override
-  public final Value eval(Value[] args, int control) {
+  public Value eval(Tool tool, ExprOrOpArgNode[] args, Context c, TLCState s0, TLCState s1, int control, CostModel cm) {
     try {
-      Value res = null;
       try {
-        if (args.length == 0) {
-          res = (Value) this.mh.invokeExact();
-        } else {
-          res = (Value) this.mh.invoke(args);
+        switch (args.length) {
+          case 0:
+            return (Value) this.mh.invokeExact();
+          case 1:
+            return (Value) this.mh.invoke(tool.eval(args[0], c, s0, s1, control, cm));
+          case 2:
+            return (Value) this.mh.invoke(tool.eval(args[0], c, s0, s1, control, cm),
+                tool.eval(args[1], c, s0, s1, control, cm));
+          default:
+            final Value[] argVals = new Value[args.length];
+            // evaluate the operator's arguments:
+            for (int i = 0; i < args.length; i++) {
+              argVals[i] = tool.eval(args[i], c, s0, s1, control, cm);
+            }
+            return (Value) this.mh.invoke(argVals);
         }
       } catch (Throwable e) {
         if (e instanceof InvocationTargetException) {
@@ -185,7 +198,6 @@ public class MethodValue extends OpValue {
           Assert.fail(EC.TLC_MODULE_VALUE_JAVA_METHOD_OVERRIDE, new String[] { this.md.toString(), message });
         }
       }
-      return res;
     } catch (RuntimeException | OutOfMemoryError e) {
       if (hasSource()) {
         throw FingerprintException.getNewHead(this, e);
@@ -193,6 +205,12 @@ public class MethodValue extends OpValue {
         throw e;
       }
     }
+    return null; // make compiler happy
+  }
+
+  @Override
+  public final Value eval(Value[] args, int control) {
+    throw new UnsupportedOperationException("MethodValue does not support eval with already evaluated arguments.");
   }
 
   @Override

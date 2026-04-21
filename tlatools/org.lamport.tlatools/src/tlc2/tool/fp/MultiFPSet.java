@@ -33,7 +33,7 @@ public class MultiFPSet extends FPSet {
 	/**
 	 * Contains all nested {@link FPSet}s
 	 */
-	protected final List<FPSet> sets;
+	protected final ArrayList<FPSet> sets;
 
 	/**
 	 * Amount of leftmost bits used to determine nested {@link FPSet}
@@ -62,8 +62,8 @@ public class MultiFPSet extends FPSet {
 		this.fpbits = 64 - bits;
 	}
 
-	protected List<FPSet> getNestedFPSets(final FPSetConfiguration fpSetConfiguration) throws RemoteException {
-		final List<FPSet> s = new ArrayList<>(fpSetConfiguration.getMultiFPSetCnt());
+	protected ArrayList<FPSet> getNestedFPSets(final FPSetConfiguration fpSetConfiguration) throws RemoteException {
+		final ArrayList<FPSet> s = new ArrayList<>(fpSetConfiguration.getMultiFPSetCnt());
 		for (int i = 0; i < fpSetConfiguration.getMultiFPSetCnt(); i++) {
 			s.add(FPSetFactory.getFPSet(new MultiFPSetConfiguration(fpSetConfiguration)));
 		}

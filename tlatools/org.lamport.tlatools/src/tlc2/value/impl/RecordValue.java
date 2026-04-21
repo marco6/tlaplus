@@ -527,6 +527,7 @@ public class RecordValue extends Value implements FunctionValue {
     }
   }
 
+
   @Override
   public final Value getDomain() {
     try {

@@ -96,7 +96,7 @@ public final class CallStackTool extends Tool {
 	}
 
 	@Override
-	protected final TLCState getNextStates(final Action action, final SemanticNode pred, final ActionItemList acts,
+	public final TLCState getNextStates(final Action action, final SemanticNode pred, final ActionItemList acts,
 			final Context c, final TLCState s0, final TLCState s1, final INextStateFunctor nss, final CostModel cm) {
 		this.callStack.push(pred);
 		try {

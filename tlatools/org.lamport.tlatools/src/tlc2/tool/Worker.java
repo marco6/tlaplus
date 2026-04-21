@@ -571,26 +571,28 @@ public final class Worker extends IdThread implements IWorker, INextStateFunctor
 	private final boolean doNextCheckInvariants(final TLCState curState, final TLCState succState)
 			throws IOException, WorkerException, Exception {
 		int k = 0;
+		var invariants = this.tool.getInvariants();
+		var invariantNames = this.tool.getInvNames();
 		try {
-			for (k = 0; k < this.tool.getInvariants().length; k++) {
-				if (!tool.isValid(this.tool.getInvariants()[k], succState)) {
+			for (k = 0; k < invariants.length; k++) {
+				if (!tool.isValid(invariants[k], succState)) {
 					// We get here because of invariant violation:
 					if (TLCGlobals.continuation) {
 						synchronized (this.tlc) {
 							MP.printError(EC.TLC_INVARIANT_VIOLATED_BEHAVIOR,
-									this.tool.getInvNames()[k]);
+									invariantNames[k]);
 							this.tlc.trace.printTrace(curState, succState);
 							return false;
 						}
 					} else {
 						return this.doNextSetErr(curState, succState, false,
-								EC.TLC_INVARIANT_VIOLATED_BEHAVIOR, this.tool.getInvNames()[k]);
+								EC.TLC_INVARIANT_VIOLATED_BEHAVIOR, invariantNames[k]);
 					}
 				}
 			}
 		} catch (Exception e) {
 			this.tlc.doNextEvalFailed(curState, succState, EC.TLC_INVARIANT_EVALUATION_FAILED,
-					this.tool.getInvNames()[k], e);
+					invariantNames[k], e);
 		}
 		return false;
 	}
@@ -598,27 +600,28 @@ public final class Worker extends IdThread implements IWorker, INextStateFunctor
 	private final boolean doNextCheckImplied(final TLCState curState, final TLCState succState)
 			throws IOException, WorkerException, Exception {
 		int k = 0;
+		var impliedActions = this.tool.getImpliedActions();
+		var impliedActNames = this.tool.getImpliedActNames();
 		try {
-			for (k = 0; k < this.tool.getImpliedActions().length; k++) {
-				if (!tool.isValid(this.tool.getImpliedActions()[k], curState, succState)) {
+			for (k = 0; k < impliedActions.length; k++) {
+				if (!tool.isValid(impliedActions[k], curState, succState)) {
 					// We get here because of implied-action violation:
 					if (TLCGlobals.continuation) {
 						synchronized (this.tlc) {
-							MP.printError(EC.TLC_ACTION_PROPERTY_VIOLATED_BEHAVIOR, this.tool
-									.getImpliedActNames()[k]);
+							MP.printError(EC.TLC_ACTION_PROPERTY_VIOLATED_BEHAVIOR, impliedActNames[k]);
 							this.tlc.trace.printTrace(curState, succState);
 							return false;
 						}
 					} else {
 						return this.doNextSetErr(curState, succState, false,
 								EC.TLC_ACTION_PROPERTY_VIOLATED_BEHAVIOR,
-								this.tool.getImpliedActNames()[k]);
+								impliedActNames[k]);
 					}
 				}
 			}
 		} catch (Exception e) {
 			this.tlc.doNextEvalFailed(curState, succState, EC.TLC_ACTION_PROPERTY_EVALUATION_FAILED,
-					this.tool.getImpliedActNames()[k], e);
+					impliedActNames[k], e);
 		}
 		return false;
 	}

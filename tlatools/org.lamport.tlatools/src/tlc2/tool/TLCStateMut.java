@@ -28,6 +28,7 @@ import tlc2.value.IValueOutputStream;
 import tlc2.value.Values;
 import tlc2.value.impl.RecordValue;
 import tlc2.value.impl.TupleValue;
+import tlc2.value.impl.Value;
 import util.UniqueString;
 import util.WrongInvocationException;
 
@@ -130,6 +131,12 @@ public final class TLCStateMut extends TLCState implements Serializable {
     if (loc < 0)
       return null;
     return this.values[loc];
+  }
+
+  public static final Value lookup(TLCState state, int varIndex) {
+    if (varIndex < 0)
+      return null;
+    return (Value) ((TLCStateMut) state).values[varIndex];
   }
 
   public final boolean containsKey(UniqueString var) {
@@ -276,7 +283,7 @@ public final class TLCStateMut extends TLCState implements Serializable {
       }
       minVals = vals;
     }
-  
+
     // Fingerprint the state:
     long fp = FP64.New();
     for (int i = 0; i < sz; i++) {

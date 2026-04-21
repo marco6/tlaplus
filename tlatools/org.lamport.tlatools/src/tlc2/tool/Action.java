@@ -10,7 +10,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import tla2sany.semantic.FormalParamNode;
 import tla2sany.semantic.OpDefNode;
@@ -19,6 +18,7 @@ import tla2sany.st.Location;
 import tla2sany.st.SyntaxTreeConstants;
 import tla2sany.st.TreeNode;
 import tlc2.tool.coverage.CostModel;
+import tlc2.tool.impl.jit.CompiledAction;
 import tlc2.util.Context;
 import tlc2.value.impl.Value;
 import util.UniqueString;

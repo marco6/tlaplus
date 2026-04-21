@@ -8,6 +8,7 @@
 package tlc2.tool.impl;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -892,10 +893,10 @@ public abstract class Tool
     return false;
   }
 
-  protected abstract TLCState getNextStates(final Action action, SemanticNode pred, ActionItemList acts, Context c,
+  public abstract TLCState getNextStates(final Action action, SemanticNode pred, ActionItemList acts, Context c,
       TLCState s0, TLCState s1, INextStateFunctor nss, CostModel cm);
 
-  protected final TLCState getNextStatesImpl(final Action action, SemanticNode pred, ActionItemList acts, Context c,
+  public final TLCState getNextStatesImpl(final Action action, SemanticNode pred, ActionItemList acts, Context c,
       TLCState s0, TLCState s1, INextStateFunctor nss, CostModel cm) {
     switch (pred.getKind()) {
       case OpApplKind: {
@@ -923,9 +924,9 @@ public abstract class Tool
       }
       default: {
         Assert.fail("The next state relation is not a boolean expression.\n" + pred, pred, c);
+        return s1;
       }
     }
-    return s1;
   }
 
   @ExpectInlined
@@ -936,6 +937,16 @@ public abstract class Tool
     Context c1 = c;
     for (int i = 0; i < slen; i++) {
       Subst sub = subs[i];
+      // TODO: if sub.getExpr is a constant or a variable we should really not bind it!
+      var op = sub.getOp();
+      var expr = sub.getExpr();
+      if (expr instanceof OpApplNode) {
+        var exprOp = ((OpApplNode) expr).getOperator();
+        if (op == exprOp) {
+          // If the replaced symbol is the same as the original one, just skip it!
+          continue;
+        }
+      }
       c1 = c1.cons(sub.getOp(), this.getVal(sub.getExpr(), c, false, coverage ? sub.getCM() : cm, toolId));
     }
     return this.getNextStates(action, pred1.getBody(), acts, c1, s0, s1, nss, cm);
@@ -1517,6 +1528,42 @@ public abstract class Tool
 
   /* processUnchanged */
 
+  private final boolean collectUnchanged(final SemanticNode expr, final ArrayList<SymbolNode> vars, final Context c) {
+    if (expr instanceof OpApplNode) {
+      OpApplNode expr1 = (OpApplNode) expr;
+      ExprOrOpArgNode[] args = expr1.getArgs();
+      int alen = args.length;
+      SymbolNode opNode = expr1.getOperator();
+      UniqueString opName = opNode.getName();
+      int opcode = BuiltInOPs.getOpCode(opName);
+
+      if (opcode == OPCODE_tup) {
+        for (var arg : args) {
+          SymbolNode var = this.getVar(arg, c, false, toolId);
+          if (var != null) {
+            vars.add(var);
+          } else if (!collectUnchanged(arg, vars, c)) {
+            return false;
+          }
+        }
+      } else if (opcode == 0 && alen == 0) {
+        // a 0-arity operator:
+        final Object val = this.lookup(opNode, c, false);
+        boolean isUnchanged = true;
+        if (val instanceof OpDefNode) {
+          isUnchanged = collectUnchanged(((OpDefNode) val).getBody(), vars, c);
+        } else if (val instanceof LazyValue) {
+          final LazyValue lv = (LazyValue) val;
+          isUnchanged = collectUnchanged(lv.expr, vars, lv.con);
+        }
+        if (!isUnchanged) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   @ExpectInlined
   protected abstract TLCState processUnchanged(final Action action, SemanticNode expr, ActionItemList acts, Context c,
       TLCState s0, TLCState s1, INextStateFunctor nss, CostModel cm);
@@ -1527,30 +1574,24 @@ public abstract class Tool
       cm = cm.get(expr);
     }
     SymbolNode var = this.getVar(expr, c, false, toolId);
-    TLCState resState = s1;
     if (var != null) {
       return processUnchangedImplVar(action, expr, acts, s0, s1, nss, var, cm);
     }
 
     if (expr instanceof OpApplNode) {
-      OpApplNode expr1 = (OpApplNode) expr;
-      ExprOrOpArgNode[] args = expr1.getArgs();
-      int alen = args.length;
-      SymbolNode opNode = expr1.getOperator();
-      UniqueString opName = opNode.getName();
-      int opcode = BuiltInOPs.getOpCode(opName);
-
-      if (opcode == OPCODE_tup) {
-        return processUnchangedImplTuple(action, acts, c, s0, s1, nss, args, alen, cm, coverage ? cm.get(expr1) : cm);
-      }
-
-      if (opcode == 0 && alen == 0) {
-        // a 0-arity operator:
-        return processUnchangedImpl0Arity(action, expr, acts, c, s0, s1, nss, cm, opNode, opName);
+      var vars = new ArrayList<SymbolNode>(10);
+      if (collectUnchanged(expr, vars, c)) {
+        return processUnchangedImplVars(action, expr, acts, s0, s1, nss, vars, cm);
+      } else {
+        return s1;
       }
     }
 
-    return verifyUnchanged(action, expr, acts, c, s0, s1, nss, cm);
+    if (verifyUnchanged(action, expr, acts, c, s0, s1, nss, cm)) {
+      return this.getNextStates(action, acts, s0, s1, nss, cm);
+    } else {
+      return s1;
+    }
   }
 
   @ExpectInlined
@@ -1566,7 +1607,12 @@ public abstract class Tool
       final LazyValue lv = (LazyValue) val;
       return this.processUnchanged(action, lv.expr, acts, lv.con, s0, s1, nss, cm);
     }
-    return verifyUnchanged(action, expr, acts, c, s0, s1, nss, cm);
+
+    if (verifyUnchanged(action, expr, acts, c, s0, s1, nss, cm)) {
+      return this.getNextStates(action, acts, s0, s1, nss, cm);
+    } else {
+      return s1;
+    }
   }
 
   /**
@@ -1574,16 +1620,12 @@ public abstract class Tool
    * values for variables in the
    * successor state.
    */
-  private TLCState verifyUnchanged(final Action action, final SemanticNode expr, final ActionItemList acts,
+  private boolean verifyUnchanged(final Action action, final SemanticNode expr, final ActionItemList acts,
       final Context c, final TLCState s0, final TLCState s1, final INextStateFunctor nss,
       final CostModel cm) {
-    TLCState resState = s1;
     IValue v0 = this.eval(expr, c, s0, cm);
     IValue v1 = this.eval(expr, c, s1, TLCState.Null, EvalControl.Clear, cm);
-    if (v0.equals(v1)) {
-      resState = this.getNextStates(action, acts, s0, s1, nss, cm);
-    }
-    return resState;
+    return v0.equals(v1);
   }
 
   @Override
@@ -1641,6 +1683,42 @@ public abstract class Tool
       }
     } else {
       MP.printWarning(EC.TLC_UNCHANGED_VARIABLE_CHANGED, new String[] { varName.toString(), expr.toString() });
+    }
+    return resState;
+  }
+
+  @ExpectInlined
+  private final TLCState processUnchangedImplVars(final Action action, SemanticNode expr, ActionItemList acts,
+      TLCState s0, TLCState s1, INextStateFunctor nss,
+      ArrayList<SymbolNode> vars, final CostModel cm) {
+  
+    // Bind all variables as unchanged
+    for (int i = 0; i < vars.size(); i++) {
+      final SymbolNode var = vars.get(i);
+      final UniqueString varName = var.getName();
+      final IValue val0 = s0.lookup(varName);
+      final IValue val1 = s1.lookup(varName);
+      if (val1 == null) {
+        s1.bind(varName, val0);
+      } else if (val0.equals(val1)) {
+        vars.set(i, null);
+      } else {
+        MP.printWarning(EC.TLC_UNCHANGED_VARIABLE_CHANGED, new String[] { varName.toString(), expr.toString() });
+      } 
+    }
+
+    TLCState resState;
+    if (coverage) {
+      resState = this.getNextStates(action, acts, s0, s1, nss, cm);
+    } else {
+      resState = this.getNextStates0(action, acts, s0, s1, nss, cm);
+    }
+    
+    for (var var : vars) {
+      if (var != null) {
+        final UniqueString varName = var.getName();
+        resState.unbind(varName);
+      }
     }
     return resState;
   }
@@ -1884,6 +1962,10 @@ public abstract class Tool
       // be substed by a builtin operator. This special case occurs
       // when the lookup returns an OpDef with opcode # 0.
       Object val = this.lookup(opNode, c, s0, EvalControl.isPrimed(control));
+
+      if (val == opNode) {
+        val = this.lookup(opNode, c, s0, EvalControl.isPrimed(control));
+      }
 
       // if (val instanceof Supplier) {
       // val = ((Supplier) val).get();
@@ -2842,7 +2924,7 @@ public abstract class Tool
   }
 
   @Override
-  public final boolean isInModel(final ExprNode constraint, final TLCState state) throws EvalException {
+  public boolean isInModel(final ExprNode constraint, final TLCState state) throws EvalException {
     final CostModel cm = coverage ? ((Action) constraint.getToolObject(toolId)).cm : CostModel.DO_NOT_RECORD;
     IValue bval = this.eval(constraint, Context.Empty, state, cm);
     if (!(bval instanceof BoolValue)) {
@@ -3512,7 +3594,7 @@ public abstract class Tool
 
   /* This method determines if the action predicate is valid in (s0, s1). */
   @Override
-  public final boolean isValid(Action act, TLCState s0, TLCState s1) {
+  public boolean isValid(Action act, TLCState s0, TLCState s1) {
     Value val = this.eval(act.pred, act.con, s0, s1, EvalControl.Clear, act.cm);
     if (!(val instanceof BoolValue)) {
       Assert.fail(EC.TLC_EXPECTED_VALUE, new String[] { "boolean", act.pred.toString() }, act.pred, act.con);

@@ -425,7 +425,7 @@ public class DebugTool extends Tool {
 	}
 
 	@Override
-	protected final TLCState getNextStates(final Action action, final SemanticNode expr, final ActionItemList acts,
+	public final TLCState getNextStates(final Action action, final SemanticNode expr, final ActionItemList acts,
 			final Context c, final TLCState s0, final TLCState s1, final INextStateFunctor nss, final CostModel cm) {
 		if (mode == EvalMode.Debugger) {
 			return fastTool.getNextStatesImpl(action, expr, acts, c, s0, s1, nss, cm);

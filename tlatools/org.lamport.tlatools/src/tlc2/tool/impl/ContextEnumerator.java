@@ -15,10 +15,10 @@ import tlc2.value.impl.ValueEnumeration;
 import util.Assert;
 
 public final class ContextEnumerator implements IContextEnumerator {
-    private Context con;
-    private Object[] vars;
-    private ValueEnumeration[] enums;
-    private Value[] currentElems;
+    private final Context con;
+    private final Object[] vars;
+    private final ValueEnumeration[] enums;
+    private final Value[] currentElems;
     private boolean isDone;
 
     public ContextEnumerator(Object[] vars, ValueEnumeration[] enums, Context con) {

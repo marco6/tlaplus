@@ -10,7 +10,7 @@ import tlc2.tool.IActionItemList;
 import tlc2.tool.coverage.CostModel;
 import tlc2.util.Context;
 
-class ActionItemList implements IActionItemList {
+public class ActionItemList implements IActionItemList {
   protected static final boolean coverage = TLCGlobals.Coverage.isActionEnabled();
   /**
    * We assume that this.pred is null iff the list is empty.

@@ -25,7 +25,17 @@
  ******************************************************************************/
 package tlc2.value;
 
+import java.util.Objects;
+
 import tlc2.pprint.PrettyPrint;
+import tlc2.value.impl.BoolValue;
+import tlc2.value.impl.FcnRcdValue;
+import tlc2.value.impl.IntValue;
+import tlc2.value.impl.RecordValue;
+import tlc2.value.impl.StringValue;
+import tlc2.value.impl.Value;
+import util.Assert;
+import util.UniqueString;
 
 public abstract class Values {
 
@@ -40,5 +50,47 @@ public abstract class Values {
 			return "null";
 		}
 		return PrettyPrint.mypp(v.toString(), WIDTH);
+	}
+
+	public static boolean equals(Value a, Value b) {
+		return a == b || a != null && a.equals(b);
+	}
+
+	public static boolean equals(Value a, boolean b) {
+		return a instanceof BoolValue && ((BoolValue) a).val == b;
+	}
+
+	public static boolean equals(Value a, int b) {
+		return a instanceof IntValue && ((IntValue) a).val == b;
+	}
+
+	public static boolean equals(boolean a, Value b) {
+		return b instanceof BoolValue && ((BoolValue) b).val == a;
+	}
+
+	public static boolean equals(int a, Value b) {
+		return b instanceof IntValue && ((IntValue) b).val == a;
+	}
+
+	public static Value select(Value arg, int uid) {
+		if (arg instanceof RecordValue) {
+			var record = (RecordValue) arg;
+			int rlen = record.names.length;
+			for (int i = 0; i < rlen; i++) {
+				if (record.names[i].getTok() == uid) {
+					return record.values[i];
+				}
+			}
+			return null;
+
+		} else {
+			FcnRcdValue fcn = (FcnRcdValue) arg.toFcnRcd();
+			var sval = new StringValue(UniqueString.uidToUniqueString(uid));
+			if (fcn == null) {
+				Assert.fail("Attempted to select field " + sval + " from a non-record" +
+						" value " + Values.ppr(arg.toString()) + "\n");
+			}
+			return fcn.apply(sval, 0);
+		}
 	}
 }

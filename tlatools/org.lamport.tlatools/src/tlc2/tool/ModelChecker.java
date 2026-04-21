@@ -196,8 +196,8 @@ public class ModelChecker extends AbstractChecker {
 					result = MP.printError(EC.TLC_FINGERPRINT_EXCEPTION, new String[] {
 							cTool.hasCallStack() ? cTool.toString() : fe.getTrace(), fe.getRootCause().getMessage() });
 				} catch (Throwable e1) {
-					// Assert.printStack(e);
 					result = MP.printError(EC.TLC_NESTED_EXPRESSION, cTool.toString());
+					e1.printStackTrace();
 				}
 				this.printSummary(false, startTime);
 				this.cleanup(false);
